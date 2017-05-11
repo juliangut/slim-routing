@@ -1,0 +1,47 @@
+language: php
+
+sudo: false
+
+git:
+  depth: 3
+
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+
+env:
+  - COMPOSER_FLAGS="--prefer-stable --prefer-dist"
+
+php:
+  - 7.1
+  - nightly
+
+matrix:
+  fast_finish: true
+  include:
+    - php: 7
+      env:
+        - COMPOSER_FLAGS="--prefer-lowest --prefer-stable --prefer-dist"
+    - php: 7
+      env:
+        - TEST_VERSION=true
+        - COMPOSER_FLAGS="--prefer-stable --prefer-dist"
+  allow_failures:
+    - php: nightly
+
+before_install:
+  - if [[ -z $TEST_VERSION && -f "/home/travis/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini" ]]; then phpenv config-rm xdebug.ini; fi
+  - composer global require hirak/prestissimo
+  - composer self-update --stable --no-progress
+
+install:
+  - travis_retry composer update $COMPOSER_FLAGS --no-interaction --no-scripts --no-progress
+  - if [[ $TEST_VERSION ]]; then travis_retry composer require satooshi/php-coveralls:dev-master $COMPOSER_FLAGS --no-interaction --no-scripts --no-progress ; fi
+
+script:
+  - if [[ $TEST_VERSION ]]; then composer qa && composer phpunit-clover ; fi
+
+  - if [[ -z $TEST_VERSION ]]; then composer phpunit ; fi
+
+after_script:
+  - if [[ $TEST_VERSION ]]; then travis_retry php vendor/bin/coveralls --verbose ; fi
