@@ -45,12 +45,10 @@ class SourceFactory
         switch ($extension) {
             case 'php':
                 return new PhpSource($file);
-                break;
 
             case 'yml':
             case 'yaml':
                 return new YamlSource($file);
-                break;
         }
 
         throw new \RuntimeException(sprintf('Unknown "%s" extension', $extension));

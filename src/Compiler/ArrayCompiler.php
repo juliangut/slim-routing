@@ -287,7 +287,7 @@ class ArrayCompiler extends AbstractCompiler
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      *
-     * @return mixed
+     * @return string|array|callable
      */
     protected function getSourceInvokable(array $source)
     {
@@ -297,7 +297,7 @@ class ArrayCompiler extends AbstractCompiler
 
         $invokable = $source['invokable'];
 
-        if (!is_string($invokable) && !is_array($invokable)) {
+        if (!is_string($invokable) && !is_array($invokable) && !is_callable($invokable)) {
             throw new \InvalidArgumentException('Route invokable does not seam to be supported by Slim router');
         }
 

@@ -212,7 +212,7 @@ Defines a group in which routes may reside.
 * `placeholders`, optional, array of regex for path placeholders, 
 * `middleware`, optional, array of middleware to be added to all group routes
 
-#### Route (Method)
+#### Route
 
 Defines the final routes added to Slim
 
