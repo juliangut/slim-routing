@@ -26,7 +26,7 @@ class SourceFactoryTest extends TestCase
 {
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessageRegExp /^".+" routing source. Must be a SourceInterface, a directory or a path$/
+     * @expectedExceptionMessageRegExp /^".+" routing source. Must be a SourceInterface, a directory or a file path$/
      */
     public function testInvalidSource()
     {

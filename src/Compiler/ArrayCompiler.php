@@ -287,7 +287,7 @@ class ArrayCompiler extends AbstractCompiler
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      *
-     * @return string|array|callable
+     * @return callable
      */
     protected function getSourceInvokable(array $source)
     {

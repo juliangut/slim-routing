@@ -45,9 +45,9 @@ class AnnotationLoader implements LoaderInterface
      *
      * @param string $directory
      *
-     * @return array
+     * @return string[]
      */
-    protected function loadFromDirectory(string $directory)
+    protected function loadFromDirectory(string $directory): array
     {
         $rotingFiles = [];
 

@@ -29,7 +29,7 @@ class PhpLoader extends AbstractArrayLoader
     /**
      * {@inheritdoc}
      */
-    protected function loadFile(string  $file): array
+    protected function loadFile(string $file): array
     {
         $routingData = require $file;
 

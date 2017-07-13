@@ -32,7 +32,7 @@ class YamlLoader extends AbstractArrayLoader
     /**
      * {@inheritdoc}
      */
-    protected function loadFile(string  $file): array
+    protected function loadFile(string $file): array
     {
         try {
             $routingData = YamlReader::parse(file_get_contents($file));

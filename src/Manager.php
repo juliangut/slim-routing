@@ -115,18 +115,21 @@ class Manager
     /**
      * Get routes.
      *
+     * @throws \RuntimeException
+     *
      * @return Route[]
      */
     protected function loadRoutes(): array
     {
         $routes = [];
-
         foreach ($this->configuration->getSources() as $source) {
             $source = SourceFactory::getSource($source);
 
             $routingSources = $this->getLoader($source)->load($source->getPaths());
-            $routes = array_merge($routes, $this->getCompiler($source)->getRoutes($routingSources));
+            $routes[] = $this->getCompiler($source)->getRoutes($routingSources);
         }
+
+        $routes = count($routes) ? array_merge(...$routes) : [];
 
         $this->checkDuplicatedRoutes($routes);
 
@@ -151,16 +154,16 @@ class Manager
     {
         $paths = [];
         foreach ($routes as $route) {
-            $paths = array_merge(
-                $paths,
-                array_map(
-                    function ($method) use ($route) {
-                        return sprintf('%s %s', $method, $this->getCompoundPath($route));
-                    },
-                    $route->getMethods()
-                )
+            /** @var Route $route */
+            $paths[] = array_map(
+                function (string $method) use ($route) {
+                    return sprintf('%s %s', $method, $this->getCompoundPath($route));
+                },
+                $route->getMethods()
             );
         }
+
+        $paths = count($paths) ? array_merge(...$paths) : [];
 
         $duplicatedPaths = array_unique(array_diff_assoc($paths, array_unique($paths)));
         if (count($duplicatedPaths)) {
