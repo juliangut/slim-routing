@@ -154,7 +154,7 @@ class Manager
     {
         $paths = [];
         foreach ($routes as $route) {
-            /** @var Route $route */
+            /* @var Route $route */
             $paths[] = array_map(
                 function (string $method) use ($route) {
                     return sprintf('%s %s', $method, $this->getCompoundPath($route));
