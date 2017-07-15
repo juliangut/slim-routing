@@ -25,19 +25,19 @@ class AnnotationLoader implements LoaderInterface
      */
     public function load(array $loadingPaths): array
     {
-        $rotingFiles = [];
+        $routingFiles = [];
 
         foreach ($loadingPaths as $path) {
             if (is_dir($path)) {
-                $rotingFiles = array_merge($rotingFiles, $this->loadFromDirectory($path));
+                $routingFiles = array_merge($routingFiles, $this->loadFromDirectory($path));
             } elseif (is_file($path)) {
-                $rotingFiles[] = $this->loadFromFile($path);
+                $routingFiles[] = $this->loadFromFile($path);
             } else {
                 throw new \RuntimeException(sprintf('Path "%s" does not exist', $path));
             }
         }
 
-        return array_filter(array_unique($rotingFiles));
+        return array_filter(array_unique($routingFiles));
     }
 
     /**
@@ -49,15 +49,15 @@ class AnnotationLoader implements LoaderInterface
      */
     protected function loadFromDirectory(string $directory): array
     {
-        $rotingFiles = [];
+        $routingFiles = [];
 
         foreach (glob($directory . '/{**/*,*}.php', GLOB_BRACE | GLOB_ERR) as $file) {
             if (is_file($file)) {
-                $rotingFiles[] = $this->loadFromFile($file);
+                $routingFiles[] = $this->loadFromFile($file);
             }
         }
 
-        return $rotingFiles;
+        return $routingFiles;
     }
 
     /**

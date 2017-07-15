@@ -24,6 +24,7 @@ class SourceFactory
      * @param SourceInterface|string $source
      *
      * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      *
      * @return SourceInterface
      */
