@@ -109,7 +109,10 @@ class Manager
             $routes = $this->loadRoutes();
 
             if ($compilationPath && is_writable($compilationPath)) {
-                file_put_contents($compilationFile, sprintf('<?php%1$s%1$sreturn %2$s;', "\n", var_export($routes, true)));
+                file_put_contents(
+                    $compilationFile,
+                    sprintf('<?php%1$s%1$sreturn %2$s;', "\n", var_export($routes, true))
+                );
             }
         }
 
