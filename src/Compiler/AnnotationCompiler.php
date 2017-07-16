@@ -43,14 +43,11 @@ class AnnotationCompiler extends AbstractCompiler
             $routerAnnotation = $annotationReader->getClassAnnotation($class, RouterAnnotation::class);
 
             if ($routerAnnotation !== null) {
-                $routes = array_merge(
-                    $routes,
-                    $this->getClassRoutes($class, $annotationReader, $groups)
-                );
+                $routes[] = $this->getClassRoutes($class, $annotationReader, $groups);
             }
         }
 
-        return $routes;
+        return count($routes) ? array_merge(...$routes) : [];
     }
 
     /**

@@ -29,13 +29,15 @@ abstract class AbstractArrayLoader implements LoaderInterface
 
         foreach ($loadingPaths as $path) {
             if (is_dir($path)) {
-                $loadedData = array_merge($loadedData, $this->loadFromDirectory($path));
+                $loadedData[] = $this->loadFromDirectory($path);
             } elseif (is_file($path)) {
-                $loadedData[] = $this->loadFile($path);
+                $loadedData[] = [$this->loadFile($path)];
             } else {
                 throw new \RuntimeException(sprintf('Path "%s" does not exist', $path));
             }
         }
+
+        $loadedData = count($loadedData) ? array_merge(...$loadedData) : [];
 
         $routingData = [];
         foreach ($loadedData as $data) {

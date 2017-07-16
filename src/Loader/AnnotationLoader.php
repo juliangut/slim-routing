@@ -29,13 +29,15 @@ class AnnotationLoader implements LoaderInterface
 
         foreach ($loadingPaths as $path) {
             if (is_dir($path)) {
-                $routingFiles = array_merge($routingFiles, $this->loadFromDirectory($path));
+                $routingFiles[] = $this->loadFromDirectory($path);
             } elseif (is_file($path)) {
-                $routingFiles[] = $this->loadFromFile($path);
+                $routingFiles[] = [$this->loadFromFile($path)];
             } else {
                 throw new \RuntimeException(sprintf('Path "%s" does not exist', $path));
             }
         }
+
+        $routingFiles = count($routingFiles) ? array_merge(...$routingFiles) : [];
 
         return array_filter(array_unique($routingFiles));
     }

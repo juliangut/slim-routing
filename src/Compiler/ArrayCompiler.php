@@ -47,6 +47,7 @@ class ArrayCompiler extends AbstractCompiler
      * @param array $sources
      *
      * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      *
      * @return array
      */
@@ -62,11 +63,13 @@ class ArrayCompiler extends AbstractCompiler
             if (array_key_exists('routes', $source)) {
                 $groupRoutes = $this->getCompoundRoutes($source['routes']);
 
-                $routes = array_merge($routes, $this->getCompoundGroupRoutes($source, $groupRoutes));
+                $routes[] = $this->getCompoundGroupRoutes($source, $groupRoutes);
             } else {
-                $routes[] = $this->getProcessedRoute($source);
+                $routes[] = [$this->getProcessedRoute($source)];
             }
         }
+
+        $routes = count($routes) ? array_merge(...$routes) : [];
 
         foreach ($routes as $route) {
             $this->checkPath($route['pattern'], $route['placeholders']);
