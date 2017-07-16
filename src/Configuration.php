@@ -13,19 +13,15 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing;
 
-use Psr\SimpleCache\CacheInterface;
-
 /**
  * Routing configuration.
  */
 class Configuration
 {
     /**
-     * Routing cache.
-     *
-     * @var CacheInterface
+     * @var string
      */
-    protected $cache;
+    protected $compilationPath;
 
     /**
      * Routing sources.
@@ -69,25 +65,31 @@ class Configuration
     }
 
     /**
-     * Get cache.
+     * Get compilation path.
      *
-     * @return CacheInterface|null
+     * @return string|null
      */
-    public function getCache()
+    public function getCompilationPath()
     {
-        return $this->cache;
+        return $this->compilationPath;
     }
 
     /**
-     * Set cache.
+     * Set compilation path.
      *
-     * @param CacheInterface $cache
+     * @param string $compilationPath
+     *
+     * @throws \RuntimeException
      *
      * @return $this
      */
-    public function setCache(CacheInterface $cache)
+    public function setCompilationPath(string $compilationPath)
     {
-        $this->cache = $cache;
+        if (!file_exists($compilationPath) || !is_dir($compilationPath) || !is_writable($compilationPath)) {
+            throw new \RuntimeException(sprintf('%s directory does not exist or is write protected', $compilationPath));
+        }
+
+        $this->compilationPath = rtrim($compilationPath, DIRECTORY_SEPARATOR);
 
         return $this;
     }

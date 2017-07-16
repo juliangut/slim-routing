@@ -15,7 +15,6 @@ namespace Jgut\Slim\Routing\Tests;
 
 use Jgut\Slim\Routing\Configuration;
 use PHPUnit\Framework\TestCase;
-use Psr\SimpleCache\CacheInterface;
 
 /**
  * Configuration tests.
@@ -35,7 +34,7 @@ class ConfigurationTest extends TestCase
     {
         $configuration = new Configuration();
 
-        self::assertNull($configuration->getCache());
+        self::assertNull($configuration->getCompilationPath());
         self::assertEmpty($configuration->getSources());
     }
 
@@ -51,13 +50,19 @@ class ConfigurationTest extends TestCase
         self::assertEquals($paths, $configuration->getSources());
     }
 
-    public function testCache()
+    public function testCompilationPath()
     {
-        $cache = $this->getMockBuilder(CacheInterface::class)
-            ->getMock();
+        $configuration = new Configuration(['compilationPath' => sys_get_temp_dir()]);
 
-        $configuration = new Configuration(['cache' => $cache]);
+        self::assertEquals(sys_get_temp_dir(), $configuration->getCompilationPath());
+    }
 
-        self::assertEquals($cache, $configuration->getCache());
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage /unknown/compilation/path directory does not exist or is write protected
+     */
+    public function testInvalidCompilationPath()
+    {
+        new Configuration(['compilationPath' => '/unknown/compilation/path']);
     }
 }

@@ -18,9 +18,9 @@ use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Loader\LoaderInterface;
 use Jgut\Slim\Routing\Route;
 use Jgut\Slim\Routing\Tests\Stubs\ManagerStub;
+use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use Psr\SimpleCache\CacheInterface;
 use Slim\Router;
 
 /**
@@ -64,16 +64,11 @@ class ManagerTest extends TestCase
 
     public function testGetRoutes()
     {
+        $compilationDir = vfsStream::setup('compilationDir');
         $routes = [
             (new Route())->setMethods(['POST'])->setPattern('/path/{id}'),
             (new Route())->setMethods(['GET'])->setPattern('/path/{id}')->setPriority(-10),
         ];
-
-        $cache = $this->getMockBuilder(CacheInterface::class)
-            ->getMock();
-        $cache->expects(self::once())
-            ->method('set');
-        /* @var CacheInterface $cache */
 
         $loader = $this->getMockBuilder(LoaderInterface::class)
             ->getMock();
@@ -89,8 +84,8 @@ class ManagerTest extends TestCase
         $configuration = $this->getMockBuilder(Configuration::class)
             ->getMock();
         $configuration->expects(self::once())
-            ->method('getCache')
-            ->will(self::returnValue($cache));
+            ->method('getCompilationPath')
+            ->will(self::returnValue($compilationDir->url()));
         $configuration->expects(self::once())
             ->method('getSources')
             ->will(self::returnValue([__DIR__]));
@@ -101,15 +96,22 @@ class ManagerTest extends TestCase
         $loaded = $manager->getRoutes();
 
         self::assertEquals(array_reverse($routes), $loaded);
+        self::assertFileExists($compilationDir->url() . '/CompiledRoutes.php');
     }
 
-    public function testRouting()
+    public function testCompiledRoutes()
     {
-        $router = new Router();
+        $compilationDir = vfsStream::setup('compilationDir');
+        $compilationDir->addChild(vfsStream::newFile('CompiledRoutes.php'));
         $routes = [
             (new Route())->setMethods(['POST'])->setPattern('/path/{id}')->setName('one'),
             (new Route())->setMethods(['GET'])->setPattern('/path/{id}'),
         ];
+        file_put_contents(
+            $compilationDir->getChild('CompiledRoutes.php')->url(),
+            sprintf('<?php return %s;', var_export($routes, true))
+        );
+        $router = new Router();
 
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
@@ -118,21 +120,11 @@ class ManagerTest extends TestCase
             ->willReturnOnConsecutiveCalls($router, ['outputBuffering' => 'append']);
         /* @var ContainerInterface $container */
 
-        $cache = $this->getMockBuilder(CacheInterface::class)
-            ->getMock();
-        $cache->expects(self::once())
-            ->method('has')
-            ->will(self::returnValue(true));
-        $cache->expects(self::any())
-            ->method('get')
-            ->will(self::returnValue(serialize($routes)));
-        /* @var CacheInterface $cache */
-
         $configuration = $this->getMockBuilder(Configuration::class)
             ->getMock();
         $configuration->expects(self::once())
-            ->method('getCache')
-            ->will(self::returnValue($cache));
+            ->method('getCompilationPath')
+            ->will(self::returnValue($compilationDir->url()));
         /* @var Configuration $configuration */
 
         $manager = new ManagerStub($configuration);
@@ -144,5 +136,30 @@ class ManagerTest extends TestCase
 
         self::assertCount(2, $loaded);
         self::assertEquals('one', array_shift($loaded)->getName());
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage vfs://compilationDir/CompiledRoutes.php file should return an array
+     */
+    public function testWrongCompiledRoutes()
+    {
+        $compilationDir = vfsStream::setup('compilationDir');
+        $compilationDir->addChild(vfsStream::newFile('CompiledRoutes.php'));
+
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->getMock();
+        /* @var ContainerInterface $container */
+
+        $configuration = $this->getMockBuilder(Configuration::class)
+            ->getMock();
+        $configuration->expects(self::once())
+            ->method('getCompilationPath')
+            ->will(self::returnValue($compilationDir->url()));
+        /* @var Configuration $configuration */
+
+        $manager = new ManagerStub($configuration);
+
+        $manager->registerRoutes($container);
     }
 }

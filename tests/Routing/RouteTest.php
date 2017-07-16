@@ -103,4 +103,20 @@ class RouteTest extends TestCase
 
         self::assertEquals($callable, $this->route->getInvokable());
     }
+
+    public function testSetState()
+    {
+        $route = Route::__set_state([
+            'name' => 'route',
+            'priority' => 10,
+            'methods' => ['GET'],
+            'pattern' => '',
+            'placeholders' => [],
+            'middleware' => [],
+            'invokable' => null,
+        ]);
+
+        self::assertInstanceOf(Route::class, $route);
+        self::assertEquals('route', $route->getName());
+    }
 }

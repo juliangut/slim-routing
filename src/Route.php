@@ -234,4 +234,24 @@ class Route
 
         return $this;
     }
+
+    /**
+     * @param $parameters
+     *
+     * @return Route
+     */
+    public static function __set_state($parameters): Route
+    {
+        $route = new self();
+
+        $route->name = $parameters['name'];
+        $route->priority = $parameters['priority'];
+        $route->methods = $parameters['methods'];
+        $route->pattern = $parameters['pattern'];
+        $route->placeholders = $parameters['placeholders'];
+        $route->middleware = $parameters['middleware'];
+        $route->invokable = $parameters['invokable'];
+
+        return $route;
+    }
 }

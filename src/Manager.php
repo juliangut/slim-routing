@@ -24,8 +24,6 @@ use Psr\Container\ContainerInterface;
  */
 class Manager
 {
-    const CACHE_KEY = 'foundry.routing.cache';
-
     /**
      * Routing configuration.
      *
@@ -61,6 +59,8 @@ class Manager
      * Register routes into Slim router.
      *
      * @param ContainerInterface $container
+     *
+     * @throws \RuntimeException
      */
     public function registerRoutes(ContainerInterface $container)
     {
@@ -90,22 +90,26 @@ class Manager
     /**
      * Get defined routes.
      *
+     * @throws \RuntimeException
+     *
      * @return Route[]
      */
     public function getRoutes(): array
     {
-        $cache = $this->configuration->getCache();
-        if ($cache) {
-            $cache = new PsrDoctrineCacheAdapter($cache);
-        }
+        $compilationPath = $this->configuration->getCompilationPath();
+        $compilationFile = $compilationPath . '/CompiledRoutes.php';
 
-        if ($cache && $cache->contains(self::CACHE_KEY)) {
-            $routes = unserialize($cache->fetch(self::CACHE_KEY), ['allowed_classes' => [Route::class]]);
+        if ($compilationPath && file_exists($compilationFile) && is_readable($compilationFile)) {
+            $routes = require $compilationFile;
+
+            if (!is_array($routes)) {
+                throw new \RuntimeException(sprintf('%s file should return an array', $compilationFile));
+            }
         } else {
             $routes = $this->loadRoutes();
 
-            if ($cache) {
-                $cache->save(self::CACHE_KEY, serialize($routes));
+            if ($compilationPath && is_writable($compilationPath)) {
+                file_put_contents($compilationFile, sprintf('<?php%1$s%1$sreturn %2$s;', "\n", var_export($routes, true)));
             }
         }
 
