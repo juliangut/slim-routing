@@ -67,6 +67,9 @@ class SourceFactory
             case 'php':
                 return new PhpSource($file);
 
+            case 'json':
+                return new JsonSource($file);
+
             case 'yml':
             case 'yaml':
                 return new YamlSource($file);

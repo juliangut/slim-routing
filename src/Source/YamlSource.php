@@ -17,7 +17,7 @@ use Jgut\Slim\Routing\Compiler\ArrayCompiler;
 use Jgut\Slim\Routing\Loader\YamlLoader;
 
 /**
- * PHP files Routing source.
+ * YAML files routing source.
  */
 class YamlSource extends AbstractSource
 {

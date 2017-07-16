@@ -13,20 +13,17 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Loader;
 
-use Symfony\Component\Yaml\Exception\ParseException;
-use Symfony\Component\Yaml\Yaml as YamlReader;
-
 /**
- * YAML file routing loader.
+ * JSON file routing loader.
  */
-class YamlLoader extends AbstractArrayLoader
+class JsonLoader extends AbstractArrayLoader
 {
     /**
      * {@inheritdoc}
      */
     protected function getExtension(): string
     {
-        return '{yml,yaml}';
+        return 'json';
     }
 
     /**
@@ -34,15 +31,7 @@ class YamlLoader extends AbstractArrayLoader
      */
     protected function loadFile(string $file): array
     {
-        try {
-            $routingData = YamlReader::parse(file_get_contents($file));
-        // @codeCoverageIgnoreStart
-        } catch (ParseException $exception) {
-            throw new \RuntimeException(
-                printf('Unable to parse the YAML file %s: %s', $file, $exception->getMessage())
-            );
-        }
-        // @codeCoverageIgnoreEnd
+        $routingData = json_decode(file_get_contents($file), true);
 
         if (!is_array($routingData)) {
             throw new \RuntimeException(sprintf('Routing file %s should return an array', $file));

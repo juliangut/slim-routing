@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Tests\Source;
 
 use Jgut\Slim\Routing\Source\AnnotationSource;
+use Jgut\Slim\Routing\Source\JsonSource;
 use Jgut\Slim\Routing\Source\PhpSource;
 use Jgut\Slim\Routing\Source\SourceFactory;
 use Jgut\Slim\Routing\Source\YamlSource;
@@ -61,6 +62,17 @@ class SourceFactoryTest extends TestCase
         $source = SourceFactory::getSource(__DIR__ . '/../Files/files/valid/routingA.php');
 
         self::assertInstanceOf(PhpSource::class, $source);
+    }
+
+    public function testSourceFromJsonFile()
+    {
+        $source = SourceFactory::getSource(__DIR__ . '/../Files/files/valid/routingA.json');
+
+        self::assertInstanceOf(JsonSource::class, $source);
+
+        $source = SourceFactory::getSource(__DIR__ . '/../Files/files/valid/routingB.json');
+
+        self::assertInstanceOf(JsonSource::class, $source);
     }
 
     public function testSourceFromYamlFile()
