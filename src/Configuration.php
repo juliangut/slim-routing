@@ -19,11 +19,6 @@ namespace Jgut\Slim\Routing;
 class Configuration
 {
     /**
-     * @var string
-     */
-    protected $compilationPath;
-
-    /**
      * Routing sources.
      *
      * @var array
@@ -62,36 +57,6 @@ class Configuration
                 call_user_func($callback, $configurations[$config]);
             }
         }
-    }
-
-    /**
-     * Get compilation path.
-     *
-     * @return string|null
-     */
-    public function getCompilationPath()
-    {
-        return $this->compilationPath;
-    }
-
-    /**
-     * Set compilation path.
-     *
-     * @param string $compilationPath
-     *
-     * @throws \RuntimeException
-     *
-     * @return $this
-     */
-    public function setCompilationPath(string $compilationPath)
-    {
-        if (!file_exists($compilationPath) || !is_dir($compilationPath) || !is_writable($compilationPath)) {
-            throw new \RuntimeException(sprintf('%s directory does not exist or is write protected', $compilationPath));
-        }
-
-        $this->compilationPath = $compilationPath;
-
-        return $this;
     }
 
     /**

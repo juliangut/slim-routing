@@ -41,7 +41,6 @@ $app = new App();
 
 $configuration = new Configuration([
     'sources' => ['/path/to/routing/files'],
-    'cache' => new Psr16CacheImplementation(),
 ]);
 $manager = new Manager($configuration);
 $manager->registerRoutes($app->getContainer());
@@ -52,9 +51,8 @@ $app->run();
 ### Configuration
 
 * `sources`, array of directories (annotations) or files (annotations, php or yml) to extract routing from
-* `cache`, PSR-16 cache implementation
 
-> Routing load and compilation can be a heavy load process depending on how many classes and routes are defined. For this reason it's advised to use caching on production applications and invalidate cache on deployment
+> Routing load and compilation can be a heavy load process depending on how many classes and routes are defined. For this reason it's advised to use Slim's router caching on production applications and invalidate cache on deployment
 
 ### Annotations
 
