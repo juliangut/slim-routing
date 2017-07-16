@@ -50,7 +50,7 @@ $app->run();
 
 ### Configuration
 
-* `sources`, array of directories (annotations) or files (annotations, php or yml) to extract routing from
+* `sources`, array of directories (annotations) or files (annotations, php, json or yml) to extract routing from
 
 > Routing load and compilation can be a heavy load process depending on how many classes and routes are defined. For this reason it's advised to use Slim's router caching on production applications and invalidate cache on deployment
 
@@ -142,33 +142,73 @@ class Section
 return [
   [
     // Group
-    'pattern' => 'groupPattern',
-    'placeholders' => ['groupPlaceholders'],
-    'middleware' => ['groupMiddleware'],
+    'pattern' => 'group-pattern',
+    'placeholders' => ['group-placeholders'],
+    'middleware' => ['group-middleware'],
     'routes' => [
       [
         // Route
         'name' => 'routeName',
         'methods' => ['GET', 'POST'],
         'priority' => 0
-        'pattern' => 'routePattern',
-        'placeholders' => ['routePlaceholders'],
-        'middleware' => ['routeMiddleware'],
+        'pattern' => 'route-pattern',
+        'placeholders' => ['route-placeholders'],
+        'middleware' => ['route-middleware'],
       ],
       [
         // Subgroup
-        'pattern' => 'groupPattern',
-        'placeholders' => ['groupPlaceholders'],
-        'middleware' => ['groupMiddleware'],
+        'pattern' => 'group-pattern',
+        'placeholders' => ['group-placeholders'],
+        'middleware' => ['group-middleware'],
         'routes' => [
           // Routes/groups
-          ...
+          // ...
         ],
       ],
-      ...
+      // Routes/groups
+      // ...
     ],
   ],
-  ...
+  // Routes/groups
+  // ...
+]
+```
+
+###### JSON
+
+```json
+[
+  {
+    // Group
+    "pattern": "group-pattern",
+    "placeholders": ["group-placeholders"],
+    "middleware": ["group-middleware"],
+    "routes": [
+      {
+        // Route
+        "name": "routeName",
+        "methods": ["GET", "POST"],
+        "priority": 0,
+        "pattern": "route-pattern",
+        "placeholders": ["route-placeholders"],
+        "middleware": ["route-middleware"]
+      },
+      {
+        // Subgroup
+        "pattern": "group-pattern",
+        "placeholders": ["group-placeholders"],
+        "middleware": ["group-middleware"],
+        "routes": [
+          // Routes/groups
+          // ...
+        ]
+      }
+      // Routes/groups
+      // ...
+    ]
+  }
+  // Routes/groups
+  // ...
 ]
 ```
 
@@ -181,25 +221,29 @@ composer require symfony/yaml
 ```
 
 ```yaml
-- pattern: groupPattern
-  placeholders: [groupPlaceholders]
-  middleware: [groupMiddleware]
+// Group
+- pattern: group-pattern
+  placeholders: [group-placeholders]
+  middleware: [group-middleware]
   routes:
     // Route
     - name: routeName
       methods: [GET, POST]
       priority: 0
-      pattern: routePattern
-      placeholders: [routePlaceholders]
-      middleware: [routeMiddleware]
+      pattern: route-pattern
+      placeholders: [route-placeholders]
+      middleware: [route-middleware]
     // Subgroup
-    - pattern: groupPattern
-      placeholders: [groupPlaceholders]
-      middleware: [groupMiddleware]
+    - pattern: group-pattern
+      placeholders: [group-placeholders]
+      middleware: [group-middleware]
       routes:
         // Routes/groups
-        - ...
-    - ...
+        // ...
+    // Routes/groups
+    // ...
+// Routes/groups
+// ...
 ```
 
 #### Group
@@ -212,7 +256,7 @@ Defines a group in which routes may reside.
 
 #### Route
 
-Defines the final routes added to Slim
+Defines the final route added to Slim
 
 * `name`, optional, route name so it can be referenced in Slim
 * `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to [GET, POST, PUT, PATCH, DELETE], if ANY is used no other method is allowed (defaults to GET)
