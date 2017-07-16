@@ -89,7 +89,7 @@ class Configuration
             throw new \RuntimeException(sprintf('%s directory does not exist or is write protected', $compilationPath));
         }
 
-        $this->compilationPath = rtrim($compilationPath, DIRECTORY_SEPARATOR);
+        $this->compilationPath = $compilationPath;
 
         return $this;
     }

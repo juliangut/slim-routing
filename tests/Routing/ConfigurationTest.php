@@ -59,10 +59,10 @@ class ConfigurationTest extends TestCase
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage /unknown/compilation/path directory does not exist or is write protected
+     * @expectedExceptionMessage /unknown/compilation/path/ directory does not exist or is write protected
      */
     public function testInvalidCompilationPath()
     {
-        new Configuration(['compilationPath' => '/unknown/compilation/path']);
+        new Configuration(['compilationPath' => '/unknown/compilation/path/']);
     }
 }

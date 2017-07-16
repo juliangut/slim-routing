@@ -97,7 +97,7 @@ class Manager
     public function getRoutes(): array
     {
         $compilationPath = $this->configuration->getCompilationPath();
-        $compilationFile = $compilationPath . '/CompiledRoutes.php';
+        $compilationFile = $compilationPath ? rtrim($compilationPath) . '/CompiledRoutes.php' : null;
 
         if ($compilationPath && file_exists($compilationFile) && is_readable($compilationFile)) {
             $routes = require $compilationFile;
@@ -108,7 +108,7 @@ class Manager
         } else {
             $routes = $this->loadRoutes();
 
-            if ($compilationPath && is_writable($compilationPath)) {
+            if ($compilationPath) {
                 file_put_contents(
                     $compilationFile,
                     sprintf('<?php%1$s%1$sreturn %2$s;', "\n", var_export($routes, true))
