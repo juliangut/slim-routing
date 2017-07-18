@@ -63,7 +63,7 @@ class Route
     /**
      * Route invokable.
      *
-     * @var mixed
+     * @var string|array|callable
      */
     protected $invokable;
 
@@ -214,7 +214,7 @@ class Route
     /**
      * Get route invokable.
      *
-     * @return mixed
+     * @return string|array|callable
      */
     public function getInvokable()
     {
@@ -226,10 +226,16 @@ class Route
      *
      * @param mixed $invokable
      *
+     * @throws \InvalidArgumentException
+     *
      * @return $this
      */
     public function setInvokable($invokable)
     {
+        if (!is_string($invokable) && !is_array($invokable) && !is_callable($invokable)) {
+            throw new \InvalidArgumentException('Route invokable does not seam to be supported by Slim router');
+        }
+
         $this->invokable = $invokable;
 
         return $this;

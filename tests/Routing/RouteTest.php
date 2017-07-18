@@ -104,6 +104,15 @@ class RouteTest extends TestCase
         self::assertEquals($callable, $this->route->getInvokable());
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Route invokable does not seam to be supported by Slim router
+     */
+    public function testInvalidInvokable()
+    {
+        $this->route->setInvokable(10);
+    }
+
     public function testSetState()
     {
         $route = Route::__set_state([
