@@ -11,8 +11,6 @@
 
 use PhpCsFixer\Config;
 use PhpCsFixer\Finder;
-use PhpCsFixer\Fixer\Comment\HeaderCommentFixer;
-use PhpCsFixer\FixerInterface;
 
 $header = <<<'HEADER'
 slim-routing (https://github.com/juliangut/slim-routing).

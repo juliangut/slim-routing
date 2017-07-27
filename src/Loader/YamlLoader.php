@@ -36,13 +36,13 @@ class YamlLoader extends AbstractArrayLoader
     {
         try {
             $routingData = YamlReader::parse(file_get_contents($file));
-        // @codeCoverageIgnoreStart
         } catch (ParseException $exception) {
+            // @codeCoverageIgnoreStart
             throw new \RuntimeException(
                 printf('Unable to parse the YAML file %s: %s', $file, $exception->getMessage())
             );
+            // @codeCoverageIgnoreEnd
         }
-        // @codeCoverageIgnoreEnd
 
         if (!is_array($routingData)) {
             throw new \RuntimeException(sprintf('Routing file %s should return an array', $file));

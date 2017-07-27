@@ -42,7 +42,7 @@ class AnnotationCompiler extends AbstractCompiler
             /* @var RouterAnnotation $routerAnnotation */
             $routerAnnotation = $annotationReader->getClassAnnotation($class, RouterAnnotation::class);
 
-            if ($routerAnnotation !== null) {
+            if ($routerAnnotation) {
                 $routes[] = $this->getClassRoutes($class, $annotationReader, $groups);
             }
         }
@@ -75,7 +75,7 @@ class AnnotationCompiler extends AbstractCompiler
             /* @var RouteAnnotation $routeAnnotation */
             $routeAnnotation = $annotationReader->getMethodAnnotation($method, RouteAnnotation::class);
 
-            if ($routeAnnotation !== null) {
+            if ($routeAnnotation) {
                 $routes[] = $this->getCompiledRoute(
                     $class,
                     $method,
@@ -297,7 +297,7 @@ class AnnotationCompiler extends AbstractCompiler
             /* @var GroupAnnotation $groupAnnotation */
             $groupAnnotation = $annotationReader->getClassAnnotation($class, GroupAnnotation::class);
 
-            if ($groupAnnotation !== null && $groupAnnotation->getName() !== '') {
+            if ($groupAnnotation && $groupAnnotation->getName() !== '') {
                 $groups[$groupAnnotation->getName()] = $groupAnnotation;
             }
         }

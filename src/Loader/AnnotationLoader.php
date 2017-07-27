@@ -75,8 +75,10 @@ class AnnotationLoader implements LoaderInterface
     protected function loadFromFile(string $file): string
     {
         $tokens = token_get_all(file_get_contents($file));
-        $class = false;
-        $namespace = false;
+        $hasClass = false;
+        $class = null;
+        $hasNamespace = false;
+        $namespace = '';
 
         for ($i = 0, $length = count($tokens); $i < $length; $i++) {
             $token = $tokens[$i];
@@ -85,13 +87,13 @@ class AnnotationLoader implements LoaderInterface
                 continue;
             }
 
-            if ($class && $token[0] === T_STRING) {
+            if ($hasClass && $token[0] === T_STRING) {
                 $class = $namespace . '\\' . $token[1];
 
                 break;
             }
 
-            if ($namespace === true && $token[0] === T_STRING) {
+            if ($hasNamespace && $token[0] === T_STRING) {
                 $namespace = '';
 
                 do {
@@ -99,13 +101,15 @@ class AnnotationLoader implements LoaderInterface
 
                     $token = $tokens[++$i];
                 } while ($i < $length && is_array($token) && in_array($token[0], [T_NS_SEPARATOR, T_STRING]));
+
+                $hasNamespace = false;
             }
 
             if ($token[0] == T_CLASS) {
-                $class = true;
+                $hasClass = true;
             }
             if ($token[0] === T_NAMESPACE) {
-                $namespace = true;
+                $hasNamespace = true;
             }
         }
 
