@@ -34,8 +34,8 @@ class Configuration
      */
     public function __construct($configurations = [])
     {
-        if (!is_array($configurations) && !$configurations instanceof \Traversable) {
-            throw new \InvalidArgumentException('Configurations must be a traversable');
+        if (!is_iterable($configurations)) {
+            throw new \InvalidArgumentException('Configurations must be an iterable');
         }
 
         $this->seedConfigurations($configurations);

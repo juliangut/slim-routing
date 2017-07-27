@@ -23,7 +23,7 @@ class ConfigurationTest extends TestCase
 {
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Configurations must be a traversable
+     * @expectedExceptionMessage Configurations must be an iterable
      */
     public function testInvalidConfigurations()
     {

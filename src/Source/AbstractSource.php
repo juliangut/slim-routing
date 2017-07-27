@@ -38,9 +38,9 @@ abstract class AbstractSource implements SourceInterface
             $paths = [$paths];
         }
 
-        if (!is_array($paths) && !$paths instanceof \Traversable) {
+        if (!is_iterable($paths)) {
             throw new \InvalidArgumentException(
-                sprintf('Paths must be a string or traversable, "%s" given', gettype($paths))
+                sprintf('Paths must be a string or iterable, "%s" given', gettype($paths))
             );
         }
 
