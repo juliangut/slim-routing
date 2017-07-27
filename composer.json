@@ -37,10 +37,10 @@
     "phpunit/phpunit": "^5.7|^6.0",
     "sebastian/phpcpd": "^2.0",
     "squizlabs/php_codesniffer": "^2.0",
-    "symfony/yaml": "^3.2"
+    "symfony/yaml": "^3.0"
   },
   "suggest": {
-    "symfony/yaml": "In order to load routing from yaml files"
+    "symfony/yaml": "In order to load routing from YAML files"
   },
   "autoload": {
     "psr-4": {
@@ -63,9 +63,9 @@
     "phpcs": "phpcs --standard=PSR2 src tests",
     "phpcs-lint": "php-cs-fixer fix --dry-run --verbose",
     "phpcpd": "phpcpd src",
-    "phpstan": "phpstan analyse --level 7 src",
     "phpmd": "phpmd src text unusedcode,naming,design,controversial,codesize",
     "phpmetrics-report": "phpmetrics --report-html=build/metrics/index.html --report-violations=build/logs/violations.xml --offline src",
+    "phpstan": "phpstan analyse --level 7 src",
     "phpunit": "phpunit",
     "phpunit-coverage": "phpunit --coverage-html build/coverage",
     "phpunit-clover": "phpunit --coverage-clover build/logs/clover.xml",
