@@ -23,7 +23,7 @@ class AbstractSourceTest extends TestCase
 {
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Paths must be a string or iterable, "integer" given
+     * @expectedExceptionMessage Paths must be an iterable, "integer" given
      */
     public function testInvalidPath()
     {

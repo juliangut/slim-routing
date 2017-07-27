@@ -36,7 +36,7 @@ class SourceFactoryTest extends TestCase
 
     public function testSourceFromInterface()
     {
-        $source = new AnnotationSource('');
+        $source = new AnnotationSource(['']);
 
         self::assertEquals($source, SourceFactory::getSource($source));
     }

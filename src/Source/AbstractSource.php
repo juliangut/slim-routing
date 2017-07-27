@@ -28,19 +28,15 @@ abstract class AbstractSource implements SourceInterface
     /**
      * Source constructor.
      *
-     * @param array|\Traversable|string $paths
+     * @param iterable $paths
      *
      * @throws \InvalidArgumentException
      */
     public function __construct($paths)
     {
-        if (is_string($paths)) {
-            $paths = [$paths];
-        }
-
         if (!is_iterable($paths)) {
             throw new \InvalidArgumentException(
-                sprintf('Paths must be a string or iterable, "%s" given', gettype($paths))
+                sprintf('Paths must be an iterable, "%s" given', gettype($paths))
             );
         }
 

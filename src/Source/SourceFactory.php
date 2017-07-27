@@ -36,7 +36,7 @@ class SourceFactory
 
         if (is_string($source)) {
             if (is_dir($source)) {
-                return new AnnotationSource($source);
+                return new AnnotationSource([$source]);
             }
 
             if (is_file($source)) {
@@ -65,14 +65,14 @@ class SourceFactory
 
         switch ($extension) {
             case 'php':
-                return new PhpSource($file);
+                return new PhpSource([$file]);
 
             case 'json':
-                return new JsonSource($file);
+                return new JsonSource([$file]);
 
             case 'yml':
             case 'yaml':
-                return new YamlSource($file);
+                return new YamlSource([$file]);
         }
 
         throw new \RuntimeException(sprintf('Unknown "%s" extension', $extension));
