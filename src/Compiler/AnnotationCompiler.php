@@ -134,7 +134,7 @@ class AnnotationCompiler extends AbstractCompiler
             ->setPattern($pattern)
             ->setPlaceholders($placeholders)
             ->setMiddleware($middleware)
-            ->setInvokable([$class->name, $method->getName()]);
+            ->setInvokable([$class->name, $method->name]);
     }
 
     /**
