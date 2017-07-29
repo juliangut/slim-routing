@@ -65,7 +65,7 @@
     "phpcpd": "phpcpd src",
     "phpmd": "phpmd src text unusedcode,naming,design,controversial,codesize",
     "phpmetrics-report": "phpmetrics --report-html=build/metrics/index.html --report-violations=build/logs/violations.xml --offline src",
-    "phpstan": "phpstan analyse --level 7 src",
+    "phpstan": "phpstan analyse --level 7 -c phpstan.neon src",
     "phpunit": "phpunit",
     "phpunit-coverage": "phpunit --coverage-html build/coverage",
     "phpunit-clover": "phpunit --coverage-clover build/logs/clover.xml",

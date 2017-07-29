@@ -1,0 +1,3 @@
+parameters:
+  ignoreErrors:
+    - '/\$paths \(mixed\[\]\) does not accept iterable\(mixed\[\]\)/'
