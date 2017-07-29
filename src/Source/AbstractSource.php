@@ -21,7 +21,7 @@ abstract class AbstractSource implements SourceInterface
     /**
      * Sources.
      *
-     * @var array
+     * @var iterable
      */
     protected $paths;
 
@@ -46,7 +46,7 @@ abstract class AbstractSource implements SourceInterface
     /**
      * {@inheritdoc}
      */
-    public function getPaths(): array
+    public function getPaths()
     {
         return $this->paths;
     }

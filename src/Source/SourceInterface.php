@@ -21,9 +21,9 @@ interface SourceInterface
     /**
      * Get routing paths.
      *
-     * @return array
+     * @return iterable
      */
-    public function getPaths(): array;
+    public function getPaths();
 
     /**
      * Get loader class.

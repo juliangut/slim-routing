@@ -87,7 +87,7 @@ class AnnotationCompiler extends AbstractCompiler
         }
 
         if (!count($routes)) {
-            throw new \RuntimeException(sprintf('Class %s does not define any route', $class->getName()));
+            throw new \RuntimeException(sprintf('Class %s does not define any route', $class->name));
         }
 
         return $routes;
@@ -134,7 +134,7 @@ class AnnotationCompiler extends AbstractCompiler
             ->setPattern($pattern)
             ->setPlaceholders($placeholders)
             ->setMiddleware($middleware)
-            ->setInvokable([$class->getName(), $method->getName()]);
+            ->setInvokable([$class->name, $method->getName()]);
     }
 
     /**
@@ -167,7 +167,7 @@ class AnnotationCompiler extends AbstractCompiler
                     sprintf(
                         'Referenced group "%s" on class %s is not defined',
                         $referencedGroup,
-                        $class->getName()
+                        $class->name
                     )
                 );
             }
@@ -177,7 +177,7 @@ class AnnotationCompiler extends AbstractCompiler
                     sprintf(
                         'Circular reference detected with group "%s" on class %s',
                         $referencedGroup,
-                        $class->getName()
+                        $class->name
                     )
                 );
             }
