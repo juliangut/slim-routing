@@ -93,7 +93,7 @@ class AnnotationLoaderTest extends TestCase
                     'section' => '[A-Za-z]+',
                 ],
                 'middleware' => ['fourMiddleware', 'dependentMiddleware', 'groupedMiddleware'],
-                'invokable' => 'Jgut\\Slim\\Routing\\Tests\\Files\\Annotation\\Valid\\DependentRoute::actionFour',
+                'invokable' => ['Jgut\\Slim\\Routing\\Tests\\Files\\Annotation\\Valid\\DependentRoute', 'actionFour'],
             ],
             [
                 'name' => '',
@@ -104,7 +104,7 @@ class AnnotationLoaderTest extends TestCase
                     'section' => '[A-Za-z]+',
                 ],
                 'middleware' => ['twoMiddleware', 'groupedMiddleware'],
-                'invokable' => 'Jgut\\Slim\\Routing\\Tests\\Files\\Annotation\\Valid\\GroupedRoute::actionTwo',
+                'invokable' => ['Jgut\\Slim\\Routing\\Tests\\Files\\Annotation\\Valid\\GroupedRoute', 'actionTwo'],
             ],
             [
                 'name' => '',
@@ -116,7 +116,7 @@ class AnnotationLoaderTest extends TestCase
                     'id' => '\\d+',
                 ],
                 'middleware' => ['threeMiddleware', 'groupedMiddleware'],
-                'invokable' => 'Jgut\\Slim\\Routing\\Tests\\Files\\Annotation\\Valid\\GroupedRoute::actionThree',
+                'invokable' => ['Jgut\\Slim\\Routing\\Tests\\Files\\Annotation\\Valid\\GroupedRoute', 'actionThree'],
             ],
             [
                 'name' => 'one',
@@ -127,7 +127,7 @@ class AnnotationLoaderTest extends TestCase
                     'id' => '[0-9]+',
                 ],
                 'middleware' => ['oneMiddleware'],
-                'invokable' => 'Jgut\\Slim\\Routing\\Tests\\Files\\Annotation\\Valid\\SingleRoute::actionOne',
+                'invokable' => ['Jgut\\Slim\\Routing\\Tests\\Files\\Annotation\\Valid\\SingleRoute', 'actionOne'],
             ],
         ];
 

@@ -289,7 +289,7 @@ class AnnotationLoader implements LoaderInterface
             'pattern' => $pattern,
             'placeholders' => $placeholders,
             'middleware' => $middleware,
-            'invokable' => $class->name . '::' . $method->name,
+            'invokable' => [$class->name,  $method->name],
         ];
     }
 
