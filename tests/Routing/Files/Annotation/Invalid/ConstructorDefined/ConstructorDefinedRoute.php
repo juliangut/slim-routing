@@ -11,26 +11,24 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing\Tests\Files\Annotation;
+namespace Jgut\Slim\Routing\Tests\Files\Annotation\Invalid\ConstructorDefined;
 
 use Jgut\Slim\Routing\Annotation as JSR;
 
 /**
- * Example duplicated placeholder route.
+ * Example constructor defined route.
  *
  * @JSR\Router()
- * @JSR\Group(
- *     pattern="/{duplicated}"
- * )
+ * @JSR\Group()
  */
-class DuplicatedPlaceholderRoute
+class ConstructorDefinedRoute
 {
     /**
      * @JSR\Route(
-     *     pattern="/{duplicated}"
+     *     pattern="/constructor"
      * )
      */
-    public function actionDuplicated()
+    public function __construct()
     {
     }
 }

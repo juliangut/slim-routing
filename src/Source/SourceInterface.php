@@ -31,11 +31,4 @@ interface SourceInterface
      * @return string
      */
     public function getLoaderClass(): string;
-
-    /**
-     * Get compiler class.
-     *
-     * @return string
-     */
-    public function getCompilerClass(): string;
 }

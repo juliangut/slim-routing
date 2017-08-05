@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Source;
 
-use Jgut\Slim\Routing\Compiler\AnnotationCompiler;
 use Jgut\Slim\Routing\Loader\AnnotationLoader;
 
 /**
@@ -27,13 +26,5 @@ class AnnotationSource extends AbstractSource
     public function getLoaderClass(): string
     {
         return AnnotationLoader::class;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCompilerClass(): string
-    {
-        return AnnotationCompiler::class;
     }
 }

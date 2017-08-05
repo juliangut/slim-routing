@@ -43,24 +43,94 @@ class AnnotationLoaderTest extends TestCase
         $this->loader->load(['\non\existing\path']);
     }
 
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessageRegExp /Routes can not be defined in constructor in .+ class$/
+     */
+    public function testConstructorDefinedRoute()
+    {
+        $this->loader->load([__DIR__ . '/../Files/Annotation/Invalid/ConstructorDefined/ConstructorDefinedRoute.php']);
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessageRegExp /Class .+ does not define any route$/
+     */
+    public function testNoRoutesRoute()
+    {
+        $this->loader->load([__DIR__ . '/../Files/Annotation/Invalid/NoRoutes']);
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessageRegExp /^Referenced group "unknown" on class .+ is not defined$/
+     */
+    public function testUnknownGroupRoute()
+    {
+        $this->loader->load([__DIR__ . '/../Files/Annotation/Invalid/UnknownGroup']);
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessageRegExp /^Circular reference detected with group "circular" on class .+$/
+     */
+    public function testCircularReferenceRoute()
+    {
+        $this->loader->load([__DIR__ . '/../Files/Annotation/Invalid/CircularReference']);
+    }
+
     public function testEmptyMethods()
     {
-        $classes = $this->loader->load([
-            __DIR__ . '/../Files/Annotation',
-            __DIR__ . '/../Files/Annotation/SingleRoute.php',
-        ]);
+        $routes = $this->loader->load([__DIR__ . '/../Files/Annotation/Valid']);
 
         $loaded = [
-            \Jgut\Slim\Routing\Tests\Files\Annotation\CircularReferenceRoute::class,
-            \Jgut\Slim\Routing\Tests\Files\Annotation\DependentRoute::class,
-            \Jgut\Slim\Routing\Tests\Files\Annotation\DuplicatedPlaceholderRoute::class,
-            \Jgut\Slim\Routing\Tests\Files\Annotation\GroupedRoute::class,
-            \Jgut\Slim\Routing\Tests\Files\Annotation\NoRoutesRoute::class,
-            \Jgut\Slim\Routing\Tests\Files\Annotation\SingleRoute::class,
-            \Jgut\Slim\Routing\Tests\Files\Annotation\UnknownGroupRoute::class,
-            \Jgut\Slim\Routing\Tests\Files\Annotation\UnknownPlaceholdersRoute::class,
+            [
+                'name' => '',
+                'priority' => 0,
+                'methods' => ['GET'],
+                'pattern' => '/grouped/{section}/dependent/four',
+                'placeholders' => [
+                    'section' => '[A-Za-z]+',
+                ],
+                'middleware' => ['fourMiddleware', 'dependentMiddleware', 'groupedMiddleware'],
+                'invokable' => 'Jgut\\Slim\\Routing\\Tests\\Files\\Annotation\\Valid\\DependentRoute::actionFour',
+            ],
+            [
+                'name' => '',
+                'priority' => 0,
+                'methods' => ['GET'],
+                'pattern' => '/grouped/{section}/two/{id}',
+                'placeholders' => [
+                    'section' => '[A-Za-z]+',
+                ],
+                'middleware' => ['twoMiddleware', 'groupedMiddleware'],
+                'invokable' => 'Jgut\\Slim\\Routing\\Tests\\Files\\Annotation\\Valid\\GroupedRoute::actionTwo',
+            ],
+            [
+                'name' => '',
+                'priority' => 0,
+                'methods' => ['GET'],
+                'pattern' => '/grouped/{section}/three/{id}',
+                'placeholders' => [
+                    'section' => '[A-Za-z]+',
+                    'id' => '\\d+',
+                ],
+                'middleware' => ['threeMiddleware', 'groupedMiddleware'],
+                'invokable' => 'Jgut\\Slim\\Routing\\Tests\\Files\\Annotation\\Valid\\GroupedRoute::actionThree',
+            ],
+            [
+                'name' => 'one',
+                'priority' => -10,
+                'methods' => ['GET', 'POST'],
+                'pattern' => '/one/{id}',
+                'placeholders' => [
+                    'id' => '[0-9]+',
+                ],
+                'middleware' => ['oneMiddleware'],
+                'invokable' => 'Jgut\\Slim\\Routing\\Tests\\Files\\Annotation\\Valid\\SingleRoute::actionOne',
+            ],
         ];
 
-        self::assertEquals($loaded, $classes);
+        self::assertEquals($loaded, $routes);
     }
 }

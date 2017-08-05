@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests;
 
-use Jgut\Slim\Routing\Compiler\CompilerInterface;
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Loader\LoaderInterface;
 use Jgut\Slim\Routing\Route;
+use Jgut\Slim\Routing\RouteCompiler;
 use Jgut\Slim\Routing\Tests\Stubs\ManagerStub;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -42,12 +42,12 @@ class ManagerTest extends TestCase
             ->getMock();
         /* @var LoaderInterface $loader */
 
-        $compiler = $this->getMockBuilder(CompilerInterface::class)
+        $compiler = $this->getMockBuilder(RouteCompiler::class)
             ->getMock();
         $compiler->expects(self::once())
             ->method('getRoutes')
             ->will(self::returnValue($routes));
-        /* @var CompilerInterface $compiler */
+        /* @var RouteCompiler $compiler */
 
         $configuration = $this->getMockBuilder(Configuration::class)
             ->getMock();
@@ -56,7 +56,8 @@ class ManagerTest extends TestCase
             ->will(self::returnValue([__DIR__]));
         /* @var Configuration $configuration */
 
-        $manager = new ManagerStub($configuration, $loader, $compiler);
+        $manager = new ManagerStub($configuration, $loader);
+        $manager->setCompiler($compiler);
 
         $manager->getRoutes();
     }
@@ -72,12 +73,12 @@ class ManagerTest extends TestCase
             ->getMock();
         /* @var LoaderInterface $loader */
 
-        $compiler = $this->getMockBuilder(CompilerInterface::class)
+        $compiler = $this->getMockBuilder(RouteCompiler::class)
             ->getMock();
         $compiler->expects(self::once())
             ->method('getRoutes')
             ->will(self::returnValue($routes));
-        /* @var CompilerInterface $compiler */
+        /* @var RouteCompiler $compiler */
 
         $configuration = $this->getMockBuilder(Configuration::class)
             ->getMock();
@@ -86,7 +87,8 @@ class ManagerTest extends TestCase
             ->will(self::returnValue([__DIR__]));
         /* @var Configuration $configuration */
 
-        $manager = new ManagerStub($configuration, $loader, $compiler);
+        $manager = new ManagerStub($configuration, $loader);
+        $manager->setCompiler($compiler);
 
         $loaded = $manager->getRoutes();
 
@@ -112,12 +114,12 @@ class ManagerTest extends TestCase
             ->getMock();
         /* @var LoaderInterface $loader */
 
-        $compiler = $this->getMockBuilder(CompilerInterface::class)
+        $compiler = $this->getMockBuilder(RouteCompiler::class)
             ->getMock();
         $compiler->expects(self::once())
             ->method('getRoutes')
             ->will(self::returnValue($routes));
-        /* @var CompilerInterface $compiler */
+        /* @var RouteCompiler $compiler */
 
         $configuration = $this->getMockBuilder(Configuration::class)
             ->getMock();
@@ -126,7 +128,8 @@ class ManagerTest extends TestCase
             ->will(self::returnValue([__DIR__]));
         /* @var Configuration $configuration */
 
-        $manager = new ManagerStub($configuration, $loader, $compiler);
+        $manager = new ManagerStub($configuration, $loader);
+        $manager->setCompiler($compiler);
 
         $manager->registerRoutes($container);
 

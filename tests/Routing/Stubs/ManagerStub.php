@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Stubs;
 
-use Jgut\Slim\Routing\Compiler\CompilerInterface;
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Loader\LoaderInterface;
 use Jgut\Slim\Routing\Manager as RoutingManager;
+use Jgut\Slim\Routing\RouteCompiler;
 use Jgut\Slim\Routing\Source\SourceInterface;
 
 /**
@@ -30,26 +30,19 @@ class ManagerStub extends RoutingManager
     protected $loader;
 
     /**
-     * @var CompilerInterface
-     */
-    protected $compiler;
-
-    /**
      * Manager Stub constructor.
      *
-     * @param Configuration     $configuration
-     * @param LoaderInterface   $loader
-     * @param CompilerInterface $compiler
+     * @param Configuration   $configuration
+     * @param LoaderInterface $loader
+     * @param RouteCompiler   $compiler
      */
     public function __construct(
         Configuration $configuration,
-        LoaderInterface $loader = null,
-        CompilerInterface $compiler = null
+        LoaderInterface $loader = null
     ) {
         parent::__construct($configuration);
 
         $this->loader = $loader;
-        $this->compiler = $compiler;
     }
 
     /**
@@ -60,15 +53,5 @@ class ManagerStub extends RoutingManager
         parent::getLoader($source);
 
         return $this->loader;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getCompiler(SourceInterface $source): CompilerInterface
-    {
-        parent::getCompiler($source);
-
-        return $this->compiler;
     }
 }

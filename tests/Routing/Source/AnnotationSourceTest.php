@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Source;
 
-use Jgut\Slim\Routing\Compiler\AnnotationCompiler;
 use Jgut\Slim\Routing\Loader\AnnotationLoader;
 use Jgut\Slim\Routing\Source\AnnotationSource;
 use PHPUnit\Framework\TestCase;
@@ -28,6 +27,5 @@ class AnnotationSourceTest extends TestCase
         $source = new AnnotationSource([]);
 
         self::assertEquals(AnnotationLoader::class, $source->getLoaderClass());
-        self::assertEquals(AnnotationCompiler::class, $source->getCompilerClass());
     }
 }

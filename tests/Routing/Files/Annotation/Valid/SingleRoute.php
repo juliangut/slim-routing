@@ -11,29 +11,28 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing\Tests\Files\Annotation;
+namespace Jgut\Slim\Routing\Tests\Files\Annotation\Valid;
 
 use Jgut\Slim\Routing\Annotation as JSR;
 
 /**
- * Example dependent route.
+ * Example single route.
  *
  * @JSR\Router()
- * @JSR\Group(
- *     group="grouped",
- *     pattern="/dependent",
- *     middleware={"dependentMiddleware"}
- * )
  */
-class DependentRoute
+class SingleRoute
 {
     /**
      * @JSR\Route(
-     *     pattern="/three",
-     *     middleware={"threeMiddleware"}
+     *     methods={"GET", "POST"},
+     *     pattern="/one/{id}",
+     *     priority=-10,
+     *     placeholders={"id": "[0-9]+"},
+     *     middleware={"oneMiddleware"},
+     *     name="one"
      * )
      */
-    public function actionThree()
+    public function actionOne()
     {
     }
 }

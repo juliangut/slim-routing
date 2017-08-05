@@ -16,7 +16,7 @@ namespace Jgut\Slim\Routing\Loader;
 /**
  * PHP file routing loader.
  */
-class PhpLoader extends AbstractArrayLoader
+class PhpLoader extends AbstractFileLoader
 {
     /**
      * {@inheritdoc}

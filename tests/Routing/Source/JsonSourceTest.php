@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Source;
 
-use Jgut\Slim\Routing\Compiler\ArrayCompiler;
 use Jgut\Slim\Routing\Loader\JsonLoader;
 use Jgut\Slim\Routing\Source\JsonSource;
 use PHPUnit\Framework\TestCase;
@@ -28,6 +27,5 @@ class JsonSourceTest extends TestCase
         $source = new JsonSource([]);
 
         self::assertEquals(JsonLoader::class, $source->getLoaderClass());
-        self::assertEquals(ArrayCompiler::class, $source->getCompilerClass());
     }
 }

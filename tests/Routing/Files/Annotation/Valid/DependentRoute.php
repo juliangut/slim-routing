@@ -11,24 +11,29 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing\Tests\Files\Annotation;
+namespace Jgut\Slim\Routing\Tests\Files\Annotation\Valid;
 
 use Jgut\Slim\Routing\Annotation as JSR;
 
 /**
- * Example unknown placeholders route.
+ * Example dependent route.
  *
  * @JSR\Router()
+ * @JSR\Group(
+ *     group="grouped",
+ *     pattern="/dependent",
+ *     middleware={"dependentMiddleware"}
+ * )
  */
-class UnknownPlaceholdersRoute
+class DependentRoute
 {
     /**
      * @JSR\Route(
-     *     pattern="/only/{one}/placeholder",
-     *     placeholders={"one": "a-z", "two": "unknown"}
+     *     pattern="/four",
+     *     middleware={"fourMiddleware"}
      * )
      */
-    public function actionUnknown()
+    public function actionFour()
     {
     }
 }

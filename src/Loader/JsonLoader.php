@@ -16,7 +16,7 @@ namespace Jgut\Slim\Routing\Loader;
 /**
  * JSON file routing loader.
  */
-class JsonLoader extends AbstractArrayLoader
+class JsonLoader extends AbstractFileLoader
 {
     /**
      * {@inheritdoc}

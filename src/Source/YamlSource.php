@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Source;
 
-use Jgut\Slim\Routing\Compiler\ArrayCompiler;
 use Jgut\Slim\Routing\Loader\YamlLoader;
 
 /**
@@ -27,13 +26,5 @@ class YamlSource extends AbstractSource
     public function getLoaderClass(): string
     {
         return YamlLoader::class;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCompilerClass(): string
-    {
-        return ArrayCompiler::class;
     }
 }

@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Source;
 
-use Jgut\Slim\Routing\Compiler\ArrayCompiler;
 use Jgut\Slim\Routing\Loader\PhpLoader;
 use Jgut\Slim\Routing\Source\PhpSource;
 use PHPUnit\Framework\TestCase;
@@ -28,6 +27,5 @@ class PhpSourceTest extends TestCase
         $source = new PhpSource([]);
 
         self::assertEquals(PhpLoader::class, $source->getLoaderClass());
-        self::assertEquals(ArrayCompiler::class, $source->getCompilerClass());
     }
 }

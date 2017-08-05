@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Source;
 
-use Jgut\Slim\Routing\Compiler\ArrayCompiler;
 use Jgut\Slim\Routing\Loader\YamlLoader;
 use Jgut\Slim\Routing\Source\YamlSource;
 use PHPUnit\Framework\TestCase;
@@ -28,6 +27,5 @@ class YamlSourceTest extends TestCase
         $source = new YamlSource([]);
 
         self::assertEquals(YamlLoader::class, $source->getLoaderClass());
-        self::assertEquals(ArrayCompiler::class, $source->getCompilerClass());
     }
 }

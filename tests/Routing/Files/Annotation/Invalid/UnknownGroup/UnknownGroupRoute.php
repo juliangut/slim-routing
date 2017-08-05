@@ -11,15 +11,26 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing\Tests\Files\Annotation;
+namespace Jgut\Slim\Routing\Tests\Files\Annotation\Invalid\UnknownGroup;
 
 use Jgut\Slim\Routing\Annotation as JSR;
 
 /**
- * Example no routes route.
+ * Example unknown group route.
  *
  * @JSR\Router()
+ * @JSR\Group(
+ *     group="unknown"
+ * )
  */
-class NoRoutesRoute
+class UnknownGroupRoute
 {
+    /**
+     * @JSR\Route(
+     *     pattern="/unknown"
+     * )
+     */
+    public function actionUnknown()
+    {
+    }
 }

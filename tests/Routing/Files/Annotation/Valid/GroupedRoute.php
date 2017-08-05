@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing\Tests\Files\Annotation;
+namespace Jgut\Slim\Routing\Tests\Files\Annotation\Valid;
 
 use Jgut\Slim\Routing\Annotation as JSR;
 
@@ -35,6 +35,17 @@ class GroupedRoute
      * )
      */
     public function actionTwo()
+    {
+    }
+
+    /**
+     * @JSR\Route(
+     *     pattern="/three/{id}",
+     *     placeholders={"id":"\d+"},
+     *     middleware={"threeMiddleware"},
+     * )
+     */
+    public function actionThree()
     {
     }
 }

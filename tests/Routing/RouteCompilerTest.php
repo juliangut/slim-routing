@@ -11,19 +11,19 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing\Tests\Compiler;
+namespace Jgut\Slim\Routing\Tests;
 
-use Jgut\Slim\Routing\Compiler\ArrayCompiler;
 use Jgut\Slim\Routing\Route;
+use Jgut\Slim\Routing\RouteCompiler;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Array compiler tests.
+ * Routing compiler tests.
  */
-class ArrayCompilerTest extends TestCase
+class RouteCompilerTest extends TestCase
 {
     /**
-     * @var ArrayCompiler
+     * @var RouteCompiler
      */
     protected $compiler;
 
@@ -32,7 +32,7 @@ class ArrayCompilerTest extends TestCase
      */
     protected function setUp()
     {
-        $this->compiler = new ArrayCompiler();
+        $this->compiler = new RouteCompiler();
     }
 
     /**

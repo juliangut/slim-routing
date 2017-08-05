@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing;
 
-use Jgut\Slim\Routing\Compiler\CompilerInterface;
 use Jgut\Slim\Routing\Loader\LoaderInterface;
 use Jgut\Slim\Routing\Source\SourceFactory;
 use Jgut\Slim\Routing\Source\SourceInterface;
@@ -39,11 +38,11 @@ class Manager
     protected $loaders = [];
 
     /**
-     * Compiler list.
+     * Route compiler.
      *
-     * @var array
+     * @var RouteCompiler
      */
-    protected $compilers = [];
+    protected $compiler;
 
     /**
      * Routing Manager constructor.
@@ -101,7 +100,7 @@ class Manager
             $source = SourceFactory::getSource($source);
 
             $routingSources = $this->getLoader($source)->load($source->getPaths());
-            $routes[] = $this->getCompiler($source)->getRoutes($routingSources);
+            $routes[] = $this->getCompiler()->getRoutes($routingSources);
         }
 
         $routes = count($routes) ? array_merge(...$routes) : [];
@@ -192,20 +191,28 @@ class Manager
     }
 
     /**
-     * Get compiler from source.
+     * Get route compiler.
      *
-     * @param SourceInterface $source
-     *
-     * @return CompilerInterface
+     * @return RouteCompiler
      */
-    protected function getCompiler(SourceInterface $source): CompilerInterface
+    protected function getCompiler(): RouteCompiler
     {
-        $compilerClass = $source->getCompilerClass();
-
-        if (!array_key_exists($compilerClass, $this->compilers)) {
-            $this->compilers[$compilerClass] = new $compilerClass();
+        if ($this->compiler === null) {
+            // @codeCoverageIgnoreStart
+            $this->compiler = new RouteCompiler();
+            // @codeCoverageIgnoreEnd
         }
 
-        return $this->compilers[$compilerClass];
+        return $this->compiler;
+    }
+
+    /**
+     * Set route compiler.
+     *
+     * @param RouteCompiler $compiler
+     */
+    public function setCompiler(RouteCompiler $compiler)
+    {
+        $this->compiler = $compiler;
     }
 }

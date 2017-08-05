@@ -16,7 +16,7 @@ namespace Jgut\Slim\Routing\Loader;
 /**
  * Abstract array routing loader.
  */
-abstract class AbstractArrayLoader implements LoaderInterface
+abstract class AbstractFileLoader implements LoaderInterface
 {
     /**
      * {@inheritdoc}
@@ -95,7 +95,7 @@ abstract class AbstractArrayLoader implements LoaderInterface
      *
      * @return array
      */
-    private function merge(array $arrayA, array $arrayB): array
+    final protected function merge(array $arrayA, array $arrayB): array
     {
         foreach ($arrayB as $key => $value) {
             if (isset($arrayA[$key]) || array_key_exists($key, $arrayA)) {
