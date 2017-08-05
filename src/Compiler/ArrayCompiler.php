@@ -238,13 +238,7 @@ class ArrayCompiler extends AbstractCompiler
                     throw new \InvalidArgumentException('Placeholder keys must be all strings');
                 }
 
-                if (!$this->isValidRegex($pattern)) {
-                    throw new \InvalidArgumentException(
-                        sprintf('Placeholder pattern "%s" is not a valid regex', $pattern)
-                    );
-                }
-
-                return $pattern;
+                return $this->getPlaceholderPattern($pattern);
             }
         );
 
@@ -305,17 +299,5 @@ class ArrayCompiler extends AbstractCompiler
         }
 
         return $invokable;
-    }
-
-    /**
-     * Test regex validation.
-     *
-     * @param string $pattern
-     *
-     * @return bool
-     */
-    protected function isValidRegex(string $pattern): bool
-    {
-        return @preg_match('/' . $pattern . '/', '') !== false;
     }
 }

@@ -48,4 +48,30 @@ class ConfigurationTest extends TestCase
 
         self::assertEquals($paths, $configuration->getSources());
     }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Placeholder pattern "notRegex/" is not a valid regex
+     */
+    public function testBadPlaceholderAlias()
+    {
+        new Configuration(['placeholderAliases' => ['tlf' => 'notRegex/']]);
+    }
+
+    public function testPlaceholderAliases()
+    {
+        $aliasList = [
+            'tlf' => '',
+            'dni' => '',
+        ];
+
+        $configuration = new Configuration([
+            'placeholderAliases' => [
+                'tlf' => '',
+                'dni' => '',
+            ],
+        ]);
+
+        self::assertEquals($aliasList, $configuration->getPlaceholderAliases());
+    }
 }

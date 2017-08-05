@@ -203,7 +203,7 @@ class Manager
         $compilerClass = $source->getCompilerClass();
 
         if (!array_key_exists($compilerClass, $this->compilers)) {
-            $this->compilers[$compilerClass] = new $compilerClass();
+            $this->compilers[$compilerClass] = new $compilerClass($this->configuration);
         }
 
         return $this->compilers[$compilerClass];
