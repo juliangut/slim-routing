@@ -39,7 +39,7 @@ class RouteTest extends TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Route annotation methods must be a string or string array. "integer" given
+     * @expectedExceptionMessage Route annotation methods must be strings. "integer" given
      */
     public function testInvalidMethodsType()
     {
@@ -55,29 +55,11 @@ class RouteTest extends TestCase
         new Route(['methods' => '']);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Route "ANY" method cannot be defined with other methods
-     */
-    public function testAnyMethodMisused()
-    {
-        new Route(['methods' => ['GET', 'ANY']]);
-    }
-
     public function testMethods()
     {
         $methods = ['GET', 'POST'];
 
         $annotation = new Route(['methods' => $methods]);
-
-        self::assertEquals($methods, $annotation->getMethods());
-    }
-
-    public function testAnyMethods()
-    {
-        $methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
-
-        $annotation = new Route(['methods' => 'ANY']);
 
         self::assertEquals($methods, $annotation->getMethods());
     }

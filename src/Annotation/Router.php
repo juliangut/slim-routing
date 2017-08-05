@@ -19,6 +19,17 @@ namespace Jgut\Slim\Routing\Annotation;
  * @Annotation
  * @Target("CLASS")
  */
-class Router
+class Router extends AbstractAnnotation
 {
+    /**
+     * Router annotation constructor.
+     *
+     * @param array $parameters
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function __construct(array $parameters)
+    {
+        $this->seedParameters($parameters);
+    }
 }

@@ -112,7 +112,7 @@ class Route extends AbstractAnnotation
         foreach (array_filter($methods) as $method) {
             if (!is_string($method)) {
                 throw new \InvalidArgumentException(
-                    sprintf('Route annotation methods must be a string or string array. "%s" given', gettype($method))
+                    sprintf('Route annotation methods must be strings. "%s" given', gettype($method))
                 );
             }
 
@@ -123,14 +123,6 @@ class Route extends AbstractAnnotation
 
         if (!count($this->methods)) {
             throw new \InvalidArgumentException('Route annotation methods can not be empty');
-        }
-
-        if (in_array('ANY', $this->methods, true)) {
-            if (count($this->methods) > 1) {
-                throw new \InvalidArgumentException('Route "ANY" method cannot be defined with other methods');
-            }
-
-            $this->methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
         }
 
         return $this;

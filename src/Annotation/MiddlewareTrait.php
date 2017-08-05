@@ -56,7 +56,7 @@ trait MiddlewareTrait
         foreach ($middlewareList as $middleware) {
             if (!is_string($middleware)) {
                 throw new \InvalidArgumentException(
-                    sprintf('Middleware annotation must be a string or string array. "%s" given', gettype($middleware))
+                    sprintf('Route annotation middleware must be strings. "%s" given', gettype($middleware))
                 );
             }
 

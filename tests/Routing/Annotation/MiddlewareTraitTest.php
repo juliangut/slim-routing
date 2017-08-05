@@ -30,7 +30,7 @@ class MiddlewareTraitTest extends TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Middleware annotation must be a string or string array. "integer" given
+     * @expectedExceptionMessage Route annotation middleware must be strings. "integer" given
      */
     public function testInvalidMiddleware()
     {
