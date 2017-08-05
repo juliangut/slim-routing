@@ -25,6 +25,13 @@ class Configuration
      */
     protected $sources = [];
 
+    protected $placeholderAliases = [
+        'numeric' => '\d+',
+        'alpha' => '[A-Za-z]+',
+        'alnum' => '[A-Z-a-z0-9]+',
+        'any' => '.+',
+    ];
+
     /**
      * Configuration constructor.
      *
@@ -52,9 +59,15 @@ class Configuration
 
         foreach ($configs as $config) {
             if (isset($configurations[$config])) {
-                $callback = [$this, 'set' . ucfirst($config)];
+                switch ($config) {
+                    case 'sources':
+                        $this->setSources($configurations[$config]);
+                        break;
 
-                call_user_func($callback, $configurations[$config]);
+                    case 'placeholderAliases':
+                        $this->addPlaceholderAliases($configurations[$config]);
+                        break;
+                }
             }
         }
     }
@@ -81,5 +94,48 @@ class Configuration
         $this->sources = $sources;
 
         return $this;
+    }
+
+    /**
+     * Get placeholder aliases.
+     *
+     * @return array
+     */
+    public function getPlaceholderAliases(): array
+    {
+        return $this->placeholderAliases;
+    }
+
+    /**
+     * Add placeholder aliases.
+     *
+     * @param array $aliases
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function addPlaceholderAliases(array $aliases)
+    {
+        foreach ($aliases as $alias => $patter) {
+            $this->addPlaceholderAlias($alias, $patter);
+        }
+    }
+
+    /**
+     * Add placeholder alias.
+     *
+     * @param string $alias
+     * @param string $pattern
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function addPlaceholderAlias(string $alias, string $pattern)
+    {
+        if (@preg_match('/' . $pattern . '/', '') === false) {
+            throw new \InvalidArgumentException(
+                sprintf('Placeholder pattern "%s" is not a valid regex', $pattern)
+            );
+        }
+
+        $this->placeholderAliases[$alias] = $pattern;
     }
 }

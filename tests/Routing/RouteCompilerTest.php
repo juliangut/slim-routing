@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests;
 
+use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Route;
 use Jgut\Slim\Routing\RouteCompiler;
 use PHPUnit\Framework\TestCase;
@@ -32,7 +33,7 @@ class RouteCompilerTest extends TestCase
      */
     protected function setUp()
     {
-        $this->compiler = new RouteCompiler();
+        $this->compiler = new RouteCompiler(new Configuration());
     }
 
     /**
@@ -108,7 +109,7 @@ class RouteCompilerTest extends TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Placeholder pattern "noRegex/" is not a valid regex
+     * @expectedExceptionMessage Placeholder pattern "noRegex/" is not a known alias or a valid regex
      */
     public function testInvalidPlaceholdersRegexRoute()
     {
@@ -207,7 +208,7 @@ class RouteCompilerTest extends TestCase
                 'priority' => -10,
                 'pattern' => '/one/{id}',
                 'placeholders' => [
-                    'id' => '[0-9]+',
+                    'id' => 'numeric',
                 ],
                 'middleware' => ['oneMiddleware'],
                 'invokable' => ['class', 'method'],
@@ -226,7 +227,7 @@ class RouteCompilerTest extends TestCase
         self::assertEquals(['GET', 'POST'], $route->getMethods());
         self::assertEquals(-10, $route->getPriority());
         self::assertEquals('/one/{id}', $route->getPattern());
-        self::assertEquals(['id' => '[0-9]+'], $route->getPlaceholders());
+        self::assertEquals(['id' => '\d+'], $route->getPlaceholders());
         self::assertEquals(['oneMiddleware'], $route->getMiddleware());
         self::assertEquals(['class', 'method'], $route->getInvokable());
     }

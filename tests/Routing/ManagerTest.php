@@ -43,6 +43,7 @@ class ManagerTest extends TestCase
         /* @var LoaderInterface $loader */
 
         $compiler = $this->getMockBuilder(RouteCompiler::class)
+            ->disableOriginalConstructor()
             ->getMock();
         $compiler->expects(self::once())
             ->method('getRoutes')
@@ -74,6 +75,7 @@ class ManagerTest extends TestCase
         /* @var LoaderInterface $loader */
 
         $compiler = $this->getMockBuilder(RouteCompiler::class)
+            ->disableOriginalConstructor()
             ->getMock();
         $compiler->expects(self::once())
             ->method('getRoutes')
@@ -115,6 +117,7 @@ class ManagerTest extends TestCase
         /* @var LoaderInterface $loader */
 
         $compiler = $this->getMockBuilder(RouteCompiler::class)
+            ->disableOriginalConstructor()
             ->getMock();
         $compiler->expects(self::once())
             ->method('getRoutes')

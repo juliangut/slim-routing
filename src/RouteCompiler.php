@@ -19,6 +19,23 @@ namespace Jgut\Slim\Routing;
 class RouteCompiler
 {
     /**
+     * Routing configuration.
+     *
+     * @var Configuration
+     */
+    protected $configuration;
+
+    /**
+     * RouteCompiler constructor.
+     *
+     * @param Configuration $configuration
+     */
+    public function __construct(Configuration $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
      * Get parsed routes.
      *
      * @param array $routingSources
@@ -235,18 +252,12 @@ class RouteCompiler
 
         array_walk(
             $placeholders,
-            function (string $pattern, $key) {
+            function (string &$pattern, $key) {
                 if (!is_string($key)) {
                     throw new \InvalidArgumentException('Placeholder keys must be all strings');
                 }
 
-                if (!$this->isValidRegex($pattern)) {
-                    throw new \InvalidArgumentException(
-                        sprintf('Placeholder pattern "%s" is not a valid regex', $pattern)
-                    );
-                }
-
-                return $pattern;
+                $pattern = $this->getPlaceholderPattern($pattern);
             }
         );
 
@@ -340,14 +351,28 @@ class RouteCompiler
     }
 
     /**
-     * Test regex validation.
+     * Get placeholder pattern.
      *
      * @param string $pattern
      *
-     * @return bool
+     * @throws \InvalidArgumentException
+     *
+     * @return string
      */
-    protected function isValidRegex(string $pattern): bool
+    protected function getPlaceholderPattern(string $pattern): string
     {
-        return @preg_match('/' . $pattern . '/', '') !== false;
+        $aliases = $this->configuration->getPlaceholderAliases();
+
+        if (array_key_exists($pattern, $aliases)) {
+            return $aliases[$pattern];
+        }
+
+        if (@preg_match('/' . $pattern . '/', '') !== false) {
+            return $pattern;
+        }
+
+        throw new \InvalidArgumentException(
+            sprintf('Placeholder pattern "%s" is not a known alias or a valid regex', $pattern)
+        );
     }
 }

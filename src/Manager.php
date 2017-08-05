@@ -199,7 +199,7 @@ class Manager
     {
         if ($this->compiler === null) {
             // @codeCoverageIgnoreStart
-            $this->compiler = new RouteCompiler();
+            $this->compiler = new RouteCompiler($this->configuration);
             // @codeCoverageIgnoreEnd
         }
 
