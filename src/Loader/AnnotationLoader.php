@@ -261,7 +261,7 @@ class AnnotationLoader implements LoaderInterface
      *
      * @throws \RuntimeException
      *
-     * @return Route
+     * @return array
      */
     protected function getCompiledRoute(
         \ReflectionClass $class,

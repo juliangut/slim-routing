@@ -45,24 +45,6 @@ class PathTraitTest extends TestCase
         self::assertEquals('/path/to/{id}', $annotation->getPattern());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Placeholder keys must be all strings
-     */
-    public function testInvalidPlaceholdersKey()
-    {
-        new PathStub(['placeholders' => ['placeholder']]);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Placeholder pattern "noRegex/" is not a valid regex
-     */
-    public function testInvalidPlaceholdersRegex()
-    {
-        new PathStub(['placeholders' => ['id' => 'noRegex/']]);
-    }
-
     public function testPlaceholders()
     {
         $placeholders = [

@@ -85,37 +85,8 @@ trait PathTrait
      */
     public function setPlaceholders(array $placeholders)
     {
-        array_walk(
-            $placeholders,
-            function (string $pattern, $key) {
-                if (!is_string($key)) {
-                    throw new \InvalidArgumentException('Placeholder keys must be all strings');
-                }
-
-                if (!$this->isValidRegex($pattern)) {
-                    throw new \InvalidArgumentException(
-                        sprintf('Placeholder pattern "%s" is not a valid regex', $pattern)
-                    );
-                }
-
-                return $pattern;
-            }
-        );
-
         $this->placeholders = $placeholders;
 
         return $this;
-    }
-
-    /**
-     * Test regex validation.
-     *
-     * @param string $pattern
-     *
-     * @return bool
-     */
-    protected function isValidRegex(string $pattern): bool
-    {
-        return @preg_match('/' . $pattern . '/', '') !== false;
     }
 }
