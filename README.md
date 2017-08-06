@@ -56,7 +56,7 @@ $app->run();
 * `placeholderAliases` array of placeholder aliases. There are some default aliases already provided:
   * numeric => `\d+`
   * alpha => `[a-zA-Z]+`
-  * alnum => `[A-Z-a-z0-9]+`
+  * alnum => `[a-zA-Z0-9]+`
   * any => `.+`
 
 ### Annotations
