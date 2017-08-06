@@ -62,8 +62,8 @@ class ConfigurationTest extends TestCase
     {
         $aliasList = [
             'numeric' => '\d+',
-            'alpha' => '[A-Za-z]+',
-            'alnum' => '[A-Z-a-z0-9]+',
+            'alpha' => '[a-zA-Z]+',
+            'alnum' => '[a-zA-Z0-9]+',
             'any' => '.+',
             'dni' => '\d+[A-Z]',
         ];
