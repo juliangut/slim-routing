@@ -25,6 +25,11 @@ class Configuration
      */
     protected $sources = [];
 
+    /**
+     * Placeholder aliases.
+     *
+     * @var array
+     */
     protected $placeholderAliases = [
         'numeric' => '\d+',
         'alpha' => '[A-Za-z]+',
@@ -130,7 +135,7 @@ class Configuration
      */
     public function addPlaceholderAlias(string $alias, string $pattern)
     {
-        if (@preg_match('/' . $pattern . '/', '') === false) {
+        if (@preg_match('~^' . $pattern . '$~', '') === false) {
             throw new \InvalidArgumentException(
                 sprintf('Placeholder pattern "%s" is not a valid regex', $pattern)
             );

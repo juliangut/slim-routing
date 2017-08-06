@@ -367,7 +367,7 @@ class RouteCompiler
             return $aliases[$pattern];
         }
 
-        if (@preg_match('/' . $pattern . '/', '') !== false) {
+        if (@preg_match('~^' . $pattern . '$~', '') !== false) {
             return $pattern;
         }
 

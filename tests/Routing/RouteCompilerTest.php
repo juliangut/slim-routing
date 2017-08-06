@@ -109,13 +109,13 @@ class RouteCompilerTest extends TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Placeholder pattern "noRegex/" is not a known alias or a valid regex
+     * @expectedExceptionMessage Placeholder pattern "noRegex~" is not a known alias or a valid regex
      */
     public function testInvalidPlaceholdersRegexRoute()
     {
         $routes = [
             [
-                'placeholders' => ['id' => 'noRegex/'],
+                'placeholders' => ['id' => 'noRegex~'],
             ],
         ];
 
@@ -207,9 +207,7 @@ class RouteCompilerTest extends TestCase
                 'methods' => ['GET', 'POST'],
                 'priority' => -10,
                 'pattern' => '/one/{id}',
-                'placeholders' => [
-                    'id' => 'numeric',
-                ],
+                'placeholders' => ['id' => 'numeric'],
                 'middleware' => ['oneMiddleware'],
                 'invokable' => ['class', 'method'],
             ],
@@ -232,21 +230,30 @@ class RouteCompilerTest extends TestCase
         self::assertEquals(['class', 'method'], $route->getInvokable());
     }
 
-    public function testGroupedRoute()
+    public function testGroupedRoutes()
     {
         $routes = [
             [
                 'pattern' => '/grouped/{section}',
-                'placeholders' => [
-                    'section' => '[A-Za-z]+',
-                ],
+                'placeholders' => ['section' => '[A-Za-z_-]+'],
                 'middleware' => 'groupedMiddleware',
                 'routes' => [
                     [
                         'methods' => 'ANY',
-                        'pattern' => '/two/{id}',
+                        'pattern' => '/two[/{id}]',
+                        'placeholders' => ['id' => 'any'],
                         'middleware' => ['twoMiddleware'],
                         'invokable' => ['class', 'method'],
+                    ],
+                    [
+                        'pattern' => '/sub',
+                        'routes' => [
+                            [
+                                'pattern' => '/three',
+                                'middleware' => ['threeMiddleware'],
+                                'invokable' => ['class', 'method'],
+                            ],
+                        ],
                     ],
                 ],
             ],
@@ -255,15 +262,22 @@ class RouteCompilerTest extends TestCase
         /* @var Route[] $routes */
         $routes = $this->compiler->getRoutes($routes);
 
-        self::assertCount(1, $routes);
+        self::assertCount(2, $routes);
 
         $route = $routes[0];
-
         self::assertInstanceOf(Route::class, $route);
         self::assertEquals(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], $route->getMethods());
-        self::assertEquals('/grouped/{section}/two/{id}', $route->getPattern());
-        self::assertEquals(['section' => '[A-Za-z]+'], $route->getPlaceholders());
+        self::assertEquals('/grouped/{section}/two[/{id}]', $route->getPattern());
+        self::assertEquals(['section' => '[A-Za-z_-]+', 'id' => '.+'], $route->getPlaceholders());
         self::assertEquals(['twoMiddleware', 'groupedMiddleware'], $route->getMiddleware());
+        self::assertEquals(['class', 'method'], $route->getInvokable());
+
+        $route = $routes[1];
+        self::assertInstanceOf(Route::class, $route);
+        self::assertEquals(['GET'], $route->getMethods());
+        self::assertEquals('/grouped/{section}/sub/three', $route->getPattern());
+        self::assertEquals(['section' => '[A-Za-z_-]+'], $route->getPlaceholders());
+        self::assertEquals(['threeMiddleware', 'groupedMiddleware'], $route->getMiddleware());
         self::assertEquals(['class', 'method'], $route->getInvokable());
     }
 }

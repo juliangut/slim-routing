@@ -51,11 +51,11 @@ class ConfigurationTest extends TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Placeholder pattern "notRegex/" is not a valid regex
+     * @expectedExceptionMessage Placeholder pattern "notRegex~" is not a valid regex
      */
     public function testBadPlaceholderAlias()
     {
-        new Configuration(['placeholderAliases' => ['tlf' => 'notRegex/']]);
+        new Configuration(['placeholderAliases' => ['tlf' => 'notRegex~']]);
     }
 
     public function testPlaceholderAliases()
