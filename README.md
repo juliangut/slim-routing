@@ -14,7 +14,9 @@
 
 Annotation and configuration based Slim framework routing
 
-Routes are defined either by class annotations (in controllers) or in routing definition files (currently php and yaml available) and automatically inserted into Slim's router
+Routes are defined either by class annotations (in controllers) or in routing definition files (currently php, json and yaml available) and automatically inserted into Slim's router
+
+> Routing load and compilation can be a heavy load process depending on how many classes and routes are defined. For this reason it's advised to always use Slim's router caching on production applications and invalidate cache on deployment
 
 ## Installation
 
@@ -51,8 +53,11 @@ $app->run();
 ### Configuration
 
 * `sources`, array of directories (annotations) or files (annotations, php, json or yml) to extract routing from
-
-> Routing load and compilation can be a heavy load process depending on how many classes and routes are defined. For this reason it's advised to use Slim's router caching on production applications and invalidate cache on deployment
+* `placeholderAliases` array of placeholder aliases. There are some default aliases already provided:
+  * numeric => `\d+`
+  * alpha => `[a-zA-Z]+`
+  * alnum => `[A-Z-a-z0-9]+`
+  * any => `.+`
 
 ### Annotations
 
@@ -96,7 +101,7 @@ class Section
 * `name`, optional, group name so it can be referenced by another route in order to create a group tree
 * `group`, optional, references a parent group
 * `pattern`, optional, group path pattern
-* `placeholders`, optional, array of regex for path placeholders, 
+* `placeholders`, optional, array of regex/alias for path placeholders, 
 * `middleware`, optional, array of middleware to be added to all group routes
 
 #### Route (Method)
@@ -130,7 +135,7 @@ class Section
 * `name`, optional, route name so it can be referenced in Slim
 * `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to [GET, POST, PUT, PATCH, DELETE], if ANY is used no other method is allowed (defaults to GET)
 * `pattern`, route path pattern
-* `placeholders`, optional, array of regex for path placeholders
+* `placeholders`, optional, array of regex/alias for path placeholders
 * `middleware`, optional, array of middleware to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
 
@@ -214,7 +219,7 @@ return [
 
 ###### YAML
 
-Require symfony/yaml to parse yaml files
+Requires symfony/yaml to parse yaml files
 
 ```
 composer require symfony/yaml
@@ -250,8 +255,9 @@ composer require symfony/yaml
 
 Defines a group in which routes may reside.
 
+* `routes`, array of routes and/or subgroups
 * `pattern`, optional, group path pattern
-* `placeholders`, optional, array of regex for path placeholders, 
+* `placeholders`, optional, array of regex/alias for path placeholders, 
 * `middleware`, optional, array of middleware to be added to all group routes
 
 #### Route
@@ -264,6 +270,8 @@ Defines the final route added to Slim
 * `placeholders`, optional, array of regex for path placeholders
 * `middleware`, optional, array of middleware to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
+
+_What tells apart groups from routes is the presence of the `routes` key_
 
 ## Route composition
 
