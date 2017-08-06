@@ -43,6 +43,10 @@ class AnnotationLoader implements LoaderInterface
 
         $loadedData = [];
         foreach ($classes as $class) {
+            if ($class->isAbstract()) {
+                continue;
+            }
+
             /* @var RouterAnnotation $routerAnnotation */
             $routerAnnotation = $annotationReader->getClassAnnotation($class, RouterAnnotation::class);
 
@@ -166,11 +170,7 @@ class AnnotationLoader implements LoaderInterface
         $classes = [];
 
         foreach ($routingSources as $routingClass) {
-            $class = new \ReflectionClass($routingClass);
-
-            if (!$class->isAbstract()) {
-                $classes[] = $class;
-            }
+            $classes[] = new \ReflectionClass($routingClass);
         }
 
         return $classes;
@@ -227,9 +227,9 @@ class AnnotationLoader implements LoaderInterface
             $routeAnnotation = $annotationReader->getMethodAnnotation($method, RouteAnnotation::class);
 
             if ($routeAnnotation) {
-                if ($method->isConstructor()) {
+                if ($method->isConstructor() || $method->isDestructor()) {
                     throw new \RuntimeException(
-                        sprintf('Routes can not be defined in constructor in %s class', $class->name)
+                        sprintf('Routes can not be defined in constructor or destructor in class %s', $class->name)
                     );
                 }
 

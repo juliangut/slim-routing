@@ -45,7 +45,7 @@ class AnnotationLoaderTest extends TestCase
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessageRegExp /Routes can not be defined in constructor in .+ class$/
+     * @expectedExceptionMessageRegExp /Routes can not be defined in constructor or destructor in class .+$/
      */
     public function testConstructorDefinedRoute()
     {
@@ -88,11 +88,9 @@ class AnnotationLoaderTest extends TestCase
                 'name' => '',
                 'priority' => 0,
                 'methods' => ['GET'],
-                'pattern' => '/grouped/{section}/dependent/four',
-                'placeholders' => [
-                    'section' => '[A-Za-z]+',
-                ],
-                'middleware' => ['fourMiddleware', 'dependentMiddleware', 'groupedMiddleware'],
+                'pattern' => '/abstract/dependent/four',
+                'placeholders' => [],
+                'middleware' => ['fourMiddleware', 'dependentMiddleware', 'abstractMiddleware'],
                 'invokable' => ['Jgut\\Slim\\Routing\\Tests\\Files\\Annotation\\Valid\\DependentRoute', 'actionFour'],
             ],
             [

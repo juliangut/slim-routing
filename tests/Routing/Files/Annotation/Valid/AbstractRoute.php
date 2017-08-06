@@ -20,20 +20,11 @@ use Jgut\Slim\Routing\Annotation as JSR;
  *
  * @JSR\Router()
  * @JSR\Group(
- *     group="abstract",
- *     pattern="/dependent",
- *     middleware={"dependentMiddleware"}
+ *     name="abstract",
+ *     pattern="/abstract",
+ *     middleware={"abstractMiddleware"}
  * )
  */
-class DependentRoute
+abstract class AbstractRoute
 {
-    /**
-     * @JSR\Route(
-     *     pattern="/four",
-     *     middleware={"fourMiddleware"}
-     * )
-     */
-    public function actionFour()
-    {
-    }
 }
