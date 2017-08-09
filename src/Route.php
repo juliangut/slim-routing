@@ -233,7 +233,7 @@ class Route
     public function setInvokable($invokable)
     {
         if (!is_string($invokable) && !is_array($invokable) && !is_callable($invokable)) {
-            throw new \InvalidArgumentException('Route invokable does not seam to be supported by Slim router');
+            throw new \InvalidArgumentException('Route invokable does not seem to be supported by Slim router');
         }
 
         $this->invokable = $invokable;
