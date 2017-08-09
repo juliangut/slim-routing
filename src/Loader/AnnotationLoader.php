@@ -95,11 +95,13 @@ class AnnotationLoader implements LoaderInterface
     {
         $routingFiles = [];
 
-        foreach (glob($directory . '/{**/*,*}.php', GLOB_BRACE | GLOB_ERR) as $file) {
-            if (is_file($file)) {
-                $routingFiles[] = $this->loadSourceFromFile($file);
-            }
+        $recursiveIterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory));
+        $regexIterator = new \RegexIterator($recursiveIterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
+
+        foreach ($regexIterator as $file) {
+            $routingFiles[] = $this->loadSourceFromFile($file[0]);
         }
+        sort($routingFiles);
 
         return $routingFiles;
     }
