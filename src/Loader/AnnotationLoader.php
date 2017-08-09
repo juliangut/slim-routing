@@ -22,6 +22,8 @@ use Jgut\Slim\Routing\Route;
 
 /**
  * Classes routing loader.
+ *
+ * @SuppressWarnings(PMD.CouplingBetweenObjects)
  */
 class AnnotationLoader implements LoaderInterface
 {
