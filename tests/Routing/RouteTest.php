@@ -106,7 +106,7 @@ class RouteTest extends TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Route invokable does not seam to be supported by Slim router
+     * @expectedExceptionMessage Route invokable does not seem to be supported by Slim router
      */
     public function testInvalidInvokable()
     {
