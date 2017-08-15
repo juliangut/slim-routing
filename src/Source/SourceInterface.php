@@ -21,7 +21,7 @@ interface SourceInterface
     /**
      * Get routing paths.
      *
-     * @return iterable
+     * @return string[]
      */
     public function getPaths();
 

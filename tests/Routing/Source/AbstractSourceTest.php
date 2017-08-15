@@ -21,15 +21,6 @@ use PHPUnit\Framework\TestCase;
  */
 class AbstractSourceTest extends TestCase
 {
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Paths must be an iterable, "integer" given
-     */
-    public function testInvalidPath()
-    {
-        new SourceStub(10);
-    }
-
     public function testPaths()
     {
         $paths = [
