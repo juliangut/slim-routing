@@ -107,7 +107,7 @@ class Manager
 
         $this->checkDuplicatedRoutes($routes);
 
-        usort(
+        $this->stableUsort(
             $routes,
             function (Route $routeA, Route $routeB) {
                 return $routeA->getPriority() <=> $routeB->getPriority();
@@ -214,5 +214,35 @@ class Manager
     public function setCompiler(RouteCompiler $compiler)
     {
         $this->compiler = $compiler;
+    }
+
+    /**
+     * Stable usort.
+     * Keeps original order when sorting function returns 0.
+     *
+     * @param array    $array
+     * @param callable $sortFunction
+     *
+     * @return bool
+     */
+    private function stableUsort(array &$array, callable $sortFunction): bool
+    {
+        $index = 0;
+        foreach ($array as &$item) {
+            $item = [$index++, $item];
+        }
+        unset($item);
+
+        $result = usort($array, function (array $itemA, array $itemB) use ($sortFunction) {
+            $result = $sortFunction($itemA[1], $itemB[1]);
+
+            return $result == 0 ? $itemA[0] - $itemB[0] : $result;
+        });
+
+        foreach ($array as &$item) {
+            $item = $item[1];
+        }
+
+        return $result;
     }
 }
