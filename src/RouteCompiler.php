@@ -88,11 +88,16 @@ class RouteCompiler
             }
         }
 
-        $routes = count($routes) ? array_merge(...$routes) : [];
+        $routes = array_map(
+            function (array $route) {
+                $route['pattern'] = $route['pattern'] === '/' ? '/' : preg_replace('!/$!', '', $route['pattern']);
 
-        foreach ($routes as $route) {
-            $this->checkPath($route['pattern'], $route['placeholders']);
-        }
+                $this->checkPath($route['pattern'], $route['placeholders']);
+
+                return $route;
+            },
+            count($routes) ? array_merge(...$routes) : []
+        );
 
         return $routes;
     }
