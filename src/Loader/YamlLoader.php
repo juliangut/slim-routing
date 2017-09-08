@@ -26,7 +26,7 @@ class YamlLoader extends AbstractFileLoader
      */
     protected function getExtension(): string
     {
-        return '{yml,yaml}';
+        return '(yml|yaml)';
     }
 
     /**

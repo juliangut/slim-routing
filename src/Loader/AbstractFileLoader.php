@@ -58,12 +58,12 @@ abstract class AbstractFileLoader implements LoaderInterface
     {
         $routingData = [];
 
-        $globPattern = sprintf('%s/{**/*,*}.%s', $directory, $this->getExtension());
+        $filePattern = sprintf('/^.+\.%s$/i', $this->getExtension());
+        $recursiveIterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory));
+        $regexIterator = new \RegexIterator($recursiveIterator, $filePattern, \RecursiveRegexIterator::GET_MATCH);
 
-        foreach (glob($globPattern, GLOB_BRACE | GLOB_ERR) as $file) {
-            if (is_file($file)) {
-                $routingData[] = $this->loadFile($file);
-            }
+        foreach ($regexIterator as $file) {
+            $routingData[] = $this->loadFile($file[0]);
         }
 
         return $routingData;
