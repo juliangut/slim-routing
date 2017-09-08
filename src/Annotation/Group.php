@@ -39,6 +39,13 @@ class Group extends AbstractAnnotation
     protected $parent = '';
 
     /**
+     * Group name prefix.
+     *
+     * @var string
+     */
+    protected $prefix = '';
+
+    /**
      * Router constructor.
      *
      * @param array $parameters
@@ -63,10 +70,16 @@ class Group extends AbstractAnnotation
      *
      * @param string $name
      *
+     * @throws \InvalidArgumentException
+     *
      * @return $this
      */
     public function setName(string $name)
     {
+        if (strpos(trim($name), ' ') !== false) {
+            throw new \InvalidArgumentException(sprintf('Group names must not contain spaces'));
+        }
+
         $this->name = trim($name);
 
         return $this;
@@ -92,6 +105,36 @@ class Group extends AbstractAnnotation
     public function setParent(string $parent)
     {
         $this->parent = trim($parent);
+
+        return $this;
+    }
+
+    /**
+     * Get group name prefix.
+     *
+     * @return string
+     */
+    public function getPrefix(): string
+    {
+        return $this->prefix;
+    }
+
+    /**
+     * Set group name prefix.
+     *
+     * @param string $prefix
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return $this
+     */
+    public function setPrefix(string $prefix)
+    {
+        if (strpos(trim($prefix), ' ') !== false) {
+            throw new \InvalidArgumentException(sprintf('Group prefixes must not contain spaces'));
+        }
+
+        $this->prefix = trim($prefix);
 
         return $this;
     }

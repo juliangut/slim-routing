@@ -30,6 +30,15 @@ class RouteTest extends TestCase
         self::assertEquals(0, $annotation->getPriority());
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Route names must not contain spaces
+     */
+    public function testWrongName()
+    {
+        new Route(['name' => 'a name']);
+    }
+
     public function testName()
     {
         $annotation = new Route(['name' => 'routeName']);

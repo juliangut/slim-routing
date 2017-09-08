@@ -29,6 +29,15 @@ class GroupTest extends TestCase
         self::assertEquals('', $annotation->getParent());
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Group names must not contain spaces
+     */
+    public function testWrongName()
+    {
+        new Group(['name' => 'a name']);
+    }
+
     public function testName()
     {
         $annotation = new Group(['name' => 'name']);
@@ -36,10 +45,26 @@ class GroupTest extends TestCase
         self::assertEquals('name', $annotation->getName());
     }
 
-    public function testGroup()
+    public function testParent()
     {
         $annotation = new Group(['parent' => 'groupName']);
 
         self::assertEquals('groupName', $annotation->getParent());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Group prefixes must not contain spaces
+     */
+    public function testWrongPrefix()
+    {
+        new Group(['prefix' => 'a prefix']);
+    }
+
+    public function testPrefix()
+    {
+        $annotation = new Group(['prefix' => 'prefix']);
+
+        self::assertEquals('prefix', $annotation->getPrefix());
     }
 }

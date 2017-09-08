@@ -11,31 +11,23 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing\Tests\Files\Annotation\Valid;
+namespace Jgut\Slim\Routing\Tests\Files\Annotation\Invalid\PrivateDefined;
 
 use Jgut\Slim\Routing\Annotation as JSR;
 
 /**
- * Example dependent route.
+ * Example private method defined route.
  *
  * @JSR\Router()
- * @JSR\Group(
- *     parent="abstract",
- *     prefix="grouped",
- *     pattern="/dependent",
- *     middleware={"dependentMiddleware"}
- * )
  */
-class DependentRoute
+class PrivateDefinedRoute
 {
     /**
      * @JSR\Route(
-     *     name="four",
-     *     pattern="/four",
-     *     middleware={"fourMiddleware"}
+     *     pattern="/private"
      * )
      */
-    public function actionFour()
+    private function privateAction()
     {
     }
 }

@@ -18,7 +18,6 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use Jgut\Slim\Routing\Annotation\Group as GroupAnnotation;
 use Jgut\Slim\Routing\Annotation\Route as RouteAnnotation;
 use Jgut\Slim\Routing\Annotation\Router as RouterAnnotation;
-use Jgut\Slim\Routing\Route;
 
 /**
  * Classes routing loader.
@@ -40,11 +39,11 @@ class AnnotationLoader implements LoaderInterface
 
         $annotationReader = new AnnotationReader();
 
-        $classes = $this->getClasses($routingSources);
-        $groups = $this->getNamedGroups($classes, $annotationReader);
+        $classList = $this->getClasses($routingSources);
+        $groupList = $this->getNamedGroups($classList, $annotationReader);
 
         $loadedData = [];
-        foreach ($classes as $class) {
+        foreach ($classList as $class) {
             if ($class->isAbstract()) {
                 continue;
             }
@@ -53,7 +52,7 @@ class AnnotationLoader implements LoaderInterface
             $routerAnnotation = $annotationReader->getClassAnnotation($class, RouterAnnotation::class);
 
             if ($routerAnnotation) {
-                $loadedData[] = $this->getClassRoutes($class, $annotationReader, $groups);
+                $loadedData[] = $this->getClassRoutes($class, $annotationReader, $groupList);
             }
         }
 
@@ -209,24 +208,23 @@ class AnnotationLoader implements LoaderInterface
      *
      * @param \ReflectionClass  $class
      * @param AnnotationReader  $annotationReader
-     * @param GroupAnnotation[] $definedGroups
+     * @param GroupAnnotation[] $groupList
      *
-     * @throws \InvalidArgumentException
      * @throws \RuntimeException
      *
-     * @return Route[]
+     * @return array
      */
     protected function getClassRoutes(
         \ReflectionClass $class,
         AnnotationReader $annotationReader,
-        array $definedGroups
+        array $groupList
     ): array {
         $routes = [];
 
         /* @var GroupAnnotation $groupAnnotation */
         $groupAnnotation = $annotationReader->getClassAnnotation($class, GroupAnnotation::class);
 
-        foreach ($class->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+        foreach ($class->getMethods() as $method) {
             /* @var RouteAnnotation $routeAnnotation */
             $routeAnnotation = $annotationReader->getMethodAnnotation($method, RouteAnnotation::class);
 
@@ -237,11 +235,21 @@ class AnnotationLoader implements LoaderInterface
                     );
                 }
 
+                $modifiers = array_intersect(
+                    ['private', 'protected'],
+                    \Reflection::getModifierNames($method->getModifiers())
+                );
+                if (count($modifiers)) {
+                    throw new \RuntimeException(
+                        sprintf('Routes can not be defined in private or protected methods in class %s', $class->name)
+                    );
+                }
+
                 $routes[] = $this->getCompiledRoute(
                     $class,
                     $method,
                     $routeAnnotation,
-                    $definedGroups,
+                    $groupList,
                     $groupAnnotation
                 );
             }
@@ -260,7 +268,7 @@ class AnnotationLoader implements LoaderInterface
      * @param \ReflectionClass     $class
      * @param \ReflectionMethod    $method
      * @param RouteAnnotation      $routeAnnotation
-     * @param GroupAnnotation[]    $definedGroups
+     * @param GroupAnnotation[]    $groupList
      * @param GroupAnnotation|null $groupAnnotation
      *
      * @throws \RuntimeException
@@ -271,49 +279,42 @@ class AnnotationLoader implements LoaderInterface
         \ReflectionClass $class,
         \ReflectionMethod $method,
         RouteAnnotation $routeAnnotation,
-        array $definedGroups,
+        array $groupList,
         GroupAnnotation $groupAnnotation = null
     ): array {
-        if ($groupAnnotation) {
-            $definedGroups = $this->getGroupChain($class, $groupAnnotation, $definedGroups);
-
-            $pattern = $this->getCompoundPattern($routeAnnotation, $definedGroups);
-            $placeholders = $this->getCompoundPlaceholders($routeAnnotation, $definedGroups);
-            $middleware = $this->getCompoundMiddleware($routeAnnotation, $definedGroups);
-        } else {
-            $pattern = $routeAnnotation->getPattern();
-            $placeholders = $routeAnnotation->getPlaceholders();
-            $middleware = $routeAnnotation->getMiddleware();
-        }
+        $groupChain = $this->getGroupChain($class, $groupList, $groupAnnotation);
 
         return [
-            'name' => $routeAnnotation->getName(),
+            'name' => $this->getCompoundName($routeAnnotation, $groupChain),
             'priority' => $routeAnnotation->getPriority(),
             'methods' => $routeAnnotation->getMethods(),
-            'pattern' => $pattern,
-            'placeholders' => $placeholders,
-            'middleware' => $middleware,
+            'pattern' => $this->getCompoundPattern($routeAnnotation, $groupChain),
+            'placeholders' => $this->getCompoundPlaceholders($routeAnnotation, $groupChain),
+            'middleware' => $this->getCompoundMiddleware($routeAnnotation, $groupChain),
             'invokable' => [$class->name,  $method->name],
         ];
     }
 
     /**
-     * Get group chain.
+     * Get group annotations chain.
      *
      * @param \ReflectionClass  $class
+     * @param GroupAnnotation[] $groupList
      * @param GroupAnnotation   $groupAnnotation
-     * @param GroupAnnotation[] $definedGroups
      *
-     * @throws \InvalidArgumentException
      * @throws \RuntimeException
      *
      * @return GroupAnnotation[]
      */
     protected function getGroupChain(
         \ReflectionClass $class,
-        GroupAnnotation $groupAnnotation,
-        array $definedGroups
+        array $groupList,
+        GroupAnnotation $groupAnnotation = null
     ): array {
+        if ($groupAnnotation === null) {
+            return [];
+        }
+
         $groupChain = [
             $groupAnnotation->getName() => $groupAnnotation,
         ];
@@ -322,7 +323,7 @@ class AnnotationLoader implements LoaderInterface
         while ($group->getParent() !== '') {
             $parentGroup = $group->getParent();
 
-            if (!array_key_exists($parentGroup, $definedGroups)) {
+            if (!array_key_exists($parentGroup, $groupList)) {
                 throw new \RuntimeException(
                     sprintf(
                         'Referenced group "%s" on class %s is not defined',
@@ -342,80 +343,106 @@ class AnnotationLoader implements LoaderInterface
                 );
             }
 
-            $groupChain[$parentGroup] = $definedGroups[$parentGroup];
-
-            $group = $definedGroups[$parentGroup];
+            $groupChain[$parentGroup] = $group = $groupList[$parentGroup];
         }
 
         return array_reverse(array_values($groupChain));
     }
 
     /**
+     * Get compound name.
+     *
+     * @param RouteAnnotation   $routeAnnotation
+     * @param GroupAnnotation[] $groupChain
+     *
+     * @return string
+     */
+    protected function getCompoundName(
+        RouteAnnotation $routeAnnotation,
+        array $groupChain
+    ): string {
+        $routeName = $routeAnnotation->getName();
+        if ($routeName === '') {
+            return '';
+        }
+
+        $names = array_map(
+            function (GroupAnnotation $groupAnnotation) {
+                return $groupAnnotation->getPrefix();
+            },
+            $groupChain
+        );
+        $names[] = $routeName;
+
+        return implode('_', array_filter($names));
+    }
+
+    /**
      * Get compound path.
      *
      * @param RouteAnnotation   $routeAnnotation
-     * @param GroupAnnotation[] $groupAnnotations
+     * @param GroupAnnotation[] $groupChain
      *
      * @return string
      */
     protected function getCompoundPattern(
         RouteAnnotation $routeAnnotation,
-        array $groupAnnotations
+        array $groupChain
     ): string {
         $patterns = array_map(
             function (GroupAnnotation $groupAnnotation) {
                 return $groupAnnotation->getPattern();
             },
-            $groupAnnotations
+            $groupChain
         );
         $patterns[] = $routeAnnotation->getPattern();
 
-        return preg_replace('!//+!', '/', implode('', $patterns));
+        return preg_replace('!//+!', '/', implode('', array_filter($patterns)));
     }
 
     /**
      * Get compound placeholders.
      *
      * @param RouteAnnotation   $routeAnnotation
-     * @param GroupAnnotation[] $groupAnnotations
+     * @param GroupAnnotation[] $groupChain
      *
      * @return array
      */
     protected function getCompoundPlaceholders(
         RouteAnnotation $routeAnnotation,
-        array $groupAnnotations
+        array $groupChain
     ): array {
         $placeholders = array_map(
             function (GroupAnnotation $groupAnnotation) {
                 return $groupAnnotation->getPlaceholders();
             },
-            $groupAnnotations
+            $groupChain
         );
         $placeholders[] = $routeAnnotation->getPlaceholders();
 
-        return array_merge(...$placeholders);
+        return array_filter(array_merge(...$placeholders));
     }
 
     /**
      * Get compound middleware.
      *
      * @param RouteAnnotation   $routeAnnotation
-     * @param GroupAnnotation[] $groupAnnotations
+     * @param GroupAnnotation[] $groupChain
      *
      * @return array
      */
     protected function getCompoundMiddleware(
         RouteAnnotation $routeAnnotation,
-        array $groupAnnotations
+        array $groupChain
     ): array {
         $middleware = array_map(
             function (GroupAnnotation $groupAnnotation) {
                 return $groupAnnotation->getMiddleware();
             },
-            array_reverse($groupAnnotations)
+            array_reverse($groupChain)
         );
         array_unshift($middleware, $routeAnnotation->getMiddleware());
 
-        return array_merge(...$middleware);
+        return array_filter(array_merge(...$middleware));
     }
 }

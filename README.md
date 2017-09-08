@@ -61,9 +61,9 @@ $app->run();
 
 ### Annotations
 
-#### Router (Class)
+#### Router (Class level)
 
-Each class that defines routes need this annotation
+This annotation is just a mark to identify classes defining routes
 
 ```php
 use Jgut\Slim\Routing\Annotation as JSR
@@ -76,7 +76,7 @@ class Home
 }
 ```
 
-#### Group (Class)
+#### Group (Class level)
 
 Defines a group in which routes may reside. It is not mandatory unless you want to do route grouping or apply middleware to several routes at the same time
 
@@ -87,6 +87,7 @@ use Jgut\Slim\Routing\Annotation as JSR
  * @JSR\Router
  * @JSR\Group(
  *     name="groupName",
+ *     prefix="routePrefix",
  *     parent="parentGroupName",
  *     pattern="/section/{name}",
  *     placeholders={"name": "[a-z]+"},
@@ -99,12 +100,13 @@ class Section
 ```
 
 * `name`, optional, group name so it can be referenced by another route in order to create a group tree
-* `group`, optional, references a parent group
+* `prefix`, optional, prefix to be prepended to route names
+* `parent`, optional, references a parent group
 * `pattern`, optional, group path pattern
 * `placeholders`, optional, array of regex/alias for path placeholders, 
 * `middleware`, optional, array of middleware to be added to all group routes
 
-#### Route (Method)
+#### Route (Method level)
 
 Defines the final routes added to Slim
 
@@ -274,6 +276,10 @@ Defines the final route added to Slim
 _What tells apart groups from routes is the presence of the `routes` key_
 
 ## Route composition
+
+### Name
+
+Final route name is composed of the concatenation of group prefixes (referenced by the "prefix" parameter on annotations) and finally route name
 
 ### Pattern
 

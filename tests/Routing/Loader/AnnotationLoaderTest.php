@@ -54,6 +54,15 @@ class AnnotationLoaderTest extends TestCase
 
     /**
      * @expectedException \RuntimeException
+     * @expectedExceptionMessageRegExp /Routes can not be defined in private or protected methods in class .+$/
+     */
+    public function testPrivateDefinedRoute()
+    {
+        $this->loader->load([__DIR__ . '/../Files/Annotation/Invalid/PrivateDefined/PrivateDefinedRoute.php']);
+    }
+
+    /**
+     * @expectedException \RuntimeException
      * @expectedExceptionMessageRegExp /Class .+ does not define any route$/
      */
     public function testNoRoutesRoute()
@@ -85,7 +94,7 @@ class AnnotationLoaderTest extends TestCase
 
         $loaded = [
             [
-                'name' => '',
+                'name' => 'abstract_grouped_four',
                 'priority' => 0,
                 'methods' => ['GET'],
                 'pattern' => '/abstract/dependent/four',
