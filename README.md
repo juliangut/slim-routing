@@ -87,7 +87,7 @@ use Jgut\Slim\Routing\Annotation as JSR
  * @JSR\Router
  * @JSR\Group(
  *     name="groupName",
- *     group="parentGroupName",
+ *     parent="parentGroupName",
  *     pattern="/section/{name}",
  *     placeholders={"name": "[a-z]+"},
  *     middleware={"groupMiddlewareName"}

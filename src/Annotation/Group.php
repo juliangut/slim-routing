@@ -32,11 +32,11 @@ class Group extends AbstractAnnotation
     protected $name = '';
 
     /**
-     * Referenced group.
+     * Parent group.
      *
      * @var string
      */
-    protected $group = '';
+    protected $parent = '';
 
     /**
      * Router constructor.
@@ -73,25 +73,25 @@ class Group extends AbstractAnnotation
     }
 
     /**
-     * Get referenced group.
+     * Get parent group.
      *
      * @return string
      */
-    public function getGroup(): string
+    public function getParent(): string
     {
-        return $this->group;
+        return $this->parent;
     }
 
     /**
-     * Set referenced group.
+     * Set parent group.
      *
-     * @param string $group
+     * @param string $parent
      *
      * @return $this
      */
-    public function setGroup(string $group)
+    public function setParent(string $parent)
     {
-        $this->group = trim($group);
+        $this->parent = trim($parent);
 
         return $this;
     }

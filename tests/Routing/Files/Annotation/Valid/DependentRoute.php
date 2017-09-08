@@ -20,7 +20,7 @@ use Jgut\Slim\Routing\Annotation as JSR;
  *
  * @JSR\Router()
  * @JSR\Group(
- *     group="abstract",
+ *     parent="abstract",
  *     pattern="/dependent",
  *     middleware={"dependentMiddleware"}
  * )

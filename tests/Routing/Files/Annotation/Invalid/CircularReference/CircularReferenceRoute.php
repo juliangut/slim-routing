@@ -21,7 +21,7 @@ use Jgut\Slim\Routing\Annotation as JSR;
  * @JSR\Router()
  * @JSR\Group(
  *     name="circular",
- *     group="circular"
+ *     parent="circular"
  * )
  */
 class CircularReferenceRoute

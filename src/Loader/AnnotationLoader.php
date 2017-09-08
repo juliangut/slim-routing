@@ -319,32 +319,32 @@ class AnnotationLoader implements LoaderInterface
         ];
 
         $group = $groupAnnotation;
-        while ($group->getGroup() !== '') {
-            $referencedGroup = $group->getGroup();
+        while ($group->getParent() !== '') {
+            $parentGroup = $group->getParent();
 
-            if (!array_key_exists($referencedGroup, $definedGroups)) {
+            if (!array_key_exists($parentGroup, $definedGroups)) {
                 throw new \RuntimeException(
                     sprintf(
                         'Referenced group "%s" on class %s is not defined',
-                        $referencedGroup,
+                        $parentGroup,
                         $class->name
                     )
                 );
             }
 
-            if (array_key_exists($referencedGroup, $groupChain)) {
+            if (array_key_exists($parentGroup, $groupChain)) {
                 throw new \RuntimeException(
                     sprintf(
                         'Circular reference detected with group "%s" on class %s',
-                        $referencedGroup,
+                        $parentGroup,
                         $class->name
                     )
                 );
             }
 
-            $groupChain[$referencedGroup] = $definedGroups[$referencedGroup];
+            $groupChain[$parentGroup] = $definedGroups[$parentGroup];
 
-            $group = $definedGroups[$referencedGroup];
+            $group = $definedGroups[$parentGroup];
         }
 
         return array_reverse(array_values($groupChain));

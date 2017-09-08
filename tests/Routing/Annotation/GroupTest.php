@@ -26,7 +26,7 @@ class GroupTest extends TestCase
         $annotation = new Group([]);
 
         self::assertEquals('', $annotation->getName());
-        self::assertEquals('', $annotation->getGroup());
+        self::assertEquals('', $annotation->getParent());
     }
 
     public function testName()
@@ -38,8 +38,8 @@ class GroupTest extends TestCase
 
     public function testGroup()
     {
-        $annotation = new Group(['group' => 'groupName']);
+        $annotation = new Group(['parent' => 'groupName']);
 
-        self::assertEquals('groupName', $annotation->getGroup());
+        self::assertEquals('groupName', $annotation->getParent());
     }
 }
