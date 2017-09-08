@@ -227,21 +227,28 @@ class Manager
      */
     private function stableUsort(array &$array, callable $sortFunction): bool
     {
-        $index = 0;
-        foreach ($array as &$item) {
-            $item = [$index++, $item];
-        }
-        unset($item);
+        array_walk(
+            $array,
+            function (&$item, $key) {
+                $item = [$key, $item];
+            }
+        );
 
-        $result = usort($array, function (array $itemA, array $itemB) use ($sortFunction) {
-            $result = $sortFunction($itemA[1], $itemB[1]);
+        $result = usort(
+            $array,
+            function (array $itemA, array $itemB) use ($sortFunction) {
+                $result = $sortFunction($itemA[1], $itemB[1]);
 
-            return $result == 0 ? $itemA[0] - $itemB[0] : $result;
-        });
+                return $result === 0 ? $itemA[0] - $itemB[0] : $result;
+            }
+        );
 
-        foreach ($array as &$item) {
-            $item = $item[1];
-        }
+        array_walk(
+            $array,
+            function (&$item) {
+                $item = $item[1];
+            }
+        );
 
         return $result;
     }
