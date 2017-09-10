@@ -149,6 +149,7 @@ class Section
 return [
   [
     // Group
+    'prefix' => 'prefix',
     'pattern' => 'group-pattern',
     'placeholders' => ['group-placeholders'],
     'middleware' => ['group-middleware'],
@@ -187,6 +188,7 @@ return [
 [
   {
     // Group
+    "prefix": "prefix",
     "pattern": "group-pattern",
     "placeholders": ["group-placeholders"],
     "middleware": ["group-middleware"],
@@ -229,7 +231,8 @@ composer require symfony/yaml
 
 ```yaml
 // Group
-- pattern: group-pattern
+- prefix: prefix
+  pattern: group-pattern
   placeholders: [group-placeholders]
   middleware: [group-middleware]
   routes:
@@ -258,6 +261,7 @@ composer require symfony/yaml
 Defines a group in which routes may reside.
 
 * `routes`, array of routes and/or subgroups
+* `prefix`, optional, prefix to be prepended to route names
 * `pattern`, optional, group path pattern
 * `placeholders`, optional, array of regex/alias for path placeholders, 
 * `middleware`, optional, array of middleware to be added to all group routes

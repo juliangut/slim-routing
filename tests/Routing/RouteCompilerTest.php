@@ -239,6 +239,7 @@ class RouteCompilerTest extends TestCase
                 'middleware' => 'groupedMiddleware',
                 'routes' => [
                     [
+                        'name' => 'two',
                         'methods' => 'ANY',
                         'pattern' => '/two[/{id}]',
                         'placeholders' => ['id' => 'any'],
@@ -246,9 +247,11 @@ class RouteCompilerTest extends TestCase
                         'invokable' => ['class', 'method'],
                     ],
                     [
+                        'prefix' => 'sub',
                         'pattern' => '/sub',
                         'routes' => [
                             [
+                                'name' => 'three',
                                 'pattern' => '/three',
                                 'middleware' => ['threeMiddleware'],
                                 'invokable' => ['class', 'method'],
@@ -266,6 +269,7 @@ class RouteCompilerTest extends TestCase
 
         $route = $routes[0];
         self::assertInstanceOf(Route::class, $route);
+        self::assertEquals('two', $route->getName());
         self::assertEquals(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], $route->getMethods());
         self::assertEquals('/grouped/{section}/two[/{id}]', $route->getPattern());
         self::assertEquals(['section' => '[A-Za-z_-]+', 'id' => '.+'], $route->getPlaceholders());
@@ -275,6 +279,7 @@ class RouteCompilerTest extends TestCase
         $route = $routes[1];
         self::assertInstanceOf(Route::class, $route);
         self::assertEquals(['GET'], $route->getMethods());
+        self::assertEquals('sub_three', $route->getName());
         self::assertEquals('/grouped/{section}/sub/three', $route->getPattern());
         self::assertEquals(['section' => '[A-Za-z_-]+'], $route->getPlaceholders());
         self::assertEquals(['threeMiddleware', 'groupedMiddleware'], $route->getMiddleware());

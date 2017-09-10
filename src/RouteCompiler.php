@@ -63,14 +63,15 @@ class RouteCompiler
     /**
      * Get defined routes.
      *
-     * @param array $sources
+     * @param array  $sources
+     * @param string $prefix
      *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      *
      * @return array
      */
-    protected function getCompoundRoutes(array $sources): array
+    protected function getCompoundRoutes(array $sources, string $prefix = ''): array
     {
         $routes = [];
 
@@ -80,11 +81,15 @@ class RouteCompiler
             }
 
             if (array_key_exists('routes', $source)) {
-                $groupRoutes = $this->getCompoundRoutes($source['routes']);
+                if (array_key_exists('prefix', $source)) {
+                    $prefix = $prefix . $source['prefix'] . '_';
+                }
+
+                $groupRoutes = $this->getCompoundRoutes($source['routes'], $prefix);
 
                 $routes[] = $this->getCompoundGroupRoutes($source, $groupRoutes);
             } else {
-                $routes[] = [$this->getProcessedRoute($source)];
+                $routes[] = [$this->getProcessedRoute($source, $prefix)];
             }
         }
 
@@ -133,17 +138,18 @@ class RouteCompiler
     /**
      * Get defined route.
      *
-     * @param array $source
+     * @param array  $source
+     * @param string $prefix
      *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      *
      * @return array
      */
-    protected function getProcessedRoute(array $source): array
+    protected function getProcessedRoute(array $source, string $prefix = ''): array
     {
         return [
-            'name' => $this->getSourceName($source),
+            'name' => $prefix . $this->getSourceName($source),
             'methods' => $this->getSourceMethods($source),
             'priority' => $this->getSourcePriority($source),
             'pattern' => $this->getSourcePattern($source),

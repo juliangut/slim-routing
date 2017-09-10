@@ -298,9 +298,9 @@ class AnnotationLoader implements LoaderInterface
     /**
      * Get group annotations chain.
      *
-     * @param \ReflectionClass  $class
-     * @param GroupAnnotation[] $groupList
-     * @param GroupAnnotation   $groupAnnotation
+     * @param \ReflectionClass     $class
+     * @param GroupAnnotation[]    $groupList
+     * @param GroupAnnotation|null $groupAnnotation
      *
      * @throws \RuntimeException
      *
