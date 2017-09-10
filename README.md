@@ -58,6 +58,7 @@ $app->run();
   * alpha => `[a-zA-Z]+`
   * alnum => `[a-zA-Z0-9]+`
   * any => `.+`
+* `namingStrategy`, instance of \Jgut\Slim\Routing\Naming\NamingInterface, \Jgut\Slim\Routing\Naming\SnakeCase by default
 
 ### Annotations
 
@@ -283,7 +284,7 @@ _What tells apart groups from routes is the presence of the `routes` key_
 
 ### Name
 
-Final route name is composed of the concatenation of group prefixes (referenced by the "prefix" parameter on annotations) and finally route name
+Final route name is composed of the concatenation of group prefixes (referenced by the "prefix" parameter on annotations) and finally route name according to selected route naming strategy
 
 ### Pattern
 

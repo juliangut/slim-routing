@@ -16,7 +16,7 @@ namespace Jgut\Slim\Routing\Loader;
 /**
  * Abstract array routing loader.
  */
-abstract class AbstractFileLoader implements LoaderInterface
+abstract class AbstractFileLoader extends AbstractLoader
 {
     /**
      * {@inheritdoc}

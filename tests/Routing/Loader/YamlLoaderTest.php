@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Loader;
 
+use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Loader\YamlLoader;
+use Jgut\Slim\Routing\Naming\SnakeCase;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -31,7 +33,14 @@ class YamlLoaderTest extends TestCase
      */
     protected function setUp()
     {
-        $this->loader = new YamlLoader();
+        $configuration = $this->getMockBuilder(Configuration::class)
+            ->getMock();
+        $configuration->expects(self::any())
+            ->method('getNamingStrategy')
+            ->will(self::returnValue(new SnakeCase()));
+        /* @var Configuration $configuration */
+
+        $this->loader = new YamlLoader($configuration);
     }
 
     /**

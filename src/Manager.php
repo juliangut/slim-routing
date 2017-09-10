@@ -184,7 +184,7 @@ class Manager
         $loaderClass = $source->getLoaderClass();
 
         if (!array_key_exists($loaderClass, $this->loaders)) {
-            $this->loaders[$loaderClass] = new $loaderClass();
+            $this->loaders[$loaderClass] = new $loaderClass($this->configuration);
         }
 
         return $this->loaders[$loaderClass];

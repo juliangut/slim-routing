@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Tests;
 
 use Jgut\Slim\Routing\Configuration;
+use Jgut\Slim\Routing\Naming\CamelCase;
+use Jgut\Slim\Routing\Naming\SnakeCase;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -32,9 +34,18 @@ class ConfigurationTest extends TestCase
 
     public function testDefaults()
     {
+        $defaultAliasList = [
+            'numeric' => '\d+',
+            'alpha' => '[a-zA-Z]+',
+            'alnum' => '[a-zA-Z0-9]+',
+            'any' => '.+',
+        ];
+
         $configuration = new Configuration();
 
         self::assertEmpty($configuration->getSources());
+        self::assertEquals($defaultAliasList, $configuration->getPlaceholderAliases());
+        self::assertInstanceOf(SnakeCase::class, $configuration->getNamingStrategy());
     }
 
     public function testSourcePaths()
@@ -75,5 +86,12 @@ class ConfigurationTest extends TestCase
         ]);
 
         self::assertEquals($aliasList, $configuration->getPlaceholderAliases());
+    }
+
+    public function testNamingStrategy()
+    {
+        $configuration = new Configuration(['namingStrategy' => new CamelCase()]);
+
+        self::assertInstanceOf(CamelCase::class, $configuration->getNamingStrategy());
     }
 }

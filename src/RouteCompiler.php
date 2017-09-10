@@ -63,15 +63,15 @@ class RouteCompiler
     /**
      * Get defined routes.
      *
-     * @param array  $sources
-     * @param string $prefix
+     * @param array $sources
+     * @param array $prefixes
      *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      *
      * @return array
      */
-    protected function getCompoundRoutes(array $sources, string $prefix = ''): array
+    protected function getCompoundRoutes(array $sources, array $prefixes = []): array
     {
         $routes = [];
 
@@ -82,14 +82,14 @@ class RouteCompiler
 
             if (array_key_exists('routes', $source)) {
                 if (array_key_exists('prefix', $source)) {
-                    $prefix = $prefix . $source['prefix'] . '_';
+                    $prefixes[] = $source['prefix'];
                 }
 
-                $groupRoutes = $this->getCompoundRoutes($source['routes'], $prefix);
+                $groupRoutes = $this->getCompoundRoutes($source['routes'], $prefixes);
 
                 $routes[] = $this->getCompoundGroupRoutes($source, $groupRoutes);
             } else {
-                $routes[] = [$this->getProcessedRoute($source, $prefix)];
+                $routes[] = [$this->getProcessedRoute($source, $prefixes)];
             }
         }
 
@@ -138,18 +138,22 @@ class RouteCompiler
     /**
      * Get defined route.
      *
-     * @param array  $source
-     * @param string $prefix
+     * @param array $source
+     * @param array $prefixes
      *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      *
      * @return array
      */
-    protected function getProcessedRoute(array $source, string $prefix = ''): array
+    protected function getProcessedRoute(array $source, array $prefixes): array
     {
+        $name = $this->configuration->getNamingStrategy()->combine(
+            array_merge($prefixes, [$this->getSourceName($source)])
+        );
+
         return [
-            'name' => $prefix . $this->getSourceName($source),
+            'name' => $name,
             'methods' => $this->getSourceMethods($source),
             'priority' => $this->getSourcePriority($source),
             'pattern' => $this->getSourcePattern($source),

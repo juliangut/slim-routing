@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing;
 
+use Jgut\Slim\Routing\Naming\NamingInterface;
+use Jgut\Slim\Routing\Naming\SnakeCase;
+
 /**
  * Routing configuration.
  */
@@ -36,6 +39,13 @@ class Configuration
         'alnum' => '[a-zA-Z0-9]+',
         'any' => '.+',
     ];
+
+    /**
+     * Naming strategy.
+     *
+     * @var NamingInterface
+     */
+    protected $namingStrategy;
 
     /**
      * Configuration constructor.
@@ -71,6 +81,10 @@ class Configuration
 
                     case 'placeholderAliases':
                         $this->addPlaceholderAliases($configurations[$config]);
+                        break;
+
+                    case 'namingStrategy':
+                        $this->setNamingStrategy($configurations[$config]);
                         break;
                 }
             }
@@ -142,5 +156,33 @@ class Configuration
         }
 
         $this->placeholderAliases[$alias] = $pattern;
+    }
+
+    /**
+     * Get naming strategy.
+     *
+     * @return NamingInterface
+     */
+    public function getNamingStrategy(): NamingInterface
+    {
+        if ($this->namingStrategy === null) {
+            $this->namingStrategy = new SnakeCase();
+        }
+
+        return $this->namingStrategy;
+    }
+
+    /**
+     * Set naming strategy.
+     *
+     * @param NamingInterface $namingStrategy
+     *
+     * @return $this
+     */
+    public function setNamingStrategy(NamingInterface $namingStrategy)
+    {
+        $this->namingStrategy = $namingStrategy;
+
+        return $this;
     }
 }

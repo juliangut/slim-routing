@@ -24,7 +24,7 @@ use Jgut\Slim\Routing\Annotation\Router as RouterAnnotation;
  *
  * @SuppressWarnings(PMD.CouplingBetweenObjects)
  */
-class AnnotationLoader implements LoaderInterface
+class AnnotationLoader extends AbstractLoader
 {
     /**
      * {@inheritdoc}
@@ -374,7 +374,7 @@ class AnnotationLoader implements LoaderInterface
         );
         $names[] = $routeName;
 
-        return implode('_', array_filter($names));
+        return $this->configuration->getNamingStrategy()->combine(array_filter($names));
     }
 
     /**
