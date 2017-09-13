@@ -82,7 +82,7 @@ class RouteCompiler
 
             if (array_key_exists('routes', $source)) {
                 if (array_key_exists('prefix', $source)) {
-                    $prefixes[] = $source['prefix'];
+                    $prefixes[] = trim($source['prefix']);
                 }
 
                 $groupRoutes = $this->getCompoundRoutes($source['routes'], $prefixes);
@@ -148,9 +148,21 @@ class RouteCompiler
      */
     protected function getProcessedRoute(array $source, array $prefixes): array
     {
-        $name = $this->configuration->getNamingStrategy()->combine(
-            array_merge($prefixes, [$this->getSourceName($source)])
+        $prefixes = array_filter(
+            $prefixes,
+            function (string $prefix) {
+                return trim($prefix) !== '';
+            }
         );
+
+        $name = $this->getSourceName($source);
+        $name = $name === ''
+            ? ''
+            : $this->configuration->getNamingStrategy()->combine(array_merge($prefixes, [$name]));
+
+        if (strpos($name, ' ') !== false) {
+            throw new \InvalidArgumentException('Route name must not contain spaces');
+        }
 
         return [
             'name' => $name,
@@ -172,7 +184,7 @@ class RouteCompiler
      */
     protected function getSourceName(array $source): string
     {
-        return array_key_exists('name', $source) ? $source['name'] : '';
+        return array_key_exists('name', $source) ? trim($source['name']) : '';
     }
 
     /**
@@ -188,6 +200,10 @@ class RouteCompiler
     {
         if (!array_key_exists('methods', $source)) {
             return ['GET'];
+        }
+
+        if (is_string($source['methods']) && trim($source['methods']) === 'ANY') {
+            return ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
         }
 
         $methods = [];
@@ -207,18 +223,14 @@ class RouteCompiler
             $methods[] = strtoupper(trim($method));
         }
 
-        $methods = array_unique($methods);
+        $methods = array_unique(array_filter($methods, 'strlen'));
 
         if (!count($methods)) {
             throw new \InvalidArgumentException('Route methods can not be empty');
         }
 
         if (in_array('ANY', $methods, true)) {
-            if (count($methods) > 1) {
-                throw new \InvalidArgumentException('Route "ANY" method cannot be defined with other methods');
-            }
-
-            $methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
+            throw new \InvalidArgumentException('Route "ANY" method cannot be defined with other methods');
         }
 
         return $methods;
@@ -245,7 +257,7 @@ class RouteCompiler
      */
     protected function getSourcePattern(array $source): string
     {
-        return array_key_exists('pattern', $source) ? $source['pattern'] : '/';
+        return array_key_exists('pattern', $source) ? trim($source['pattern']) : '/';
     }
 
     /**

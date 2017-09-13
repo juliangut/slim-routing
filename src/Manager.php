@@ -105,7 +105,8 @@ class Manager
 
         $routes = count($routes) ? array_merge(...$routes) : [];
 
-        $this->checkDuplicatedRoutes($routes);
+        $this->checkDuplicatedRouteNames($routes);
+        $this->checkDuplicatedRoutePaths($routes);
 
         $this->stableUsort(
             $routes,
@@ -118,24 +119,51 @@ class Manager
     }
 
     /**
-     * Check duplicated routes.
+     * Check duplicated route names.
      *
      * @param Route[] $routes
      *
      * @throws \RuntimeException
      */
-    protected function checkDuplicatedRoutes(array $routes)
+    protected function checkDuplicatedRouteNames(array $routes)
     {
-        $paths = [];
-        foreach ($routes as $route) {
-            /* @var Route $route */
-            $paths[] = array_map(
-                function (string $method) use ($route) {
-                    return sprintf('%s %s', $method, $this->getCompoundPath($route));
-                },
-                $route->getMethods()
-            );
+        $names = array_filter(array_map(
+            function (Route $route) {
+                return $route->getName();
+            },
+            $routes
+        ));
+
+        $duplicatedNames = array_unique(array_diff_assoc($names, array_unique($names)));
+        if (count($duplicatedNames)) {
+            throw new \RuntimeException('There are duplicated route names: ' . implode(', ', $duplicatedNames));
         }
+    }
+
+    /**
+     * Check duplicated route paths.
+     *
+     * @param Route[] $routes
+     *
+     * @throws \RuntimeException
+     */
+    protected function checkDuplicatedRoutePaths(array $routes)
+    {
+        $paths = array_map(
+            function (Route $route) {
+                return array_map(
+                    function (string $method) use ($route) {
+                        return sprintf(
+                            '%s %s',
+                            $method,
+                            preg_replace('/\{.+:/', '{', $this->getCompoundPath($route))
+                        );
+                    },
+                    $route->getMethods()
+                );
+            },
+            $routes
+        );
 
         $paths = count($paths) ? array_merge(...$paths) : [];
 

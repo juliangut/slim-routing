@@ -29,9 +29,45 @@ class ManagerTest extends TestCase
 {
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage There are duplicated routes: POST /path/{id:[0-9]+}
+     * @expectedExceptionMessage There are duplicated route names: name
      */
-    public function testDuplicatedRoutes()
+    public function testDuplicatedRouteNames()
+    {
+        $routes = [
+            (new Route())->setMethods(['GET'])->setName('name'),
+            (new Route())->setMethods(['POST'])->setName('name'),
+        ];
+
+        $loader = $this->getMockBuilder(LoaderInterface::class)
+            ->getMock();
+        /* @var LoaderInterface $loader */
+
+        $compiler = $this->getMockBuilder(RouteCompiler::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $compiler->expects(self::once())
+            ->method('getRoutes')
+            ->will(self::returnValue($routes));
+        /* @var RouteCompiler $compiler */
+
+        $configuration = $this->getMockBuilder(Configuration::class)
+            ->getMock();
+        $configuration->expects(self::once())
+            ->method('getSources')
+            ->will(self::returnValue([__DIR__]));
+        /* @var Configuration $configuration */
+
+        $manager = new ManagerStub($configuration, $loader);
+        $manager->setCompiler($compiler);
+
+        $manager->getRoutes();
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage There are duplicated routes: POST /path/{[0-9]+}
+     */
+    public function testDuplicatedRoutePaths()
     {
         $routes = [
             (new Route())->setMethods(['GET', 'POST'])->setPattern('/path/{id}')->setPlaceholders(['id' => '[0-9]+']),

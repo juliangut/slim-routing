@@ -129,7 +129,7 @@ class Route extends AbstractAnnotation
             $this->methods[] = strtoupper(trim($method));
         }
 
-        $this->methods = array_unique($this->methods);
+        $this->methods = array_unique(array_filter($this->methods, 'strlen'));
 
         if (!count($this->methods)) {
             throw new \InvalidArgumentException('Route annotation methods can not be empty');

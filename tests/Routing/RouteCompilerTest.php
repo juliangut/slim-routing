@@ -49,6 +49,21 @@ class RouteCompilerTest extends TestCase
 
     /**
      * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Route name must not contain spaces
+     */
+    public function testInvalidNameRoute()
+    {
+        $routes = [
+            [
+                'name' => 'spaced name',
+            ],
+        ];
+
+        $this->compiler->getRoutes($routes);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Route methods must be a string or string array. "integer" given
      */
     public function testInvalidMethodsTypeRoute()
@@ -256,6 +271,11 @@ class RouteCompilerTest extends TestCase
                                 'middleware' => ['threeMiddleware'],
                                 'invokable' => ['class', 'method'],
                             ],
+                            [
+                                'pattern' => '/four',
+                                'middleware' => ['fourMiddleware'],
+                                'invokable' => ['class', 'method'],
+                            ],
                         ],
                     ],
                 ],
@@ -265,7 +285,7 @@ class RouteCompilerTest extends TestCase
         /* @var Route[] $routes */
         $routes = $this->compiler->getRoutes($routes);
 
-        self::assertCount(2, $routes);
+        self::assertCount(3, $routes);
 
         $route = $routes[0];
         self::assertInstanceOf(Route::class, $route);
@@ -283,6 +303,15 @@ class RouteCompilerTest extends TestCase
         self::assertEquals('/grouped/{section}/sub/three', $route->getPattern());
         self::assertEquals(['section' => '[A-Za-z_-]+'], $route->getPlaceholders());
         self::assertEquals(['threeMiddleware', 'groupedMiddleware'], $route->getMiddleware());
+        self::assertEquals(['class', 'method'], $route->getInvokable());
+
+        $route = $routes[2];
+        self::assertInstanceOf(Route::class, $route);
+        self::assertEquals(['GET'], $route->getMethods());
+        self::assertEquals('', $route->getName());
+        self::assertEquals('/grouped/{section}/sub/four', $route->getPattern());
+        self::assertEquals(['section' => '[A-Za-z_-]+'], $route->getPlaceholders());
+        self::assertEquals(['fourMiddleware', 'groupedMiddleware'], $route->getMiddleware());
         self::assertEquals(['class', 'method'], $route->getInvokable());
     }
 }
