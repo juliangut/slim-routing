@@ -32,11 +32,20 @@ class RouteTest extends TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Route names must not contain spaces
+     * @expectedExceptionMessage Route name must not contain spaces
      */
     public function testWrongName()
     {
         new Route(['name' => 'a name']);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Route name can not be empty
+     */
+    public function testEmptyName()
+    {
+        new Route(['name' => '']);
     }
 
     public function testName()

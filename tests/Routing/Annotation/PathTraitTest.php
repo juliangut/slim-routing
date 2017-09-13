@@ -31,6 +31,15 @@ class PathTraitTest extends TestCase
 
     /**
      * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Pattern can not be empty
+     */
+    public function testEmptyPattern()
+    {
+        new PathStub(['pattern' => '']);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Placeholder matching "[0-9]+" must be defined on placeholders parameter
      */
     public function testInvalidPattern()

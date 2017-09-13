@@ -79,7 +79,11 @@ class Route extends AbstractAnnotation
     public function setName(string $name)
     {
         if (strpos(trim($name), ' ') !== false) {
-            throw new \InvalidArgumentException(sprintf('Route names must not contain spaces'));
+            throw new \InvalidArgumentException(sprintf('Route name must not contain spaces'));
+        }
+
+        if (trim($name) === '') {
+            throw new \InvalidArgumentException(sprintf('Route name can not be empty'));
         }
 
         $this->name = trim($name);

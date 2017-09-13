@@ -31,11 +31,20 @@ class GroupTest extends TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Group names must not contain spaces
+     * @expectedExceptionMessage Group name must not contain spaces
      */
     public function testWrongName()
     {
         new Group(['name' => 'a name']);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Group name can not be empty
+     */
+    public function testEmptyName()
+    {
+        new Group(['name' => '']);
     }
 
     public function testName()

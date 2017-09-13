@@ -40,7 +40,7 @@ class AnnotationLoader extends AbstractLoader
         $annotationReader = new AnnotationReader();
 
         $classList = $this->getClasses($routingSources);
-        $groupList = $this->getNamedGroups($classList, $annotationReader);
+        $groupList = $this->getNamedGroups($annotationReader, $classList);
 
         $loadedData = [];
         foreach ($classList as $class) {
@@ -52,7 +52,7 @@ class AnnotationLoader extends AbstractLoader
             $routerAnnotation = $annotationReader->getClassAnnotation($class, RouterAnnotation::class);
 
             if ($routerAnnotation) {
-                $loadedData[] = $this->getClassRoutes($class, $annotationReader, $groupList);
+                $loadedData[] = $this->getClassRoutes($annotationReader, $class, $groupList);
             }
         }
 
@@ -182,12 +182,12 @@ class AnnotationLoader extends AbstractLoader
     /**
      * Get group annotations.
      *
-     * @param \ReflectionClass[] $classes
      * @param AnnotationReader   $annotationReader
+     * @param \ReflectionClass[] $classes
      *
      * @return GroupAnnotation[]
      */
-    final protected function getNamedGroups(array $classes, AnnotationReader $annotationReader): array
+    final protected function getNamedGroups(AnnotationReader $annotationReader, array $classes): array
     {
         $groups = [];
 
@@ -206,8 +206,8 @@ class AnnotationLoader extends AbstractLoader
     /**
      * Get processed routes.
      *
-     * @param \ReflectionClass  $class
      * @param AnnotationReader  $annotationReader
+     * @param \ReflectionClass  $class
      * @param GroupAnnotation[] $groupList
      *
      * @throws \RuntimeException
@@ -215,8 +215,8 @@ class AnnotationLoader extends AbstractLoader
      * @return array
      */
     protected function getClassRoutes(
-        \ReflectionClass $class,
         AnnotationReader $annotationReader,
+        \ReflectionClass $class,
         array $groupList
     ): array {
         $routes = [];

@@ -77,7 +77,11 @@ class Group extends AbstractAnnotation
     public function setName(string $name)
     {
         if (strpos(trim($name), ' ') !== false) {
-            throw new \InvalidArgumentException(sprintf('Group names must not contain spaces'));
+            throw new \InvalidArgumentException(sprintf('Group name must not contain spaces'));
+        }
+
+        if (trim($name) === '') {
+            throw new \InvalidArgumentException(sprintf('Group name can not be empty'));
         }
 
         $this->name = trim($name);

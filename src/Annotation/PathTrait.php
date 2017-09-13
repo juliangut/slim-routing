@@ -53,6 +53,10 @@ trait PathTrait
      */
     public function setPattern(string $pattern)
     {
+        if (trim($pattern) === '') {
+            throw new \InvalidArgumentException(sprintf('Pattern can not be empty'));
+        }
+
         if (preg_match('/\{.+:(.+)?\}/', $pattern, $matches)) {
             throw new \InvalidArgumentException(
                 sprintf('Placeholder matching "%s" must be defined on placeholders parameter', $matches[1])
