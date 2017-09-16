@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Tests\Source;
 
 use Jgut\Slim\Routing\Mapping\Driver\AnnotationDriver;
-use Jgut\Slim\Routing\Mapping\Driver\DriverFactory;
 use Jgut\Slim\Routing\Mapping\Driver\DefinitionFileDriver;
+use Jgut\Slim\Routing\Mapping\Driver\DriverFactory;
 use PHPUnit\Framework\TestCase;
 
 /**
