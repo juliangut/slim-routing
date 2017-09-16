@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Files\Annotation\Valid;
 
-use Jgut\Slim\Routing\Annotation as JSR;
+use Jgut\Slim\Routing\Mapping\Annotation as JSR;
 
 /**
  * Example single route.
@@ -27,7 +27,7 @@ class SingleRoute
      *     methods={"GET", "POST"},
      *     pattern="/one/{id}",
      *     priority=-10,
-     *     placeholders={"id": "[0-9]+"},
+     *     placeholders={"id": "numeric"},
      *     middleware={"oneMiddleware"},
      *     name="one"
      * )

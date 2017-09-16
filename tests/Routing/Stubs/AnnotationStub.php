@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Stubs;
 
-use Jgut\Slim\Routing\Annotation\AbstractAnnotation;
+use Jgut\Slim\Routing\Mapping\Annotation\AbstractAnnotation;
 
 /**
  * Abstract annotation stub.

@@ -13,7 +13,8 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Stubs;
 
-use Jgut\Slim\Routing\Source\AbstractSource;
+use Jgut\Slim\Routing\Mapping\Driver\DriverInterface;
+use Jgut\Slim\Routing\Mapping\Source\AbstractSource;
 
 /**
  * Abstract source stub.
@@ -21,18 +22,23 @@ use Jgut\Slim\Routing\Source\AbstractSource;
 class SourceStub extends AbstractSource
 {
     /**
-     * {@inheritdoc}
+     * SourceStub constructor.
+     *
+     * @param array                $paths
+     * @param DriverInterface|null $driver
      */
-    public function getLoaderClass(): string
+    public function __construct(array $paths, DriverInterface $driver = null)
     {
-        return '';
+        parent::__construct($paths);
+
+        $this->driver = $driver;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getCompilerClass(): string
+    public function getDriver(): DriverInterface
     {
-        return '';
+        return $this->driver;
     }
 }

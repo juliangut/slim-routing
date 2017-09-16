@@ -14,12 +14,12 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Tests;
 
 use Jgut\Slim\Routing\Configuration;
-use Jgut\Slim\Routing\Loader\LoaderInterface;
-use Jgut\Slim\Routing\Route;
-use Jgut\Slim\Routing\RouteCompiler;
-use Jgut\Slim\Routing\Tests\Stubs\ManagerStub;
+use Jgut\Slim\Routing\Manager;
+use Jgut\Slim\Routing\Mapping\RouteMetadata;
+use Jgut\Slim\Routing\Resolver;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Slim\Route;
 use Slim\Router;
 
 /**
@@ -27,155 +27,85 @@ use Slim\Router;
  */
 class ManagerTest extends TestCase
 {
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage There are duplicated route names: name
-     */
-    public function testDuplicatedRouteNames()
+    public function testDefaultResolver()
     {
-        $routes = [
-            (new Route())->setMethods(['GET'])->setName('name'),
-            (new Route())->setMethods(['POST'])->setName('name'),
-        ];
-
-        $loader = $this->getMockBuilder(LoaderInterface::class)
-            ->getMock();
-        /* @var LoaderInterface $loader */
-
-        $compiler = $this->getMockBuilder(RouteCompiler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $compiler->expects(self::once())
-            ->method('getRoutes')
-            ->will(self::returnValue($routes));
-        /* @var RouteCompiler $compiler */
-
         $configuration = $this->getMockBuilder(Configuration::class)
             ->getMock();
-        $configuration->expects(self::once())
-            ->method('getSources')
-            ->will(self::returnValue([__DIR__]));
         /* @var Configuration $configuration */
 
-        $manager = new ManagerStub($configuration, $loader);
-        $manager->setCompiler($compiler);
+        $manager = new Manager($configuration);
 
-        $manager->getRoutes();
+
+        self::assertInstanceOf(Resolver::class, $manager->getResolver());
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage There are duplicated routes: POST /path/{[0-9]+}
-     */
-    public function testDuplicatedRoutePaths()
+    public function testResolver()
     {
-        $routes = [
-            (new Route())->setMethods(['GET', 'POST'])->setPattern('/path/{id}')->setPlaceholders(['id' => '[0-9]+']),
-            (new Route())->setMethods(['POST'])->setPattern('/path/{id}')->setPlaceholders(['id' => '[0-9]+']),
-        ];
-
-        $loader = $this->getMockBuilder(LoaderInterface::class)
-            ->getMock();
-        /* @var LoaderInterface $loader */
-
-        $compiler = $this->getMockBuilder(RouteCompiler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $compiler->expects(self::once())
-            ->method('getRoutes')
-            ->will(self::returnValue($routes));
-        /* @var RouteCompiler $compiler */
-
         $configuration = $this->getMockBuilder(Configuration::class)
             ->getMock();
-        $configuration->expects(self::once())
-            ->method('getSources')
-            ->will(self::returnValue([__DIR__]));
         /* @var Configuration $configuration */
 
-        $manager = new ManagerStub($configuration, $loader);
-        $manager->setCompiler($compiler);
-
-        $manager->getRoutes();
-    }
-
-    public function testGetRoutes()
-    {
-        $routes = [
-            (new Route())->setMethods(['POST'])->setPattern('/path/{id}'),
-            (new Route())->setMethods(['GET'])->setPattern('/path/{id}')->setPriority(-10),
-        ];
-
-        $loader = $this->getMockBuilder(LoaderInterface::class)
-            ->getMock();
-        /* @var LoaderInterface $loader */
-
-        $compiler = $this->getMockBuilder(RouteCompiler::class)
+        $resolver = $this->getMockBuilder(Resolver::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $compiler->expects(self::once())
-            ->method('getRoutes')
-            ->will(self::returnValue($routes));
-        /* @var RouteCompiler $compiler */
+        /* @var Resolver $resolver */
 
-        $configuration = $this->getMockBuilder(Configuration::class)
-            ->getMock();
-        $configuration->expects(self::once())
-            ->method('getSources')
-            ->will(self::returnValue([__DIR__]));
-        /* @var Configuration $configuration */
+        $manager = new Manager($configuration);
+        $manager->setResolver($resolver);
 
-        $manager = new ManagerStub($configuration, $loader);
-        $manager->setCompiler($compiler);
-
-        $loaded = $manager->getRoutes();
-
-        self::assertEquals(array_reverse($routes), $loaded);
+        self::assertEquals($resolver, $manager->getResolver());
     }
 
-    public function testCompiledRoutes()
+    public function testRouteRegistration()
     {
-        $routes = [
-            (new Route())->setMethods(['POST'])->setPattern('/path/{id}')->setName('one'),
-            (new Route())->setMethods(['GET'])->setPattern('/path/{id}'),
+        $routesMetadata = [
+            (new RouteMetadata())
+                ->setPrefixes(['pref'])
+                ->setMethods(['GET'])
+                ->setPattern('/one/{id}')
+                ->setPlaceholders(['id' => 'numeric'])
+                ->setInvokable(['one', 'action']),
+            (new RouteMetadata())
+                ->setMethods(['POST'])
+                ->setPattern('/two')
+                ->setName('two')
+                ->setMiddleware(['twoMiddleware'])
+                ->setInvokable(['two', 'action']),
         ];
-        $router = new Router();
+
+        $router = $this->getMockBuilder(Router::class)
+            ->getMock();
+        $router->expects(self::exactly(2))
+            ->method('map')
+            ->will($this->returnValue(new Route('', '', '')));
 
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
-        $container->expects(self::exactly(2))
+        $container->expects(self::any())
             ->method('get')
             ->willReturnOnConsecutiveCalls($router, ['outputBuffering' => 'append']);
         /* @var ContainerInterface $container */
 
-        $loader = $this->getMockBuilder(LoaderInterface::class)
-            ->getMock();
-        /* @var LoaderInterface $loader */
-
-        $compiler = $this->getMockBuilder(RouteCompiler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $compiler->expects(self::once())
-            ->method('getRoutes')
-            ->will(self::returnValue($routes));
-        /* @var RouteCompiler $compiler */
-
         $configuration = $this->getMockBuilder(Configuration::class)
+            ->setMethods(['getSources'])
             ->getMock();
         $configuration->expects(self::once())
             ->method('getSources')
-            ->will(self::returnValue([__DIR__]));
+            ->will(self::returnValue([__DIR__ . '/Files/Annotation/Valid']));
         /* @var Configuration $configuration */
 
-        $manager = new ManagerStub($configuration, $loader);
-        $manager->setCompiler($compiler);
+        $resolver = $this->getMockBuilder(Resolver::class)
+            ->setConstructorArgs([$configuration])
+            ->setMethods(['sort'])
+            ->getMock();
+        $resolver->expects(self::once())
+            ->method('sort')
+            ->will(self::returnValue($routesMetadata));
+        /* @var Resolver $resolver */
+
+        $manager = new Manager($configuration);
+        $manager->setResolver($resolver);
 
         $manager->registerRoutes($container);
-
-        /* @var \Slim\Route[] $loaded */
-        $loaded = $router->getRoutes();
-
-        self::assertCount(2, $loaded);
-        self::assertEquals('one', array_shift($loaded)->getName());
     }
 }

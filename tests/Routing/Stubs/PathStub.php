@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Stubs;
 
-use Jgut\Slim\Routing\Annotation\PathTrait;
+use Jgut\Slim\Routing\Mapping\Annotation\PathTrait;
 
 /**
  * Path annotation stub.

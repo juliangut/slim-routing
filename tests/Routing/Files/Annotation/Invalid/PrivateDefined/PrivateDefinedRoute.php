@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Files\Annotation\Invalid\PrivateDefined;
 
-use Jgut\Slim\Routing\Annotation as JSR;
+use Jgut\Slim\Routing\Mapping\Annotation as JSR;
 
 /**
  * Example private method defined route.

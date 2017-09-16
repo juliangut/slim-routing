@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing;
 
-use Jgut\Slim\Routing\Loader\LoaderInterface;
-use Jgut\Slim\Routing\Source\SourceFactory;
-use Jgut\Slim\Routing\Source\SourceInterface;
+use Jgut\Slim\Routing\Mapping\RouteMetadata;
+use Jgut\Slim\Routing\Mapping\Source\SourceFactory;
 use Psr\Container\ContainerInterface;
+use Slim\Route;
 
 /**
  * Routing manager.
@@ -31,18 +31,11 @@ class Manager
     protected $configuration;
 
     /**
-     * Loader list.
+     * Route resolver.
      *
-     * @var array
+     * @var Resolver
      */
-    protected $loaders = [];
-
-    /**
-     * Route compiler.
-     *
-     * @var RouteCompiler
-     */
-    protected $compiler;
+    protected $resolver;
 
     /**
      * Routing Manager constructor.
@@ -55,29 +48,52 @@ class Manager
     }
 
     /**
+     * Get route resolver.
+     *
+     * @return Resolver
+     */
+    public function getResolver(): Resolver
+    {
+        if (!$this->resolver) {
+            $this->resolver = new Resolver($this->configuration);
+        }
+
+        return $this->resolver;
+    }
+
+    /**
+     * Set route resolver.
+     *
+     * @param Resolver $resolver
+     */
+    public function setResolver(Resolver $resolver)
+    {
+        $this->resolver = $resolver;
+    }
+
+    /**
      * Register routes into Slim router.
      *
      * @param ContainerInterface $container
      *
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
     public function registerRoutes(ContainerInterface $container)
     {
+        /* @var \Slim\Router $router */
         $router = $container->get('router');
         $buffering = $container->get('settings')['outputBuffering'];
 
         foreach ($this->getRoutes() as $route) {
             /* @var \Slim\Route $slimRoute */
-            $slimRoute = $router->map(
-                $route->getMethods(),
-                $this->getCompoundPath($route),
-                $route->getInvokable()
-            );
+            $slimRoute = $router->map($route->getMethods(), $route->getPattern(), $route->getCallable());
             $slimRoute->setContainer($container);
             $slimRoute->setOutputBuffering($buffering);
 
-            if ($route->getName() !== '') {
-                $slimRoute->setName($route->getName());
+            $name = $route->getName();
+            if ($name !== null) {
+                $slimRoute->setName($name);
             }
 
             foreach ($route->getMiddleware() as $middleware) {
@@ -89,195 +105,59 @@ class Manager
     /**
      * Get routes.
      *
-     * @throws \RuntimeException
-     *
      * @return Route[]
      */
     public function getRoutes(): array
     {
+        $resolver = $this->getResolver();
+
         $routes = [];
-        foreach ($this->configuration->getSources() as $source) {
-            $source = SourceFactory::getSource($source);
 
-            $routingSources = $this->getLoader($source)->load($source->getPaths());
-            $routes[] = $this->getCompiler()->getRoutes($routingSources);
-        }
+        foreach ($this->getRoutesMetadata() as $routeMetadata) {
+            $methods = $resolver->getMethods($routeMetadata);
+            $pattern = $resolver->getPattern($routeMetadata);
+            $callable = $routeMetadata->getInvokable();
 
-        $routes = count($routes) ? array_merge(...$routes) : [];
+            $slimRoute = new Route($methods, $pattern, $callable);
 
-        $this->checkDuplicatedRouteNames($routes);
-        $this->checkDuplicatedRoutePaths($routes);
-
-        $this->stableUsort(
-            $routes,
-            function (Route $routeA, Route $routeB) {
-                return $routeA->getPriority() <=> $routeB->getPriority();
+            $name = $resolver->getName($routeMetadata);
+            if ($name !== '') {
+                $slimRoute->setName($name);
             }
-        );
+
+            foreach ($routeMetadata->getMiddleware() as $middleware) {
+                $slimRoute->add($middleware);
+            }
+
+            $routes[] = $slimRoute;
+        }
 
         return $routes;
     }
 
     /**
-     * Check duplicated route names.
+     * Get routes metadata.
      *
-     * @param Route[] $routes
-     *
+     * @throws \InvalidArgumentException
      * @throws \RuntimeException
+     *
+     * @return RouteMetadata[]
      */
-    protected function checkDuplicatedRouteNames(array $routes)
+    protected function getRoutesMetadata(): array
     {
-        $names = array_filter(array_map(
-            function (Route $route) {
-                return $route->getName();
-            },
-            $routes
-        ));
+        $routesMetadata = [];
+        foreach ($this->configuration->getSources() as $source) {
+            $source = SourceFactory::getSource($source);
 
-        $duplicatedNames = array_unique(array_diff_assoc($names, array_unique($names)));
-        if (count($duplicatedNames)) {
-            throw new \RuntimeException('There are duplicated route names: ' . implode(', ', $duplicatedNames));
-        }
-    }
-
-    /**
-     * Check duplicated route paths.
-     *
-     * @param Route[] $routes
-     *
-     * @throws \RuntimeException
-     */
-    protected function checkDuplicatedRoutePaths(array $routes)
-    {
-        $paths = array_map(
-            function (Route $route) {
-                return array_map(
-                    function (string $method) use ($route) {
-                        return sprintf(
-                            '%s %s',
-                            $method,
-                            preg_replace('/\{.+:/', '{', $this->getCompoundPath($route))
-                        );
-                    },
-                    $route->getMethods()
-                );
-            },
-            $routes
-        );
-
-        $paths = count($paths) ? array_merge(...$paths) : [];
-
-        $duplicatedPaths = array_unique(array_diff_assoc($paths, array_unique($paths)));
-        if (count($duplicatedPaths)) {
-            throw new \RuntimeException('There are duplicated routes: ' . implode(', ', $duplicatedPaths));
-        }
-    }
-
-    /**
-     * Get compound path.
-     *
-     * @param Route $route
-     *
-     * @return string
-     */
-    protected function getCompoundPath(Route $route): string
-    {
-        $path = $route->getPattern();
-        $regex = $route->getPlaceholders();
-
-        if (preg_match_all('/\{(.+)\}/', $path, $parameter)) {
-            $parameter = array_column($parameter, 0);
-
-            if (array_key_exists($parameter[1], $regex)) {
-                $path = str_replace(
-                    $parameter[0],
-                    sprintf('{%s:%s}', $parameter[1], $regex[$parameter[1]]),
-                    $path
-                );
-            }
+            $routesMetadata[] = $source->getRoutingMetadata();
         }
 
-        return $path;
-    }
+        $resolver = $this->getResolver();
 
-    /**
-     * Get loader from source.
-     *
-     * @param SourceInterface $source
-     *
-     * @return LoaderInterface
-     */
-    protected function getLoader(SourceInterface $source): LoaderInterface
-    {
-        $loaderClass = $source->getLoaderClass();
+        $routesMetadata = $resolver->sort(count($routesMetadata) ? array_merge(...$routesMetadata) : []);
 
-        if (!array_key_exists($loaderClass, $this->loaders)) {
-            $this->loaders[$loaderClass] = new $loaderClass($this->configuration);
-        }
+        $resolver->checkDuplicatedRoutes($routesMetadata);
 
-        return $this->loaders[$loaderClass];
-    }
-
-    /**
-     * Get route compiler.
-     *
-     * @return RouteCompiler
-     */
-    protected function getCompiler(): RouteCompiler
-    {
-        if ($this->compiler === null) {
-            // @codeCoverageIgnoreStart
-            $this->compiler = new RouteCompiler($this->configuration);
-            // @codeCoverageIgnoreEnd
-        }
-
-        return $this->compiler;
-    }
-
-    /**
-     * Set route compiler.
-     *
-     * @param RouteCompiler $compiler
-     */
-    public function setCompiler(RouteCompiler $compiler)
-    {
-        $this->compiler = $compiler;
-    }
-
-    /**
-     * Stable usort.
-     * Keeps original order when sorting function returns 0.
-     *
-     * @param array    $array
-     * @param callable $sortFunction
-     *
-     * @return bool
-     */
-    private function stableUsort(array &$array, callable $sortFunction): bool
-    {
-        array_walk(
-            $array,
-            function (&$item, $key) {
-                $item = [$key, $item];
-            }
-        );
-
-        $result = usort(
-            $array,
-            function (array $itemA, array $itemB) use ($sortFunction) {
-                $result = $sortFunction($itemA[1], $itemB[1]);
-
-                return $result === 0 ? $itemA[0] - $itemB[0] : $result;
-            }
-        );
-
-        array_walk(
-            $array,
-            function (&$item) {
-                $item = $item[1];
-            }
-        );
-
-        return $result;
+        return $routesMetadata;
     }
 }

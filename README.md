@@ -52,13 +52,15 @@ $app->run();
 
 ### Configuration
 
-* `sources`, array of directories (annotations) or files (annotations, php, json or yml) to extract routing from
-* `placeholderAliases` array of placeholder aliases. There are some default aliases already provided:
+* `sources`, sources to extract routing from. must be an array of
+  * instances of \Jgut\Slim\Routing\Mapping\Source or
+  * paths to a directory (annotations) or php, json or yml definition file
+* `placeholderAliases` array of placeholder aliases. There are some default aliases already available:
   * numeric => `\d+`
   * alpha => `[a-zA-Z]+`
   * alnum => `[a-zA-Z0-9]+`
   * any => `.+`
-* `namingStrategy`, instance of \Jgut\Slim\Routing\Naming\NamingInterface, \Jgut\Slim\Routing\Naming\SnakeCase by default
+* `namingStrategy`, instance of \Jgut\Slim\Routing\Naming\NamingInterface (\Jgut\Slim\Routing\Naming\SnakeCase by default)
 
 ### Annotations
 
@@ -67,7 +69,7 @@ $app->run();
 This annotation is just a mark to identify classes defining routes
 
 ```php
-use Jgut\Slim\Routing\Annotation as JSR
+use Jgut\Slim\Routing\Mapping\Annotation as JSR
 
 /**
  * @JSR\Router
@@ -82,7 +84,7 @@ class Home
 Defines a group in which routes may reside. It is not mandatory unless you want to do route grouping or apply middleware to several routes at the same time
 
 ```php
-use Jgut\Slim\Routing\Annotation as JSR
+use Jgut\Slim\Routing\Mapping\Annotation as JSR
 
 /**
  * @JSR\Router
@@ -112,7 +114,7 @@ class Section
 Defines the final routes added to Slim
 
 ```php
-use Jgut\Slim\Routing\Annotation as JSR
+use Jgut\Slim\Routing\Mapping\Annotation as JSR
 
 /**
  * @JSR\Router
@@ -136,8 +138,8 @@ class Section
 ```
 
 * `name`, optional, route name so it can be referenced in Slim
+* `pattern`, optional, route path pattern (defaults to '/')
 * `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to [GET, POST, PUT, PATCH, DELETE], if ANY is used no other method is allowed (defaults to GET)
-* `pattern`, route path pattern
 * `placeholders`, optional, array of regex/alias for path placeholders
 * `middleware`, optional, array of middleware to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
@@ -231,30 +233,30 @@ composer require symfony/yaml
 ```
 
 ```yaml
-// Group
+# Group
 - prefix: prefix
   pattern: group-pattern
   placeholders: [group-placeholders]
   middleware: [group-middleware]
   routes:
-    // Route
+    # Route
     - name: routeName
       methods: [GET, POST]
       priority: 0
       pattern: route-pattern
       placeholders: [route-placeholders]
       middleware: [route-middleware]
-    // Subgroup
+    # Subgroup
     - pattern: group-pattern
       placeholders: [group-placeholders]
       middleware: [group-middleware]
       routes:
-        // Routes/groups
-        // ...
-    // Routes/groups
-    // ...
-// Routes/groups
-// ...
+        # Routes/groups
+        # ...
+    # Routes/groups
+    # ...
+# Routes/groups
+# ...
 ```
 
 #### Group
@@ -269,11 +271,12 @@ Defines a group in which routes may reside.
 
 #### Route
 
-Defines the final route added to Slim
+Defines a route added to Slim
 
+* `invokable`, callable to be invoked on route match. Can be a container entry, class name or an array of [class, method]
 * `name`, optional, route name so it can be referenced in Slim
+* `pattern`, optional, route path pattern ()defaults to '/')
 * `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to [GET, POST, PUT, PATCH, DELETE], if ANY is used no other method is allowed (defaults to GET)
-* `pattern`, route path pattern
 * `placeholders`, optional, array of regex for path placeholders
 * `middleware`, optional, array of middleware to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
@@ -284,31 +287,31 @@ _What tells apart groups from routes is the presence of the `routes` key_
 
 ### Name
 
-Final route name is composed of the concatenation of group prefixes (referenced by the "prefix" parameter on annotations) and finally route name according to selected route naming strategy
+Final route name is composed of the concatenation of group prefixes followed by route name according to selected route naming strategy
 
 ### Pattern
 
-Resulting route pattern is composed of the concatenation of group pattern (referenced by the "group" parameter on annotations) and finally route pattern
-
-It is important to pay attention not to duplicate placeholder names in the resulting pattern as this can't be handled by FastRoute. Check group tree patterns for placeholder names
+Resulting route pattern is composed of the concatenation of group patterns and finally route pattern
 
 ### Placeholders
 
-Resulting placeholders regex list is composed of all group placeholders (referenced by the "group" parameter on annotations) and finally route placeholders
+Resulting placeholders list is composed of all group placeholders if any and route placeholders
+
+It is important to pay attention not to duplicate placeholder names in the resulting pattern as this can't be handled by FastRoute. Check group tree patterns for placeholder names
 
 ### Middleware
 
-Resulting middleware applied to a route will be the result of combining group middleware (referenced by the "group" parameter on annotations) and finally route middleware
+Resulting middleware applied to a route will be the result of combining group middleware and route middleware
 
-The only drawback of using middleware with annotations is that every middleware must be registered in the container as they are just a list of strings (services pulled from the container)
+There is a drawback on defining middleware in any other format but PHP definition files. You cannot use a callable, only strings so that middleware must be a reference to a container entry
 
 ## Considerations
 
 Important to note is the order in which the middleware is assigned to each route:
 
 * Firstly route middleware will be applied in the order they are defined
-* Then group (if any) middleware are to be applied in the order they are defined
-* Finally if there are more groups above (reference by the "group" parameter on annotations) they are applied in the order they are defined, this continues up the group tree until there are no more groups
+* Then group (if any) middleware are to be applied in the same order they are defined
+* Finally if there are more groups, walking up the group tree, their middleware are applied in the order they are defined
 
 ## Contributing
 
