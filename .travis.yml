@@ -36,7 +36,7 @@ before_install:
 
 install:
   - travis_retry composer update $COMPOSER_FLAGS --no-interaction --no-scripts --no-progress
-  - if [[ $TEST_VERSION ]]; then travis_retry composer require satooshi/php-coveralls:dev-master $COMPOSER_FLAGS --no-interaction --no-scripts --no-progress ; fi
+  - if [[ $TEST_VERSION ]]; then travis_retry composer require php-coveralls/php-coveralls $COMPOSER_FLAGS --no-interaction --no-scripts --no-progress ; fi
 
 script:
   - if [[ $TEST_VERSION ]]; then composer qa && composer phpunit-clover ; fi
