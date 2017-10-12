@@ -85,18 +85,24 @@ class Manager
         $router = $container->get('router');
         $buffering = $container->get('settings')['outputBuffering'];
 
-        foreach ($this->getRoutes() as $route) {
+        $resolver = $this->getResolver();
+
+        foreach ($this->getRoutesMetadata() as $routeMetadata) {
+            $methods = $resolver->getMethods($routeMetadata);
+            $pattern = $resolver->getPattern($routeMetadata);
+            $callable = $routeMetadata->getInvokable();
+
             /* @var \Slim\Route $slimRoute */
-            $slimRoute = $router->map($route->getMethods(), $route->getPattern(), $route->getCallable());
+            $slimRoute = $router->map($methods, $pattern, $callable);
             $slimRoute->setContainer($container);
             $slimRoute->setOutputBuffering($buffering);
 
-            $name = $route->getName();
-            if ($name !== null) {
+            $name = $resolver->getName($routeMetadata);
+            if ($name !== '') {
                 $slimRoute->setName($name);
             }
 
-            foreach ($route->getMiddleware() as $middleware) {
+            foreach ($routeMetadata->getMiddleware() as $middleware) {
                 $slimRoute->add($middleware);
             }
         }

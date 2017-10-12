@@ -56,6 +56,48 @@ class ManagerTest extends TestCase
         self::assertEquals($resolver, $manager->getResolver());
     }
 
+    public function testRoutes()
+    {
+        $routesMetadata = [
+            (new RouteMetadata())
+                ->setPrefixes(['pref'])
+                ->setMethods(['GET'])
+                ->setPattern('/one/{id}')
+                ->setPlaceholders(['id' => 'numeric'])
+                ->setInvokable(['one', 'action']),
+            (new RouteMetadata())
+                ->setMethods(['POST'])
+                ->setPattern('/two')
+                ->setName('two')
+                ->setMiddleware(['twoMiddleware'])
+                ->setInvokable(['two', 'action']),
+        ];
+
+        $configuration = $this->getMockBuilder(Configuration::class)
+            ->setMethods(['getSources'])
+            ->getMock();
+        $configuration->expects(self::once())
+            ->method('getSources')
+            ->will(self::returnValue([__DIR__ . '/Files/Annotation/Valid']));
+        /* @var Configuration $configuration */
+
+        $resolver = $this->getMockBuilder(Resolver::class)
+            ->setConstructorArgs([$configuration])
+            ->setMethods(['sort'])
+            ->getMock();
+        $resolver->expects(self::once())
+            ->method('sort')
+            ->will(self::returnValue($routesMetadata));
+        /* @var Resolver $resolver */
+
+        $manager = new Manager($configuration);
+        $manager->setResolver($resolver);
+
+        $routes = $manager->getRoutes();
+
+        self::assertCount(2, $routes);
+    }
+
     public function testRouteRegistration()
     {
         $routesMetadata = [
