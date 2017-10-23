@@ -96,14 +96,12 @@ class ManagerTest extends TestCase
         self::assertCount(2, $routes);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage There are no defined routes
-     */
     public function testNoRoutes()
     {
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
+        $container->expects($this->never())
+            ->method('get');
         /* @var ContainerInterface $container */
 
         $configuration = $this->getMockBuilder(Configuration::class)

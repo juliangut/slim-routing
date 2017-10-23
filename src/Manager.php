@@ -83,7 +83,7 @@ class Manager
     {
         $routes = $this->getRoutesMetadata();
         if (!count($routes)) {
-            throw new \RuntimeException('There are no defined routes');
+            return;
         }
 
         /* @var \Slim\Router $router */
