@@ -148,7 +148,7 @@ class Manager
     /**
      * Get routes metadata.
      *
-     * @return \Jgut\SLim\Routing\Mapping\Metadata\RouteMetadata[]
+     * @return \Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata[]
      */
     protected function getRoutesMetadata(): array
     {

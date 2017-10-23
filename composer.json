@@ -69,7 +69,7 @@
     "phpcs-lint": "php-cs-fixer fix --dry-run --verbose",
     "phpcpd": "phpcpd src",
     "phpmd": "phpmd src text unusedcode,naming,design,controversial,codesize",
-    "phpmetrics-report": "phpmetrics --report-html=build/metrics/index.html --report-violations=build/logs/violations.xml --offline src",
+    "phpmetrics-report": "phpmetrics --report-html=build/metrics --report-violations=build/logs/violations.xml --offline .",
     "phpstan": "phpstan analyse --level 7 src",
     "phpunit": "phpunit",
     "phpunit-coverage": "phpunit --coverage-html build/coverage",
