@@ -15,8 +15,8 @@ namespace Jgut\Slim\Routing\Tests\Source;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Jgut\Slim\Routing\Mapping\Driver\AnnotationDriver;
-use Jgut\Slim\Routing\Mapping\Loader\AnnotationLoader;
-use Jgut\Slim\Routing\Mapping\RouteMetadata;
+use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
+use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -43,18 +43,13 @@ class AnnotationDriverTest extends TestCase
      */
     public function testConstructorDefinedRoute()
     {
-        $loader = $this->getMockBuilder(AnnotationLoader::class)
-            ->getMock();
-        $loader->expects(self::any())
-            ->method('getMappingData')
-            ->will($this->returnValue(
-                ['Jgut\Slim\Routing\Tests\Files\Annotation\Invalid\ConstructorDefined\ConstructorDefinedRoute']
-            ));
-        /* @var AnnotationLoader $loader */
+        $paths = [
+            dirname(__DIR__, 2) . '/Files/Annotation/Invalid/ConstructorDefined/ConstructorDefinedRoute.php',
+        ];
 
-        $driver = new AnnotationDriver($loader, $this->reader);
+        $driver = new AnnotationDriver($paths, $this->reader);
 
-        $driver->getRoutingMetadata([]);
+        $driver->getMetadata();
     }
 
     /**
@@ -63,18 +58,13 @@ class AnnotationDriverTest extends TestCase
      */
     public function testPrivateDefinedRoute()
     {
-        $loader = $this->getMockBuilder(AnnotationLoader::class)
-            ->getMock();
-        $loader->expects(self::any())
-            ->method('getMappingData')
-            ->will($this->returnValue(
-                ['Jgut\Slim\Routing\Tests\Files\Annotation\Invalid\PrivateDefined\PrivateDefinedRoute']
-            ));
-        /* @var AnnotationLoader $loader */
+        $paths = [
+            dirname(__DIR__, 2) . '/Files/Annotation/Invalid/PrivateDefined/PrivateDefinedRoute.php',
+        ];
 
-        $driver = new AnnotationDriver($loader, $this->reader);
+        $driver = new AnnotationDriver($paths, $this->reader);
 
-        $driver->getRoutingMetadata([]);
+        $driver->getMetadata();
     }
 
     /**
@@ -83,133 +73,112 @@ class AnnotationDriverTest extends TestCase
      */
     public function testNoRoutesRoute()
     {
-        $loader = $this->getMockBuilder(AnnotationLoader::class)
-            ->getMock();
-        $loader->expects(self::any())
-            ->method('getMappingData')
-            ->will($this->returnValue(
-                ['Jgut\Slim\Routing\Tests\Files\Annotation\Invalid\NoRoutes\NoRoutesRoute']
-            ));
-        /* @var AnnotationLoader $loader */
+        $paths = [
+            dirname(__DIR__, 2) . '/Files/Annotation/Invalid/NoRoutes/NoRoutesRoute.php',
+        ];
 
-        $driver = new AnnotationDriver($loader, $this->reader);
+        $driver = new AnnotationDriver($paths, $this->reader);
 
-        $driver->getRoutingMetadata([]);
+        $driver->getMetadata();
     }
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessageRegExp /^Referenced group "unknown" on class .+ is not defined$/
+     * @expectedExceptionMessage Parent group unknown does not exist
      */
     public function testUnknownGroupRoute()
     {
-        $loader = $this->getMockBuilder(AnnotationLoader::class)
-            ->getMock();
-        $loader->expects(self::any())
-            ->method('getMappingData')
-            ->will($this->returnValue(
-                ['Jgut\Slim\Routing\Tests\Files\Annotation\Invalid\UnknownGroup\UnknownGroupRoute']
-            ));
-        /* @var AnnotationLoader $loader */
+        $paths = [
+            dirname(__DIR__, 2) . '/Files/Annotation/Invalid/UnknownGroup/UnknownGroupRoute.php',
+        ];
 
-        $driver = new AnnotationDriver($loader, $this->reader);
+        $driver = new AnnotationDriver($paths, $this->reader);
 
-        $driver->getRoutingMetadata([]);
+        $driver->getMetadata();
     }
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessageRegExp /^Circular reference detected with group "circular" on class .+$/
+     * @expectedExceptionMessage Circular group reference detected
      */
     public function testCircularReferenceRoute()
     {
-        $loader = $this->getMockBuilder(AnnotationLoader::class)
-            ->getMock();
-        $loader->expects(self::any())
-            ->method('getMappingData')
-            ->will($this->returnValue(
-                ['Jgut\Slim\Routing\Tests\Files\Annotation\Invalid\CircularReference\CircularReferenceRoute']
-            ));
-        /* @var AnnotationLoader $loader */
+        $paths = [
+            dirname(__DIR__, 2) . '/Files/Annotation/Invalid/CircularReference/CircularReferenceRoute.php',
+        ];
 
-        $driver = new AnnotationDriver($loader, $this->reader);
+        $driver = new AnnotationDriver($paths, $this->reader);
 
-        $driver->getRoutingMetadata([]);
+        $route = $driver->getMetadata()[0];
+
+        $route->getGroupChain();
     }
 
     public function testRoutes()
     {
-        $loader = $this->getMockBuilder(AnnotationLoader::class)
-            ->getMock();
-        $loader->expects(self::any())
-            ->method('getMappingData')
-            ->will($this->returnValue([
-                'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\AbstractRoute',
-                'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\DependentRoute',
-                'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\GroupedRoute',
-                'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\SingleRoute',
-            ]));
-        /* @var AnnotationLoader $loader */
+        $paths = [
+            dirname(__DIR__, 2) . '/Files/Annotation/Valid/AbstractRoute.php',
+            dirname(__DIR__, 2) . '/Files/Annotation/Valid/DependentRoute.php',
+            dirname(__DIR__, 2) . '/Files/Annotation/Valid/GroupedRoute.php',
+            dirname(__DIR__, 2) . '/Files/Annotation/Valid/SingleRoute.php',
+        ];
 
-        $driver = new AnnotationDriver($loader, $this->reader);
+        $driver = new AnnotationDriver($paths, $this->reader);
 
         /* @var RouteMetadata[] $routes */
-        $routes = $driver->getRoutingMetadata([]);
+        $routes = $driver->getMetadata();
 
         $route = $routes[0];
         self::assertInstanceOf(RouteMetadata::class, $route);
-        self::assertEquals(['abstract', 'grouped'], $route->getPrefixes());
+        self::assertInstanceOf(GroupMetadata::class, $route->getGroup());
         self::assertEquals('four', $route->getName());
-        self::assertEquals(0, $route->getPriority());
         self::assertEquals(['GET'], $route->getMethods());
-        self::assertEquals('/abstract/dependent/four', $route->getPattern());
-        self::assertEquals([], $route->getPlaceholders());
-        self::assertEquals(['fourMiddleware', 'dependentMiddleware', 'abstractMiddleware'], $route->getMiddleware());
         self::assertEquals(
             ['Jgut\Slim\Routing\Tests\Files\Annotation\Valid\DependentRoute', 'actionFour'],
             $route->getInvokable()
         );
+        self::assertEquals(0, $route->getPriority());
+        self::assertEquals('four', $route->getPattern());
+        self::assertEquals([], $route->getPlaceholders());
+        self::assertEquals(['fourMiddleware'], $route->getMiddleware());
 
         $route = $routes[1];
         self::assertInstanceOf(RouteMetadata::class, $route);
-        self::assertEquals([], $route->getPrefixes());
-        self::assertEquals('', $route->getName());
-        self::assertEquals(0, $route->getPriority());
+        self::assertNull($route->getName());
         self::assertEquals(['GET'], $route->getMethods());
-        self::assertEquals('/grouped/{section}/two/{id}', $route->getPattern());
-        self::assertEquals(['section' => '[A-Za-z]+'], $route->getPlaceholders());
-        self::assertEquals(['twoMiddleware', 'groupedMiddleware'], $route->getMiddleware());
         self::assertEquals(
             ['Jgut\Slim\Routing\Tests\Files\Annotation\Valid\GroupedRoute', 'actionTwo'],
             $route->getInvokable()
         );
+        self::assertEquals(0, $route->getPriority());
+        self::assertEquals('two/{id}', $route->getPattern());
+        self::assertEquals([], $route->getPlaceholders());
+        self::assertEquals(['twoMiddleware'], $route->getMiddleware());
 
         $route = $routes[2];
         self::assertInstanceOf(RouteMetadata::class, $route);
-        self::assertEquals([], $route->getPrefixes());
-        self::assertEquals('', $route->getName());
-        self::assertEquals(0, $route->getPriority());
+        self::assertNull($route->getName());
         self::assertEquals(['GET'], $route->getMethods());
-        self::assertEquals('/grouped/{section}/three/{id}', $route->getPattern());
-        self::assertEquals(['section' => '[A-Za-z]+', 'id' => '\d+'], $route->getPlaceholders());
-        self::assertEquals(['groupedMiddleware'], $route->getMiddleware());
         self::assertEquals(
             ['Jgut\Slim\Routing\Tests\Files\Annotation\Valid\GroupedRoute', 'actionThree'],
             $route->getInvokable()
         );
+        self::assertEquals(0, $route->getPriority());
+        self::assertEquals('three/{id}', $route->getPattern());
+        self::assertEquals(['id' => '\d+'], $route->getPlaceholders());
+        self::assertEquals([], $route->getMiddleware());
 
         $route = $routes[3];
         self::assertInstanceOf(RouteMetadata::class, $route);
-        self::assertEquals([], $route->getPrefixes());
         self::assertEquals('one', $route->getName());
-        self::assertEquals(-10, $route->getPriority());
         self::assertEquals(['GET', 'POST'], $route->getMethods());
-        self::assertEquals('/one/{id}', $route->getPattern());
-        self::assertEquals(['id' => 'numeric'], $route->getPlaceholders());
-        self::assertEquals(['oneMiddleware'], $route->getMiddleware());
         self::assertEquals(
             ['Jgut\Slim\Routing\Tests\Files\Annotation\Valid\SingleRoute', 'actionOne'],
             $route->getInvokable()
         );
+        self::assertEquals(-10, $route->getPriority());
+        self::assertEquals('one/{id}', $route->getPattern());
+        self::assertEquals(['id' => 'numeric'], $route->getPlaceholders());
+        self::assertEquals(['oneMiddleware'], $route->getMiddleware());
     }
 }

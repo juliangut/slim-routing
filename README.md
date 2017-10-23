@@ -14,9 +14,14 @@
 
 Annotation and configuration based Slim framework routing
 
-Routes are defined either by class annotations (in controllers) or in routing definition files (currently php, json and yaml available) and automatically inserted into Slim's router
+Thanks to this library, instead of configuring routes by hand one by one and including them into Slim's router you can create mapping files that define and structure your routes and let them be included into the router.
 
-> Routing load and compilation can be a heavy load process depending on how many classes and routes are defined. For this reason it's advised to always use Slim's router caching on production applications and invalidate cache on deployment
+If you're familiar with how Doctrine defines entities mappings you'll feel at home with slim-routing because much as how Doctrine does route mappings are defined either
+
+* On class annotations (in controllers)
+* In routing definition files, currently supported in PHP, Json, XML and YAML
+
+> Routing gathering and compilation can be quite a heavy load process depending on how many classes/files and routes are defined. For this reason it's advised to always use [Slim's router cache](https://www.slimframework.com/docs/objects/application.html#slim-default-settings) on production applications and invalidate cache on deployment
 
 ## Installation
 
@@ -24,6 +29,12 @@ Routes are defined either by class annotations (in controllers) or in routing de
 
 ```
 composer require juliangut/slim-routing
+```
+
+symfony/yaml to parse yaml files
+
+```
+composer require symfony/yaml
 ```
 
 ## Usage
@@ -52,10 +63,11 @@ $app->run();
 
 ### Configuration
 
-* `sources`, sources to extract routing from. must be an array of
-  * instances of \Jgut\Slim\Routing\Mapping\Source or
-  * paths to a directory (annotations) or php, json or yml definition file
-* `placeholderAliases` array of placeholder aliases. There are some default aliases already available:
+* `sources` must be an array containing arrays of configurations to create MappingDriver objects:
+    * `type` one of \Jgut\Slim\Routing\Mapping\Driver\DriverInterface constants: `DRIVER_ANNOTATION`, `DRIVER_PHP`, `DRIVER_JSON`, `DRIVER_XML` or `DRIVER_YAML` **defaults to DRIVER_ANNOTATION if no driver**
+    * `path` a string path or array of paths to where mapping files are located (files or directories) **REQUIRED if no driver**
+    * `driver` an already created \Jgut\Slim\Routing\Mapping\Driver\DriverInterface object **REQUIRED if no type AND path**
+* `placeholderAliases` array of additional placeholder aliases. There are some default aliases already available:
   * numeric => `\d+`
   * alpha => `[a-zA-Z]+`
   * alnum => `[a-zA-Z0-9]+`
@@ -66,7 +78,7 @@ $app->run();
 
 #### Router (Class level)
 
-This annotation is just a mark to identify classes defining routes
+This annotation is just a mark to identify classes defining routes. Its presence is mandatory
 
 ```php
 use Jgut\Slim\Routing\Mapping\Annotation as JSR
@@ -92,7 +104,7 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR
  *     name="groupName",
  *     prefix="routePrefix",
  *     parent="parentGroupName",
- *     pattern="/section/{name}",
+ *     pattern="section/{name}",
  *     placeholders={"name": "[a-z]+"},
  *     middleware={"groupMiddlewareName"}
  * )
@@ -102,16 +114,16 @@ class Section
 }
 ```
 
-* `name`, optional, group name so it can be referenced by another route in order to create a group tree
+* `name`, optional, group name so it can be referenced by another group in order to create a group tree
 * `prefix`, optional, prefix to be prepended to route names
-* `parent`, optional, references a parent group
-* `pattern`, optional, group path pattern
+* `parent`, optional, references a parent group's _name_
+* `pattern`, optional, path pattern
 * `placeholders`, optional, array of regex/alias for path placeholders, 
 * `middleware`, optional, array of middleware to be added to all group routes
 
 #### Route (Method level)
 
-Defines the final routes added to Slim
+Defines the final routes added to Slim's router
 
 ```php
 use Jgut\Slim\Routing\Mapping\Annotation as JSR
@@ -125,7 +137,7 @@ class Section
      * @JSR\Route(
      *     name="routeNamme",
      *     methods={"GET", "POST"},
-     *     pattern="/do/{action}",
+     *     pattern="do/{action}",
      *     placeholders={"action": "[a-z0-9]+"},
      *     middleware={"routeMiddlewareName"},
      *     priority=-10,
@@ -138,8 +150,8 @@ class Section
 ```
 
 * `name`, optional, route name so it can be referenced in Slim
-* `pattern`, optional, route path pattern (defaults to '/')
-* `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to [GET, POST, PUT, PATCH, DELETE], if ANY is used no other method is allowed (defaults to GET)
+* `pattern`, optional, path pattern (defaults to '/')
+* `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed in the list (defaults to GET)
 * `placeholders`, optional, array of regex/alias for path placeholders
 * `middleware`, optional, array of middleware to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
@@ -172,16 +184,13 @@ return [
         'placeholders' => ['group-placeholders'],
         'middleware' => ['group-middleware'],
         'routes' => [
-          // Routes/groups
-          // ...
+          // Routes/groups ...
         ],
       ],
-      // Routes/groups
-      // ...
+      // Routes/groups ...
     ],
   ],
-  // Routes/groups
-  // ...
+  // Routes/groups ...
 ]
 ```
 
@@ -211,26 +220,60 @@ return [
         "placeholders": ["group-placeholders"],
         "middleware": ["group-middleware"],
         "routes": [
-          // Routes/groups
-          // ...
+          // Routes/groups ...
         ]
       }
-      // Routes/groups
-      // ...
+      // Routes/groups ...
     ]
   }
-  // Routes/groups
-  // ...
+  // Routes/groups ...
 ]
 ```
 
+###### XML
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <group1 prefix="prefix" pattern="group-pattern">
+        <placeholders>
+            <placeholder1>group-placeholder</group-placeholder1>
+        </placeholders>
+        <middleware>
+            <middleware1>group-middleware</middleware1>
+        </middleware>
+        <routes>
+            <route1 name="routeName" priority="0" pattern="route-pattern">
+                <methods>
+                    <method1>GET</method1>
+                    <method2>POST</method2>
+                </methods>
+                <placeholders>
+                    <placeholder1>route-placeholder</placeholder1>
+                </placeholders>
+                <middleware>
+                    <middleware1>route-middleware</middleware1>
+                </middleware>
+            </route1>
+            <subgroup1 prefix="prefix" pattern="group-pattern">
+                <placeholders>
+                    <placeholder1>group-placeholder</group-placeholder1>
+                </placeholders>
+                <middleware>
+                    <middleware1>group-middleware</middleware1>
+                </middleware>
+                <routes>
+                    <!-- Routes/groups... -->
+                </routes>
+            </subgroup1>
+            <!-- Routes/groups... -->
+        </routes>
+    </group1>
+    <!-- Routes/groups... -->
+</root>
+```
+
 ###### YAML
-
-Requires symfony/yaml to parse yaml files
-
-```
-composer require symfony/yaml
-```
 
 ```yaml
 # Group
@@ -251,21 +294,18 @@ composer require symfony/yaml
       placeholders: [group-placeholders]
       middleware: [group-middleware]
       routes:
-        # Routes/groups
-        # ...
-    # Routes/groups
-    # ...
-# Routes/groups
-# ...
+        # Routes/groups ...
+    # Routes/groups ...
+# Routes/groups ...
 ```
 
 #### Group
 
 Defines a group in which routes may reside.
 
-* `routes`, array of routes and/or subgroups
+* `routes`, array of routes and/or subgroups (this key identifies a group)
 * `prefix`, optional, prefix to be prepended to route names
-* `pattern`, optional, group path pattern
+* `pattern`, optional, path pattern
 * `placeholders`, optional, array of regex/alias for path placeholders, 
 * `middleware`, optional, array of middleware to be added to all group routes
 
@@ -275,13 +315,11 @@ Defines a route added to Slim
 
 * `invokable`, callable to be invoked on route match. Can be a container entry, class name or an array of [class, method]
 * `name`, optional, route name so it can be referenced in Slim
-* `pattern`, optional, route path pattern ()defaults to '/')
-* `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to [GET, POST, PUT, PATCH, DELETE], if ANY is used no other method is allowed (defaults to GET)
+* `pattern`, optional, path pattern (defaults to '/')
+* `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed (defaults to GET)
 * `placeholders`, optional, array of regex for path placeholders
 * `middleware`, optional, array of middleware to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
-
-_What tells apart groups from routes is the presence of the `routes` key_
 
 ## Route composition
 
@@ -311,7 +349,7 @@ Important to note is the order in which the middleware is assigned to each route
 
 * Firstly route middleware will be applied in the order they are defined
 * Then group (if any) middleware are to be applied in the same order they are defined
-* Finally if there are more groups, walking up the group tree, their middleware are applied in the order they are defined
+* If route group (if any) has a parent then parent's middleware are applied in the order they are defined, and this goes up until no group parent is defined
 
 ## Contributing
 

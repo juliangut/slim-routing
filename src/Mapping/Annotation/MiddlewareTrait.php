@@ -42,7 +42,7 @@ trait MiddlewareTrait
      *
      * @throws \InvalidArgumentException
      *
-     * @return $this
+     * @return static
      */
     public function setMiddleware($middlewareList)
     {

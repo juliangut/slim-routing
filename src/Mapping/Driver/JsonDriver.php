@@ -13,11 +13,14 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Mapping\Driver;
 
-use Jgut\Mapping\Driver\DriverInterface as BaseDriverInterface;
+use Jgut\Mapping\Driver\AbstractMappingDriver;
+use Jgut\Mapping\Driver\Traits\JsonMappingTrait;
 
 /**
- * Custom driver interface.
+ * JSON mapping driver.
  */
-interface DriverInterface extends BaseDriverInterface
+class JsonDriver extends AbstractMappingDriver implements DriverInterface
 {
+    use JsonMappingTrait;
+    use MappingTrait;
 }

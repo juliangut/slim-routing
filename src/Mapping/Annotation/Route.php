@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Mapping\Annotation;
 
+use Jgut\Mapping\Annotation\AbstractAnnotation;
+
 /**
  * Route annotation.
  *
@@ -29,7 +31,7 @@ class Route extends AbstractAnnotation
      *
      * @var string
      */
-    protected $name = '';
+    protected $name;
 
     /**
      * Route methods.
@@ -46,23 +48,11 @@ class Route extends AbstractAnnotation
     protected $priority = 0;
 
     /**
-     * Route annotation constructor.
-     *
-     * @param array $parameters
-     *
-     * @throws \InvalidArgumentException
-     */
-    public function __construct(array $parameters)
-    {
-        $this->seedParameters($parameters);
-    }
-
-    /**
      * Get route name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getName(): string
+    public function getName()
     {
         return $this->name;
     }
@@ -74,9 +64,9 @@ class Route extends AbstractAnnotation
      *
      * @throws \InvalidArgumentException
      *
-     * @return $this
+     * @return self
      */
-    public function setName(string $name)
+    public function setName(string $name): Route
     {
         if (strpos(trim($name), ' ') !== false) {
             throw new \InvalidArgumentException(sprintf('Route name must not contain spaces'));
@@ -106,11 +96,11 @@ class Route extends AbstractAnnotation
      *
      * @param array|string $methods
      *
-     * @throws \InvalidArgumentException
+     * @throws \UnexpectedValueException
      *
-     * @return $this
+     * @return self
      */
-    public function setMethods($methods)
+    public function setMethods($methods): Route
     {
         $this->methods = [];
 
@@ -121,7 +111,7 @@ class Route extends AbstractAnnotation
 
         foreach (array_filter($methods) as $method) {
             if (!is_string($method)) {
-                throw new \InvalidArgumentException(
+                throw new \UnexpectedValueException(
                     sprintf('Route annotation methods must be strings. "%s" given', gettype($method))
                 );
             }
@@ -132,7 +122,11 @@ class Route extends AbstractAnnotation
         $this->methods = array_unique(array_filter($this->methods, 'strlen'));
 
         if (!count($this->methods)) {
-            throw new \InvalidArgumentException('Route annotation methods can not be empty');
+            throw new \UnexpectedValueException('Route annotation methods can not be empty');
+        }
+
+        if (in_array('ANY', $this->methods, true) && count($this->methods) > 1) {
+            throw new \UnexpectedValueException('Route "ANY" method cannot be defined with other methods');
         }
 
         return $this;
@@ -153,9 +147,9 @@ class Route extends AbstractAnnotation
      *
      * @param int $priority
      *
-     * @return $this
+     * @return self
      */
-    public function setPriority(int $priority)
+    public function setPriority(int $priority): Route
     {
         $this->priority = $priority;
 

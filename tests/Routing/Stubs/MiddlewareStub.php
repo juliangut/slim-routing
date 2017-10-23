@@ -18,7 +18,7 @@ use Jgut\Slim\Routing\Mapping\Annotation\MiddlewareTrait;
 /**
  * Middleware annotation stub.
  */
-class MiddlewareStub extends AnnotationStub
+class MiddlewareStub
 {
     use MiddlewareTrait;
 }

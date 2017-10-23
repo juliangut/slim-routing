@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Mapping\Annotation;
 
+use Jgut\Mapping\Annotation\AbstractAnnotation;
+
 /**
  * Router annotation.
  *
@@ -29,38 +31,28 @@ class Group extends AbstractAnnotation
      *
      * @var string
      */
-    protected $name = '';
+    protected $name;
 
     /**
      * Parent group.
      *
      * @var string
      */
-    protected $parent = '';
+    protected $parent;
 
     /**
      * Group name prefix.
      *
      * @var string
      */
-    protected $prefix = '';
-
-    /**
-     * Router constructor.
-     *
-     * @param array $parameters
-     */
-    public function __construct(array $parameters)
-    {
-        $this->seedParameters($parameters);
-    }
+    protected $prefix;
 
     /**
      * Get group name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getName(): string
+    public function getName()
     {
         return $this->name;
     }
@@ -72,9 +64,9 @@ class Group extends AbstractAnnotation
      *
      * @throws \InvalidArgumentException
      *
-     * @return $this
+     * @return self
      */
-    public function setName(string $name)
+    public function setName(string $name): Group
     {
         if (strpos(trim($name), ' ') !== false) {
             throw new \InvalidArgumentException(sprintf('Group name must not contain spaces'));
@@ -92,9 +84,9 @@ class Group extends AbstractAnnotation
     /**
      * Get parent group.
      *
-     * @return string
+     * @return string|null
      */
-    public function getParent(): string
+    public function getParent()
     {
         return $this->parent;
     }
@@ -104,9 +96,9 @@ class Group extends AbstractAnnotation
      *
      * @param string $parent
      *
-     * @return $this
+     * @return self
      */
-    public function setParent(string $parent)
+    public function setParent(string $parent): Group
     {
         $this->parent = trim($parent);
 
@@ -116,9 +108,9 @@ class Group extends AbstractAnnotation
     /**
      * Get group name prefix.
      *
-     * @return string
+     * @return string|null
      */
-    public function getPrefix(): string
+    public function getPrefix()
     {
         return $this->prefix;
     }
@@ -130,9 +122,9 @@ class Group extends AbstractAnnotation
      *
      * @throws \InvalidArgumentException
      *
-     * @return $this
+     * @return self
      */
-    public function setPrefix(string $prefix)
+    public function setPrefix(string $prefix): Group
     {
         if (strpos(trim($prefix), ' ') !== false) {
             throw new \InvalidArgumentException(sprintf('Group prefixes must not contain spaces'));

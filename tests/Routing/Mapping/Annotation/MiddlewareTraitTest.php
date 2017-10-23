@@ -21,11 +21,22 @@ use PHPUnit\Framework\TestCase;
  */
 class MiddlewareTraitTest extends TestCase
 {
+    /**
+     * @var MiddlewareStub
+     */
+    protected $annotation;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        $this->annotation = new MiddlewareStub();
+    }
+
     public function testDefaults()
     {
-        $annotation = new MiddlewareStub([]);
-
-        self::assertEquals([], $annotation->getMiddleware());
+        self::assertEquals([], $this->annotation->getMiddleware());
     }
 
     /**
@@ -34,7 +45,7 @@ class MiddlewareTraitTest extends TestCase
      */
     public function testInvalidMiddleware()
     {
-        new MiddlewareStub(['middleware' => 10]);
+        $this->annotation->setMiddleware(10);
     }
 
     public function testMiddleware()
@@ -44,8 +55,8 @@ class MiddlewareTraitTest extends TestCase
             'middlewareTwo',
         ];
 
-        $annotation = new MiddlewareStub(['middleware' => $middleware]);
+        $this->annotation->setMiddleware($middleware);
 
-        self::assertEquals($middleware, $annotation->getMiddleware());
+        self::assertEquals($middleware, $this->annotation->getMiddleware());
     }
 }

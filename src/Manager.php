@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing;
 
-use Jgut\Slim\Routing\Mapping\RouteMetadata;
-use Jgut\Slim\Routing\Mapping\Source\SourceFactory;
+use Jgut\Slim\Routing\Mapping\Driver\DriverFactory;
+use Jgut\Slim\Routing\Mapping\Driver\DriverInterface;
 use Psr\Container\ContainerInterface;
 use Slim\Route;
 
@@ -81,28 +81,32 @@ class Manager
      */
     public function registerRoutes(ContainerInterface $container)
     {
+        $routes = $this->getRoutesMetadata();
+        if (!count($routes)) {
+            throw new \RuntimeException('There are no defined routes');
+        }
+
         /* @var \Slim\Router $router */
         $router = $container->get('router');
         $buffering = $container->get('settings')['outputBuffering'];
-
         $resolver = $this->getResolver();
 
-        foreach ($this->getRoutesMetadata() as $routeMetadata) {
-            $methods = $resolver->getMethods($routeMetadata);
-            $pattern = $resolver->getPattern($routeMetadata);
-            $callable = $routeMetadata->getInvokable();
+        foreach ($routes as $route) {
+            $methods = $route->getMethods();
+            $pattern = $resolver->getPattern($route);
+            $callable = $route->getInvokable();
 
-            /* @var \Slim\Route $slimRoute */
+            /* @var Route $slimRoute */
             $slimRoute = $router->map($methods, $pattern, $callable);
             $slimRoute->setContainer($container);
             $slimRoute->setOutputBuffering($buffering);
 
-            $name = $resolver->getName($routeMetadata);
-            if ($name !== '') {
+            $name = $resolver->getName($route);
+            if ($name !== null) {
                 $slimRoute->setName($name);
             }
 
-            foreach ($routeMetadata->getMiddleware() as $middleware) {
+            foreach ($resolver->getMiddleware($route) as $middleware) {
                 $slimRoute->add($middleware);
             }
         }
@@ -119,19 +123,19 @@ class Manager
 
         $routes = [];
 
-        foreach ($this->getRoutesMetadata() as $routeMetadata) {
-            $methods = $resolver->getMethods($routeMetadata);
-            $pattern = $resolver->getPattern($routeMetadata);
-            $callable = $routeMetadata->getInvokable();
+        foreach ($this->getRoutesMetadata() as $route) {
+            $methods = $route->getMethods();
+            $pattern = $resolver->getPattern($route);
+            $callable = $route->getInvokable();
 
             $slimRoute = new Route($methods, $pattern, $callable);
 
-            $name = $resolver->getName($routeMetadata);
-            if ($name !== '') {
+            $name = $resolver->getName($route);
+            if ($name !== null) {
                 $slimRoute->setName($name);
             }
 
-            foreach ($routeMetadata->getMiddleware() as $middleware) {
+            foreach ($resolver->getMiddleware($route) as $middleware) {
                 $slimRoute->add($middleware);
             }
 
@@ -144,26 +148,27 @@ class Manager
     /**
      * Get routes metadata.
      *
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
-     *
-     * @return RouteMetadata[]
+     * @return \Jgut\SLim\Routing\Mapping\Metadata\RouteMetadata[]
      */
     protected function getRoutesMetadata(): array
     {
-        $routesMetadata = [];
-        foreach ($this->configuration->getSources() as $source) {
-            $source = SourceFactory::getSource($source);
+        $routes = [];
+        foreach ($this->configuration->getSources() as $mappingSource) {
+            if (!is_array($mappingSource)) {
+                $mappingSource = [
+                    'type' => DriverInterface::DRIVER_ANNOTATION,
+                    'path' => $mappingSource,
+                ];
+            }
 
-            $routesMetadata[] = $source->getRoutingMetadata();
+            $routes[] = DriverFactory::getDriver($mappingSource)->getMetadata();
         }
-
         $resolver = $this->getResolver();
 
-        $routesMetadata = $resolver->sort(count($routesMetadata) ? array_merge(...$routesMetadata) : []);
+        $routes = $resolver->sort(count($routes) ? array_merge(...$routes) : []);
 
-        $resolver->checkDuplicatedRoutes($routesMetadata);
+        $resolver->checkDuplicatedRoutes($routes);
 
-        return $routesMetadata;
+        return $routes;
     }
 }

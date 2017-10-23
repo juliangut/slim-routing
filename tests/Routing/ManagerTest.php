@@ -15,7 +15,7 @@ namespace Jgut\Slim\Routing\Tests;
 
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Manager;
-use Jgut\Slim\Routing\Mapping\RouteMetadata;
+use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use Jgut\Slim\Routing\Resolver;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -34,7 +34,6 @@ class ManagerTest extends TestCase
         /* @var Configuration $configuration */
 
         $manager = new Manager($configuration);
-
 
         self::assertInstanceOf(Resolver::class, $manager->getResolver());
     }
@@ -60,14 +59,13 @@ class ManagerTest extends TestCase
     {
         $routesMetadata = [
             (new RouteMetadata())
-                ->setPrefixes(['pref'])
                 ->setMethods(['GET'])
-                ->setPattern('/one/{id}')
+                ->setPattern('one/{id}')
                 ->setPlaceholders(['id' => 'numeric'])
                 ->setInvokable(['one', 'action']),
             (new RouteMetadata())
                 ->setMethods(['POST'])
-                ->setPattern('/two')
+                ->setPattern('two')
                 ->setName('two')
                 ->setMiddleware(['twoMiddleware'])
                 ->setInvokable(['two', 'action']),
@@ -98,18 +96,36 @@ class ManagerTest extends TestCase
         self::assertCount(2, $routes);
     }
 
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage There are no defined routes
+     */
+    public function testNoRoutes()
+    {
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->getMock();
+        /* @var ContainerInterface $container */
+
+        $configuration = $this->getMockBuilder(Configuration::class)
+            ->getMock();
+        /* @var Configuration $configuration */
+
+        $manager = new Manager($configuration);
+
+        $manager->registerRoutes($container);
+    }
+
     public function testRouteRegistration()
     {
-        $routesMetadata = [
+        $routes = [
             (new RouteMetadata())
-                ->setPrefixes(['pref'])
                 ->setMethods(['GET'])
-                ->setPattern('/one/{id}')
+                ->setPattern('one/{id}')
                 ->setPlaceholders(['id' => 'numeric'])
                 ->setInvokable(['one', 'action']),
             (new RouteMetadata())
                 ->setMethods(['POST'])
-                ->setPattern('/two')
+                ->setPattern('two')
                 ->setName('two')
                 ->setMiddleware(['twoMiddleware'])
                 ->setInvokable(['two', 'action']),
@@ -142,7 +158,7 @@ class ManagerTest extends TestCase
             ->getMock();
         $resolver->expects(self::once())
             ->method('sort')
-            ->will(self::returnValue($routesMetadata));
+            ->will(self::returnValue($routes));
         /* @var Resolver $resolver */
 
         $manager = new Manager($configuration);

@@ -21,13 +21,24 @@ use PHPUnit\Framework\TestCase;
  */
 class RouteTest extends TestCase
 {
+    /**
+     * @var Route
+     */
+    protected $annotation;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        $this->annotation = new Route([]);
+    }
+
     public function testDefaults()
     {
-        $annotation = new Route([]);
-
-        self::assertEquals('', $annotation->getName());
-        self::assertEquals(['GET'], $annotation->getMethods());
-        self::assertEquals(0, $annotation->getPriority());
+        self::assertEquals('', $this->annotation->getName());
+        self::assertEquals(['GET'], $this->annotation->getMethods());
+        self::assertEquals(0, $this->annotation->getPriority());
     }
 
     /**
@@ -36,7 +47,7 @@ class RouteTest extends TestCase
      */
     public function testWrongName()
     {
-        new Route(['name' => 'a name']);
+        $this->annotation->setName('a name');
     }
 
     /**
@@ -45,47 +56,56 @@ class RouteTest extends TestCase
      */
     public function testEmptyName()
     {
-        new Route(['name' => '']);
+        $this->annotation->setName('');
     }
 
     public function testName()
     {
-        $annotation = new Route(['name' => 'routeName']);
+        $this->annotation->setName('routeName');
 
-        self::assertEquals('routeName', $annotation->getName());
+        self::assertEquals('routeName', $this->annotation->getName());
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \UnexpectedValueException
      * @expectedExceptionMessage Route annotation methods must be strings. "integer" given
      */
     public function testInvalidMethodsType()
     {
-        new Route(['methods' => 10]);
+        $this->annotation->setMethods([10]);
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \UnexpectedValueException
      * @expectedExceptionMessage Route annotation methods can not be empty
      */
     public function testEmptyMethods()
     {
-        new Route(['methods' => '']);
+        $this->annotation->setMethods('');
+    }
+
+    /**
+     * @expectedException \UnexpectedValueException
+     * @expectedExceptionMessage Route "ANY" method cannot be defined with other methods
+     */
+    public function testWrongMethodCount()
+    {
+        $this->annotation->setMethods(['GET', 'ANY']);
     }
 
     public function testMethods()
     {
         $methods = ['GET', 'POST'];
 
-        $annotation = new Route(['methods' => $methods]);
+        $this->annotation->setMethods($methods);
 
-        self::assertEquals($methods, $annotation->getMethods());
+        self::assertEquals($methods, $this->annotation->getMethods());
     }
 
     public function testPriority()
     {
-        $annotation = new Route(['priority' => -10]);
+        $this->annotation->setPriority(-10);
 
-        self::assertEquals(-10, $annotation->getPriority());
+        self::assertEquals(-10, $this->annotation->getPriority());
     }
 }

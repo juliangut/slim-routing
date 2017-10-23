@@ -1,0 +1,129 @@
+<?php
+
+/*
+ * slim-routing (https://github.com/juliangut/slim-routing).
+ * Slim framework routing.
+ *
+ * @license BSD-3-Clause
+ * @link https://github.com/juliangut/slim-routing
+ * @author Julián Gutiérrez <juliangut@gmail.com>
+ */
+
+declare(strict_types=1);
+
+namespace Jgut\Slim\Routing\Mapping\Metadata;
+
+use Jgut\Mapping\Metadata\MetadataInterface;
+
+/**
+ * Abstract metadata.
+ */
+abstract class AbstractMetadata implements MetadataInterface
+{
+    /**
+     * Path pattern.
+     *
+     * @var string
+     */
+    protected $pattern;
+
+    /**
+     * Placeholders regex.
+     *
+     * @var string[]
+     */
+    protected $placeholders = [];
+
+    /**
+     * Middleware list.
+     *
+     * @var callable[]|string[]
+     */
+    protected $middleware = [];
+
+    /**
+     * Get path pattern.
+     *
+     * @return string|null
+     */
+    public function getPattern()
+    {
+        return $this->pattern;
+    }
+
+    /**
+     * Set path pattern.
+     *
+     * @param string $pattern
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return static
+     */
+    public function setPattern(string $pattern): AbstractMetadata
+    {
+        if (trim($pattern) === '') {
+            throw new \InvalidArgumentException(sprintf('Pattern can not be empty'));
+        }
+
+        $pattern = trim($pattern, ' /');
+
+        if (preg_match('/\{.+:(.+)?\}/', $pattern, $matches)) {
+            throw new \InvalidArgumentException(
+                sprintf('Placeholder matching "%s" must be defined on placeholders parameter', $matches[1])
+            );
+        }
+
+        $this->pattern = $pattern;
+
+        return $this;
+    }
+
+    /**
+     * Get parameters restrictions.
+     *
+     * @return array
+     */
+    public function getPlaceholders(): array
+    {
+        return $this->placeholders;
+    }
+
+    /**
+     * Set parameters restrictions.
+     *
+     * @param string[] $placeholders
+     *
+     * @return static
+     */
+    public function setPlaceholders(array $placeholders): AbstractMetadata
+    {
+        $this->placeholders = $placeholders;
+
+        return $this;
+    }
+
+    /**
+     * Get middleware.
+     *
+     * @return callable[]|string[]
+     */
+    public function getMiddleware(): array
+    {
+        return $this->middleware;
+    }
+
+    /**
+     * Set middleware.
+     *
+     * @param callable[]|string[] $middleware
+     *
+     * @return static
+     */
+    public function setMiddleware(array $middleware): AbstractMetadata
+    {
+        $this->middleware = $middleware;
+
+        return $this;
+    }
+}

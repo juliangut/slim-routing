@@ -14,58 +14,51 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Mapping\Driver;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Jgut\Slim\Routing\Mapping\Loader\AnnotationLoader;
-use Jgut\Slim\Routing\Mapping\Loader\JsonLoader;
-use Jgut\Slim\Routing\Mapping\Loader\PhpLoader;
-use Jgut\Slim\Routing\Mapping\Loader\YamlLoader;
+use Jgut\Mapping\Driver\AbstractDriverFactory;
+use Jgut\Mapping\Driver\DriverInterface;
 
 /**
- * Mapping driver factory.
+ * Custom mapping driver factory.
  */
-class DriverFactory
+class DriverFactory extends AbstractDriverFactory
 {
     /**
-     * Get annotation driver.
-     *
-     * @param AnnotationReader|null $annotationReader
-     *
-     * @return AnnotationDriver
+     * {@inheritdoc}
      */
-    public static function getAnnotationDriver(AnnotationReader $annotationReader = null): AnnotationDriver
+    protected static function getAnnotationDriver(array $paths): DriverInterface
     {
-        return new AnnotationDriver(
-            new AnnotationLoader(),
-            $annotationReader === null ? new AnnotationReader() : $annotationReader
-        );
+        return new AnnotationDriver($paths, new AnnotationReader());
     }
 
     /**
-     * Get PHP files driver.
-     *
-     * @return DefinitionFileDriver
+     * {@inheritdoc}
      */
-    public static function getPhpDriver(): DefinitionFileDriver
+    protected static function getPhpDriver(array $paths): DriverInterface
     {
-        return new DefinitionFileDriver(new PhpLoader());
+        return new PhpDriver($paths);
     }
 
     /**
-     * Get Json files driver.
-     *
-     * @return DefinitionFileDriver
+     * {@inheritdoc}
      */
-    public static function getJsonDriver(): DefinitionFileDriver
+    protected static function getXmlDriver(array $paths): DriverInterface
     {
-        return new DefinitionFileDriver(new JsonLoader());
+        return new XmlDriver($paths);
     }
 
     /**
-     * Get YAML files driver.
-     *
-     * @return DefinitionFileDriver
+     * {@inheritdoc}
      */
-    public static function getYamlDriver(): DefinitionFileDriver
+    protected static function getJsonDriver(array $paths): DriverInterface
     {
-        return new DefinitionFileDriver(new YamlLoader());
+        return new JsonDriver($paths);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected static function getYamlDriver(array $paths): DriverInterface
+    {
+        return new YamlDriver($paths);
     }
 }

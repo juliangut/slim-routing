@@ -23,7 +23,7 @@ trait PathTrait
      *
      * @var string
      */
-    protected $pattern = '';
+    protected $pattern;
 
     /**
      * Pattern path placeholders regex.
@@ -35,9 +35,9 @@ trait PathTrait
     /**
      * Get pattern path.
      *
-     * @return string
+     * @return string|null
      */
-    public function getPattern(): string
+    public function getPattern()
     {
         return $this->pattern;
     }
@@ -49,23 +49,11 @@ trait PathTrait
      *
      * @throws \InvalidArgumentException
      *
-     * @return $this
+     * @return static
      */
     public function setPattern(string $pattern)
     {
-        if (trim($pattern) === '') {
-            throw new \InvalidArgumentException(sprintf('Pattern can not be empty'));
-        }
-
-        $pattern = trim($pattern, ' /');
-
-        if (preg_match('/\{.+:(.+)?\}/', $pattern, $matches)) {
-            throw new \InvalidArgumentException(
-                sprintf('Placeholder matching "%s" must be defined on placeholders parameter', $matches[1])
-            );
-        }
-
-        $this->pattern = $pattern !== '' ? '/' . $pattern : '';
+        $this->pattern = $pattern;
 
         return $this;
     }
@@ -87,7 +75,7 @@ trait PathTrait
      *
      * @throws \InvalidArgumentException
      *
-     * @return $this
+     * @return static
      */
     public function setPlaceholders(array $placeholders)
     {

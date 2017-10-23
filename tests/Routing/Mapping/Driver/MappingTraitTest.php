@@ -13,52 +13,30 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Source;
 
-use Jgut\Slim\Routing\Mapping\Driver\DefinitionFileDriver;
-use Jgut\Slim\Routing\Mapping\Loader\LoaderInterface;
-use Jgut\Slim\Routing\Mapping\RouteMetadata;
+use Jgut\Slim\Routing\Mapping\Driver\MappingTrait;
+use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Definition file mapping driver factory tests.
  */
-class DefinitionFileDriverTest extends TestCase
+class MappingTraitTest extends TestCase
 {
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Routing definition must be an array. "integer" given
-     */
-    public function testInvalidRouteDefinitionType()
-    {
-        $loader = $this->getMockBuilder(LoaderInterface::class)
-            ->getMock();
-        $loader->expects(self::any())
-            ->method('getMappingData')
-            ->will($this->returnValue([10]));
-        /* @var LoaderInterface $loader */
-
-        $driver = new DefinitionFileDriver($loader);
-
-        $driver->getRoutingMetadata([]);
-    }
-
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Route methods can not be empty
      */
     public function testEmptyMethods()
     {
-        $loader = $this->getMockBuilder(LoaderInterface::class)
-            ->getMock();
-        $loader->expects(self::any())
+        $driver = $this->getMockForTrait(MappingTrait::class);
+        $driver->expects($this->once())
             ->method('getMappingData')
             ->will($this->returnValue([
                 ['methods' => ''],
             ]));
-        /* @var LoaderInterface $loader */
+        /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
 
-        $driver = new DefinitionFileDriver($loader);
-
-        $driver->getRoutingMetadata([]);
+        $driver->getMetadata();
     }
 
     /**
@@ -67,18 +45,15 @@ class DefinitionFileDriverTest extends TestCase
      */
     public function testInvalidMethods()
     {
-        $loader = $this->getMockBuilder(LoaderInterface::class)
-            ->getMock();
-        $loader->expects(self::any())
+        $driver = $this->getMockForTrait(MappingTrait::class);
+        $driver->expects($this->once())
             ->method('getMappingData')
             ->will($this->returnValue([
                 ['methods' => 10],
             ]));
-        /* @var LoaderInterface $loader */
+        /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
 
-        $driver = new DefinitionFileDriver($loader);
-
-        $driver->getRoutingMetadata([]);
+        $driver->getMetadata();
     }
 
     /**
@@ -87,38 +62,32 @@ class DefinitionFileDriverTest extends TestCase
      */
     public function testInvalidPlaceholders()
     {
-        $loader = $this->getMockBuilder(LoaderInterface::class)
-            ->getMock();
-        $loader->expects(self::any())
+        $driver = $this->getMockForTrait(MappingTrait::class);
+        $driver->expects($this->once())
             ->method('getMappingData')
             ->will($this->returnValue([
                 ['placeholders' => ['invalid']],
             ]));
-        /* @var LoaderInterface $loader */
+        /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
 
-        $driver = new DefinitionFileDriver($loader);
-
-        $driver->getRoutingMetadata([]);
+        $driver->getMetadata();
     }
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Route middleware must be a string or string array. "integer" given
+     * @expectedExceptionMessage Middleware must be a string or string array. "integer" given
      */
     public function testInvalidMiddleware()
     {
-        $loader = $this->getMockBuilder(LoaderInterface::class)
-            ->getMock();
-        $loader->expects(self::any())
+        $driver = $this->getMockForTrait(MappingTrait::class);
+        $driver->expects($this->once())
             ->method('getMappingData')
             ->will($this->returnValue([
                 ['middleware' => 10],
             ]));
-        /* @var LoaderInterface $loader */
+        /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
 
-        $driver = new DefinitionFileDriver($loader);
-
-        $driver->getRoutingMetadata([]);
+        $driver->getMetadata();
     }
 
     /**
@@ -127,18 +96,15 @@ class DefinitionFileDriverTest extends TestCase
      */
     public function testMissingInvokable()
     {
-        $loader = $this->getMockBuilder(LoaderInterface::class)
-            ->getMock();
-        $loader->expects(self::any())
+        $driver = $this->getMockForTrait(MappingTrait::class);
+        $driver->expects($this->once())
             ->method('getMappingData')
             ->will($this->returnValue([
                 [],
             ]));
-        /* @var LoaderInterface $loader */
+        /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
 
-        $driver = new DefinitionFileDriver($loader);
-
-        $driver->getRoutingMetadata([]);
+        $driver->getMetadata();
     }
 
     /**
@@ -147,25 +113,21 @@ class DefinitionFileDriverTest extends TestCase
      */
     public function testInvalidInvokable()
     {
-        $loader = $this->getMockBuilder(LoaderInterface::class)
-            ->getMock();
-        $loader->expects(self::any())
+        $driver = $this->getMockForTrait(MappingTrait::class);
+        $driver->expects($this->once())
             ->method('getMappingData')
             ->will($this->returnValue([
                 ['invokable' => 10],
             ]));
-        /* @var LoaderInterface $loader */
+        /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
 
-        $driver = new DefinitionFileDriver($loader);
-
-        $driver->getRoutingMetadata([]);
+        $driver->getMetadata();
     }
 
     public function testRoutes()
     {
-        $loader = $this->getMockBuilder(LoaderInterface::class)
-            ->getMock();
-        $loader->expects(self::any())
+        $driver = $this->getMockForTrait(MappingTrait::class);
+        $driver->expects($this->once())
             ->method('getMappingData')
             ->will($this->returnValue([
                 [
@@ -224,55 +186,48 @@ class DefinitionFileDriverTest extends TestCase
                     'invokable' => ['OneRoute', 'actionOne'],
                 ],
             ]));
-        /* @var LoaderInterface $loader */
+        /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
 
-        $driver = new DefinitionFileDriver($loader);
-
-        /* @var RouteMetadata[] $routes */
-        $routes = $driver->getRoutingMetadata([]);
+        $routes = $driver->getMetadata();
 
         $route = $routes[0];
         self::assertInstanceOf(RouteMetadata::class, $route);
-        self::assertEquals(['abstract', 'grouped'], $route->getPrefixes());
         self::assertEquals('four', $route->getName());
-        self::assertEquals(0, $route->getPriority());
         self::assertEquals(['GET'], $route->getMethods());
-        self::assertEquals('/abstract/dependent/four', $route->getPattern());
-        self::assertEquals([], $route->getPlaceholders());
-        self::assertEquals(['fourMiddleware', 'dependentMiddleware', 'abstractMiddleware'], $route->getMiddleware());
+        self::assertEquals(0, $route->getPriority());
         self::assertEquals(['FourRoute', 'actionFour'], $route->getInvokable());
+        self::assertEquals('four', $route->getPattern());
+        self::assertEquals([], $route->getPlaceholders());
+        self::assertEquals(['fourMiddleware'], $route->getMiddleware());
 
         $route = $routes[1];
         self::assertInstanceOf(RouteMetadata::class, $route);
-        self::assertEquals([], $route->getPrefixes());
-        self::assertEquals('', $route->getName());
-        self::assertEquals(0, $route->getPriority());
+        self::assertNull($route->getName());
         self::assertEquals(['GET'], $route->getMethods());
-        self::assertEquals('/grouped/{section}/two/{id}', $route->getPattern());
-        self::assertEquals(['section' => '[A-Za-z]+'], $route->getPlaceholders());
-        self::assertEquals(['twoMiddleware', 'groupedMiddleware'], $route->getMiddleware());
+        self::assertEquals(0, $route->getPriority());
         self::assertEquals(['TwoRoute', 'actionTwo'], $route->getInvokable());
+        self::assertEquals('two/{id}', $route->getPattern());
+        self::assertEquals([], $route->getPlaceholders());
+        self::assertEquals(['twoMiddleware'], $route->getMiddleware());
 
         $route = $routes[2];
         self::assertInstanceOf(RouteMetadata::class, $route);
-        self::assertEquals([], $route->getPrefixes());
         self::assertEquals('', $route->getName());
-        self::assertEquals(0, $route->getPriority());
         self::assertEquals(['GET'], $route->getMethods());
-        self::assertEquals('/grouped/{section}/three/{id}', $route->getPattern());
-        self::assertEquals(['section' => '[A-Za-z]+', 'id' => '\d+'], $route->getPlaceholders());
-        self::assertEquals(['groupedMiddleware'], $route->getMiddleware());
         self::assertEquals(['ThreeRoute', 'actionThree'], $route->getInvokable());
+        self::assertEquals(0, $route->getPriority());
+        self::assertEquals('three/{id}', $route->getPattern());
+        self::assertEquals(['id' => '\d+'], $route->getPlaceholders());
+        self::assertEquals([], $route->getMiddleware());
 
         $route = $routes[3];
         self::assertInstanceOf(RouteMetadata::class, $route);
-        self::assertEquals([], $route->getPrefixes());
         self::assertEquals('one', $route->getName());
-        self::assertEquals(-10, $route->getPriority());
         self::assertEquals(['GET', 'POST'], $route->getMethods());
-        self::assertEquals('/one/{id}', $route->getPattern());
+        self::assertEquals(-10, $route->getPriority());
+        self::assertEquals(['OneRoute', 'actionOne'], $route->getInvokable());
+        self::assertEquals('one/{id}', $route->getPattern());
         self::assertEquals(['id' => 'numeric'], $route->getPlaceholders());
         self::assertEquals(['oneMiddleware'], $route->getMiddleware());
-        self::assertEquals(['OneRoute', 'actionOne'], $route->getInvokable());
     }
 }

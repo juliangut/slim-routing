@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing;
 
+use Jgut\Slim\Routing\Mapping\Driver\DriverInterface;
 use Jgut\Slim\Routing\Naming\NamingInterface;
 use Jgut\Slim\Routing\Naming\SnakeCase;
 
@@ -60,16 +61,6 @@ class Configuration
             throw new \InvalidArgumentException('Configurations must be an iterable');
         }
 
-        $this->seedConfigurations($configurations);
-    }
-
-    /**
-     * Seed configurations.
-     *
-     * @param array|\Traversable $configurations
-     */
-    protected function seedConfigurations($configurations)
-    {
         $configs = array_keys(get_object_vars($this));
 
         foreach ($configs as $config) {
@@ -106,11 +97,39 @@ class Configuration
      *
      * @param array $sources
      *
-     * @return $this
+     * @return self
      */
-    public function setSources(array $sources)
+    public function setSources(array $sources): Configuration
     {
-        $this->sources = $sources;
+        $this->sources = [];
+
+        foreach ($sources as $source) {
+            $this->addSource($source);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add mapping source.
+     *
+     * @param string|mixed[]|DriverInterface[] $source
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return self
+     */
+    public function addSource($source): Configuration
+    {
+        if (!is_string($source) && !is_array($source) && !$source instanceof DriverInterface) {
+            throw new \InvalidArgumentException(sprintf(
+                'Mapping source must be a string, array or %s, %s given',
+                DriverInterface::class,
+                is_object($source) ? get_class($source) : gettype($source)
+            ));
+        }
+
+        $this->sources[] = $source;
 
         return $this;
     }
@@ -131,12 +150,16 @@ class Configuration
      * @param array $aliases
      *
      * @throws \InvalidArgumentException
+     *
+     * @return self
      */
-    public function addPlaceholderAliases(array $aliases)
+    public function addPlaceholderAliases(array $aliases): Configuration
     {
         foreach ($aliases as $alias => $patter) {
             $this->addPlaceholderAlias($alias, $patter);
         }
+
+        return $this;
     }
 
     /**
@@ -146,8 +169,10 @@ class Configuration
      * @param string $pattern
      *
      * @throws \InvalidArgumentException
+     *
+     * @return self
      */
-    public function addPlaceholderAlias(string $alias, string $pattern)
+    public function addPlaceholderAlias(string $alias, string $pattern): Configuration
     {
         if (@preg_match('~^' . $pattern . '$~', '') === false) {
             throw new \InvalidArgumentException(
@@ -156,6 +181,8 @@ class Configuration
         }
 
         $this->placeholderAliases[$alias] = $pattern;
+
+        return $this;
     }
 
     /**
@@ -177,9 +204,9 @@ class Configuration
      *
      * @param NamingInterface $namingStrategy
      *
-     * @return $this
+     * @return self
      */
-    public function setNamingStrategy(NamingInterface $namingStrategy)
+    public function setNamingStrategy(NamingInterface $namingStrategy): Configuration
     {
         $this->namingStrategy = $namingStrategy;
 

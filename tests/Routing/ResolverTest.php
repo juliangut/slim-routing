@@ -14,7 +14,8 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Tests;
 
 use Jgut\Slim\Routing\Configuration;
-use Jgut\Slim\Routing\Mapping\RouteMetadata;
+use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
+use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use Jgut\Slim\Routing\Resolver;
 use PHPUnit\Framework\TestCase;
 
@@ -42,7 +43,7 @@ class ResolverTest extends TestCase
      * @param RouteMetadata $route
      * @param string        $name
      */
-    public function testRouteName(RouteMetadata $route, string $name)
+    public function testRouteName(RouteMetadata $route, string $name = null)
     {
         self::assertEquals($name, $this->resolver->getName($route));
     }
@@ -55,46 +56,45 @@ class ResolverTest extends TestCase
     public function routeNameProvider(): array
     {
         return [
-            [new RouteMetadata(), ''],
+            [new RouteMetadata(), null],
             [(new RouteMetadata())->setName('name'), 'name'],
-            [(new RouteMetadata())->setPrefixes(['one', 'two'])->setName('name'), 'one_two_name'],
+            [
+                (new RouteMetadata())
+                    ->setName('name')
+                    ->setGroup((new GroupMetadata())->setPrefix('prefix')),
+                'prefix_name',
+            ],
         ];
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Route "ANY" method cannot be defined with other methods
+     * @dataProvider routeMiddlewareProvider
+     *
+     * @param RouteMetadata $route
+     * @param array         $middleware
      */
-    public function testInvalidRouteMethods()
+    public function testRouteMiddleware(RouteMetadata $route, array $middleware)
     {
-        $route = (new RouteMetadata())->setMethods(['POST', 'ANY', 'GET']);
-
-        $this->resolver->getMethods($route);
-    }
-
-    public function testRouteMethodsAny()
-    {
-        $route = (new RouteMetadata())->setMethods(['ANY']);
-
-        self::assertEquals(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], $this->resolver->getMethods($route));
-    }
-
-    public function testRouteMethod()
-    {
-        $route = (new RouteMetadata())->setMethods(['GET', 'POST']);
-
-        self::assertEquals(['GET', 'POST'], $this->resolver->getMethods($route));
+        self::assertEquals($middleware, $this->resolver->getMiddleware($route));
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Placeholder pattern "~245" is not a known alias or a valid regex
+     * Route name checker provider.
+     *
+     * @return array
      */
-    public function testInvalidMethodsTypeRoute()
+    public function routeMiddlewareProvider(): array
     {
-        $route = (new RouteMetadata())->setPlaceholders(['id', '~245']);
-
-        $this->resolver->getPattern($route);
+        return [
+            [new RouteMetadata(), []],
+            [(new RouteMetadata())->setMiddleware(['routeMiddleware']), ['routeMiddleware']],
+            [
+                (new RouteMetadata())
+                    ->setMiddleware(['routeMiddleware'])
+                    ->setGroup((new GroupMetadata())->setMiddleware(['groupMiddleware'])),
+                ['routeMiddleware', 'groupMiddleware'],
+            ],
+        ];
     }
 
     /**
@@ -116,24 +116,66 @@ class ResolverTest extends TestCase
     public function routePathProvider(): array
     {
         return [
+            [new RouteMetadata(), '/'],
             [
                 (new RouteMetadata())
-                    ->setPattern('/entity/{id}'),
+                    ->setPattern('entity/{id}'),
                 '/entity/{id}',
             ],
             [
                 (new RouteMetadata())
-                    ->setPattern('/entity/{id}')
+                    ->setPattern('entity/{id}')
+                    ->setGroup((new GroupMetadata())->setPattern('parent/{section}')),
+                '/parent/{section}/entity/{id}',
+            ],
+            [
+                (new RouteMetadata())
+                    ->setPattern('entity/{id}')
                     ->setPlaceholders(['id' => 'alnum']),
                 '/entity/{id:[a-zA-Z0-9]+}',
             ],
             [
                 (new RouteMetadata())
-                    ->setPattern('/entity/{id}')
-                    ->setPlaceholders(['id' => '[a-z+]']),
-                '/entity/{id:[a-z+]}',
+                    ->setPattern('entity/{id}')
+                    ->setPlaceholders(['id' => 'alnum']),
+                '/entity/{id:[a-zA-Z0-9]+}',
+            ],
+            [
+                (new RouteMetadata())
+                    ->setPattern('entity/{id}')
+                    ->setPlaceholders(['id' => '[a-z+]'])
+                    ->setGroup(
+                        (new GroupMetadata())
+                            ->setPattern('parent/{section}')
+                            ->setPlaceholders(['section' => 'any'])
+                    ),
+                '/parent/{section:.+}/entity/{id:[a-z+]}',
             ],
         ];
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage There are duplicated route parameters: id
+     */
+    public function testDuplicatedParameter()
+    {
+        $route = (new RouteMetadata())
+            ->setPattern('entity/{id}')
+            ->setGroup((new GroupMetadata())->setPattern('parent/{id}'));
+
+        $this->resolver->getPattern($route);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Placeholder "~245" is not a known alias or a valid regex pattern
+     */
+    public function testInvalidPlaceholder()
+    {
+        $route = (new RouteMetadata())->setPlaceholders(['id', '~245']);
+
+        $this->resolver->getPattern($route);
     }
 
     public function testRouteSorting()
@@ -176,11 +218,11 @@ class ResolverTest extends TestCase
         $routes = [
             (new RouteMetadata())
                 ->setMethods(['GET'])
-                ->setPattern('/route/{id}')
+                ->setPattern('route/{id}')
                 ->setPlaceholders(['id' => 'alnum']),
             (new RouteMetadata())
                 ->setMethods(['GET'])
-                ->setPattern('/route/{slug}')
+                ->setPattern('route/{slug}')
                 ->setPlaceholders(['slug' => 'alnum']),
         ];
 

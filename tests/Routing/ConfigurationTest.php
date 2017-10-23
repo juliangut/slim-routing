@@ -48,6 +48,15 @@ class ConfigurationTest extends TestCase
         self::assertInstanceOf(SnakeCase::class, $configuration->getNamingStrategy());
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessageRegExp /Mapping source must be a string, array or .+\DriverInterface, integer given/
+     */
+    public function testBadSource()
+    {
+        new Configuration(['sources' => [10]]);
+    }
+
     public function testSourcePaths()
     {
         $paths = [

@@ -21,37 +21,32 @@ use PHPUnit\Framework\TestCase;
  */
 class PathTraitTest extends TestCase
 {
+    /**
+     * @var PathStub
+     */
+    protected $annotation;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        $this->annotation = new PathStub();
+    }
+
     public function testDefaults()
     {
-        $annotation = new PathStub([]);
-
-        self::assertEquals('', $annotation->getPattern());
-        self::assertEquals([], $annotation->getPlaceholders());
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Pattern can not be empty
-     */
-    public function testEmptyPattern()
-    {
-        new PathStub(['pattern' => '']);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Placeholder matching "[0-9]+" must be defined on placeholders parameter
-     */
-    public function testInvalidPattern()
-    {
-        new PathStub(['pattern' => 'path/to/{id:[0-9]+}']);
+        self::assertEquals('', $this->annotation->getPattern());
+        self::assertEquals([], $this->annotation->getPlaceholders());
     }
 
     public function testPattern()
     {
-        $annotation = new PathStub(['pattern' => 'path/to/{id}/']);
+        $path = '/home/route/path/{id}';
 
-        self::assertEquals('/path/to/{id}', $annotation->getPattern());
+        $this->annotation->setPattern($path);
+
+        self::assertEquals($path, $this->annotation->getPattern());
     }
 
     public function testPlaceholders()
@@ -61,8 +56,8 @@ class PathTraitTest extends TestCase
             'name' => '[A-Za-z0-9]',
         ];
 
-        $annotation = new PathStub(['placeholders' => $placeholders]);
+        $this->annotation->setPlaceholders($placeholders);
 
-        self::assertEquals($placeholders, $annotation->getPlaceholders());
+        self::assertEquals($placeholders, $this->annotation->getPlaceholders());
     }
 }

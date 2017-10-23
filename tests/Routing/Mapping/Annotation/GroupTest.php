@@ -21,12 +21,23 @@ use PHPUnit\Framework\TestCase;
  */
 class GroupTest extends TestCase
 {
+    /**
+     * @var Group
+     */
+    protected $annotation;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        $this->annotation = new Group([]);
+    }
+
     public function testDefaults()
     {
-        $annotation = new Group([]);
-
-        self::assertEquals('', $annotation->getName());
-        self::assertEquals('', $annotation->getParent());
+        self::assertEquals('', $this->annotation->getName());
+        self::assertEquals('', $this->annotation->getParent());
     }
 
     /**
@@ -49,16 +60,16 @@ class GroupTest extends TestCase
 
     public function testName()
     {
-        $annotation = new Group(['name' => 'name']);
+        $this->annotation->setName('name');
 
-        self::assertEquals('name', $annotation->getName());
+        self::assertEquals('name', $this->annotation->getName());
     }
 
     public function testParent()
     {
-        $annotation = new Group(['parent' => 'groupName']);
+        $this->annotation->setParent('groupName');
 
-        self::assertEquals('groupName', $annotation->getParent());
+        self::assertEquals('groupName', $this->annotation->getParent());
     }
 
     /**
@@ -72,8 +83,8 @@ class GroupTest extends TestCase
 
     public function testPrefix()
     {
-        $annotation = new Group(['prefix' => 'prefix']);
+        $this->annotation->setPrefix('prefix');
 
-        self::assertEquals('prefix', $annotation->getPrefix());
+        self::assertEquals('prefix', $this->annotation->getPrefix());
     }
 }

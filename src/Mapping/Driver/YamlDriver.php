@@ -13,11 +13,14 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Mapping\Driver;
 
-use Jgut\Mapping\Driver\DriverInterface as BaseDriverInterface;
+use Jgut\Mapping\Driver\AbstractMappingDriver;
+use Jgut\Mapping\Driver\Traits\YamlMappingTrait;
 
 /**
- * Custom driver interface.
+ * YAML mapping driver.
  */
-interface DriverInterface extends BaseDriverInterface
+class YamlDriver extends AbstractMappingDriver implements DriverInterface
 {
+    use YamlMappingTrait;
+    use MappingTrait;
 }

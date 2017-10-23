@@ -18,7 +18,7 @@ use Jgut\Slim\Routing\Mapping\Annotation\PathTrait;
 /**
  * Path annotation stub.
  */
-class PathStub extends AnnotationStub
+class PathStub
 {
     use PathTrait;
 }
