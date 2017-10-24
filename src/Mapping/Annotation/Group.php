@@ -27,13 +27,6 @@ class Group extends AbstractAnnotation
     use MiddlewareTrait;
 
     /**
-     * Group name.
-     *
-     * @var string
-     */
-    protected $name;
-
-    /**
      * Parent group.
      *
      * @var string
@@ -46,40 +39,6 @@ class Group extends AbstractAnnotation
      * @var string
      */
     protected $prefix;
-
-    /**
-     * Get group name.
-     *
-     * @return string|null
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Set group name.
-     *
-     * @param string $name
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return self
-     */
-    public function setName(string $name): Group
-    {
-        if (strpos(trim($name), ' ') !== false) {
-            throw new \InvalidArgumentException(sprintf('Group name must not contain spaces'));
-        }
-
-        if (trim($name) === '') {
-            throw new \InvalidArgumentException(sprintf('Group name can not be empty'));
-        }
-
-        $this->name = trim($name);
-
-        return $this;
-    }
 
     /**
      * Get parent group.
@@ -100,7 +59,7 @@ class Group extends AbstractAnnotation
      */
     public function setParent(string $parent): Group
     {
-        $this->parent = trim($parent);
+        $this->parent = trim($parent, '\\');
 
         return $this;
     }

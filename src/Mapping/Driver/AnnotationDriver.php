@@ -71,16 +71,11 @@ class AnnotationDriver extends AbstractAnnotationDriver implements DriverInterfa
             $group = $this->annotationReader->getClassAnnotation($class, GroupAnnotation::class);
 
             if ($group) {
-                $name = $group->getName();
-                if ($name === null) {
-                    $name = $class->getName();
-                }
-
                 $groupDataBag = new \stdClass();
                 $groupDataBag->parent = $group->getParent();
                 $groupDataBag->group = $this->getGroupMetadata($group);
 
-                $groups[$name] = $groupDataBag;
+                $groups[$class->getName()] = $groupDataBag;
             }
         }
 
@@ -151,12 +146,7 @@ class AnnotationDriver extends AbstractAnnotationDriver implements DriverInterfa
         /* @var GroupAnnotation $groupAnnotation */
         $groupAnnotation = $this->annotationReader->getClassAnnotation($class, GroupAnnotation::class);
         if ($groupAnnotation) {
-            $name = $groupAnnotation->getName();
-            if ($name === null) {
-                $name = $class->getName();
-            }
-
-            $group = $groups[$name];
+            $group = $groups[$class->getName()];
         }
 
         foreach ($class->getMethods() as $method) {

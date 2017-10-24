@@ -36,33 +36,7 @@ class GroupTest extends TestCase
 
     public function testDefaults()
     {
-        self::assertEquals('', $this->annotation->getName());
         self::assertEquals('', $this->annotation->getParent());
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Group name must not contain spaces
-     */
-    public function testWrongName()
-    {
-        new Group(['name' => 'a name']);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Group name can not be empty
-     */
-    public function testEmptyName()
-    {
-        new Group(['name' => '']);
-    }
-
-    public function testName()
-    {
-        $this->annotation->setName('name');
-
-        self::assertEquals('name', $this->annotation->getName());
     }
 
     public function testParent()

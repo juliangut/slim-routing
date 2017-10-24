@@ -20,7 +20,6 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
  *
  * @JSR\Router()
  * @JSR\Group(
- *     name="abstract",
  *     prefix="abstract",
  *     pattern="/abstract",
  *     middleware={"abstractMiddleware"}

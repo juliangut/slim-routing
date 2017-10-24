@@ -20,8 +20,7 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
  *
  * @JSR\Router()
  * @JSR\Group(
- *     name="circular",
- *     parent="circular"
+ *     parent="Jgut\Slim\Routing\Tests\Files\Annotation\Invalid\CircularReference\CircularReferenceRoute"
  * )
  */
 class CircularReferenceRoute

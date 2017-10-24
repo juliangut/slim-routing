@@ -20,7 +20,6 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
  *
  * @JSR\Router()
  * @JSR\Group(
- *     name="grouped",
  *     pattern="/grouped/{section}",
  *     placeholders={"section": "[A-Za-z]+"},
  *     middleware={"groupedMiddleware"}
