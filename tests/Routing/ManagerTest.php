@@ -17,10 +17,9 @@ use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Manager;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use Jgut\Slim\Routing\Resolver;
+use Jgut\Slim\Routing\Router\Router;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use Slim\Route;
-use Slim\Router;
 
 /**
  * Routing manager tests.
@@ -98,11 +97,11 @@ class ManagerTest extends TestCase
 
     public function testNoRoutes()
     {
-        $container = $this->getMockBuilder(ContainerInterface::class)
+        $router = $this->getMockBuilder(Router::class)
             ->getMock();
-        $container->expects($this->never())
-            ->method('get');
-        /* @var ContainerInterface $container */
+        $router->expects($this->never())
+            ->method('getContainer');
+        /* @var Router $router */
 
         $configuration = $this->getMockBuilder(Configuration::class)
             ->getMock();
@@ -110,7 +109,7 @@ class ManagerTest extends TestCase
 
         $manager = new Manager($configuration);
 
-        $manager->registerRoutes($container);
+        $manager->registerRoutes($router);
     }
 
     public function testRouteRegistration()
@@ -129,18 +128,15 @@ class ManagerTest extends TestCase
                 ->setInvokable(['two', 'action']),
         ];
 
-        $router = $this->getMockBuilder(Router::class)
-            ->getMock();
-        $router->expects(self::exactly(2))
-            ->method('map')
-            ->will($this->returnValue(new Route('', '', '')));
-
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
         $container->expects(self::any())
             ->method('get')
-            ->willReturnOnConsecutiveCalls($router, ['outputBuffering' => 'append']);
+            ->willReturn(['outputBuffering' => 'append']);
         /* @var ContainerInterface $container */
+
+        $router = new Router();
+        $router->setContainer($container);
 
         $configuration = $this->getMockBuilder(Configuration::class)
             ->setMethods(['getSources'])
@@ -162,6 +158,6 @@ class ManagerTest extends TestCase
         $manager = new Manager($configuration);
         $manager->setResolver($resolver);
 
-        $manager->registerRoutes($container);
+        $manager->registerRoutes($router);
     }
 }

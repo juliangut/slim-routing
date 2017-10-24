@@ -48,15 +48,31 @@ require './vendor/autoload.php';
 ```php
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Manager;
+use Jgut\Slim\Routing\Router\Router;
 use Slim\App;
 
 $app = new App();
+
+$container = $app->getContainer();
+
+$container['router'] = function ($container) {
+    $routerCacheFile = false;
+    if (isset($container->get('settings')['routerCacheFile'])) {
+        $routerCacheFile = $container->get('settings')['routerCacheFile'];
+    }
+
+    $router = new Router();
+    $router->setCacheFile($routerCacheFile);
+    $router->setContainer($container);
+
+    return $router;
+};
 
 $configuration = new Configuration([
     'sources' => ['/path/to/routing/files'],
 ]);
 $manager = new Manager($configuration);
-$manager->registerRoutes($app->getContainer());
+$manager->registerRoutes($container->get('router'));
 
 $app->run();
 ```
@@ -101,7 +117,6 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR
 /**
  * @JSR\Router
  * @JSR\Group(
- *     name="groupName",
  *     prefix="routePrefix",
  *     parent="parentGroupName",
  *     pattern="section/{name}",
@@ -114,7 +129,6 @@ class Section
 }
 ```
 
-* `name`, optional, group name so it can be referenced by another group in order to create a group tree
 * `prefix`, optional, prefix to be prepended to route names
 * `parent`, optional, references a parent group's _name_
 * `pattern`, optional, path pattern

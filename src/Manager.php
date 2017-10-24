@@ -15,7 +15,7 @@ namespace Jgut\Slim\Routing;
 
 use Jgut\Slim\Routing\Mapping\Driver\DriverFactory;
 use Jgut\Slim\Routing\Mapping\Driver\DriverInterface;
-use Psr\Container\ContainerInterface;
+use Jgut\Slim\Routing\Router\RouterInterface;
 use Slim\Route;
 
 /**
@@ -74,32 +74,30 @@ class Manager
     /**
      * Register routes into Slim router.
      *
-     * @param ContainerInterface $container
+     * @param RouterInterface $router
      *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    public function registerRoutes(ContainerInterface $container)
+    public function registerRoutes(RouterInterface $router)
     {
         $routes = $this->getRoutesMetadata();
         if (!count($routes)) {
             return;
         }
 
-        /* @var \Slim\Router $router */
-        $router = $container->get('router');
-        $buffering = $container->get('settings')['outputBuffering'];
+        $container = $router->getContainer();
+        $buffering = $container !== null ? $container->get('settings')['outputBuffering'] : null;
         $resolver = $this->getResolver();
 
         foreach ($routes as $route) {
-            $methods = $route->getMethods();
-            $pattern = $resolver->getPattern($route);
-            $callable = $route->getInvokable();
-
             /* @var Route $slimRoute */
-            $slimRoute = $router->map($methods, $pattern, $callable);
-            $slimRoute->setContainer($container);
-            $slimRoute->setOutputBuffering($buffering);
+            $slimRoute = $router->map($route->getMethods(), $resolver->getPattern($route), $route->getInvokable());
+
+            if ($container !== null) {
+                $slimRoute->setContainer($container);
+                $slimRoute->setOutputBuffering($buffering);
+            }
 
             $name = $resolver->getName($route);
             if ($name !== null) {
