@@ -97,7 +97,7 @@ class Configuration
      *
      * @param array $sources
      *
-     * @return self
+     * @return static
      */
     public function setSources(array $sources): Configuration
     {
@@ -117,7 +117,7 @@ class Configuration
      *
      * @throws \InvalidArgumentException
      *
-     * @return self
+     * @return static
      */
     public function addSource($source): Configuration
     {
@@ -151,7 +151,7 @@ class Configuration
      *
      * @throws \InvalidArgumentException
      *
-     * @return self
+     * @return static
      */
     public function addPlaceholderAliases(array $aliases): Configuration
     {
@@ -170,7 +170,7 @@ class Configuration
      *
      * @throws \InvalidArgumentException
      *
-     * @return self
+     * @return static
      */
     public function addPlaceholderAlias(string $alias, string $pattern): Configuration
     {
@@ -204,7 +204,7 @@ class Configuration
      *
      * @param NamingInterface $namingStrategy
      *
-     * @return self
+     * @return static
      */
     public function setNamingStrategy(NamingInterface $namingStrategy): Configuration
     {

@@ -55,7 +55,7 @@ class Group extends AbstractAnnotation
      *
      * @param string $parent
      *
-     * @return self
+     * @return static
      */
     public function setParent(string $parent): Group
     {
@@ -81,7 +81,7 @@ class Group extends AbstractAnnotation
      *
      * @throws \InvalidArgumentException
      *
-     * @return self
+     * @return static
      */
     public function setPrefix(string $prefix): Group
     {

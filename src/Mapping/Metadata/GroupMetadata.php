@@ -47,7 +47,7 @@ class GroupMetadata extends AbstractMetadata
      *
      * @param GroupMetadata $parent
      *
-     * @return self
+     * @return static
      */
     public function setParent(GroupMetadata $parent): GroupMetadata
     {

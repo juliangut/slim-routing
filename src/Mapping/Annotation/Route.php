@@ -64,7 +64,7 @@ class Route extends AbstractAnnotation
      *
      * @throws \InvalidArgumentException
      *
-     * @return self
+     * @return static
      */
     public function setName(string $name): Route
     {
@@ -98,7 +98,7 @@ class Route extends AbstractAnnotation
      *
      * @throws \UnexpectedValueException
      *
-     * @return self
+     * @return static
      */
     public function setMethods($methods): Route
     {
@@ -147,7 +147,7 @@ class Route extends AbstractAnnotation
      *
      * @param int $priority
      *
-     * @return self
+     * @return static
      */
     public function setPriority(int $priority): Route
     {

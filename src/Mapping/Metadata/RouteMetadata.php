@@ -75,7 +75,7 @@ class RouteMetadata extends AbstractMetadata
      *
      * @param string $name
      *
-     * @return self
+     * @return static
      */
     public function setName(string $name): RouteMetadata
     {
@@ -99,7 +99,7 @@ class RouteMetadata extends AbstractMetadata
      *
      * @param GroupMetadata $group
      *
-     * @return self
+     * @return static
      */
     public function setGroup(GroupMetadata $group): RouteMetadata
     {
@@ -156,7 +156,7 @@ class RouteMetadata extends AbstractMetadata
      *
      * @throws \UnexpectedValueException
      *
-     * @return self
+     * @return static
      */
     public function setMethods(array $methods): RouteMetadata
     {
@@ -182,7 +182,7 @@ class RouteMetadata extends AbstractMetadata
      *
      * @throws \InvalidArgumentException
      *
-     * @return self
+     * @return static
      */
     public function setInvokable($invokable): RouteMetadata
     {
@@ -210,7 +210,7 @@ class RouteMetadata extends AbstractMetadata
      *
      * @param int $priority
      *
-     * @return self
+     * @return static
      */
     public function setPriority(int $priority): RouteMetadata
     {
