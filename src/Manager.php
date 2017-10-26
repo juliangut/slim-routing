@@ -122,11 +122,7 @@ class Manager
         $routes = [];
 
         foreach ($this->getRoutesMetadata() as $route) {
-            $methods = $route->getMethods();
-            $pattern = $resolver->getPattern($route);
-            $callable = $route->getInvokable();
-
-            $slimRoute = new Route($methods, $pattern, $callable);
+            $slimRoute = new Route($route->getMethods(), $resolver->getPattern($route), $route->getInvokable());
 
             $name = $resolver->getName($route);
             if ($name !== null) {
