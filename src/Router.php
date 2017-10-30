@@ -48,8 +48,8 @@ class Router extends SlimRouter
     /**
      * Router constructor.
      *
-     * @param Configuration $configuration
-     * @param RouteParser   $parser
+     * @param Configuration    $configuration
+     * @param RouteParser|null $parser
      */
     public function __construct(
         Configuration $configuration,

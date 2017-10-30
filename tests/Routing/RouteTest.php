@@ -147,6 +147,7 @@ class RouteTest extends TestCase
             '/',
             function () {
                 echo ' echo ';
+
                 return 'response';
             }
         );
