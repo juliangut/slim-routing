@@ -11,20 +11,19 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing\Router;
+namespace Jgut\Slim\Routing\Response;
 
-use Slim\Router as BaseRouter;
+use Psr\Http\Message\ResponseInterface;
 
 /**
- * Router.
+ * Response type interface.
  */
-class Router extends BaseRouter implements RouterInterface
+interface ResponseTypeInterface
 {
     /**
-     * {@inheritdoc}
+     * Get PSR-7 response.
+     *
+     * @return ResponseInterface|null
      */
-    public function getContainer()
-    {
-        return $this->container;
-    }
+    public function getResponse();
 }

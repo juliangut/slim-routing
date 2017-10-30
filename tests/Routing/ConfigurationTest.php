@@ -16,6 +16,7 @@ namespace Jgut\Slim\Routing\Tests;
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Naming\CamelCase;
 use Jgut\Slim\Routing\Naming\SnakeCase;
+use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandlerInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -102,5 +103,21 @@ class ConfigurationTest extends TestCase
         $configuration = new Configuration(['namingStrategy' => new CamelCase()]);
 
         self::assertInstanceOf(CamelCase::class, $configuration->getNamingStrategy());
+    }
+
+    public function testResponseHandlers()
+    {
+        $handler = $this->getMockBuilder(ResponseTypeHandlerInterface::class)
+            ->getMock();
+        /* @var ResponseTypeHandlerInterface $handler */
+        $handlers = [
+            'responseTypeClass' => $handler,
+        ];
+
+        $configuration = new Configuration([
+            'responseHandlers' => $handlers,
+        ]);
+
+        self::assertEquals($handlers, $configuration->getResponseHandlers());
     }
 }

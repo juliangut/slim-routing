@@ -12,16 +12,18 @@
 
 # slim-routing
 
-Annotation and configuration based Slim framework routing
+A replacement for Slim's router that adds annotation and configuration based routing as well as expands the possibilities of your route callbacks by handling return types
 
 Thanks to this library, instead of configuring routes by hand one by one and including them into Slim's router you can create mapping files that define and structure your routes and let them be included into the router.
 
 If you're familiar with how Doctrine defines entities mappings you'll feel at home with slim-routing because much as how Doctrine does route mappings are defined either
 
-* On class annotations (in controllers)
+* On class annotations (in controller classes)
 * In routing definition files, currently supported in PHP, Json, XML and YAML
 
 > Routing gathering and compilation can be quite a heavy load process depending on how many classes/files and routes are defined. For this reason it's advised to always use [Slim's router cache](https://www.slimframework.com/docs/objects/application.html#slim-default-settings) on production applications and invalidate cache on deployment
+
+Route callbacks can now return `\Jgut\Slim\Routing\Response\ResponseTypeInterface` responses that will be later transformed into the mandatory `Psr\Message\ResponseInterface` in a way that lets you decouple view from controller 
 
 ## Installation
 
@@ -47,8 +49,10 @@ require './vendor/autoload.php';
 
 ```php
 use Jgut\Slim\Routing\Configuration;
-use Jgut\Slim\Routing\Manager;
-use Jgut\Slim\Routing\Router\Router;
+use Jgut\Slim\Routing\Framework\Strategy\RequestResponse;
+use Jgut\Slim\Routing\Response\PayloadResponseType;
+use Jgut\Slim\Routing\Response\Handler\JsonResponseHandler;
+use Jgut\Slim\Routing\Router;
 use Slim\App;
 
 $app = new App();
@@ -56,23 +60,27 @@ $app = new App();
 $container = $app->getContainer();
 
 $container['router'] = function ($container) {
+    $configuration = new Configuration([
+        'sources' => ['/path/to/routing/files'],
+        'responseHandlers' => [
+            PayloadResponseType::class => new JsonResponseHandler(),
+        ],
+    ]);
+    $router = new Router($configuration);
+    $router->setContainer($container); // Be sure to set the container
+
     $routerCacheFile = false;
     if (isset($container->get('settings')['routerCacheFile'])) {
         $routerCacheFile = $container->get('settings')['routerCacheFile'];
     }
-
-    $router = new Router();
     $router->setCacheFile($routerCacheFile);
-    $router->setContainer($container);
 
     return $router;
 };
 
-$configuration = new Configuration([
-    'sources' => ['/path/to/routing/files'],
-]);
-$manager = new Manager($configuration);
-$manager->registerRoutes($container->get('router'));
+$app->get('/', function(ServerRequestInterface $request, ResponseInterface $response) {
+    return (new PayloadResponseType($response))->setPayload(['param' => 'value']);
+});
 
 $app->run();
 ```
@@ -89,12 +97,45 @@ $app->run();
   * alnum => `[a-zA-Z0-9]+`
   * any => `.+`
 * `namingStrategy`, instance of \Jgut\Slim\Routing\Naming\NamingInterface (\Jgut\Slim\Routing\Naming\SnakeCase by default)
+* `responseHandlers` array of \Jgut\Slim\Routing\Response\ResponseTypeInterface => \Jgut\Slim\Routing\Response\Handler\ResponseHandlerInterface
 
-### Annotations
+## Response handling
 
-#### Router (Class level)
+Route callbacks normally respond with a `Psr\Message\ResponseInterface` object, but thanks to slim-routing they can now respond with a more intent expressive ResponseTypeInterface object that will be handled afterwards
 
-This annotation is just a mark to identify classes defining routes. Its presence is mandatory
+Of course normal ResponseInterface responses from route callback will be treated as usual
+
+### Response type
+
+Response types are DTO objects with the needed data to later create a ResponseInterface object. This leaves the presentation logic out of router and allows for easy presentation logic reuse
+
+If route callbacks return an instance of `\Jgut\Slim\Routing\Response\ResponseTypeInterface` it will be passed to the corresponding handler according to routing configuration
+
+Provided response types:
+
+* `ViewResponseType` keeps agnostic template payload so it can be rendered in a handler
+* `PayloadResponseType` stores simple payload to be transformed for example to json
+
+### Response type handler
+
+Mapped on configuration's "responseHandlers" key, a response handler will be responsible of returning a `Psr\Message\ResponseInterface` from the received `\Jgut\Slim\Routing\Response\ResponseTypeInterface`
+
+Typically they will agglutinate presentation logic: how to represent the data contained in the response type, such as transform it into json, XML, etc, or render it with a template engine such as Twig or Plates
+
+Provided response types:
+
+* `JsonResponseTypeHandler` receives a PayloadResponseType and returns a json response
+* `TwigViewResponseTypeHandler` receives a generic ViewResponseType and returns a template rendered thanks to Twig and [Slim's Twig-View](https://github.com/slimphp/Twig-View)
+
+### Routes
+
+Routes can be defined in two basic ways: by setting them in definition files of various types or directly defined in annotations on controller classes
+
+#### Annotations
+
+##### Router (Class level)
+
+Just a mark to identify classes defining routes. Its presence is mandatory on each routing class
 
 ```php
 use Jgut\Slim\Routing\Mapping\Annotation as JSR
@@ -107,9 +148,9 @@ class Home
 }
 ```
 
-#### Group (Class level)
+##### Group (Class level)
 
-Defines a group in which routes may reside. It is not mandatory unless you want to do route grouping or apply middleware to several routes at the same time
+Defines a group in which routes may reside. It is not mandatory but useful when you want to do route grouping or apply middleware to several routes at the same time
 
 ```php
 use Jgut\Slim\Routing\Mapping\Annotation as JSR
@@ -118,7 +159,7 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR
  * @JSR\Router
  * @JSR\Group(
  *     prefix="routePrefix",
- *     parent="parentGroupName",
+ *     parent="parentGroupClassName",
  *     pattern="section/{name}",
  *     placeholders={"name": "[a-z]+"},
  *     middleware={"groupMiddlewareName"}
@@ -130,14 +171,14 @@ class Section
 ```
 
 * `prefix`, optional, prefix to be prepended to route names
-* `parent`, optional, references a parent group's _name_
+* `parent`, optional, references a parent class name
 * `pattern`, optional, path pattern
 * `placeholders`, optional, array of regex/alias for path placeholders, 
 * `middleware`, optional, array of middleware to be added to all group routes
 
-#### Route (Method level)
+##### Route (Method level)
 
-Defines the final routes added to Slim's router
+Defines the final routes added to the router
 
 ```php
 use Jgut\Slim\Routing\Mapping\Annotation as JSR
@@ -170,9 +211,9 @@ class Section
 * `middleware`, optional, array of middleware to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
 
-### Definition files
+#### Definition files
 
-###### PHP
+####### PHP
 
 ```php
 return [
@@ -191,6 +232,7 @@ return [
         'pattern' => 'route-pattern',
         'placeholders' => ['route-placeholders'],
         'middleware' => ['route-middleware'],
+        'invokable' => 'callable',
       ],
       [
         // Subgroup
@@ -208,7 +250,7 @@ return [
 ]
 ```
 
-###### JSON
+####### JSON
 
 ```json
 [
@@ -226,7 +268,8 @@ return [
         "priority": 0,
         "pattern": "route-pattern",
         "placeholders": ["route-placeholders"],
-        "middleware": ["route-middleware"]
+        "middleware": ["route-middleware"],
+        "invokable": "callable",
       },
       {
         // Subgroup
@@ -244,7 +287,7 @@ return [
 ]
 ```
 
-###### XML
+####### XML
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -268,6 +311,7 @@ return [
                 <middleware>
                     <middleware1>route-middleware</middleware1>
                 </middleware>
+                <invokable>callable</invokable>,
             </route1>
             <subgroup1 prefix="prefix" pattern="group-pattern">
                 <placeholders>
@@ -287,7 +331,7 @@ return [
 </root>
 ```
 
-###### YAML
+####### YAML
 
 ```yaml
 # Group
@@ -303,6 +347,7 @@ return [
       pattern: route-pattern
       placeholders: [route-placeholders]
       middleware: [route-middleware]
+      invokable: callable
     # Subgroup
     - pattern: group-pattern
       placeholders: [group-placeholders]
@@ -313,7 +358,7 @@ return [
 # Routes/groups ...
 ```
 
-#### Group
+##### Group
 
 Defines a group in which routes may reside.
 
@@ -323,7 +368,7 @@ Defines a group in which routes may reside.
 * `placeholders`, optional, array of regex/alias for path placeholders, 
 * `middleware`, optional, array of middleware to be added to all group routes
 
-#### Route
+##### Route
 
 Defines a route added to Slim
 
@@ -335,27 +380,27 @@ Defines a route added to Slim
 * `middleware`, optional, array of middleware to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
 
-## Route composition
+### Route composition
 
-### Name
+#### Name
 
-Final route name is composed of the concatenation of group prefixes followed by route name according to selected route naming strategy
+Final route name is composed of the concatenation of group prefixes followed by route name according to configured route naming strategy
 
-### Pattern
+#### Pattern
 
 Resulting route pattern is composed of the concatenation of group patterns and finally route pattern
 
-### Placeholders
+#### Placeholders
 
 Resulting placeholders list is composed of all group placeholders if any and route placeholders
 
 It is important to pay attention not to duplicate placeholder names in the resulting pattern as this can't be handled by FastRoute. Check group tree patterns for placeholder names
 
-### Middleware
+#### Middleware
 
 Resulting middleware applied to a route will be the result of combining group middleware and route middleware
 
-There is a drawback on defining middleware in any other format but PHP definition files. You cannot use a callable, only strings so that middleware must be a reference to a container entry
+There is a drawback on defining middleware in any other format but PHP definition files. You cannot use a Closure, only strings, so that middleware must be a reference to a container entry
 
 ## Considerations
 

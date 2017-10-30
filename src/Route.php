@@ -1,0 +1,153 @@
+<?php
+
+/*
+ * slim-routing (https://github.com/juliangut/slim-routing).
+ * Slim framework routing.
+ *
+ * @license BSD-3-Clause
+ * @link https://github.com/juliangut/slim-routing
+ * @author Julián Gutiérrez <juliangut@gmail.com>
+ */
+
+declare(strict_types=1);
+
+namespace Jgut\Slim\Routing;
+
+use Jgut\Slim\Routing\Mapping\Resolver;
+use Jgut\Slim\Routing\Response\ResponseTypeInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Slim\Handlers\Strategies\RequestResponse;
+use Slim\Http\Body;
+use Slim\Route as SlimRoute;
+
+/**
+ * Response type aware route.
+ */
+class Route extends SlimRoute
+{
+    /**
+     * Routing configuration.
+     *
+     * @var Configuration
+     */
+    protected $configuration;
+
+    /**
+     * Route resolver.
+     *
+     * @var Resolver
+     */
+    protected $resolver;
+
+    /**
+     * Set routing configuration.
+     *
+     * @param Configuration $configuration
+     */
+    public function setConfiguration(Configuration $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $response = $this->dispatchRoute($request, $response);
+
+        if ($response instanceof ResponseTypeInterface) {
+            $response = $this->handleResponseType($response);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Dispatch route.
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     *
+     * @throws \Exception
+     * @throws \Throwable
+     *
+     * @return ResponseInterface|ResponseTypeInterface
+     *
+     * @SuppressWarnings(PMD.CyclomaticComplexity)
+     * @SuppressWarnings(PMD.NPathComplexity)
+     */
+    protected function dispatchRoute(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $this->callable = $this->resolveCallable($this->callable);
+
+        /* @var \Slim\Interfaces\InvocationStrategyInterface $handler */
+        $handler = isset($this->container) ? $this->container->get('foundHandler') : new RequestResponse();
+
+        // invoke route callable
+        try {
+            ob_start();
+            $dispatchedResponse = $handler($this->callable, $request, $response, $this->arguments);
+            $output = ob_get_clean();
+            // @codeCoverageIgnoreStart
+        } catch (\Throwable $throwable) {
+            ob_end_clean();
+            throw $throwable;
+        } catch (\Exception $exception) {
+            ob_end_clean();
+            throw $exception;
+        }
+        // @codeCoverageIgnoreEnd
+
+        if ($dispatchedResponse instanceof ResponseTypeInterface) {
+            return $dispatchedResponse;
+        }
+
+        if ($dispatchedResponse instanceof ResponseInterface) {
+            // if route callback returns a ResponseInterface, then use it
+            $response = $dispatchedResponse;
+        } elseif (is_string($dispatchedResponse)) {
+            // if route callback returns a string, then append it to the response
+            if ($response->getBody()->isWritable()) {
+                $response->getBody()->write($dispatchedResponse);
+            }
+        }
+
+        if (!empty($output) && $response->getBody()->isWritable()) {
+            if ($this->outputBuffering === 'prepend') {
+                // prepend output buffer content
+                $body = new Body(fopen('php://temp', 'rb+'));
+                $body->write($output . $response->getBody());
+
+                $response = $response->withBody($body);
+            } elseif ($this->outputBuffering === 'append') {
+                // append output buffer content
+                $response->getBody()->write($output);
+            }
+        }
+
+        return $response;
+    }
+
+    /**
+     * Handle response type.
+     *
+     * @param ResponseTypeInterface $responseType
+     *
+     * @throws \RuntimeException
+     *
+     * @return ResponseInterface
+     */
+    protected function handleResponseType(ResponseTypeInterface $responseType): ResponseInterface
+    {
+        $responseHandlers = $this->configuration->getResponseHandlers();
+        $type = get_class($responseType);
+
+        if (!array_key_exists($type, $responseHandlers)) {
+            throw new \RuntimeException(sprintf('No handler registered for response type "%s"', $type));
+        }
+
+        return $responseHandlers[$type]->handle($responseType);
+    }
+}

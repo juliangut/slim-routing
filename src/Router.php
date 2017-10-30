@@ -13,15 +13,16 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing;
 
+use FastRoute\RouteParser;
 use Jgut\Slim\Routing\Mapping\Driver\DriverFactory;
 use Jgut\Slim\Routing\Mapping\Driver\DriverInterface;
-use Jgut\Slim\Routing\Router\RouterInterface;
-use Slim\Route;
+use Jgut\Slim\Routing\Mapping\Resolver;
+use Slim\Router as SlimRouter;
 
 /**
- * Routing manager.
+ * Route loader router.
  */
-class Manager
+class Router extends SlimRouter
 {
     /**
      * Routing configuration.
@@ -38,12 +39,24 @@ class Manager
     protected $resolver;
 
     /**
-     * Routing Manager constructor.
+     * Mapping routes have been loaded.
+     *
+     * @var bool
+     */
+    protected $routesLoaded = false;
+
+    /**
+     * Router constructor.
      *
      * @param Configuration $configuration
+     * @param RouteParser   $parser
      */
-    public function __construct(Configuration $configuration)
-    {
+    public function __construct(
+        Configuration $configuration,
+        RouteParser $parser = null
+    ) {
+        parent::__construct($parser);
+
         $this->configuration = $configuration;
     }
 
@@ -72,71 +85,51 @@ class Manager
     }
 
     /**
-     * Register routes into Slim router.
-     *
-     * @param RouterInterface $router
+     * {@inheritdoc}
+     */
+    public function getRoutes()
+    {
+        if ($this->routesLoaded === false) {
+            $routes = $this->routes;
+            $this->routes = [];
+
+            $this->registerRoutes();
+
+            $this->routes = array_merge($this->routes, $routes);
+
+            $this->routesLoaded = true;
+        }
+
+        return parent::getRoutes();
+    }
+
+    /**
+     * Register routes.
      *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    public function registerRoutes(RouterInterface $router)
+    protected function registerRoutes()
     {
         $routes = $this->getRoutesMetadata();
-        if (!count($routes)) {
-            return;
-        }
 
-        $container = $router->getContainer();
-        $buffering = $container !== null ? $container->get('settings')['outputBuffering'] : null;
-        $resolver = $this->getResolver();
+        if (count($routes)) {
+            $resolver = $this->getResolver();
 
-        foreach ($routes as $route) {
-            /* @var Route $slimRoute */
-            $slimRoute = $router->map($route->getMethods(), $resolver->getPattern($route), $route->getInvokable());
+            foreach ($routes as $route) {
+                /* @var Route $slimRoute */
+                $slimRoute = $this->map($route->getMethods(), $resolver->getPattern($route), $route->getInvokable());
 
-            if ($container !== null) {
-                $slimRoute->setContainer($container);
-                $slimRoute->setOutputBuffering($buffering);
-            }
+                $name = $resolver->getName($route);
+                if ($name !== null) {
+                    $slimRoute->setName($name);
+                }
 
-            $name = $resolver->getName($route);
-            if ($name !== null) {
-                $slimRoute->setName($name);
-            }
-
-            foreach ($resolver->getMiddleware($route) as $middleware) {
-                $slimRoute->add($middleware);
+                foreach ($resolver->getMiddleware($route) as $middleware) {
+                    $slimRoute->add($middleware);
+                }
             }
         }
-    }
-
-    /**
-     * Get routes.
-     *
-     * @return Route[]
-     */
-    public function getRoutes(): array
-    {
-        $resolver = $this->getResolver();
-
-        $routes = [];
-
-        foreach ($this->getRoutesMetadata() as $route) {
-            $slimRoute = new Route($route->getMethods(), $resolver->getPattern($route), $route->getInvokable());
-
-            $name = $resolver->getName($route);
-            if ($name !== null) {
-                $slimRoute->setName($name);
-            }
-
-            foreach ($resolver->getMiddleware($route) as $middleware) {
-                $slimRoute->add($middleware);
-            }
-
-            $routes[] = $slimRoute;
-        }
-
-        return $routes;
     }
 
     /**
@@ -164,5 +157,18 @@ class Manager
         $resolver->checkDuplicatedRoutes($routes);
 
         return $routes;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createRoute($methods, $pattern, $callable): Route
+    {
+        $route = new Route($methods, $pattern, $callable, $this->routeGroups, $this->routeCounter);
+        $route->setConfiguration($this->configuration);
+        $route->setContainer($this->container);
+        $route->setOutputBuffering($this->container->get('settings')['outputBuffering']);
+
+        return $route;
     }
 }

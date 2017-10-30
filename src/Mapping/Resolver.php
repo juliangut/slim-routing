@@ -11,8 +11,9 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing;
+namespace Jgut\Slim\Routing\Mapping;
 
+use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 

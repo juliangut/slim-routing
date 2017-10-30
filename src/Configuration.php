@@ -16,6 +16,7 @@ namespace Jgut\Slim\Routing;
 use Jgut\Slim\Routing\Mapping\Driver\DriverInterface;
 use Jgut\Slim\Routing\Naming\NamingInterface;
 use Jgut\Slim\Routing\Naming\SnakeCase;
+use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandlerInterface;
 
 /**
  * Routing configuration.
@@ -49,6 +50,13 @@ class Configuration
     protected $namingStrategy;
 
     /**
+     * Response handlers.
+     *
+     * @var ResponseTypeHandlerInterface[]
+     */
+    protected $responseHandlers = [];
+
+    /**
      * Configuration constructor.
      *
      * @param array|\Traversable $configurations
@@ -76,6 +84,10 @@ class Configuration
 
                     case 'namingStrategy':
                         $this->setNamingStrategy($configurations[$config]);
+                        break;
+
+                    case 'responseHandlers':
+                        $this->addResponseHandlers($configurations[$config]);
                         break;
                 }
             }
@@ -209,6 +221,51 @@ class Configuration
     public function setNamingStrategy(NamingInterface $namingStrategy): Configuration
     {
         $this->namingStrategy = $namingStrategy;
+
+        return $this;
+    }
+
+    /**
+     * Get response handlers.
+     *
+     * @return ResponseTypeHandlerInterface[]
+     */
+    public function getResponseHandlers(): array
+    {
+        return $this->responseHandlers;
+    }
+
+    /**
+     * Add response handlers.
+     *
+     * @param array $handlers
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return static
+     */
+    public function addResponseHandlers(array $handlers): Configuration
+    {
+        foreach ($handlers as $responseType => $responseHandler) {
+            $this->addResponseHandler($responseType, $responseHandler);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add response handler.
+     *
+     * @param string                       $response
+     * @param ResponseTypeHandlerInterface $handler
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return static
+     */
+    public function addResponseHandler(string $response, ResponseTypeHandlerInterface $handler): Configuration
+    {
+        $this->responseHandlers[$response] = $handler;
 
         return $this;
     }
