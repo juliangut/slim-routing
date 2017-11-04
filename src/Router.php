@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing;
 
+use FastRoute\Dispatcher;
 use FastRoute\RouteParser;
 use Jgut\Slim\Routing\Mapping\Driver\DriverFactory;
 use Jgut\Slim\Routing\Mapping\Driver\DriverInterface;
@@ -82,6 +83,21 @@ class Router extends SlimRouter
     public function setResolver(Resolver $resolver)
     {
         $this->resolver = $resolver;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function createDispatcher(): Dispatcher
+    {
+        if ($this->dispatcher === null
+            && $this->routesLoaded === false
+            && $this->cacheFile && file_exists($this->cacheFile)
+        ) {
+            $this->getRoutes();
+        }
+
+        return parent::createDispatcher();
     }
 
     /**

@@ -33,6 +33,7 @@
     "brainmaestro/composer-git-hooks": "^2.1",
     "friendsofphp/php-cs-fixer": "^2.0",
     "humbug/humbug": "~1.0@dev",
+    "mikey179/vfsstream": "^1.6",
     "phpmd/phpmd": "^2.0",
     "phpmetrics/phpmetrics": "^2.0",
     "phpstan/phpstan": "~0.8.1",
