@@ -60,7 +60,7 @@ abstract class AbstractMetadata implements MetadataInterface
      *
      * @return static
      */
-    public function setPattern(string $pattern): AbstractMetadata
+    public function setPattern(string $pattern): self
     {
         if (trim($pattern) === '') {
             throw new \InvalidArgumentException(sprintf('Pattern can not be empty'));
@@ -96,7 +96,7 @@ abstract class AbstractMetadata implements MetadataInterface
      *
      * @return static
      */
-    public function setPlaceholders(array $placeholders): AbstractMetadata
+    public function setPlaceholders(array $placeholders): self
     {
         $this->placeholders = $placeholders;
 
@@ -120,7 +120,7 @@ abstract class AbstractMetadata implements MetadataInterface
      *
      * @return static
      */
-    public function setMiddleware(array $middleware): AbstractMetadata
+    public function setMiddleware(array $middleware): self
     {
         $this->middleware = $middleware;
 

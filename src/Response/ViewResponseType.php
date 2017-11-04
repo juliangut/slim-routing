@@ -49,7 +49,7 @@ class ViewResponseType extends AbstractResponseType
      *
      * @return static
      */
-    public function setTemplate(string $template): ViewResponseType
+    public function setTemplate(string $template): self
     {
         $this->template = $template;
 
@@ -73,7 +73,7 @@ class ViewResponseType extends AbstractResponseType
      *
      * @return static
      */
-    public function setParameters(array $parameters): ViewResponseType
+    public function setParameters(array $parameters): self
     {
         $this->parameters = $parameters;
 

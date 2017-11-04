@@ -111,7 +111,7 @@ class Configuration
      *
      * @return static
      */
-    public function setSources(array $sources): Configuration
+    public function setSources(array $sources): self
     {
         $this->sources = [];
 
@@ -131,7 +131,7 @@ class Configuration
      *
      * @return static
      */
-    public function addSource($source): Configuration
+    public function addSource($source): self
     {
         if (!is_string($source) && !is_array($source) && !$source instanceof DriverInterface) {
             throw new \InvalidArgumentException(sprintf(
@@ -165,7 +165,7 @@ class Configuration
      *
      * @return static
      */
-    public function addPlaceholderAliases(array $aliases): Configuration
+    public function addPlaceholderAliases(array $aliases): self
     {
         foreach ($aliases as $alias => $patter) {
             $this->addPlaceholderAlias($alias, $patter);
@@ -184,7 +184,7 @@ class Configuration
      *
      * @return static
      */
-    public function addPlaceholderAlias(string $alias, string $pattern): Configuration
+    public function addPlaceholderAlias(string $alias, string $pattern): self
     {
         if (@preg_match('~^' . $pattern . '$~', '') === false) {
             throw new \InvalidArgumentException(
@@ -218,7 +218,7 @@ class Configuration
      *
      * @return static
      */
-    public function setNamingStrategy(NamingInterface $namingStrategy): Configuration
+    public function setNamingStrategy(NamingInterface $namingStrategy): self
     {
         $this->namingStrategy = $namingStrategy;
 
@@ -244,7 +244,7 @@ class Configuration
      *
      * @return static
      */
-    public function addResponseHandlers(array $handlers): Configuration
+    public function addResponseHandlers(array $handlers): self
     {
         foreach ($handlers as $responseType => $responseHandler) {
             $this->addResponseHandler($responseType, $responseHandler);
@@ -263,7 +263,7 @@ class Configuration
      *
      * @return static
      */
-    public function addResponseHandler(string $response, ResponseTypeHandlerInterface $handler): Configuration
+    public function addResponseHandler(string $response, ResponseTypeHandlerInterface $handler): self
     {
         $this->responseHandlers[$response] = $handler;
 

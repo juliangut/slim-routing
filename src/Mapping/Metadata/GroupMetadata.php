@@ -49,7 +49,7 @@ class GroupMetadata extends AbstractMetadata
      *
      * @return static
      */
-    public function setParent(GroupMetadata $parent): GroupMetadata
+    public function setParent(self $parent): self
     {
         $this->parent = $parent;
 
@@ -73,7 +73,7 @@ class GroupMetadata extends AbstractMetadata
      *
      * @return static
      */
-    public function setPrefix(string $prefix): AbstractMetadata
+    public function setPrefix(string $prefix): self
     {
         $this->prefix = $prefix;
 

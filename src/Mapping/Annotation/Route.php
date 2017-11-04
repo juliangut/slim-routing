@@ -66,7 +66,7 @@ class Route extends AbstractAnnotation
      *
      * @return static
      */
-    public function setName(string $name): Route
+    public function setName(string $name): self
     {
         if (strpos(trim($name), ' ') !== false) {
             throw new \InvalidArgumentException(sprintf('Route name must not contain spaces'));
@@ -100,7 +100,7 @@ class Route extends AbstractAnnotation
      *
      * @return static
      */
-    public function setMethods($methods): Route
+    public function setMethods($methods): self
     {
         $this->methods = [];
 
@@ -149,7 +149,7 @@ class Route extends AbstractAnnotation
      *
      * @return static
      */
-    public function setPriority(int $priority): Route
+    public function setPriority(int $priority): self
     {
         $this->priority = $priority;
 

@@ -77,7 +77,7 @@ class RouteMetadata extends AbstractMetadata
      *
      * @return static
      */
-    public function setName(string $name): RouteMetadata
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -101,7 +101,7 @@ class RouteMetadata extends AbstractMetadata
      *
      * @return static
      */
-    public function setGroup(GroupMetadata $group): RouteMetadata
+    public function setGroup(GroupMetadata $group): self
     {
         $this->group = $group;
 
@@ -158,7 +158,7 @@ class RouteMetadata extends AbstractMetadata
      *
      * @return static
      */
-    public function setMethods(array $methods): RouteMetadata
+    public function setMethods(array $methods): self
     {
         $this->methods = $methods;
 
@@ -184,7 +184,7 @@ class RouteMetadata extends AbstractMetadata
      *
      * @return static
      */
-    public function setInvokable($invokable): RouteMetadata
+    public function setInvokable($invokable): self
     {
         if (!is_string($invokable) && !is_array($invokable) && !is_callable($invokable)) {
             throw new \InvalidArgumentException('Route invokable does not seem to be supported by Slim router');
@@ -212,7 +212,7 @@ class RouteMetadata extends AbstractMetadata
      *
      * @return static
      */
-    public function setPriority(int $priority): RouteMetadata
+    public function setPriority(int $priority): self
     {
         $this->priority = $priority;
 
