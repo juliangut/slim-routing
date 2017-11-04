@@ -32,7 +32,7 @@ abstract class AbstractResponseType implements ResponseTypeInterface
      *
      * @param ResponseInterface $response
      *
-     * @return self
+     * @return static
      */
     public function setResponse(ResponseInterface $response)
     {

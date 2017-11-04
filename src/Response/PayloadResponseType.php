@@ -40,7 +40,7 @@ class PayloadResponseType extends AbstractResponseType
      *
      * @param mixed $payload
      *
-     * @return self
+     * @return static
      */
     public function setPayload($payload): PayloadResponseType
     {
