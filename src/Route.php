@@ -18,7 +18,6 @@ use Jgut\Slim\Routing\Response\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Handlers\Strategies\RequestResponse;
-use Slim\Http\Body;
 use Slim\Route as SlimRoute;
 
 /**
@@ -85,45 +84,15 @@ class Route extends SlimRoute
         /* @var \Slim\Interfaces\InvocationStrategyInterface $handler */
         $handler = isset($this->container) ? $this->container->get('foundHandler') : new RequestResponse();
 
-        // invoke route callable
-        try {
-            ob_start();
-            $dispatchedResponse = $handler($this->callable, $request, $response, $this->arguments);
-            $output = ob_get_clean();
-            // @codeCoverageIgnoreStart
-        } catch (\Throwable $throwable) {
-            ob_end_clean();
-            throw $throwable;
-        } catch (\Exception $exception) {
-            ob_end_clean();
-            throw $exception;
-        }
-        // @codeCoverageIgnoreEnd
+        $dispatchedResponse = $handler($this->callable, $request, $response, $this->arguments);
 
-        if ($dispatchedResponse instanceof ResponseTypeInterface) {
-            return $dispatchedResponse;
-        }
-
-        if ($dispatchedResponse instanceof ResponseInterface) {
-            // if route callback returns a ResponseInterface, then use it
+        if ($dispatchedResponse instanceof ResponseTypeInterface
+            || $dispatchedResponse instanceof ResponseInterface
+        ) {
             $response = $dispatchedResponse;
         } elseif (is_string($dispatchedResponse)) {
-            // if route callback returns a string, then append it to the response
             if ($response->getBody()->isWritable()) {
                 $response->getBody()->write($dispatchedResponse);
-            }
-        }
-
-        if (!empty($output) && $response->getBody()->isWritable()) {
-            if ($this->outputBuffering === 'prepend') {
-                // prepend output buffer content
-                $body = new Body(fopen('php://temp', 'rb+'));
-                $body->write($output . $response->getBody());
-
-                $response = $response->withBody($body);
-            } elseif ($this->outputBuffering === 'append') {
-                // append output buffer content
-                $response->getBody()->write($output);
             }
         }
 

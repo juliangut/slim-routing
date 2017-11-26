@@ -129,13 +129,7 @@ class RouteTest extends TestCase
         $this->assertEquals($response, $route($this->request, $response));
     }
 
-    /**
-     * @dataProvider outputBufferingProvider
-     *
-     * @param string $outputBuffering
-     * @param string $responseContent
-     */
-    public function testStringResponse(string $outputBuffering, string $responseContent)
+    public function testStringResponse()
     {
         $configuration = $this->getMockBuilder(Configuration::class)
             ->disableOriginalConstructor()
@@ -146,27 +140,11 @@ class RouteTest extends TestCase
             'GET',
             '/',
             function () {
-                echo ' echo ';
-
                 return 'response';
             }
         );
         $route->setConfiguration($configuration);
-        $route->setOutputBuffering($outputBuffering);
 
-        $this->assertEquals($responseContent, (string) $route($this->request, new Response())->getBody());
-    }
-
-    /**
-     * Provide outputBuffering.
-     *
-     * @return array
-     */
-    public function outputBufferingProvider(): array
-    {
-        return [
-            ['prepend', ' echo response'],
-            ['append', 'response echo '],
-        ];
+        $this->assertEquals('response', (string) $route($this->request, new Response())->getBody());
     }
 }
