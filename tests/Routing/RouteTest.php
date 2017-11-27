@@ -17,8 +17,11 @@ use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandlerInterface;
 use Jgut\Slim\Routing\Response\ResponseTypeInterface;
 use Jgut\Slim\Routing\Route;
+use Jgut\Slim\Routing\Tests\Stubs\RouteStub;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Slim\Handlers\Strategies\RequestResponse;
 use Slim\Http\Environment;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -67,6 +70,47 @@ class RouteTest extends TestCase
             }
         );
         $route->setConfiguration($configuration);
+
+        $route($this->request, new Response());
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessageRegExp /Response handler should implement .+, "stdClass" given/
+     */
+    public function testInvalidHandler()
+    {
+        $responseType = $this->getMockBuilder(ResponseTypeInterface::class)
+            ->getMock();
+        /* @var ResponseTypeInterface $responseType */
+
+        $configuration = $this->getMockBuilder(Configuration::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $configuration->expects($this->once())
+            ->method('getResponseHandlers')
+            ->will($this->returnValue([get_class($responseType) => 'unknown']));
+        /* @var Configuration $configuration */
+
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->getMock();
+        $container->expects($this->any())
+            ->method('get')
+            ->will($this->returnValueMap([
+                ['foundHandler', new RequestResponse()],
+                ['unknown', new \stdClass()],
+            ]));
+        /* @var ContainerInterface $container */
+
+        $route = new RouteStub(
+            'GET',
+            '/',
+            function () use ($responseType) {
+                return $responseType;
+            }
+        );
+        $route->setConfiguration($configuration);
+        $route->setContainer($container);
 
         $route($this->request, new Response());
     }

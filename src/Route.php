@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing;
 
 use Jgut\Slim\Routing\Mapping\Resolver;
+use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandlerInterface;
 use Jgut\Slim\Routing\Response\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -117,6 +118,20 @@ class Route extends SlimRoute
             throw new \RuntimeException(sprintf('No handler registered for response type "%s"', $type));
         }
 
-        return $responseHandlers[$type]->handle($responseType);
+        $handler = $responseHandlers[$type];
+
+        if (is_string($handler) && isset($this->container)) {
+            $handler = $this->container->get($handler);
+        }
+
+        if (!$handler instanceof ResponseTypeHandlerInterface) {
+            throw new \RuntimeException(sprintf(
+                'Response handler should implement %s, "%s" given',
+                ResponseTypeHandlerInterface::class,
+                is_object($handler) ? get_class($handler) : gettype($handler)
+            ));
+        }
+
+        return $handler->handle($responseType);
     }
 }

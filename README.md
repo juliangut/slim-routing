@@ -97,7 +97,7 @@ $app->run();
   * alnum => `[a-zA-Z0-9]+`
   * any => `.+`
 * `namingStrategy`, instance of \Jgut\Slim\Routing\Naming\NamingInterface (\Jgut\Slim\Routing\Naming\SnakeCase by default)
-* `responseHandlers` array of \Jgut\Slim\Routing\Response\ResponseTypeInterface => \Jgut\Slim\Routing\Response\Handler\ResponseHandlerInterface
+* `responseHandlers` array of \Jgut\Slim\Routing\Response\ResponseTypeInterface::class => \Jgut\Slim\Routing\Response\Handler\ResponseHandlerInterface or container entry
 
 ## Response handling
 
