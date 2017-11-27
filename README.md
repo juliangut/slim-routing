@@ -101,20 +101,39 @@ $app->run();
 
 ## Response handling
 
+Ever thought why you should encode output or call template renderer in all your routes?
+
+```
+$app->get('/hello/{name}', function ($request, $response, $args) {
+    return $this->view->render($response, 'profile.html', [
+        'name' => $args['name']
+    ]);
+})->setName('profile');
+```
+
 Route callbacks normally respond with a `Psr\Message\ResponseInterface` object, but thanks to slim-routing they can now respond with a more intent expressive ResponseTypeInterface object that will be handled afterwards
 
 Of course normal ResponseInterface responses from route callback will be treated as usual
 
 ### Response type
 
-Response types are DTO objects with the needed data to later create a ResponseInterface object. This leaves the presentation logic out of router and allows for easy presentation logic reuse
+Response types are DTO objects with the needed data to later create a ResponseInterface object. This leaves the presentation logic out of router and allows for cleaner routes and easy presentation logic reuse
 
-If route callbacks return an instance of `\Jgut\Slim\Routing\Response\ResponseTypeInterface` it will be passed to the corresponding handler according to routing configuration
+```
+$app->get('/hello/{name}', function ($request, $response, $args) {
+    return ViewResponseType()
+        ->setResponse($response)
+        ->setTemplate('profile.html')
+        ->setParameters(['name' => $args['name']]);
+})->setName('profile');
+```
+
+If route returns an instance of `\Jgut\Slim\Routing\Response\ResponseTypeInterface` it will be passed to the corresponding handler according to routing configuration
 
 Provided response types:
 
+* `PayloadResponseType` stores simple payload to be transformed for example to JSON
 * `ViewResponseType` keeps agnostic template payload so it can be rendered in a handler
-* `PayloadResponseType` stores simple payload to be transformed for example to json
 
 ### Response type handler
 
@@ -124,7 +143,8 @@ Typically they will agglutinate presentation logic: how to represent the data co
 
 Provided response types:
 
-* `JsonResponseTypeHandler` receives a PayloadResponseType and returns a json response
+* `JsonResponseTypeHandler` receives a PayloadResponseType and returns a JSON response
+* `XmlResponseTypeHandler` receives a PayloadResponseType and returns a XML response (requires [spatie/array-to-xml](https://github.com/spatie/array-to-xml))
 * `TwigViewResponseTypeHandler` receives a generic ViewResponseType and returns a template rendered thanks to Twig and [Slim's Twig-View](https://github.com/slimphp/Twig-View)
 
 ### Routes

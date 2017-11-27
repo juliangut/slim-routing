@@ -18,18 +18,19 @@ use Jgut\Slim\Routing\Response\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Body;
 use Slim\Http\Response;
+use Spatie\ArrayToXml\ArrayToXml;
 
 /**
- * Generic JSON response handler.
+ * Generic XML response handler.
  */
-class JsonResponseHandler implements ResponseTypeHandlerInterface
+class XmlResponseHandler implements ResponseTypeHandlerInterface
 {
     /**
-     * Json encode flags.
+     * XML should be prettified.
      *
-     * @var int
+     * @var bool
      */
-    protected $jsonFlags;
+    protected $prettify;
 
     /**
      * JsonResponseTypeHandler constructor.
@@ -38,12 +39,7 @@ class JsonResponseHandler implements ResponseTypeHandlerInterface
      */
     public function __construct(bool $prettify = false)
     {
-        $jsonFlags = \JSON_UNESCAPED_UNICODE | \JSON_UNESCAPED_SLASHES | \JSON_PRESERVE_ZERO_FRACTION;
-        if ($prettify) {
-            $jsonFlags |= \JSON_PRETTY_PRINT;
-        }
-
-        $this->jsonFlags = $jsonFlags;
+        $this->prettify = $prettify;
     }
 
     /**
@@ -69,7 +65,8 @@ class JsonResponseHandler implements ResponseTypeHandlerInterface
      */
     protected function handleResponse(PayloadResponseType $responseType): ResponseInterface
     {
-        $responseContent = json_encode($responseType->getPayload(), $this->jsonFlags);
+        $converter = new ArrayToXml($responseType->getPayload(), '', false);
+        $responseContent = $this->prettify ? $this->prettify($converter) : $this->asSingleLine($converter);
 
         $response = $responseType->getResponse();
         if (!$response instanceof ResponseInterface) {
@@ -80,5 +77,40 @@ class JsonResponseHandler implements ResponseTypeHandlerInterface
         $body->write($responseContent);
 
         return $response->withBody($body);
+    }
+
+    /**
+     * Return XML in a single line.
+     *
+     * @param ArrayToXml $converter
+     *
+     * @return string
+     */
+    protected function asSingleLine(ArrayToXml $converter): string
+    {
+        $xmlLines = explode("\n", $converter->toXml());
+        array_walk(
+            $xmlLines,
+            function (string $xmlLine): string {
+                return ltrim($xmlLine);
+            }
+        );
+
+        return implode('', $xmlLines);
+    }
+
+    /**
+     * Prettify xml output.
+     *
+     * @param ArrayToXml $converter
+     *
+     * @return string
+     */
+    protected function prettify(ArrayToXml $converter): string
+    {
+        $domDocument = $converter->toDom();
+        $domDocument->formatOutput = true;
+
+        return rtrim($domDocument->saveXML(), "\n");
     }
 }

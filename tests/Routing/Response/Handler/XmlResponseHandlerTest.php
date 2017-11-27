@@ -13,16 +13,16 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests;
 
-use Jgut\Slim\Routing\Response\Handler\JsonResponseHandler;
+use Jgut\Slim\Routing\Response\Handler\XmlResponseHandler;
 use Jgut\Slim\Routing\Response\PayloadResponseType;
 use Jgut\Slim\Routing\Tests\Stubs\ResponseTypeStub;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Generic JSON response handler tests.
+ * Generic XML response handler tests.
  */
-class JsonResponseHandlerTest extends TestCase
+class XmlResponseHandlerTest extends TestCase
 {
     /**
      * @expectedException \InvalidArgumentException
@@ -30,33 +30,37 @@ class JsonResponseHandlerTest extends TestCase
      */
     public function testInvalidResponseType()
     {
-        (new JsonResponseHandler())->handle(new ResponseTypeStub());
+        (new XmlResponseHandler())->handle(new ResponseTypeStub());
     }
 
     public function testHandleCollapsed()
     {
         $responseType = (new PayloadResponseType())->setPayload(['data' => ['param' => 'value']]);
 
-        $response = (new JsonResponseHandler())->handle($responseType);
+        $response = (new XmlResponseHandler())->handle($responseType);
 
         self::assertInstanceOf(ResponseInterface::class, $response);
-        self::assertEquals('{"data":{"param":"value"}}', (string) $response->getBody());
+        self::assertEquals(
+            '<?xml version="1.0"?><root><data><param>value</param></data></root>',
+            (string) $response->getBody()
+        );
     }
 
     public function testHandlePrettified()
     {
         $responseType = (new PayloadResponseType())->setPayload(['data' => ['param' => 'value']]);
-        $response = (new JsonResponseHandler(true))->handle($responseType);
+        $response = (new XmlResponseHandler(true))->handle($responseType);
 
         self::assertInstanceOf(ResponseInterface::class, $response);
 
-        $responseContent = <<<'JSON'
-{
-    "data": {
-        "param": "value"
-    }
-}
-JSON;
+        $responseContent = <<<'XML'
+<?xml version="1.0"?>
+<root>
+  <data>
+    <param>value</param>
+  </data>
+</root>
+XML;
         self::assertEquals($responseContent, (string) $response->getBody());
     }
 }

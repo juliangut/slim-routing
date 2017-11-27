@@ -40,6 +40,7 @@
     "phpunit/phpunit": "^5.7|^6.0",
     "sebastian/phpcpd": "^2.0",
     "slim/twig-view": "^2.3",
+    "spatie/array-to-xml": "^2.2",
     "squizlabs/php_codesniffer": "^2.0"
   },
   "suggest": {
