@@ -52,7 +52,7 @@ class Configuration
     /**
      * Response handlers.
      *
-     * @var ResponseTypeHandlerInterface[]
+     * @var ResponseTypeHandlerInterface|string[]
      */
     protected $responseHandlers = [];
 
@@ -228,7 +228,7 @@ class Configuration
     /**
      * Get response handlers.
      *
-     * @return ResponseTypeHandlerInterface[]
+     * @return ResponseTypeHandlerInterface|string[]
      */
     public function getResponseHandlers(): array
     {
@@ -256,14 +256,14 @@ class Configuration
     /**
      * Add response handler.
      *
-     * @param string                       $response
-     * @param ResponseTypeHandlerInterface $handler
+     * @param string                              $response
+     * @param ResponseTypeHandlerInterface|string $handler
      *
      * @throws \InvalidArgumentException
      *
      * @return static
      */
-    public function addResponseHandler(string $response, ResponseTypeHandlerInterface $handler): self
+    public function addResponseHandler(string $response, $handler): self
     {
         $this->responseHandlers[$response] = $handler;
 
