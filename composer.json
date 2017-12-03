@@ -37,7 +37,8 @@
     "phpmd/phpmd": "^2.0",
     "phpmetrics/phpmetrics": "^2.0",
     "phpstan/phpstan": "~0.8.1",
-    "phpunit/phpunit": "^5.7|^6.0",
+    "phpunit/phpunit": "^6.0",
+    "povils/phpmnd": "^1.1",
     "sebastian/phpcpd": "^2.0",
     "slim/twig-view": "^2.3",
     "spatie/array-to-xml": "^2.2",
@@ -71,6 +72,7 @@
     "phpcs-lint": "php-cs-fixer fix --dry-run --verbose",
     "phpcpd": "phpcpd src",
     "phpmd": "phpmd src text unusedcode,naming,design,controversial,codesize",
+    "phpmnd": "phpmnd ./ --exclude=tests",
     "phpmetrics-report": "phpmetrics --report-html=build/metrics --report-violations=build/logs/violations.xml --offline .",
     "phpstan": "phpstan analyse --level 7 src",
     "phpunit": "phpunit",
@@ -83,6 +85,7 @@
       "@phpcs-lint",
       "@phpcpd",
       "@phpmd",
+      "@phpmnd",
       "@phpstan"
     ],
     "reports": [
