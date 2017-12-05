@@ -133,7 +133,7 @@ class Router extends SlimRouter
             $resolver = $this->getResolver();
 
             foreach ($routes as $route) {
-                /* @var Route $slimRoute */
+                /** @var Route $slimRoute */
                 $slimRoute = $this->map($route->getMethods(), $resolver->getPattern($route), $route->getInvokable());
 
                 $name = $resolver->getName($route);

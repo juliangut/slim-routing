@@ -43,7 +43,7 @@ class AnnotationDriver extends AbstractAnnotationDriver implements DriverInterfa
                 continue;
             }
 
-            /* @var RouterAnnotation $router */
+            /** @var RouterAnnotation $router */
             $router = $this->annotationReader->getClassAnnotation($class, RouterAnnotation::class);
             if ($router) {
                 $routes[] = $this->getRoutesMetadata($class, $groups);
@@ -67,7 +67,7 @@ class AnnotationDriver extends AbstractAnnotationDriver implements DriverInterfa
         $groups = [];
 
         foreach ($mappingClasses as $class) {
-            /* @var GroupAnnotation $group */
+            /** @var GroupAnnotation $group */
             $group = $this->annotationReader->getClassAnnotation($class, GroupAnnotation::class);
 
             if ($group) {
@@ -79,9 +79,10 @@ class AnnotationDriver extends AbstractAnnotationDriver implements DriverInterfa
             }
         }
 
+        /** @var GroupMetadata[] $groups */
         $groups = array_map(
             function (\stdClass $groupDataBag) use ($groups) {
-                /* @var GroupMetadata $group */
+                /** @var GroupMetadata $group */
                 $group = $groupDataBag->group;
 
                 $parent = $groupDataBag->parent;
@@ -97,7 +98,6 @@ class AnnotationDriver extends AbstractAnnotationDriver implements DriverInterfa
             },
             $groups
         );
-        /* @var GroupMetadata[] $groups */
 
         return $groups;
     }
@@ -143,14 +143,14 @@ class AnnotationDriver extends AbstractAnnotationDriver implements DriverInterfa
 
         $group = null;
 
-        /* @var GroupAnnotation $groupAnnotation */
+        /** @var GroupAnnotation $groupAnnotation */
         $groupAnnotation = $this->annotationReader->getClassAnnotation($class, GroupAnnotation::class);
         if ($groupAnnotation) {
             $group = $groups[$class->getName()];
         }
 
         foreach ($class->getMethods() as $method) {
-            /* @var RouteAnnotation $route */
+            /** @var RouteAnnotation $route */
             $route = $this->annotationReader->getMethodAnnotation($method, RouteAnnotation::class);
 
             if ($route) {

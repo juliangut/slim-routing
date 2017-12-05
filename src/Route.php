@@ -82,7 +82,7 @@ class Route extends SlimRoute
     {
         $this->callable = $this->resolveCallable($this->callable);
 
-        /* @var \Slim\Interfaces\InvocationStrategyInterface $handler */
+        /** @var \Slim\Interfaces\InvocationStrategyInterface $handler */
         $handler = isset($this->container) ? $this->container->get('foundHandler') : new RequestResponse();
 
         $dispatchedResponse = $handler($this->callable, $request, $response, $this->arguments);

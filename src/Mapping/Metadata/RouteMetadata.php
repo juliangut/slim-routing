@@ -178,7 +178,7 @@ class RouteMetadata extends AbstractMetadata
     /**
      * Set route invokable.
      *
-     * @param callable|string|array $invokable
+     * @param callable $invokable
      *
      * @throws \InvalidArgumentException
      *

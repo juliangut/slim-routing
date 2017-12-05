@@ -51,8 +51,8 @@ trait MiddlewareTrait
         if (!is_array($middlewareList)) {
             $middlewareList = [$middlewareList];
         }
-        /* @var array $middlewareList */
 
+        /** @var array $middlewareList */
         foreach ($middlewareList as $middleware) {
             if (!is_string($middleware)) {
                 throw new \InvalidArgumentException(

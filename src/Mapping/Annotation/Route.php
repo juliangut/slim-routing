@@ -107,8 +107,8 @@ class Route extends AbstractAnnotation
         if (!is_array($methods)) {
             $methods = [$methods];
         }
-        /* @var array $methods */
 
+        /** @var array $methods */
         foreach (array_filter($methods) as $method) {
             if (!is_string($method)) {
                 throw new \UnexpectedValueException(
