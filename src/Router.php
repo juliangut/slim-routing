@@ -92,7 +92,7 @@ class Router extends SlimRouter
     {
         if ($this->dispatcher === null
             && $this->routesLoaded === false
-            && $this->cacheFile && file_exists($this->cacheFile)
+            && $this->cacheFile !== false && file_exists($this->cacheFile)
         ) {
             $this->getRoutes();
         }

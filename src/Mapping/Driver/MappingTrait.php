@@ -38,8 +38,8 @@ trait MappingTrait
     /**
      * Get routes metadata.
      *
-     * @param array         $mappingData
-     * @param GroupMetadata $group
+     * @param array              $mappingData
+     * @param GroupMetadata|null $group
      *
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
@@ -62,8 +62,8 @@ trait MappingTrait
     /**
      * Get group metadata.
      *
-     * @param array         $mapping
-     * @param GroupMetadata $parentGroup
+     * @param array              $mapping
+     * @param GroupMetadata|null $parentGroup
      *
      * @return GroupMetadata
      */
@@ -93,8 +93,8 @@ trait MappingTrait
     /**
      * Get route metadata.
      *
-     * @param array         $mapping
-     * @param GroupMetadata $group
+     * @param array              $mapping
+     * @param GroupMetadata|null $group
      *
      * @return RouteMetadata
      */
