@@ -43,14 +43,14 @@ class AnnotationDriver extends AbstractAnnotationDriver implements DriverInterfa
                 continue;
             }
 
-            /** @var RouterAnnotation $router */
+            /** @var RouterAnnotation|null $router */
             $router = $this->annotationReader->getClassAnnotation($class, RouterAnnotation::class);
-            if ($router) {
+            if ($router !== null) {
                 $routes[] = $this->getRoutesMetadata($class, $groups);
             }
         }
 
-        return count($routes) ? array_merge(...$routes) : [];
+        return count($routes) > 0 ? array_merge(...$routes) : [];
     }
 
     /**
@@ -67,10 +67,10 @@ class AnnotationDriver extends AbstractAnnotationDriver implements DriverInterfa
         $groups = [];
 
         foreach ($mappingClasses as $class) {
-            /** @var GroupAnnotation $group */
+            /** @var GroupAnnotation|null $group */
             $group = $this->annotationReader->getClassAnnotation($class, GroupAnnotation::class);
 
-            if ($group) {
+            if ($group !== null) {
                 $groupDataBag = new \stdClass();
                 $groupDataBag->parent = $group->getParent();
                 $groupDataBag->group = $this->getGroupMetadata($group);
@@ -143,17 +143,18 @@ class AnnotationDriver extends AbstractAnnotationDriver implements DriverInterfa
 
         $group = null;
 
-        /** @var GroupAnnotation $groupAnnotation */
+        /** @var GroupAnnotation|null $groupAnnotation */
         $groupAnnotation = $this->annotationReader->getClassAnnotation($class, GroupAnnotation::class);
-        if ($groupAnnotation) {
+
+        if ($groupAnnotation !== null) {
             $group = $groups[$class->getName()];
         }
 
         foreach ($class->getMethods() as $method) {
-            /** @var RouteAnnotation $route */
+            /** @var RouteAnnotation|null $route */
             $route = $this->annotationReader->getMethodAnnotation($method, RouteAnnotation::class);
 
-            if ($route) {
+            if ($route !== null) {
                 if ($method->isConstructor() || $method->isDestructor()) {
                     throw new \RuntimeException(
                         sprintf('Routes can not be defined in constructor or destructor in class %s', $class->name)
@@ -164,7 +165,7 @@ class AnnotationDriver extends AbstractAnnotationDriver implements DriverInterfa
                     ['private', 'protected'],
                     \Reflection::getModifierNames($method->getModifiers())
                 );
-                if (count($modifiers)) {
+                if (count($modifiers) !== 0) {
                     throw new \RuntimeException(
                         sprintf('Routes can not be defined in private or protected methods in class %s', $class->name)
                     );
@@ -174,7 +175,7 @@ class AnnotationDriver extends AbstractAnnotationDriver implements DriverInterfa
             }
         }
 
-        if (!count($routes)) {
+        if (count($routes) === 0) {
             throw new \RuntimeException(sprintf('Class %s does not define any route', $class->name));
         }
 

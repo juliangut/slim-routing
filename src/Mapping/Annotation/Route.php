@@ -121,7 +121,7 @@ class Route extends AbstractAnnotation
 
         $this->methods = array_unique(array_filter($this->methods, 'strlen'));
 
-        if (!count($this->methods)) {
+        if (count($this->methods) === 0) {
             throw new \UnexpectedValueException('Route annotation methods can not be empty');
         }
 

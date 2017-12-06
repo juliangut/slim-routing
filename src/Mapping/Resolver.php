@@ -114,7 +114,7 @@ class Resolver
             $parameters = $parameter[1];
 
             $duplicatedParameters = array_unique(array_diff_assoc($parameters, array_unique($parameters)));
-            if (count($duplicatedParameters)) {
+            if (count($duplicatedParameters) > 0) {
                 throw new \RuntimeException(
                     'There are duplicated route parameters: ' . implode(', ', $duplicatedParameters)
                 );
@@ -154,7 +154,7 @@ class Resolver
             $route->getGroupChain()
         ));
         $placeholders[] = $route->getPlaceholders();
-        $placeholders = count($placeholders) ? array_filter(array_merge(...$placeholders)) : [];
+        $placeholders = count($placeholders) > 0 ? array_filter(array_merge(...$placeholders)) : [];
 
         return array_map(
             function (string $pattern) use ($aliases) {
@@ -204,7 +204,7 @@ class Resolver
         ));
 
         $duplicatedNames = array_unique(array_diff_assoc($names, array_unique($names)));
-        if (count($duplicatedNames)) {
+        if (count($duplicatedNames) > 0) {
             throw new \RuntimeException('There are duplicated route names: ' . implode(', ', $duplicatedNames));
         }
     }
@@ -234,11 +234,11 @@ class Resolver
             $routes
         );
 
-        $paths = count($paths) ? array_merge(...$paths) : [];
+        $paths = count($paths) > 0 ? array_merge(...$paths) : [];
 
         $duplicatedPaths = array_unique(array_diff_assoc($paths, array_unique($paths)));
 
-        if (count($duplicatedPaths)) {
+        if (count($duplicatedPaths) > 0) {
             throw new \RuntimeException('There are duplicated routes: ' . implode(', ', $duplicatedPaths));
         }
     }

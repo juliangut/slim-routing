@@ -68,7 +68,7 @@ class Router extends SlimRouter
      */
     public function getResolver(): Resolver
     {
-        if (!$this->resolver) {
+        if ($this->resolver === null) {
             $this->resolver = new Resolver($this->configuration);
         }
 
@@ -129,7 +129,7 @@ class Router extends SlimRouter
     {
         $routes = $this->getRoutesMetadata();
 
-        if (count($routes)) {
+        if (count($routes) > 0) {
             $resolver = $this->getResolver();
 
             foreach ($routes as $route) {
@@ -168,7 +168,7 @@ class Router extends SlimRouter
         }
         $resolver = $this->getResolver();
 
-        $routes = $resolver->sort(count($routes) ? array_merge(...$routes) : []);
+        $routes = $resolver->sort(count($routes) > 0 ? array_merge(...$routes) : []);
 
         $resolver->checkDuplicatedRoutes($routes);
 

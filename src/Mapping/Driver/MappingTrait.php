@@ -56,7 +56,7 @@ trait MappingTrait
                 : [$this->getRouteMetadata($mapping, $group)];
         }
 
-        return count($routes) ? array_merge(...$routes) : [];
+        return count($routes) > 0 ? array_merge(...$routes) : [];
     }
 
     /**
@@ -186,7 +186,7 @@ trait MappingTrait
 
         $methods = array_unique(array_filter($methods, 'strlen'));
 
-        if (!count($methods)) {
+        if (count($methods) === 0) {
             throw new \InvalidArgumentException('Route methods can not be empty');
         }
 
