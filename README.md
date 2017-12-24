@@ -49,7 +49,6 @@ require './vendor/autoload.php';
 
 ```php
 use Jgut\Slim\Routing\Configuration;
-use Jgut\Slim\Routing\Framework\Strategy\RequestResponse;
 use Jgut\Slim\Routing\Response\PayloadResponseType;
 use Jgut\Slim\Routing\Response\Handler\JsonResponseHandler;
 use Jgut\Slim\Routing\Router;
