@@ -23,7 +23,7 @@ use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 /**
  * Annotation driver.
  */
-class AnnotationDriver extends AbstractAnnotationDriver implements DriverInterface
+class AnnotationDriver extends AbstractAnnotationDriver
 {
     /**
      * {@inheritdoc}

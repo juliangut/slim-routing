@@ -19,7 +19,7 @@ use Jgut\Mapping\Driver\Traits\PhpMappingTrait;
 /**
  * PHP mapping driver.
  */
-class PhpDriver extends AbstractMappingDriver implements DriverInterface
+class PhpDriver extends AbstractMappingDriver
 {
     use PhpMappingTrait;
     use MappingTrait;

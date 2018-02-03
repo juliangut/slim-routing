@@ -11,12 +11,12 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing\Tests;
+namespace Jgut\Slim\Routing\Tests\Route;
 
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandlerInterface;
 use Jgut\Slim\Routing\Response\ResponseTypeInterface;
-use Jgut\Slim\Routing\Route;
+use Jgut\Slim\Routing\Route\Route;
 use Jgut\Slim\Routing\Tests\Stubs\RouteStub;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;

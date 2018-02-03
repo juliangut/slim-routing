@@ -15,9 +15,7 @@ namespace Jgut\Slim\Routing;
 
 use FastRoute\Dispatcher;
 use FastRoute\RouteParser;
-use Jgut\Slim\Routing\Mapping\Driver\DriverFactory;
-use Jgut\Slim\Routing\Mapping\Driver\DriverInterface;
-use Jgut\Slim\Routing\Mapping\Resolver;
+use Jgut\Slim\Routing\Route\Route;
 use Slim\Router as SlimRouter;
 
 /**
@@ -31,13 +29,6 @@ class Router extends SlimRouter
      * @var Configuration
      */
     protected $configuration;
-
-    /**
-     * Route resolver.
-     *
-     * @var Resolver
-     */
-    protected $resolver;
 
     /**
      * Mapping routes have been loaded.
@@ -59,30 +50,6 @@ class Router extends SlimRouter
         parent::__construct($parser);
 
         $this->configuration = $configuration;
-    }
-
-    /**
-     * Get route resolver.
-     *
-     * @return Resolver
-     */
-    public function getResolver(): Resolver
-    {
-        if ($this->resolver === null) {
-            $this->resolver = new Resolver($this->configuration);
-        }
-
-        return $this->resolver;
-    }
-
-    /**
-     * Set route resolver.
-     *
-     * @param Resolver $resolver
-     */
-    public function setResolver(Resolver $resolver)
-    {
-        $this->resolver = $resolver;
     }
 
     /**
@@ -127,23 +94,19 @@ class Router extends SlimRouter
      */
     protected function registerRoutes()
     {
-        $routes = $this->getRoutesMetadata();
+        $resolver = $this->configuration->getRouteResolver();
 
-        if (count($routes) > 0) {
-            $resolver = $this->getResolver();
+        foreach ($this->getRoutesMetadata() as $route) {
+            /** @var Route $slimRoute */
+            $slimRoute = $this->map($route->getMethods(), $resolver->getPattern($route), $route->getInvokable());
 
-            foreach ($routes as $route) {
-                /** @var Route $slimRoute */
-                $slimRoute = $this->map($route->getMethods(), $resolver->getPattern($route), $route->getInvokable());
+            $name = $resolver->getName($route);
+            if ($name !== null) {
+                $slimRoute->setName($name);
+            }
 
-                $name = $resolver->getName($route);
-                if ($name !== null) {
-                    $slimRoute->setName($name);
-                }
-
-                foreach ($resolver->getMiddleware($route) as $middleware) {
-                    $slimRoute->add($middleware);
-                }
+            foreach ($resolver->getMiddleware($route) as $middleware) {
+                $slimRoute->add($middleware);
             }
         }
     }
@@ -155,24 +118,13 @@ class Router extends SlimRouter
      */
     protected function getRoutesMetadata(): array
     {
-        $routes = [];
-        foreach ($this->configuration->getSources() as $mappingSource) {
-            if (!is_array($mappingSource)) {
-                $mappingSource = [
-                    'type' => DriverInterface::DRIVER_ANNOTATION,
-                    'path' => $mappingSource,
-                ];
-            }
+        /** @var \Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata[] $routes */
+        $routes = $this->configuration->getMetadataResolver()->getMetadata($this->configuration->getSources());
 
-            $routes[] = DriverFactory::getDriver($mappingSource)->getMetadata();
-        }
-        $resolver = $this->getResolver();
+        $routeResolver = $this->configuration->getRouteResolver();
+        $routeResolver->checkDuplicatedRoutes($routes);
 
-        $routes = $resolver->sort(count($routes) > 0 ? array_merge(...$routes) : []);
-
-        $resolver->checkDuplicatedRoutes($routes);
-
-        return $routes;
+        return $routeResolver->sort($routes);
     }
 
     /**
@@ -181,8 +133,13 @@ class Router extends SlimRouter
     protected function createRoute($methods, $pattern, $callable): Route
     {
         $route = new Route($methods, $pattern, $callable, $this->routeGroups, $this->routeCounter);
+
         $route->setConfiguration($this->configuration);
-        $route->setContainer($this->container);
+
+        if ($this->container !== null) {
+            $route->setContainer($this->container);
+        }
+
         $route->setOutputBuffering($this->container->get('settings')['outputBuffering']);
 
         return $route;

@@ -19,9 +19,9 @@ Thanks to this library, instead of configuring routes by hand one by one and inc
 If you're familiar with how Doctrine defines entities mappings you'll feel at home with slim-routing because much as how Doctrine does route mappings are defined either
 
 * On class annotations (in controller classes)
-* In routing definition files, currently supported in PHP, Json, XML and YAML
+* In routing definition files, currently supported in PHP, JSON, XML and YAML
 
-> Routing gathering and compilation can be quite a heavy load process depending on how many classes/files and routes are defined. For this reason it's advised to always use [Slim's router cache](https://www.slimframework.com/docs/objects/application.html#slim-default-settings) on production applications and invalidate cache on deployment
+> Routing gathering and compilation can be quite a heavy load process depending on how many classes/files and routes are defined, specially for annotations. For this reason it's advised to always use [Slim's router cache](https://www.slimframework.com/docs/objects/application.html#slim-default-settings) on production applications and invalidate cache on deployment
 
 Route callbacks can now return `\Jgut\Slim\Routing\Response\ResponseTypeInterface` responses that will be later transformed into the mandatory `Psr\Message\ResponseInterface` in a way that lets you decouple view from controller 
 
@@ -78,7 +78,7 @@ $container['router'] = function ($container) {
 };
 
 $app->get('/', function(ServerRequestInterface $request, ResponseInterface $response) {
-    return (new PayloadResponseType($response))->setPayload(['param' => 'value']);
+    return (new PayloadResponseType())->setResponse($response)->setPayload(['param' => 'value']);
 });
 
 $app->run();
@@ -87,7 +87,7 @@ $app->run();
 ### Configuration
 
 * `sources` must be an array containing arrays of configurations to create MappingDriver objects:
-    * `type` one of \Jgut\Slim\Routing\Mapping\Driver\DriverInterface constants: `DRIVER_ANNOTATION`, `DRIVER_PHP`, `DRIVER_JSON`, `DRIVER_XML` or `DRIVER_YAML` **defaults to DRIVER_ANNOTATION if no driver**
+    * `type` one of \Jgut\Slim\Routing\Mapping\Driver\DriverFactory constants: `DRIVER_ANNOTATION`, `DRIVER_PHP`, `DRIVER_JSON`, `DRIVER_XML` or `DRIVER_YAML` **defaults to DRIVER_ANNOTATION if no driver**
     * `path` a string path or array of paths to where mapping files are located (files or directories) **REQUIRED if no driver**
     * `driver` an already created \Jgut\Slim\Routing\Mapping\Driver\DriverInterface object **REQUIRED if no type AND path**
 * `placeholderAliases` array of additional placeholder aliases. There are some default aliases already available:

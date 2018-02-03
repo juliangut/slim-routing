@@ -45,4 +45,4 @@ script:
   - if [[ -z $TEST_VERSION ]]; then composer phpunit ; fi
 
 after_script:
-  - if [[ $TEST_VERSION ]]; then travis_retry php vendor/bin/coveralls --verbose ; fi
+  - if [[ $TEST_VERSION ]]; then travis_retry php vendor/bin/php-coveralls --verbose ; fi

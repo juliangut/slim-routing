@@ -11,9 +11,9 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing;
+namespace Jgut\Slim\Routing\Route;
 
-use Jgut\Slim\Routing\Mapping\Resolver;
+use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandlerInterface;
 use Jgut\Slim\Routing\Response\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;

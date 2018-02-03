@@ -16,8 +16,8 @@ namespace Jgut\Slim\Routing\Tests;
 use FastRoute\Dispatcher;
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
-use Jgut\Slim\Routing\Mapping\Resolver;
-use Jgut\Slim\Routing\Route;
+use Jgut\Slim\Routing\Route\Resolver;
+use Jgut\Slim\Routing\Route\Route;
 use Jgut\Slim\Routing\Router;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
@@ -30,44 +30,6 @@ use Slim\Http\Request;
  */
 class RouterTest extends TestCase
 {
-    public function testDefaultResolver()
-    {
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->getMock();
-        /* @var ContainerInterface $container */
-
-        $configuration = $this->getMockBuilder(Configuration::class)
-            ->getMock();
-        /* @var Configuration $configuration */
-
-        $router = new Router($configuration);
-        $router->setContainer($container);
-
-        $this->assertInstanceOf(Resolver::class, $router->getResolver());
-    }
-
-    public function testResolver()
-    {
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->getMock();
-        /* @var ContainerInterface $container */
-
-        $configuration = $this->getMockBuilder(Configuration::class)
-            ->getMock();
-        /* @var Configuration $configuration */
-
-        $resolver = $this->getMockBuilder(Resolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var Resolver $resolver */
-
-        $router = new Router($configuration);
-        $router->setContainer($container);
-        $router->setResolver($resolver);
-
-        $this->assertEquals($resolver, $router->getResolver());
-    }
-
     public function testRoutes()
     {
         $container = $this->getMockBuilder(ContainerInterface::class)
@@ -78,12 +40,11 @@ class RouterTest extends TestCase
         /* @var ContainerInterface $container */
 
         $configuration = $this->getMockBuilder(Configuration::class)
-            ->setMethods(['getSources'])
+            ->setMethods(['getSources', 'getRouteResolver'])
             ->getMock();
         $configuration->expects($this->once())
             ->method('getSources')
             ->will($this->returnValue([__DIR__ . '/Files/Annotation/Valid']));
-        /* @var Configuration $configuration */
 
         $routesMetadata = [
             (new RouteMetadata())
@@ -108,13 +69,15 @@ class RouterTest extends TestCase
             ->will($this->returnValue($routesMetadata));
         /* @var Resolver $resolver */
 
+        $configuration->expects($this->any())
+            ->method('getRouteResolver')
+            ->will($this->returnValue($resolver));
+        /* @var Configuration $configuration */
+
         $router = new Router($configuration);
         $router->setContainer($container);
-        $router->setResolver($resolver);
 
-        $routes = $router->getRoutes();
-
-        $this->assertCount(2, $routes);
+        $this->assertCount(2, $router->getRoutes());
     }
 
     public function testDispatcher()
@@ -145,7 +108,7 @@ class RouterTest extends TestCase
         /* @var ContainerInterface $container */
 
         $configuration = $this->getMockBuilder(Configuration::class)
-            ->setMethods(['getSources'])
+            ->setMethods(['getSources', 'getRouteResolver'])
             ->getMock();
         $configuration->expects($this->once())
             ->method('getSources')
@@ -168,9 +131,13 @@ class RouterTest extends TestCase
             ->will($this->returnValue($routesMetadata));
         /* @var Resolver $resolver */
 
+        $configuration->expects($this->any())
+            ->method('getRouteResolver')
+            ->will($this->returnValue($resolver));
+        /* @var Configuration $configuration */
+
         $router = new Router($configuration);
         $router->setContainer($container);
-        $router->setResolver($resolver);
         $router->setCacheFile($routesFile->url());
 
         $request = Request::createFromEnvironment(Environment::mock(['REQUEST_URI' => 'fake.com/one']));

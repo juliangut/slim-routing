@@ -11,14 +11,14 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing\Mapping;
+namespace Jgut\Slim\Routing\Route;
 
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 
 /**
- * Routing resolver.
+ * Route resolver.
  */
 class Resolver
 {
@@ -30,7 +30,7 @@ class Resolver
     protected $configuration;
 
     /**
-     * RouteCompiler constructor.
+     * Route resolver constructor.
      *
      * @param Configuration $configuration
      */
@@ -237,7 +237,6 @@ class Resolver
         $paths = count($paths) > 0 ? array_merge(...$paths) : [];
 
         $duplicatedPaths = array_unique(array_diff_assoc($paths, array_unique($paths)));
-
         if (count($duplicatedPaths) > 0) {
             throw new \RuntimeException('There are duplicated routes: ' . implode(', ', $duplicatedPaths));
         }

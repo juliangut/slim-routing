@@ -11,12 +11,12 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing\Tests\Mapping;
+namespace Jgut\Slim\Routing\Tests\Route;
 
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
-use Jgut\Slim\Routing\Mapping\Resolver;
+use Jgut\Slim\Routing\Route\Resolver;
 use PHPUnit\Framework\TestCase;
 
 /**

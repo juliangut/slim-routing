@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Stubs;
 
-use Jgut\Slim\Routing\Route;
+use Jgut\Slim\Routing\Route\Route;
 
 /**
  * Response type aware route stub.

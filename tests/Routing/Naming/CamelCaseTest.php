@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing\Tests\Loader;
+namespace Jgut\Slim\Routing\Tests\Naming;
 
 use Jgut\Slim\Routing\Naming\CamelCase;
 use PHPUnit\Framework\TestCase;

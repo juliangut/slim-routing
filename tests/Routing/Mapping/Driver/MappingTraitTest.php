@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing\Tests\Source;
+namespace Jgut\Slim\Routing\Tests\Mapping\Driver;
 
 use Jgut\Slim\Routing\Mapping\Driver\MappingTrait;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;

@@ -13,10 +13,13 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests;
 
+use Jgut\Mapping\Metadata\MetadataResolver;
 use Jgut\Slim\Routing\Configuration;
+use Jgut\Slim\Routing\Mapping\Driver\DriverFactory;
 use Jgut\Slim\Routing\Naming\CamelCase;
 use Jgut\Slim\Routing\Naming\SnakeCase;
 use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandlerInterface;
+use Jgut\Slim\Routing\Route\Resolver;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -46,7 +49,18 @@ class ConfigurationTest extends TestCase
 
         self::assertEmpty($configuration->getSources());
         self::assertEquals($defaultAliasList, $configuration->getPlaceholderAliases());
+        self::assertInstanceOf(MetadataResolver::class, $configuration->getMetadataResolver());
+        self::assertInstanceOf(Resolver::class, $configuration->getRouteResolver());
         self::assertInstanceOf(SnakeCase::class, $configuration->getNamingStrategy());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The following configuration parameters are not recognized: unknown
+     */
+    public function testUnknownParameter()
+    {
+        new Configuration(['unknown' => 'unknown']);
     }
 
     /**
@@ -96,6 +110,24 @@ class ConfigurationTest extends TestCase
         ]);
 
         self::assertEquals($aliasList, $configuration->getPlaceholderAliases());
+    }
+
+    public function testMetadataResolver()
+    {
+        $metadataResolver = new MetadataResolver(new DriverFactory());
+
+        $configuration = new Configuration(['metadataResolver' => $metadataResolver]);
+
+        self::assertEquals($metadataResolver, $configuration->getMetadataResolver());
+    }
+
+    public function testRouteResolver()
+    {
+        $routeResolver = new Resolver(new Configuration());
+
+        $configuration = new Configuration(['routeResolver' => $routeResolver]);
+
+        self::assertEquals($routeResolver, $configuration->getRouteResolver());
     }
 
     public function testNamingStrategy()

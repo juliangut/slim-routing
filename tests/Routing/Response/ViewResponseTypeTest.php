@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing\Tests;
+namespace Jgut\Slim\Routing\Tests\Response;
 
 use Jgut\Slim\Routing\Response\ViewResponseType;
 use PHPUnit\Framework\TestCase;

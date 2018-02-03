@@ -19,7 +19,7 @@ use Jgut\Mapping\Driver\Traits\XmlMappingTrait;
 /**
  * XML mapping driver.
  */
-class XmlDriver extends AbstractMappingDriver implements DriverInterface
+class XmlDriver extends AbstractMappingDriver
 {
     use XmlMappingTrait;
     use MappingTrait;

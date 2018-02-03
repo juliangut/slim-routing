@@ -1,6 +1,7 @@
 !.gitignore
 composer.lock
+cghooks.lock
 vendor/
 *.cache
-humbuglog.*
+infection-log.*
 build/

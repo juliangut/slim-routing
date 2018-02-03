@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing\Tests;
+namespace Jgut\Slim\Routing\Tests\Response\Handler;
 
 use Jgut\Slim\Routing\Response\Handler\TwigViewResponseHandler;
 use Jgut\Slim\Routing\Response\ViewResponseType;

@@ -19,7 +19,7 @@ use Jgut\Mapping\Driver\Traits\JsonMappingTrait;
 /**
  * JSON mapping driver.
  */
-class JsonDriver extends AbstractMappingDriver implements DriverInterface
+class JsonDriver extends AbstractMappingDriver
 {
     use JsonMappingTrait;
     use MappingTrait;

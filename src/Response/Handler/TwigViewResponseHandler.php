@@ -30,16 +30,16 @@ class TwigViewResponseHandler implements ResponseTypeHandlerInterface
      *
      * @var Twig
      */
-    protected $twig;
+    protected $viewRenderer;
 
     /**
      * TwigViewResponseHandler constructor.
      *
-     * @param Twig $twig
+     * @param Twig $viewRenderer
      */
-    public function __construct(Twig $twig)
+    public function __construct(Twig $viewRenderer)
     {
-        $this->twig = $twig;
+        $this->viewRenderer = $viewRenderer;
     }
 
     /**
@@ -65,7 +65,7 @@ class TwigViewResponseHandler implements ResponseTypeHandlerInterface
      */
     protected function handleResponse(ViewResponseType $responseType): ResponseInterface
     {
-        $responseContent = $this->twig->fetch($responseType->getTemplate(), $responseType->getParameters());
+        $responseContent = $this->viewRenderer->fetch($responseType->getTemplate(), $responseType->getParameters());
 
         $response = $responseType->getResponse();
         if (!$response instanceof ResponseInterface) {

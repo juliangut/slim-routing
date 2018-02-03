@@ -13,10 +13,13 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing;
 
-use Jgut\Slim\Routing\Mapping\Driver\DriverInterface;
+use Jgut\Mapping\Driver\DriverInterface;
+use Jgut\Mapping\Metadata\MetadataResolver;
+use Jgut\Slim\Routing\Mapping\Driver\DriverFactory;
 use Jgut\Slim\Routing\Naming\NamingInterface;
 use Jgut\Slim\Routing\Naming\SnakeCase;
 use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandlerInterface;
+use Jgut\Slim\Routing\Route\Resolver;
 
 /**
  * Routing configuration.
@@ -41,6 +44,20 @@ class Configuration
         'alnum' => '[a-zA-Z0-9]+',
         'any' => '.+',
     ];
+
+    /**
+     * Metadata resolver.
+     *
+     * @var MetadataResolver
+     */
+    protected $metadataResolver;
+
+    /**
+     * Route resolver.
+     *
+     * @var Resolver
+     */
+    protected $routeResolver;
 
     /**
      * Naming strategy.
@@ -71,25 +88,24 @@ class Configuration
 
         $configs = array_keys(get_object_vars($this));
 
+        $unknownParameters = array_diff(array_keys($configurations), $configs);
+        if (count($unknownParameters) > 0) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'The following configuration parameters are not recognized: %s',
+                    implode(', ', $unknownParameters)
+                )
+            );
+        }
+
         foreach ($configs as $config) {
             if (isset($configurations[$config])) {
-                switch ($config) {
-                    case 'sources':
-                        $this->setSources($configurations[$config]);
-                        break;
+                $callback = [
+                    $this,
+                    $config === 'placeholderAliases' ? 'addPlaceholderAliases' : 'set' . ucfirst($config),
+                ];
 
-                    case 'placeholderAliases':
-                        $this->addPlaceholderAliases($configurations[$config]);
-                        break;
-
-                    case 'namingStrategy':
-                        $this->setNamingStrategy($configurations[$config]);
-                        break;
-
-                    case 'responseHandlers':
-                        $this->addResponseHandlers($configurations[$config]);
-                        break;
-                }
+                call_user_func($callback, $configurations[$config]);
             }
         }
     }
@@ -198,6 +214,62 @@ class Configuration
     }
 
     /**
+     * Get metadata resolver.
+     *
+     * @return MetadataResolver
+     */
+    public function getMetadataResolver(): MetadataResolver
+    {
+        if ($this->metadataResolver === null) {
+            $this->metadataResolver = new MetadataResolver(new DriverFactory());
+        }
+
+        return $this->metadataResolver;
+    }
+
+    /**
+     * Set metadata resolver.
+     *
+     * @param MetadataResolver $metadataResolver
+     *
+     * @return static
+     */
+    public function setMetadataResolver(MetadataResolver $metadataResolver): self
+    {
+        $this->metadataResolver = $metadataResolver;
+
+        return $this;
+    }
+
+    /**
+     * Get route resolver.
+     *
+     * @return Resolver
+     */
+    public function getRouteResolver(): Resolver
+    {
+        if ($this->routeResolver === null) {
+            $this->routeResolver = new Resolver($this);
+        }
+
+        return $this->routeResolver;
+    }
+
+    /**
+     * Set route resolver.
+     *
+     * @param Resolver $routeResolver
+     *
+     * @return static
+     */
+    public function setRouteResolver(Resolver $routeResolver): self
+    {
+        $this->routeResolver = $routeResolver;
+
+        return $this;
+    }
+
+    /**
      * Get naming strategy.
      *
      * @return NamingInterface
@@ -236,16 +308,16 @@ class Configuration
     }
 
     /**
-     * Add response handlers.
+     * Set response handlers.
      *
-     * @param ResponseTypeHandlerInterface[]|string[] $handlers
-     *
-     * @throws \InvalidArgumentException
+     * @param array $handlers
      *
      * @return static
      */
-    public function addResponseHandlers(array $handlers): self
+    public function setResponseHandlers(array $handlers): self
     {
+        $this->sources = [];
+
         foreach ($handlers as $responseType => $responseHandler) {
             $this->addResponseHandler($responseType, $responseHandler);
         }

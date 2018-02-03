@@ -19,7 +19,7 @@ use Jgut\Mapping\Driver\Traits\YamlMappingTrait;
 /**
  * YAML mapping driver.
  */
-class YamlDriver extends AbstractMappingDriver implements DriverInterface
+class YamlDriver extends AbstractMappingDriver
 {
     use YamlMappingTrait;
     use MappingTrait;
