@@ -48,15 +48,15 @@ trait MiddlewareTrait
     {
         $this->middleware = [];
 
-        if (!is_array($middlewareList)) {
+        if (!\is_array($middlewareList)) {
             $middlewareList = [$middlewareList];
         }
 
         /** @var array $middlewareList */
         foreach ($middlewareList as $middleware) {
-            if (!is_string($middleware)) {
+            if (!\is_string($middleware)) {
                 throw new \InvalidArgumentException(
-                    sprintf('Route annotation middleware must be strings. "%s" given', gettype($middleware))
+                    \sprintf('Route annotation middleware must be strings. "%s" given', \gettype($middleware))
                 );
             }
 

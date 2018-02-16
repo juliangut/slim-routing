@@ -51,12 +51,12 @@ trait MappingTrait
         $routes = [];
 
         foreach ($mappingData as $mapping) {
-            $routes[] = array_key_exists('routes', $mapping)
+            $routes[] = \array_key_exists('routes', $mapping)
                 ? $this->getRoutesMetadata($mapping['routes'], $this->getGroupMetadata($mapping, $group))
                 : [$this->getRouteMetadata($mapping, $group)];
         }
 
-        return count($routes) > 0 ? array_merge(...$routes) : [];
+        return \count($routes) > 0 ? \array_merge(...$routes) : [];
     }
 
     /**
@@ -133,8 +133,8 @@ trait MappingTrait
      */
     protected function getPrefix(array $mapping)
     {
-        return array_key_exists('prefix', $mapping) && trim($mapping['prefix']) !== ''
-            ? trim($mapping['prefix'])
+        return \array_key_exists('prefix', $mapping) && \trim($mapping['prefix']) !== ''
+            ? \trim($mapping['prefix'])
             : null;
     }
 
@@ -147,8 +147,8 @@ trait MappingTrait
      */
     protected function getName(array $mapping)
     {
-        return array_key_exists('name', $mapping) && trim($mapping['name']) !== ''
-            ? trim($mapping['name'])
+        return \array_key_exists('name', $mapping) && \trim($mapping['name']) !== ''
+            ? \trim($mapping['name'])
             : null;
     }
 
@@ -163,30 +163,30 @@ trait MappingTrait
      */
     protected function getMethods(array $mapping): array
     {
-        if (!array_key_exists('methods', $mapping)) {
+        if (!\array_key_exists('methods', $mapping)) {
             return ['GET'];
         }
 
         $methods = [];
 
         $mappingMethods = $mapping['methods'];
-        if (!is_array($mappingMethods)) {
+        if (!\is_array($mappingMethods)) {
             $mappingMethods = [$mappingMethods];
         }
 
-        foreach (array_filter($mappingMethods) as $method) {
-            if (!is_string($method)) {
+        foreach (\array_filter($mappingMethods) as $method) {
+            if (!\is_string($method)) {
                 throw new \InvalidArgumentException(
-                    sprintf('Route methods must be a string or string array. "%s" given', gettype($method))
+                    \sprintf('Route methods must be a string or string array. "%s" given', \gettype($method))
                 );
             }
 
-            $methods[] = strtoupper(trim($method));
+            $methods[] = \strtoupper(\trim($method));
         }
 
-        $methods = array_unique(array_filter($methods, 'strlen'));
+        $methods = \array_unique(\array_filter($methods, 'strlen'));
 
-        if (count($methods) === 0) {
+        if (\count($methods) === 0) {
             throw new \InvalidArgumentException('Route methods can not be empty');
         }
 
@@ -202,7 +202,7 @@ trait MappingTrait
      */
     protected function getPriority(array $mapping): int
     {
-        return array_key_exists('priority', $mapping) ? (int) $mapping['priority'] : 0;
+        return \array_key_exists('priority', $mapping) ? (int) $mapping['priority'] : 0;
     }
 
     /**
@@ -214,8 +214,8 @@ trait MappingTrait
      */
     protected function getPattern(array $mapping)
     {
-        return array_key_exists('pattern', $mapping) && trim($mapping['pattern'], ' /') !== ''
-            ? trim($mapping['pattern'], ' /')
+        return \array_key_exists('pattern', $mapping) && \trim($mapping['pattern'], ' /') !== ''
+            ? \trim($mapping['pattern'], ' /')
             : null;
     }
 
@@ -230,19 +230,19 @@ trait MappingTrait
      */
     protected function getPlaceholders(array $mapping): array
     {
-        if (!array_key_exists('placeholders', $mapping)) {
+        if (!\array_key_exists('placeholders', $mapping)) {
             return [];
         }
 
         $placeholders = $mapping['placeholders'];
 
-        array_map(
+        \array_map(
             function ($key) {
-                if (!is_string($key)) {
+                if (!\is_string($key)) {
                     throw new \InvalidArgumentException('Placeholder keys must be all strings');
                 }
             },
-            array_keys($placeholders)
+            \array_keys($placeholders)
         );
 
         return $placeholders;
@@ -259,19 +259,19 @@ trait MappingTrait
      */
     protected function getMiddleware(array $mapping): array
     {
-        if (!array_key_exists('middleware', $mapping)) {
+        if (!\array_key_exists('middleware', $mapping)) {
             return [];
         }
 
         $middlewareList = $mapping['middleware'];
-        if (!is_array($middlewareList)) {
+        if (!\is_array($middlewareList)) {
             $middlewareList = [$middlewareList];
         }
 
         foreach ($middlewareList as $middleware) {
-            if (!is_string($middleware)) {
+            if (!\is_string($middleware)) {
                 throw new \InvalidArgumentException(
-                    sprintf('Middleware must be a string or string array. "%s" given', gettype($middleware))
+                    \sprintf('Middleware must be a string or string array. "%s" given', \gettype($middleware))
                 );
             }
         }
@@ -290,13 +290,13 @@ trait MappingTrait
      */
     protected function getInvokable(array $mapping)
     {
-        if (!array_key_exists('invokable', $mapping)) {
+        if (!\array_key_exists('invokable', $mapping)) {
             throw new \InvalidArgumentException('Route invokable definition missing');
         }
 
         $invokable = $mapping['invokable'];
 
-        if (!is_string($invokable) && !is_array($invokable) && !is_callable($invokable)) {
+        if (!\is_string($invokable) && !\is_array($invokable) && !\is_callable($invokable)) {
             throw new \InvalidArgumentException('Route invokable does not seam to be supported by Slim router');
         }
 

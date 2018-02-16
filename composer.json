@@ -69,7 +69,7 @@
     "cghooks": "cghooks",
     "post-install-cmd": "cghooks add --ignore-lock",
     "post-update-cmd": "cghooks update",
-    "phplint": "php -l src && php -l tests",
+    "php-lint": "php -l src && php -l tests",
     "phpcs": "phpcs --standard=PSR2 src tests",
     "phpcs-lint": "php-cs-fixer fix --dry-run --verbose",
     "phpcpd": "phpcpd src",
@@ -82,7 +82,7 @@
     "phpunit-clover": "phpunit --coverage-clover build/logs/clover.xml",
     "infection": "infection",
     "qa": [
-      "@phplint",
+      "@php-lint",
       "@phpcs",
       "@phpcs-lint",
       "@phpcpd",
@@ -97,7 +97,7 @@
     "fix": "php-cs-fixer fix --verbose",
     "security": "composer outdated",
     "test": [
-      "@qa",
+      "@php-lint",
       "@phpunit",
       "@infection"
     ]

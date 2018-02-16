@@ -44,7 +44,7 @@ class AnnotationDriverTest extends TestCase
     public function testConstructorDefinedRoute()
     {
         $paths = [
-            dirname(__DIR__, 2) . '/Files/Annotation/Invalid/ConstructorDefined/ConstructorDefinedRoute.php',
+            \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/ConstructorDefined/ConstructorDefinedRoute.php',
         ];
 
         $driver = new AnnotationDriver($paths, $this->reader);
@@ -59,7 +59,7 @@ class AnnotationDriverTest extends TestCase
     public function testPrivateDefinedRoute()
     {
         $paths = [
-            dirname(__DIR__, 2) . '/Files/Annotation/Invalid/PrivateDefined/PrivateDefinedRoute.php',
+            \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/PrivateDefined/PrivateDefinedRoute.php',
         ];
 
         $driver = new AnnotationDriver($paths, $this->reader);
@@ -74,7 +74,7 @@ class AnnotationDriverTest extends TestCase
     public function testNoRoutesRoute()
     {
         $paths = [
-            dirname(__DIR__, 2) . '/Files/Annotation/Invalid/NoRoutes/NoRoutesRoute.php',
+            \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/NoRoutes/NoRoutesRoute.php',
         ];
 
         $driver = new AnnotationDriver($paths, $this->reader);
@@ -89,7 +89,7 @@ class AnnotationDriverTest extends TestCase
     public function testUnknownGroupRoute()
     {
         $paths = [
-            dirname(__DIR__, 2) . '/Files/Annotation/Invalid/UnknownGroup/UnknownGroupRoute.php',
+            \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/UnknownGroup/UnknownGroupRoute.php',
         ];
 
         $driver = new AnnotationDriver($paths, $this->reader);
@@ -104,7 +104,7 @@ class AnnotationDriverTest extends TestCase
     public function testCircularReferenceRoute()
     {
         $paths = [
-            dirname(__DIR__, 2) . '/Files/Annotation/Invalid/CircularReference/CircularReferenceRoute.php',
+            \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/CircularReference/CircularReferenceRoute.php',
         ];
 
         $driver = new AnnotationDriver($paths, $this->reader);
@@ -117,10 +117,10 @@ class AnnotationDriverTest extends TestCase
     public function testRoutes()
     {
         $paths = [
-            dirname(__DIR__, 2) . '/Files/Annotation/Valid/AbstractRoute.php',
-            dirname(__DIR__, 2) . '/Files/Annotation/Valid/DependentRoute.php',
-            dirname(__DIR__, 2) . '/Files/Annotation/Valid/GroupedRoute.php',
-            dirname(__DIR__, 2) . '/Files/Annotation/Valid/SingleRoute.php',
+            \dirname(__DIR__, 2) . '/Files/Annotation/Valid/AbstractRoute.php',
+            \dirname(__DIR__, 2) . '/Files/Annotation/Valid/DependentRoute.php',
+            \dirname(__DIR__, 2) . '/Files/Annotation/Valid/GroupedRoute.php',
+            \dirname(__DIR__, 2) . '/Files/Annotation/Valid/SingleRoute.php',
         ];
 
         $driver = new AnnotationDriver($paths, $this->reader);

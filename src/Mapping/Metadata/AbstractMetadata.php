@@ -62,15 +62,15 @@ abstract class AbstractMetadata implements MetadataInterface
      */
     public function setPattern(string $pattern): self
     {
-        if (trim($pattern) === '') {
-            throw new \InvalidArgumentException(sprintf('Pattern can not be empty'));
+        if (\trim($pattern) === '') {
+            throw new \InvalidArgumentException(\sprintf('Pattern can not be empty'));
         }
 
-        $pattern = trim($pattern, ' /');
+        $pattern = \trim($pattern, ' /');
 
-        if (preg_match('/\{.+:(.+)?\}/', $pattern, $matches)) {
+        if (\preg_match('/\{.+:(.+)?\}/', $pattern, $matches)) {
             throw new \InvalidArgumentException(
-                sprintf('Placeholder matching "%s" must be defined on placeholders parameter', $matches[1])
+                \sprintf('Placeholder matching "%s" must be defined on placeholders parameter', $matches[1])
             );
         }
 

@@ -59,7 +59,7 @@ class Group extends AbstractAnnotation
      */
     public function setParent(string $parent): self
     {
-        $this->parent = trim($parent, '\\');
+        $this->parent = \trim($parent, '\\');
 
         return $this;
     }
@@ -85,11 +85,11 @@ class Group extends AbstractAnnotation
      */
     public function setPrefix(string $prefix): self
     {
-        if (strpos(trim($prefix), ' ') !== false) {
-            throw new \InvalidArgumentException(sprintf('Group prefixes must not contain spaces'));
+        if (\strpos(\trim($prefix), ' ') !== false) {
+            throw new \InvalidArgumentException(\sprintf('Group prefixes must not contain spaces'));
         }
 
-        $this->prefix = trim($prefix);
+        $this->prefix = \trim($prefix);
 
         return $this;
     }

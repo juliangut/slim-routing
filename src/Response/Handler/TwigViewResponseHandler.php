@@ -50,7 +50,7 @@ class TwigViewResponseHandler implements ResponseTypeHandlerInterface
     public function handle(ResponseTypeInterface $responseType): ResponseInterface
     {
         if (!$responseType instanceof ViewResponseType) {
-            throw new \InvalidArgumentException(sprintf('Response type should be %s', ViewResponseType::class));
+            throw new \InvalidArgumentException(\sprintf('Response type should be %s', ViewResponseType::class));
         }
 
         return $this->handleResponse($responseType);
@@ -72,7 +72,7 @@ class TwigViewResponseHandler implements ResponseTypeHandlerInterface
             $response = new Response();
         }
 
-        $body = new Body(fopen('php://temp', 'rb+'));
+        $body = new Body(\fopen('php://temp', 'rb+'));
         $body->write($responseContent);
 
         return $response->withBody($body);

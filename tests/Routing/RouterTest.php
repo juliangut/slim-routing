@@ -98,7 +98,7 @@ class RouterTest extends TestCase
         $fileRoot = vfsStream::setup('rootDir');
         $fileRoot->addChild($routesFile);
 
-        file_put_contents($routesFile->url(), '<?php return ' . var_export($dispatchData, true) . ';');
+        \file_put_contents($routesFile->url(), '<?php return ' . \var_export($dispatchData, true) . ';');
 
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();

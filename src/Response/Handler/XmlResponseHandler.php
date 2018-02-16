@@ -50,7 +50,7 @@ class XmlResponseHandler implements ResponseTypeHandlerInterface
     public function handle(ResponseTypeInterface $responseType): ResponseInterface
     {
         if (!$responseType instanceof PayloadResponseType) {
-            throw new \InvalidArgumentException(sprintf('Response type should be %s', PayloadResponseType::class));
+            throw new \InvalidArgumentException(\sprintf('Response type should be %s', PayloadResponseType::class));
         }
 
         return $this->handleResponse($responseType);
@@ -73,7 +73,7 @@ class XmlResponseHandler implements ResponseTypeHandlerInterface
             $response = new Response();
         }
 
-        $body = new Body(fopen('php://temp', 'rb+'));
+        $body = new Body(\fopen('php://temp', 'rb+'));
         $body->write($responseContent);
 
         return $response->withBody($body);
@@ -88,15 +88,15 @@ class XmlResponseHandler implements ResponseTypeHandlerInterface
      */
     protected function asSingleLine(ArrayToXml $converter): string
     {
-        $xmlLines = explode("\n", $converter->toXml());
-        array_walk(
+        $xmlLines = \explode("\n", $converter->toXml());
+        \array_walk(
             $xmlLines,
             function (string $xmlLine): string {
-                return ltrim($xmlLine);
+                return \ltrim($xmlLine);
             }
         );
 
-        return implode('', $xmlLines);
+        return \implode('', $xmlLines);
     }
 
     /**
@@ -111,6 +111,6 @@ class XmlResponseHandler implements ResponseTypeHandlerInterface
         $domDocument = $converter->toDom();
         $domDocument->formatOutput = true;
 
-        return rtrim($domDocument->saveXML(), "\n");
+        return \rtrim($domDocument->saveXML(), "\n");
     }
 }

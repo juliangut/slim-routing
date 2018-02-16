@@ -68,15 +68,15 @@ class Route extends AbstractAnnotation
      */
     public function setName(string $name): self
     {
-        if (strpos(trim($name), ' ') !== false) {
-            throw new \InvalidArgumentException(sprintf('Route name must not contain spaces'));
+        if (\strpos(\trim($name), ' ') !== false) {
+            throw new \InvalidArgumentException(\sprintf('Route name must not contain spaces'));
         }
 
-        if (trim($name) === '') {
-            throw new \InvalidArgumentException(sprintf('Route name can not be empty'));
+        if (\trim($name) === '') {
+            throw new \InvalidArgumentException(\sprintf('Route name can not be empty'));
         }
 
-        $this->name = trim($name);
+        $this->name = \trim($name);
 
         return $this;
     }
@@ -104,28 +104,28 @@ class Route extends AbstractAnnotation
     {
         $this->methods = [];
 
-        if (!is_array($methods)) {
+        if (!\is_array($methods)) {
             $methods = [$methods];
         }
 
         /** @var array $methods */
-        foreach (array_filter($methods) as $method) {
-            if (!is_string($method)) {
+        foreach (\array_filter($methods) as $method) {
+            if (!\is_string($method)) {
                 throw new \UnexpectedValueException(
-                    sprintf('Route annotation methods must be strings. "%s" given', gettype($method))
+                    \sprintf('Route annotation methods must be strings. "%s" given', \gettype($method))
                 );
             }
 
-            $this->methods[] = strtoupper(trim($method));
+            $this->methods[] = \strtoupper(\trim($method));
         }
 
-        $this->methods = array_unique(array_filter($this->methods, 'strlen'));
+        $this->methods = \array_unique(\array_filter($this->methods, 'strlen'));
 
-        if (count($this->methods) === 0) {
+        if (\count($this->methods) === 0) {
             throw new \UnexpectedValueException('Route annotation methods can not be empty');
         }
 
-        if (in_array('ANY', $this->methods, true) && count($this->methods) > 1) {
+        if (\in_array('ANY', $this->methods, true) && \count($this->methods) > 1) {
             throw new \UnexpectedValueException('Route "ANY" method cannot be defined with other methods');
         }
 

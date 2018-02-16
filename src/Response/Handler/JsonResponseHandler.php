@@ -54,7 +54,7 @@ class JsonResponseHandler implements ResponseTypeHandlerInterface
     public function handle(ResponseTypeInterface $responseType): ResponseInterface
     {
         if (!$responseType instanceof PayloadResponseType) {
-            throw new \InvalidArgumentException(sprintf('Response type should be %s', PayloadResponseType::class));
+            throw new \InvalidArgumentException(\sprintf('Response type should be %s', PayloadResponseType::class));
         }
 
         return $this->handleResponse($responseType);
@@ -69,14 +69,14 @@ class JsonResponseHandler implements ResponseTypeHandlerInterface
      */
     protected function handleResponse(PayloadResponseType $responseType): ResponseInterface
     {
-        $responseContent = json_encode($responseType->getPayload(), $this->jsonFlags);
+        $responseContent = \json_encode($responseType->getPayload(), $this->jsonFlags);
 
         $response = $responseType->getResponse();
         if (!$response instanceof ResponseInterface) {
             $response = new Response();
         }
 
-        $body = new Body(fopen('php://temp', 'rb+'));
+        $body = new Body(\fopen('php://temp', 'rb+'));
         $body->write($responseContent);
 
         return $response->withBody($body);

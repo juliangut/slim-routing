@@ -89,7 +89,7 @@ class RouteTest extends TestCase
             ->getMock();
         $configuration->expects($this->once())
             ->method('getResponseHandlers')
-            ->will($this->returnValue([get_class($responseType) => 'unknown']));
+            ->will($this->returnValue([\get_class($responseType) => 'unknown']));
         /* @var Configuration $configuration */
 
         $container = $this->getMockBuilder(ContainerInterface::class)
@@ -135,7 +135,7 @@ class RouteTest extends TestCase
             ->getMock();
         $configuration->expects($this->once())
             ->method('getResponseHandlers')
-            ->will($this->returnValue([get_class($responseType) => $responseHandler]));
+            ->will($this->returnValue([\get_class($responseType) => $responseHandler]));
         /* @var Configuration $configuration */
 
         $route = new Route(

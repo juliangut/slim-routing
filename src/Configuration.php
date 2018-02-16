@@ -82,18 +82,18 @@ class Configuration
      */
     public function __construct($configurations = [])
     {
-        if (!is_iterable($configurations)) {
+        if (!\is_iterable($configurations)) {
             throw new \InvalidArgumentException('Configurations must be an iterable');
         }
 
-        $configs = array_keys(get_object_vars($this));
+        $configs = \array_keys(\get_object_vars($this));
 
-        $unknownParameters = array_diff(array_keys($configurations), $configs);
-        if (count($unknownParameters) > 0) {
+        $unknownParameters = \array_diff(\array_keys($configurations), $configs);
+        if (\count($unknownParameters) > 0) {
             throw new \InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     'The following configuration parameters are not recognized: %s',
-                    implode(', ', $unknownParameters)
+                    \implode(', ', $unknownParameters)
                 )
             );
         }
@@ -102,10 +102,10 @@ class Configuration
             if (isset($configurations[$config])) {
                 $callback = [
                     $this,
-                    $config === 'placeholderAliases' ? 'addPlaceholderAliases' : 'set' . ucfirst($config),
+                    $config === 'placeholderAliases' ? 'addPlaceholderAliases' : 'set' . \ucfirst($config),
                 ];
 
-                call_user_func($callback, $configurations[$config]);
+                \call_user_func($callback, $configurations[$config]);
             }
         }
     }
@@ -149,11 +149,11 @@ class Configuration
      */
     public function addSource($source): self
     {
-        if (!is_string($source) && !is_array($source) && !$source instanceof DriverInterface) {
-            throw new \InvalidArgumentException(sprintf(
+        if (!\is_string($source) && !\is_array($source) && !$source instanceof DriverInterface) {
+            throw new \InvalidArgumentException(\sprintf(
                 'Mapping source must be a string, array or %s, %s given',
                 DriverInterface::class,
-                is_object($source) ? get_class($source) : gettype($source)
+                \is_object($source) ? \get_class($source) : \gettype($source)
             ));
         }
 
@@ -202,9 +202,9 @@ class Configuration
      */
     public function addPlaceholderAlias(string $alias, string $pattern): self
     {
-        if (@preg_match('~^' . $pattern . '$~', '') === false) {
+        if (@\preg_match('~^' . $pattern . '$~', '') === false) {
             throw new \InvalidArgumentException(
-                sprintf('Placeholder pattern "%s" is not a valid regex', $pattern)
+                \sprintf('Placeholder pattern "%s" is not a valid regex', $pattern)
             );
         }
 

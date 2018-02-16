@@ -52,7 +52,7 @@ class Resolver
             return null;
         }
 
-        $nameSegments = array_filter(array_map(
+        $nameSegments = \array_filter(\array_map(
             function (GroupMetadata $group) {
                 return $group->getPrefix();
             },
@@ -73,15 +73,15 @@ class Resolver
      */
     public function getMiddleware(RouteMetadata $route): array
     {
-        $middleware = array_filter(array_map(
+        $middleware = \array_filter(\array_map(
             function (GroupMetadata $group) {
                 return $group->getMiddleware();
             },
-            array_reverse($route->getGroupChain())
+            \array_reverse($route->getGroupChain())
         ));
-        array_unshift($middleware, $route->getMiddleware());
+        \array_unshift($middleware, $route->getMiddleware());
 
-        return array_filter(array_merge(...$middleware));
+        return \array_filter(\array_merge(...$middleware));
     }
 
     /**
@@ -98,33 +98,33 @@ class Resolver
     {
         $groupChain = $route->getGroupChain();
 
-        $patterns = array_map(
+        $patterns = \array_map(
             function (GroupMetadata $group) {
                 return $group->getPattern();
             },
             $groupChain
         );
         $patterns[] = $route->getPattern();
-        $patterns = array_filter($patterns);
+        $patterns = \array_filter($patterns);
 
-        $pattern = '/' . (count($patterns) === 0 ? '' : implode('/', $patterns));
+        $pattern = '/' . (\count($patterns) === 0 ? '' : \implode('/', $patterns));
         $placeholders = $this->getPlaceholders($route);
 
-        if (preg_match_all('/\{([^}]+)\}/', $pattern, $parameter)) {
+        if (\preg_match_all('/\{([^}]+)\}/', $pattern, $parameter)) {
             $parameters = $parameter[1];
 
-            $duplicatedParameters = array_unique(array_diff_assoc($parameters, array_unique($parameters)));
-            if (count($duplicatedParameters) > 0) {
+            $duplicatedParameters = \array_unique(\array_diff_assoc($parameters, \array_unique($parameters)));
+            if (\count($duplicatedParameters) > 0) {
                 throw new \RuntimeException(
-                    'There are duplicated route parameters: ' . implode(', ', $duplicatedParameters)
+                    'There are duplicated route parameters: ' . \implode(', ', $duplicatedParameters)
                 );
             }
 
             foreach ($parameters as $parameter) {
-                if (array_key_exists($parameter, $placeholders)) {
-                    $pattern = str_replace(
+                if (\array_key_exists($parameter, $placeholders)) {
+                    $pattern = \str_replace(
                         '{' . $parameter . '}',
-                        sprintf('{%s:%s}', $parameter, $placeholders[$parameter]),
+                        \sprintf('{%s:%s}', $parameter, $placeholders[$parameter]),
                         $pattern
                     );
                 }
@@ -147,27 +147,27 @@ class Resolver
     {
         $aliases = $this->configuration->getPlaceholderAliases();
 
-        $placeholders = array_filter(array_map(
+        $placeholders = \array_filter(\array_map(
             function (GroupMetadata $group) {
                 return $group->getPlaceholders();
             },
             $route->getGroupChain()
         ));
         $placeholders[] = $route->getPlaceholders();
-        $placeholders = count($placeholders) > 0 ? array_filter(array_merge(...$placeholders)) : [];
+        $placeholders = \count($placeholders) > 0 ? \array_filter(\array_merge(...$placeholders)) : [];
 
-        return array_map(
+        return \array_map(
             function (string $pattern) use ($aliases) {
-                if (array_key_exists($pattern, $aliases)) {
+                if (\array_key_exists($pattern, $aliases)) {
                     return $aliases[$pattern];
                 }
 
-                if (@preg_match('~^' . $pattern . '$~', '') !== false) {
+                if (@\preg_match('~^' . $pattern . '$~', '') !== false) {
                     return $pattern;
                 }
 
                 throw new \InvalidArgumentException(
-                    sprintf('Placeholder "%s" is not a known alias or a valid regex pattern', $pattern)
+                    \sprintf('Placeholder "%s" is not a known alias or a valid regex pattern', $pattern)
                 );
             },
             $placeholders
@@ -196,16 +196,16 @@ class Resolver
      */
     protected function checkDuplicatedRouteNames(array $routes)
     {
-        $names = array_filter(array_map(
+        $names = \array_filter(\array_map(
             function (RouteMetadata $route) {
                 return $this->getName($route);
             },
             $routes
         ));
 
-        $duplicatedNames = array_unique(array_diff_assoc($names, array_unique($names)));
-        if (count($duplicatedNames) > 0) {
-            throw new \RuntimeException('There are duplicated route names: ' . implode(', ', $duplicatedNames));
+        $duplicatedNames = \array_unique(\array_diff_assoc($names, \array_unique($names)));
+        if (\count($duplicatedNames) > 0) {
+            throw new \RuntimeException('There are duplicated route names: ' . \implode(', ', $duplicatedNames));
         }
     }
 
@@ -218,14 +218,14 @@ class Resolver
      */
     protected function checkDuplicatedRoutePaths(array $routes)
     {
-        $paths = array_map(
+        $paths = \array_map(
             function (RouteMetadata $route) {
-                return array_map(
+                return \array_map(
                     function (string $method) use ($route) {
-                        return sprintf(
+                        return \sprintf(
                             '%s %s',
                             $method,
-                            preg_replace('/\{.+:/', '{', $this->getPattern($route))
+                            \preg_replace('/\{.+:/', '{', $this->getPattern($route))
                         );
                     },
                     $route->getMethods()
@@ -234,11 +234,11 @@ class Resolver
             $routes
         );
 
-        $paths = count($paths) > 0 ? array_merge(...$paths) : [];
+        $paths = \count($paths) > 0 ? \array_merge(...$paths) : [];
 
-        $duplicatedPaths = array_unique(array_diff_assoc($paths, array_unique($paths)));
-        if (count($duplicatedPaths) > 0) {
-            throw new \RuntimeException('There are duplicated routes: ' . implode(', ', $duplicatedPaths));
+        $duplicatedPaths = \array_unique(\array_diff_assoc($paths, \array_unique($paths)));
+        if (\count($duplicatedPaths) > 0) {
+            throw new \RuntimeException('There are duplicated routes: ' . \implode(', ', $duplicatedPaths));
         }
     }
 
@@ -272,14 +272,14 @@ class Resolver
      */
     private function stableUsort(array &$array, callable $sortFunction): bool
     {
-        array_walk(
+        \array_walk(
             $array,
             function (&$item, $key) {
                 $item = [$key, $item];
             }
         );
 
-        $result = usort(
+        $result = \usort(
             $array,
             function (array $itemA, array $itemB) use ($sortFunction) {
                 $result = $sortFunction($itemA[1], $itemB[1]);
@@ -288,7 +288,7 @@ class Resolver
             }
         );
 
-        array_walk(
+        \array_walk(
             $array,
             function (&$item) {
                 $item = $item[1];

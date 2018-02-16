@@ -91,7 +91,7 @@ class Route extends SlimRoute
             || $dispatchedResponse instanceof ResponseInterface
         ) {
             $response = $dispatchedResponse;
-        } elseif (is_string($dispatchedResponse)) {
+        } elseif (\is_string($dispatchedResponse)) {
             if ($response->getBody()->isWritable()) {
                 $response->getBody()->write($dispatchedResponse);
             }
@@ -112,23 +112,23 @@ class Route extends SlimRoute
     protected function handleResponseType(ResponseTypeInterface $responseType): ResponseInterface
     {
         $responseHandlers = $this->configuration->getResponseHandlers();
-        $type = get_class($responseType);
+        $type = \get_class($responseType);
 
-        if (!array_key_exists($type, $responseHandlers)) {
-            throw new \RuntimeException(sprintf('No handler registered for response type "%s"', $type));
+        if (!\array_key_exists($type, $responseHandlers)) {
+            throw new \RuntimeException(\sprintf('No handler registered for response type "%s"', $type));
         }
 
         $handler = $responseHandlers[$type];
 
-        if (is_string($handler) && isset($this->container)) {
+        if (\is_string($handler) && isset($this->container)) {
             $handler = $this->container->get($handler);
         }
 
         if (!$handler instanceof ResponseTypeHandlerInterface) {
-            throw new \RuntimeException(sprintf(
+            throw new \RuntimeException(\sprintf(
                 'Response handler should implement %s, "%s" given',
                 ResponseTypeHandlerInterface::class,
-                is_object($handler) ? get_class($handler) : gettype($handler)
+                \is_object($handler) ? \get_class($handler) : \gettype($handler)
             ));
         }
 

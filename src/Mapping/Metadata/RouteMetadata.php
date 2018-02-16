@@ -123,11 +123,11 @@ class RouteMetadata extends AbstractMetadata
             if ($this->group instanceof GroupMetadata) {
                 $parent = $this->group;
                 while ($parent instanceof GroupMetadata) {
-                    if (in_array($parent, $groupChain, true)) {
+                    if (\in_array($parent, $groupChain, true)) {
                         throw new \RuntimeException('Circular group reference detected');
                     }
 
-                    array_unshift($groupChain, $parent);
+                    \array_unshift($groupChain, $parent);
 
                     $parent = $parent->getParent();
                 }
@@ -186,7 +186,7 @@ class RouteMetadata extends AbstractMetadata
      */
     public function setInvokable($invokable): self
     {
-        if (!is_string($invokable) && !is_array($invokable) && !is_callable($invokable)) {
+        if (!\is_string($invokable) && !\is_array($invokable) && !\is_callable($invokable)) {
             throw new \InvalidArgumentException('Route invokable does not seem to be supported by Slim router');
         }
 

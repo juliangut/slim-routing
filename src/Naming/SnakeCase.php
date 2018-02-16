@@ -23,6 +23,6 @@ class SnakeCase implements NamingInterface
      */
     public function combine(array $nameParts): string
     {
-        return implode('_', $nameParts);
+        return \implode('_', $nameParts);
     }
 }

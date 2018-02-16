@@ -50,7 +50,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
             }
         }
 
-        return count($routes) > 0 ? array_merge(...$routes) : [];
+        return \count($routes) > 0 ? \array_merge(...$routes) : [];
     }
 
     /**
@@ -80,15 +80,15 @@ class AnnotationDriver extends AbstractAnnotationDriver
         }
 
         /** @var GroupMetadata[] $groups */
-        $groups = array_map(
+        $groups = \array_map(
             function (\stdClass $groupDataBag) use ($groups) {
                 /** @var GroupMetadata $group */
                 $group = $groupDataBag->group;
 
                 $parent = $groupDataBag->parent;
                 if ($parent !== null) {
-                    if (!array_key_exists($parent, $groups)) {
-                        throw new \RuntimeException(sprintf('Parent group %s does not exist', $parent));
+                    if (!\array_key_exists($parent, $groups)) {
+                        throw new \RuntimeException(\sprintf('Parent group %s does not exist', $parent));
                     }
 
                     $group->setParent($groups[$parent]->group);
@@ -157,17 +157,17 @@ class AnnotationDriver extends AbstractAnnotationDriver
             if ($route !== null) {
                 if ($method->isConstructor() || $method->isDestructor()) {
                     throw new \RuntimeException(
-                        sprintf('Routes can not be defined in constructor or destructor in class %s', $class->name)
+                        \sprintf('Routes can not be defined in constructor or destructor in class %s', $class->name)
                     );
                 }
 
-                $modifiers = array_intersect(
+                $modifiers = \array_intersect(
                     ['private', 'protected'],
                     \Reflection::getModifierNames($method->getModifiers())
                 );
-                if (count($modifiers) !== 0) {
+                if (\count($modifiers) !== 0) {
                     throw new \RuntimeException(
-                        sprintf('Routes can not be defined in private or protected methods in class %s', $class->name)
+                        \sprintf('Routes can not be defined in private or protected methods in class %s', $class->name)
                     );
                 }
 
@@ -175,8 +175,8 @@ class AnnotationDriver extends AbstractAnnotationDriver
             }
         }
 
-        if (count($routes) === 0) {
-            throw new \RuntimeException(sprintf('Class %s does not define any route', $class->name));
+        if (\count($routes) === 0) {
+            throw new \RuntimeException(\sprintf('Class %s does not define any route', $class->name));
         }
 
         return $routes;
