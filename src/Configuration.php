@@ -316,7 +316,7 @@ class Configuration
      */
     public function setResponseHandlers(array $handlers): self
     {
-        $this->sources = [];
+        $this->responseHandlers = [];
 
         foreach ($handlers as $responseType => $responseHandler) {
             $this->addResponseHandler($responseType, $responseHandler);
