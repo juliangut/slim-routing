@@ -9,8 +9,8 @@ enabled:
   - alpha_ordered_imports
   - binary_operator_spaces
   - blank_line_after_opening_tag
-  - blank_line_before_return
   - cast_spaces
+  - combine_consecutive_unsets
   - concat_with_spaces
   - declare_equal_normalize
   - declare_strict_types
@@ -23,6 +23,7 @@ enabled:
   - method_separation
   - modernize_types_casting
   - native_function_casing
+  - native_function_invocation
   - new_with_braces
   - no_alias_functions
   - no_blank_lines_after_class_opening
@@ -36,9 +37,11 @@ enabled:
   - no_multiline_whitespace_before_semicolons
   - no_php4_constructor
   - no_short_bool_cast
+  - no_short_echo_tag
   - no_singleline_whitespace_before_semicolons
   - no_spaces_inside_offset
   - no_spaces_outside_offset
+  - no_trailing_comma_in_list_call
   - no_trailing_comma_in_singleline_array
   - no_unneeded_control_parentheses
   - no_unreachable_default_argument_value
@@ -50,6 +53,7 @@ enabled:
   - normalize_index_brace
   - php_unit_construct
   - php_unit_dedicate_assert
+  - phpdoc_add_missing_param_annotation
   - phpdoc_align
   - phpdoc_annotation_without_dot
   - phpdoc_indent
@@ -57,8 +61,8 @@ enabled:
   - phpdoc_no_access
   - phpdoc_no_empty_return
   - phpdoc_no_package
+  - phpdoc_no_useless_inheritdoc
   - phpdoc_order
-  - phpdoc_property
   - phpdoc_scalar
   - phpdoc_separation
   - phpdoc_single_line_var_spacing
@@ -67,7 +71,8 @@ enabled:
   - phpdoc_trim
   - phpdoc_types
   - phpdoc_var_without_name
-  - print_to_echo
+  - pow_to_exponentiation
+  - random_api_migration
   - return_type_declaration
   - self_accessor
   - short_array_syntax
@@ -77,6 +82,7 @@ enabled:
   - space_after_semicolon
   - standardize_not_equals
   - ternary_operator_spaces
+  - ternary_to_null_coalescing
   - trailing_comma_in_multiline_array
   - trim_array_spaces
   - unary_operator_spaces

@@ -20,7 +20,7 @@ use Jgut\Slim\Routing\Route\Resolver;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Routing compiler tests.
+ * Routing resolver tests.
  */
 class ResolverTest extends TestCase
 {
