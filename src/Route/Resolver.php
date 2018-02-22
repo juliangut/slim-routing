@@ -110,7 +110,7 @@ class Resolver
         $pattern = '/' . (\count($patterns) === 0 ? '' : \implode('/', $patterns));
         $placeholders = $this->getPlaceholders($route);
 
-        if (\preg_match_all('/\{([^}]+)\}/', $pattern, $parameter)) {
+        if (\preg_match_all('/\{([a-zA-Z_][a-zA-Z0-9_-]*)\}/', $pattern, $parameter)) {
             $parameters = $parameter[1];
 
             $duplicatedParameters = \array_unique(\array_diff_assoc($parameters, \array_unique($parameters)));

@@ -130,9 +130,9 @@ class ResolverTest extends TestCase
             ],
             [
                 (new RouteMetadata())
-                    ->setPattern('entity/{id}')
-                    ->setPlaceholders(['id' => 'alnum']),
-                '/entity/{id:[a-zA-Z0-9]+}',
+                    ->setPattern('/{path}/to/entity/{id}')
+                    ->setPlaceholders(['path' => '[a-z]+', 'id' => 'alnum']),
+                '/{path:[a-z]+}/to/entity/{id:[a-zA-Z0-9]+}',
             ],
             [
                 (new RouteMetadata())
@@ -143,13 +143,13 @@ class ResolverTest extends TestCase
             [
                 (new RouteMetadata())
                     ->setPattern('entity/{id}')
-                    ->setPlaceholders(['id' => '[a-z+]'])
+                    ->setPlaceholders(['id' => '[a-z]+'])
                     ->setGroup(
                         (new GroupMetadata())
                             ->setPattern('parent/{section}')
                             ->setPlaceholders(['section' => 'any'])
                     ),
-                '/parent/{section:.+}/entity/{id:[a-z+]}',
+                '/parent/{section:.+}/entity/{id:[a-z]+}',
             ],
         ];
     }

@@ -56,7 +56,7 @@ class AbstractMetadataTest extends TestCase
      */
     public function testInvalidPattern()
     {
-        $this->metadata->setPattern('path/to/{id:[0-9]+}');
+        $this->metadata->setPattern('{path}/to/{id:[0-9]+}');
     }
 
     public function testPattern()
