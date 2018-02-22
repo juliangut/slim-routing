@@ -40,7 +40,7 @@ class MiddlewareTraitTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \Jgut\Mapping\Exception\AnnotationException
      * @expectedExceptionMessage Route annotation middleware must be strings. "integer" given
      */
     public function testInvalidMiddleware()

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Mapping\Driver;
 
 use Jgut\Mapping\Driver\AbstractAnnotationDriver;
+use Jgut\Mapping\Exception\DriverException;
 use Jgut\Slim\Routing\Mapping\Annotation\Group as GroupAnnotation;
 use Jgut\Slim\Routing\Mapping\Annotation\Route as RouteAnnotation;
 use Jgut\Slim\Routing\Mapping\Annotation\Router as RouterAnnotation;
@@ -58,7 +59,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
      *
      * @param \ReflectionClass[] $mappingClasses
      *
-     * @throws \RuntimeException
+     * @throws DriverException
      *
      * @return GroupMetadata[]
      */
@@ -88,7 +89,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
                 $parent = $groupDataBag->parent;
                 if ($parent !== null) {
                     if (!\array_key_exists($parent, $groups)) {
-                        throw new \RuntimeException(\sprintf('Parent group %s does not exist', $parent));
+                        throw new DriverException(\sprintf('Parent group %s does not exist', $parent));
                     }
 
                     $group->setParent($groups[$parent]->group);
@@ -132,8 +133,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
      * @param \ReflectionClass $class
      * @param GroupMetadata[]  $groups
      *
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
+     * @throws DriverException
      *
      * @return RouteMetadata[]
      */
@@ -156,7 +156,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
 
             if ($route !== null) {
                 if ($method->isConstructor() || $method->isDestructor()) {
-                    throw new \RuntimeException(
+                    throw new DriverException(
                         \sprintf('Routes can not be defined in constructor or destructor in class %s', $class->name)
                     );
                 }
@@ -166,7 +166,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
                     \Reflection::getModifierNames($method->getModifiers())
                 );
                 if (\count($modifiers) !== 0) {
-                    throw new \RuntimeException(
+                    throw new DriverException(
                         \sprintf('Routes can not be defined in private or protected methods in class %s', $class->name)
                     );
                 }
@@ -176,7 +176,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
         }
 
         if (\count($routes) === 0) {
-            throw new \RuntimeException(\sprintf('Class %s does not define any route', $class->name));
+            throw new DriverException(\sprintf('Class %s does not define any route', $class->name));
         }
 
         return $routes;
@@ -190,7 +190,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
      * @param RouteAnnotation    $annotation
      * @param GroupMetadata|null $group
      *
-     * @throws \InvalidArgumentException
+     * @throws DriverException
      *
      * @return RouteMetadata
      */

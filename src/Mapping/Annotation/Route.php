@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Mapping\Annotation;
 
 use Jgut\Mapping\Annotation\AbstractAnnotation;
+use Jgut\Mapping\Exception\AnnotationException;
 
 /**
  * Route annotation.
@@ -62,18 +63,18 @@ class Route extends AbstractAnnotation
      *
      * @param string $name
      *
-     * @throws \InvalidArgumentException
+     * @throws AnnotationException
      *
      * @return static
      */
     public function setName(string $name): self
     {
         if (\strpos(\trim($name), ' ') !== false) {
-            throw new \InvalidArgumentException(\sprintf('Route name must not contain spaces'));
+            throw new AnnotationException(\sprintf('Route name must not contain spaces'));
         }
 
         if (\trim($name) === '') {
-            throw new \InvalidArgumentException(\sprintf('Route name can not be empty'));
+            throw new AnnotationException(\sprintf('Route name can not be empty'));
         }
 
         $this->name = \trim($name);
@@ -96,7 +97,7 @@ class Route extends AbstractAnnotation
      *
      * @param array|string $methods
      *
-     * @throws \UnexpectedValueException
+     * @throws AnnotationException
      *
      * @return static
      */
@@ -111,7 +112,7 @@ class Route extends AbstractAnnotation
         /** @var array $methods */
         foreach (\array_filter($methods) as $method) {
             if (!\is_string($method)) {
-                throw new \UnexpectedValueException(
+                throw new AnnotationException(
                     \sprintf('Route annotation methods must be strings. "%s" given', \gettype($method))
                 );
             }
@@ -122,11 +123,11 @@ class Route extends AbstractAnnotation
         $this->methods = \array_unique(\array_filter($this->methods, 'strlen'));
 
         if (\count($this->methods) === 0) {
-            throw new \UnexpectedValueException('Route annotation methods can not be empty');
+            throw new AnnotationException('Route annotation methods can not be empty');
         }
 
         if (\in_array('ANY', $this->methods, true) && \count($this->methods) > 1) {
-            throw new \UnexpectedValueException('Route "ANY" method cannot be defined with other methods');
+            throw new AnnotationException('Route "ANY" method cannot be defined with other methods');
         }
 
         return $this;

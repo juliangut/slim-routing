@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Mapping\Metadata;
 
+use Jgut\Mapping\Exception\MetadataException;
 use Jgut\Mapping\Metadata\MetadataInterface;
 
 /**
@@ -56,20 +57,20 @@ abstract class AbstractMetadata implements MetadataInterface
      *
      * @param string $pattern
      *
-     * @throws \InvalidArgumentException
+     * @throws MetadataException
      *
      * @return static
      */
     public function setPattern(string $pattern): self
     {
         if (\trim($pattern) === '') {
-            throw new \InvalidArgumentException(\sprintf('Pattern can not be empty'));
+            throw new MetadataException(\sprintf('Pattern can not be empty'));
         }
 
         $pattern = \trim($pattern, ' /');
 
         if (\preg_match('/\{([a-zA-Z_][a-zA-Z0-9_-]*):([^}]+)?\}/', $pattern, $matches)) {
-            throw new \InvalidArgumentException(
+            throw new MetadataException(
                 \sprintf('Placeholder matching "%s" must be defined on placeholders parameter', $matches[2])
             );
         }

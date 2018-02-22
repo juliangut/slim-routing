@@ -38,7 +38,7 @@ class AnnotationDriverTest extends TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException \Jgut\Mapping\Exception\DriverException
      * @expectedExceptionMessageRegExp /Routes can not be defined in constructor or destructor in class .+$/
      */
     public function testConstructorDefinedRoute()

@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Mapping\Metadata;
 
+use Jgut\Mapping\Exception\MetadataException;
+
 /**
  * Route metadata.
  */
@@ -111,7 +113,7 @@ class RouteMetadata extends AbstractMetadata
     /**
      * Get parent's group chain.
      *
-     * @throws \RuntimeException
+     * @throws MetadataException
      *
      * @return GroupMetadata[]
      */
@@ -124,7 +126,7 @@ class RouteMetadata extends AbstractMetadata
                 $parent = $this->group;
                 while ($parent instanceof GroupMetadata) {
                     if (\in_array($parent, $groupChain, true)) {
-                        throw new \RuntimeException('Circular group reference detected');
+                        throw new MetadataException('Circular group reference detected');
                     }
 
                     \array_unshift($groupChain, $parent);
@@ -154,8 +156,6 @@ class RouteMetadata extends AbstractMetadata
      *
      * @param array $methods
      *
-     * @throws \UnexpectedValueException
-     *
      * @return static
      */
     public function setMethods(array $methods): self
@@ -180,14 +180,14 @@ class RouteMetadata extends AbstractMetadata
      *
      * @param callable $invokable
      *
-     * @throws \InvalidArgumentException
+     * @throws MetadataException
      *
      * @return static
      */
     public function setInvokable($invokable): self
     {
         if (!\is_string($invokable) && !\is_array($invokable) && !\is_callable($invokable)) {
-            throw new \InvalidArgumentException('Route invokable does not seem to be supported by Slim router');
+            throw new MetadataException('Route invokable does not seem to be supported by Slim router');
         }
 
         $this->invokable = $invokable;

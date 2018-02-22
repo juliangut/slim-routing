@@ -42,7 +42,7 @@ class AbstractMetadataTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \Jgut\Mapping\Exception\MetadataException
      * @expectedExceptionMessage Pattern can not be empty
      */
     public function testEmptyPattern()
@@ -51,7 +51,7 @@ class AbstractMetadataTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \Jgut\Mapping\Exception\MetadataException
      * @expectedExceptionMessage Placeholder matching "[0-9]+" must be defined on placeholders parameter
      */
     public function testInvalidPattern()

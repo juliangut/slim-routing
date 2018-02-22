@@ -74,7 +74,7 @@ class RouteMetadataTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \Jgut\Mapping\Exception\MetadataException
      * @expectedExceptionMessage Route invokable does not seem to be supported by Slim router
      */
     public function testInvalidInvokable()

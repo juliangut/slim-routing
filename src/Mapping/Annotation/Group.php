@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Mapping\Annotation;
 
 use Jgut\Mapping\Annotation\AbstractAnnotation;
+use Jgut\Mapping\Exception\AnnotationException;
 
 /**
  * Router annotation.
@@ -79,14 +80,14 @@ class Group extends AbstractAnnotation
      *
      * @param string $prefix
      *
-     * @throws \InvalidArgumentException
+     * @throws AnnotationException
      *
      * @return static
      */
     public function setPrefix(string $prefix): self
     {
         if (\strpos(\trim($prefix), ' ') !== false) {
-            throw new \InvalidArgumentException(\sprintf('Group prefixes must not contain spaces'));
+            throw new AnnotationException(\sprintf('Group prefixes must not contain spaces'));
         }
 
         $this->prefix = \trim($prefix);

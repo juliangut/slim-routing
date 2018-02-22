@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Mapping\Driver;
 
+use Jgut\Mapping\Exception\DriverException;
 use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 
@@ -40,9 +41,6 @@ trait MappingTrait
      *
      * @param array              $mappingData
      * @param GroupMetadata|null $group
-     *
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
      *
      * @return RouteMetadata[]
      */
@@ -157,7 +155,7 @@ trait MappingTrait
      *
      * @param array $mapping
      *
-     * @throws \InvalidArgumentException
+     * @throws DriverException
      *
      * @return string[]
      */
@@ -176,7 +174,7 @@ trait MappingTrait
 
         foreach (\array_filter($mappingMethods) as $method) {
             if (!\is_string($method)) {
-                throw new \InvalidArgumentException(
+                throw new DriverException(
                     \sprintf('Route methods must be a string or string array. "%s" given', \gettype($method))
                 );
             }
@@ -187,7 +185,7 @@ trait MappingTrait
         $methods = \array_unique(\array_filter($methods, 'strlen'));
 
         if (\count($methods) === 0) {
-            throw new \InvalidArgumentException('Route methods can not be empty');
+            throw new DriverException('Route methods can not be empty');
         }
 
         return $methods;
@@ -224,7 +222,7 @@ trait MappingTrait
      *
      * @param array $mapping
      *
-     * @throws \InvalidArgumentException
+     * @throws DriverException
      *
      * @return string[]
      */
@@ -239,7 +237,7 @@ trait MappingTrait
         \array_map(
             function ($key) {
                 if (!\is_string($key)) {
-                    throw new \InvalidArgumentException('Placeholder keys must be all strings');
+                    throw new DriverException('Placeholder keys must be all strings');
                 }
             },
             \array_keys($placeholders)
@@ -253,7 +251,7 @@ trait MappingTrait
      *
      * @param array $mapping
      *
-     * @throws \InvalidArgumentException
+     * @throws DriverException
      *
      * @return array
      */
@@ -270,7 +268,7 @@ trait MappingTrait
 
         foreach ($middlewareList as $middleware) {
             if (!\is_string($middleware)) {
-                throw new \InvalidArgumentException(
+                throw new DriverException(
                     \sprintf('Middleware must be a string or string array. "%s" given', \gettype($middleware))
                 );
             }
@@ -284,20 +282,20 @@ trait MappingTrait
      *
      * @param array $mapping
      *
-     * @throws \InvalidArgumentException
+     * @throws DriverException
      *
      * @return string|array|callable
      */
     protected function getInvokable(array $mapping)
     {
         if (!\array_key_exists('invokable', $mapping)) {
-            throw new \InvalidArgumentException('Route invokable definition missing');
+            throw new DriverException('Route invokable definition missing');
         }
 
         $invokable = $mapping['invokable'];
 
         if (!\is_string($invokable) && !\is_array($invokable) && !\is_callable($invokable)) {
-            throw new \InvalidArgumentException('Route invokable does not seam to be supported by Slim router');
+            throw new DriverException('Route invokable does not seam to be supported by Slim router');
         }
 
         return $invokable;

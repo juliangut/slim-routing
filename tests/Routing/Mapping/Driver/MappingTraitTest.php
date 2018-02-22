@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
 class MappingTraitTest extends TestCase
 {
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \Jgut\Mapping\Exception\DriverException
      * @expectedExceptionMessage Route methods can not be empty
      */
     public function testEmptyMethods()
@@ -40,7 +40,7 @@ class MappingTraitTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \Jgut\Mapping\Exception\DriverException
      * @expectedExceptionMessage Route methods must be a string or string array. "integer" given
      */
     public function testInvalidMethods()
@@ -57,7 +57,7 @@ class MappingTraitTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \Jgut\Mapping\Exception\DriverException
      * @expectedExceptionMessage Placeholder keys must be all strings
      */
     public function testInvalidPlaceholders()
@@ -74,7 +74,7 @@ class MappingTraitTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \Jgut\Mapping\Exception\DriverException
      * @expectedExceptionMessage Middleware must be a string or string array. "integer" given
      */
     public function testInvalidMiddleware()
@@ -91,7 +91,7 @@ class MappingTraitTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \Jgut\Mapping\Exception\DriverException
      * @expectedExceptionMessage Route invokable definition missing
      */
     public function testMissingInvokable()
@@ -108,7 +108,7 @@ class MappingTraitTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \Jgut\Mapping\Exception\DriverException
      * @expectedExceptionMessage Route invokable does not seam to be supported by Slim router
      */
     public function testInvalidInvokable()

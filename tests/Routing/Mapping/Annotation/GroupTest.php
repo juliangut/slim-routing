@@ -47,7 +47,7 @@ class GroupTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \Jgut\Mapping\Exception\AnnotationException
      * @expectedExceptionMessage Group prefixes must not contain spaces
      */
     public function testWrongPrefix()

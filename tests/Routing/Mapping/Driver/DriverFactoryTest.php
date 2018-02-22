@@ -37,7 +37,7 @@ class DriverFactoryTest extends TestCase
     }
 
     /**
-     * @expectedException \UnexpectedValueException
+     * @expectedException \Jgut\Mapping\Exception\DriverException
      * @expectedExceptionMessage Mapping driver should be of the type Jgut\Mapping\Driver\DriverInterface, string given
      */
     public function testInvalidDriver()

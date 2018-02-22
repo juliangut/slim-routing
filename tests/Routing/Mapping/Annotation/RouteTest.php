@@ -42,7 +42,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \Jgut\Mapping\Exception\AnnotationException
      * @expectedExceptionMessage Route name must not contain spaces
      */
     public function testWrongName()
@@ -51,7 +51,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \Jgut\Mapping\Exception\AnnotationException
      * @expectedExceptionMessage Route name can not be empty
      */
     public function testEmptyName()
@@ -67,7 +67,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * @expectedException \UnexpectedValueException
+     * @expectedException \Jgut\Mapping\Exception\AnnotationException
      * @expectedExceptionMessage Route annotation methods must be strings. "integer" given
      */
     public function testInvalidMethodsType()
@@ -76,7 +76,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * @expectedException \UnexpectedValueException
+     * @expectedException \Jgut\Mapping\Exception\AnnotationException
      * @expectedExceptionMessage Route annotation methods can not be empty
      */
     public function testEmptyMethods()
@@ -85,7 +85,7 @@ class RouteTest extends TestCase
     }
 
     /**
-     * @expectedException \UnexpectedValueException
+     * @expectedException \Jgut\Mapping\Exception\AnnotationException
      * @expectedExceptionMessage Route "ANY" method cannot be defined with other methods
      */
     public function testWrongMethodCount()

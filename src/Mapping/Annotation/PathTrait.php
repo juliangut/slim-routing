@@ -47,8 +47,6 @@ trait PathTrait
      *
      * @param string $pattern
      *
-     * @throws \InvalidArgumentException
-     *
      * @return static
      */
     public function setPattern(string $pattern)
@@ -72,8 +70,6 @@ trait PathTrait
      * Set pattern placeholders regex.
      *
      * @param array $placeholders
-     *
-     * @throws \InvalidArgumentException
      *
      * @return static
      */
