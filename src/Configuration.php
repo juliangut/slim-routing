@@ -42,7 +42,7 @@ class Configuration
         'numeric' => '\d+',
         'alpha' => '[a-zA-Z]+',
         'alnum' => '[a-zA-Z0-9]+',
-        'any' => '.+',
+        'any' => '[^}]+',
     ];
 
     /**

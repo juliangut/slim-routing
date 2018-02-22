@@ -149,7 +149,7 @@ class ResolverTest extends TestCase
                             ->setPattern('parent/{section}')
                             ->setPlaceholders(['section' => 'any'])
                     ),
-                '/parent/{section:.+}/entity/{id:[a-z]+}',
+                '/parent/{section:[^}]+}/entity/{id:[a-z]+}',
             ],
         ];
     }

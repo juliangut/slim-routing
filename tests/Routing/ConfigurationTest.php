@@ -42,7 +42,7 @@ class ConfigurationTest extends TestCase
             'numeric' => '\d+',
             'alpha' => '[a-zA-Z]+',
             'alnum' => '[a-zA-Z0-9]+',
-            'any' => '.+',
+            'any' => '[^}]+',
         ];
 
         $configuration = new Configuration();
@@ -99,7 +99,7 @@ class ConfigurationTest extends TestCase
             'numeric' => '\d+',
             'alpha' => '[a-zA-Z]+',
             'alnum' => '[a-zA-Z0-9]+',
-            'any' => '.+',
+            'any' => '[^}]+',
             'dni' => '\d+[A-Z]',
         ];
 
