@@ -225,7 +225,7 @@ class Resolver
                         return \sprintf(
                             '%s %s',
                             $method,
-                            \preg_replace('/\{.+:/', '{', $this->getPattern($route))
+                            \preg_replace('/\{([a-zA-Z_][a-zA-Z0-9_-]*):/', '{', $this->getPattern($route))
                         );
                     },
                     $route->getMethods()

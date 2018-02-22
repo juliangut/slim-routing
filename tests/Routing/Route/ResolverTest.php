@@ -215,7 +215,20 @@ class ResolverTest extends TestCase
      */
     public function testDuplicatedRoutePath()
     {
-        $routes = [
+        $nonDuplicatedRoutes = [
+            (new RouteMetadata())
+                ->setMethods(['GET'])
+                ->setPattern('{path}/to/route/{id}')
+                ->setPlaceholders(['path' => 'alpha', 'id' => 'numeric']),
+            (new RouteMetadata())
+                ->setMethods(['GET'])
+                ->setPattern('{path}/to/route')
+                ->setPlaceholders(['path' => 'alpha']),
+        ];
+
+        $this->resolver->checkDuplicatedRoutes($nonDuplicatedRoutes);
+
+        $duplicatedRoutes = [
             (new RouteMetadata())
                 ->setMethods(['GET'])
                 ->setPattern('route/{id}')
@@ -226,6 +239,6 @@ class ResolverTest extends TestCase
                 ->setPlaceholders(['slug' => 'alnum']),
         ];
 
-        $this->resolver->checkDuplicatedRoutes($routes);
+        $this->resolver->checkDuplicatedRoutes($duplicatedRoutes);
     }
 }
