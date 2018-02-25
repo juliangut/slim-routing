@@ -15,6 +15,7 @@ namespace Jgut\Slim\Routing;
 
 use FastRoute\Dispatcher;
 use FastRoute\RouteParser;
+use Jgut\Slim\Routing\Middleware\XmlHttpRequestMiddleware;
 use Jgut\Slim\Routing\Route\Route;
 use Slim\Router as SlimRouter;
 
@@ -99,6 +100,7 @@ class Router extends SlimRouter
         foreach ($this->getRoutesMetadata() as $route) {
             /** @var Route $slimRoute */
             $slimRoute = $this->map($route->getMethods(), $resolver->getPattern($route), $route->getInvokable());
+            $slimRoute->setMetadata($route);
 
             $name = $resolver->getName($route);
             if ($name !== null) {
@@ -107,6 +109,10 @@ class Router extends SlimRouter
 
             foreach ($resolver->getMiddleware($route) as $middleware) {
                 $slimRoute->add($middleware);
+            }
+
+            if ($route->isXmlHttpRequest()) {
+                $slimRoute->add(new XmlHttpRequestMiddleware());
             }
         }
     }

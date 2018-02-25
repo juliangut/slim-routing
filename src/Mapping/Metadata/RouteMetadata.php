@@ -49,6 +49,13 @@ class RouteMetadata extends AbstractMetadata
     protected $methods = [];
 
     /**
+     * XmlHttpRequest constraint.
+     *
+     * @var bool
+     */
+    protected $xmlHttpRequest = false;
+
+    /**
      * Route invokable.
      *
      * @var callable
@@ -161,6 +168,30 @@ class RouteMetadata extends AbstractMetadata
     public function setMethods(array $methods): self
     {
         $this->methods = $methods;
+
+        return $this;
+    }
+
+    /**
+     * Get XmlHttpRequest constraint.
+     *
+     * @return bool
+     */
+    public function isXmlHttpRequest(): bool
+    {
+        return $this->xmlHttpRequest;
+    }
+
+    /**
+     * set XmlHttpRequest constraint.
+     *
+     * @param bool $xmlHttpRequest
+     *
+     * @return self
+     */
+    public function setXmlHttpRequest(bool $xmlHttpRequest): self
+    {
+        $this->xmlHttpRequest = $xmlHttpRequest;
 
         return $this;
     }

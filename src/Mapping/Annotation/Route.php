@@ -42,6 +42,13 @@ class Route extends AbstractAnnotation
     protected $methods = ['GET'];
 
     /**
+     * XmlHttpRequest constraint.
+     *
+     * @var bool
+     */
+    protected $xmlHttpRequest = false;
+
+    /**
      * Route load priority.
      *
      * @var int
@@ -129,6 +136,30 @@ class Route extends AbstractAnnotation
         if (\in_array('ANY', $this->methods, true) && \count($this->methods) > 1) {
             throw new AnnotationException('Route "ANY" method cannot be defined with other methods');
         }
+
+        return $this;
+    }
+
+    /**
+     * Is XmlHttpRequest.
+     *
+     * @return bool
+     */
+    public function isXmlHttpRequest(): bool
+    {
+        return $this->xmlHttpRequest;
+    }
+
+    /**
+     * Set XmlHttpRequest constraint.
+     *
+     * @param bool $xmlHttpRequest
+     *
+     * @return self
+     */
+    public function setXmlHttpRequest(bool $xmlHttpRequest): self
+    {
+        $this->xmlHttpRequest = $xmlHttpRequest;
 
         return $this;
     }

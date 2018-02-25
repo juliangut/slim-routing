@@ -100,6 +100,7 @@ trait MappingTrait
     {
         $route = (new RouteMetadata())
             ->setMethods($this->getMethods($mapping))
+            ->setXmlHttpRequest($this->isXmlHttpRequest($mapping))
             ->setPriority($this->getPriority($mapping))
             ->setPlaceholders($this->getPlaceholders($mapping))
             ->setMiddleware($this->getMiddleware($mapping))
@@ -189,6 +190,18 @@ trait MappingTrait
         }
 
         return $methods;
+    }
+
+    /**
+     * Get XmlHttpRequest constraint.
+     *
+     * @param array $mapping
+     *
+     * @return bool
+     */
+    protected function isXmlHttpRequest(array $mapping): bool
+    {
+        return (bool) ($mapping['xmlHttpRequest'] ?? false);
     }
 
     /**

@@ -204,6 +204,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
             ->setPlaceholders($annotation->getPlaceholders())
             ->setMiddleware($annotation->getMiddleware())
             ->setMethods($annotation->getMethods())
+            ->setXmlHttpRequest($annotation->isXmlHttpRequest())
             ->setInvokable([$class->name,  $method->name])
             ->setPriority($annotation->getPriority());
 

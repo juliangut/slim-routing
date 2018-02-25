@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Tests\Route;
 
 use Jgut\Slim\Routing\Configuration;
+use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandlerInterface;
 use Jgut\Slim\Routing\Response\ResponseTypeInterface;
 use Jgut\Slim\Routing\Route\Route;
@@ -138,6 +139,11 @@ class RouteTest extends TestCase
             ->will($this->returnValue([\get_class($responseType) => $responseHandler]));
         /* @var Configuration $configuration */
 
+        $metadata = $this->getMockBuilder(RouteMetadata::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var RouteMetadata $metadata */
+
         $route = new Route(
             'GET',
             '/',
@@ -146,6 +152,9 @@ class RouteTest extends TestCase
             },
             $configuration
         );
+
+        $route->setMetadata($metadata);
+        self::assertEquals($metadata, $route->getMetadata());
 
         $handledResponse = $route($this->request, new Response());
 

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Route;
 
 use Jgut\Slim\Routing\Configuration;
+use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandlerInterface;
 use Jgut\Slim\Routing\Response\ResponseTypeInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -34,11 +35,11 @@ class Route extends SlimRoute
     protected $configuration;
 
     /**
-     * Route resolver.
+     * Route metadata.
      *
-     * @var Resolver
+     * @var RouteMetadata
      */
-    protected $resolver;
+    protected $metadata;
 
     /**
      * Route constructor.
@@ -64,17 +65,37 @@ class Route extends SlimRoute
     }
 
     /**
+     * Get route metadata.
+     *
+     * @return RouteMetadata
+     */
+    public function getMetadata()
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * Set route metadata.
+     *
+     * @param RouteMetadata $metadata
+     */
+    public function setMetadata(RouteMetadata $metadata)
+    {
+        $this->metadata = $metadata;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $response = $this->dispatchRoute($request, $response);
+        $dispatchedResponse = $this->dispatchRoute($request, $response);
 
-        if ($response instanceof ResponseTypeInterface) {
-            $response = $this->handleResponseType($response);
+        if ($dispatchedResponse instanceof ResponseTypeInterface) {
+            $dispatchedResponse = $this->handleResponseType($dispatchedResponse);
         }
 
-        return $response;
+        return $dispatchedResponse;
     }
 
     /**

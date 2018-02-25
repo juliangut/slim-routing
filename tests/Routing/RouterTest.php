@@ -51,7 +51,8 @@ class RouterTest extends TestCase
                 ->setMethods(['GET'])
                 ->setPattern('one/{id}')
                 ->setPlaceholders(['id' => 'numeric'])
-                ->setInvokable(['one', 'action']),
+                ->setInvokable(['one', 'action'])
+                ->setXmlHttpRequest(true),
             (new RouteMetadata())
                 ->setMethods(['POST'])
                 ->setPattern('two')
