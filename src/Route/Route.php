@@ -67,7 +67,7 @@ class Route extends SlimRoute
     /**
      * Get route metadata.
      *
-     * @return RouteMetadata
+     * @return RouteMetadata|null
      */
     public function getMetadata()
     {
