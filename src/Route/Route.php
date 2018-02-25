@@ -41,12 +41,25 @@ class Route extends SlimRoute
     protected $resolver;
 
     /**
-     * Set routing configuration.
+     * Route constructor.
      *
-     * @param Configuration $configuration
+     * @param string|string[]    $methods
+     * @param string             $pattern
+     * @param callable           $callable
+     * @param Configuration      $configuration
+     * @param \Slim\RouteGroup[] $groups
+     * @param int                $identifier
      */
-    public function setConfiguration(Configuration $configuration)
-    {
+    public function __construct(
+        $methods,
+        string $pattern,
+        $callable,
+        Configuration $configuration,
+        array $groups = [],
+        int $identifier = 0
+    ) {
+        parent::__construct($methods, $pattern, $callable, $groups, $identifier);
+
         $this->configuration = $configuration;
     }
 

@@ -67,9 +67,9 @@ class RouteTest extends TestCase
             '/',
             function () use ($responseType) {
                 return $responseType;
-            }
+            },
+            $configuration
         );
-        $route->setConfiguration($configuration);
 
         $route($this->request, new Response());
     }
@@ -107,9 +107,9 @@ class RouteTest extends TestCase
             '/',
             function () use ($responseType) {
                 return $responseType;
-            }
+            },
+            $configuration
         );
-        $route->setConfiguration($configuration);
         $route->setContainer($container);
 
         $route($this->request, new Response());
@@ -143,9 +143,9 @@ class RouteTest extends TestCase
             '/',
             function () use ($responseType) {
                 return $responseType;
-            }
+            },
+            $configuration
         );
-        $route->setConfiguration($configuration);
 
         $handledResponse = $route($this->request, new Response());
 
@@ -166,9 +166,9 @@ class RouteTest extends TestCase
             '/',
             function ($request, $response) {
                 return $response;
-            }
+            },
+            $configuration
         );
-        $route->setConfiguration($configuration);
 
         $this->assertEquals($response, $route($this->request, $response));
     }
@@ -185,9 +185,9 @@ class RouteTest extends TestCase
             '/',
             function () {
                 return 'response';
-            }
+            },
+            $configuration
         );
-        $route->setConfiguration($configuration);
 
         $this->assertEquals('response', (string) $route($this->request, new Response())->getBody());
     }

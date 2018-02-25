@@ -132,9 +132,14 @@ class Router extends SlimRouter
      */
     protected function createRoute($methods, $pattern, $callable): Route
     {
-        $route = new Route($methods, $pattern, $callable, $this->routeGroups, $this->routeCounter);
-
-        $route->setConfiguration($this->configuration);
+        $route = new Route(
+            $methods,
+            $pattern,
+            $callable,
+            $this->configuration,
+            $this->routeGroups,
+            $this->routeCounter
+        );
 
         if ($this->container !== null) {
             $route->setContainer($this->container);
