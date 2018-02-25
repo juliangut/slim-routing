@@ -210,6 +210,7 @@ class Section
     /**
      * @JSR\Route(
      *     name="routeNamme",
+     *     xmlHttpRequest=true,
      *     methods={"GET", "POST"},
      *     pattern="do/{action}",
      *     placeholders={"action": "[a-z0-9]+"},
@@ -225,6 +226,7 @@ class Section
 
 * `name`, optional, route name so it can be referenced in Slim
 * `pattern`, optional, path pattern (defaults to '/')
+* `xmlHttpRequest`, request should be AJAX, false by default
 * `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed in the list (defaults to GET)
 * `placeholders`, optional, array of regex/alias for path placeholders
 * `middleware`, optional, array of middleware to be added to the route
@@ -246,6 +248,7 @@ return [
       [
         // Route
         'name' => 'routeName',
+        'xmlHttpRequest' => true,
         'methods' => ['GET', 'POST'],
         'priority' => 0
         'pattern' => 'route-pattern',
@@ -283,12 +286,13 @@ return [
       {
         // Route
         "name": "routeName",
+        "xmlHttpRequest": true,
         "methods": ["GET", "POST"],
         "priority": 0,
         "pattern": "route-pattern",
         "placeholders": ["route-placeholders"],
         "middleware": ["route-middleware"],
-        "invokable": "callable",
+        "invokable": "callable"
       },
       {
         // Subgroup
@@ -320,6 +324,7 @@ return [
         </middleware>
         <routes>
             <route1 name="routeName" priority="0" pattern="route-pattern">
+                <xmlHttpRequest>true</xmlHttpRequest>
                 <methods>
                     <method1>GET</method1>
                     <method2>POST</method2>
@@ -361,6 +366,7 @@ return [
   routes:
     # Route
     - name: routeName
+      xmlHttpRequest: true
       methods: [GET, POST]
       priority: 0
       pattern: route-pattern
@@ -394,6 +400,7 @@ Defines a route added to Slim
 * `invokable`, callable to be invoked on route match. Can be a container entry, class name or an array of [class, method]
 * `name`, optional, route name so it can be referenced in Slim
 * `pattern`, optional, path pattern (defaults to '/')
+* `xmlHttpRequest`, request should be AJAX, false by default
 * `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed (defaults to GET)
 * `placeholders`, optional, array of regex for path placeholders
 * `middleware`, optional, array of middleware to be added to the route
