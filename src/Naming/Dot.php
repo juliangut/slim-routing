@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Naming;
 
 /**
- * Dot separated route naming.
+ * Dot separated route naming strategy.
  */
-class Dot implements NamingInterface
+class Dot implements Strategy
 {
     /**
      * {@inheritdoc}

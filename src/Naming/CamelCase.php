@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Naming;
 
 /**
- * Camel case route naming.
+ * Camel case route naming strategy.
  */
-class CamelCase implements NamingInterface
+class CamelCase implements Strategy
 {
     /**
      * {@inheritdoc}

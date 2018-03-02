@@ -15,8 +15,8 @@ namespace Jgut\Slim\Routing\Tests\Route;
 
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
-use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandlerInterface;
-use Jgut\Slim\Routing\Response\ResponseTypeInterface;
+use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandler;
+use Jgut\Slim\Routing\Response\ResponseType;
 use Jgut\Slim\Routing\Route\Route;
 use Jgut\Slim\Routing\Tests\Stubs\RouteStub;
 use PHPUnit\Framework\TestCase;
@@ -51,9 +51,9 @@ class RouteTest extends TestCase
      */
     public function testNoHandler()
     {
-        $responseType = $this->getMockBuilder(ResponseTypeInterface::class)
+        $responseType = $this->getMockBuilder(ResponseType::class)
             ->getMock();
-        /* @var ResponseTypeInterface $responseType */
+        /* @var ResponseType $responseType */
 
         $configuration = $this->getMockBuilder(Configuration::class)
             ->disableOriginalConstructor()
@@ -81,9 +81,9 @@ class RouteTest extends TestCase
      */
     public function testInvalidHandler()
     {
-        $responseType = $this->getMockBuilder(ResponseTypeInterface::class)
+        $responseType = $this->getMockBuilder(ResponseType::class)
             ->getMock();
-        /* @var ResponseTypeInterface $responseType */
+        /* @var ResponseType $responseType */
 
         $configuration = $this->getMockBuilder(Configuration::class)
             ->disableOriginalConstructor()
@@ -118,18 +118,18 @@ class RouteTest extends TestCase
 
     public function testHandle()
     {
-        $responseType = $this->getMockBuilder(ResponseTypeInterface::class)
+        $responseType = $this->getMockBuilder(ResponseType::class)
             ->getMock();
-        /* @var ResponseTypeInterface $responseType */
+        /* @var ResponseType $responseType */
 
         $response = new Response();
 
-        $responseHandler = $this->getMockBuilder(ResponseTypeHandlerInterface::class)
+        $responseHandler = $this->getMockBuilder(ResponseTypeHandler::class)
             ->getMock();
         $responseHandler->expects($this->once())
             ->method('handle')
             ->will($this->returnValue($response));
-        /* @var ResponseTypeHandlerInterface $responseHandler */
+        /* @var ResponseTypeHandler $responseHandler */
 
         $configuration = $this->getMockBuilder(Configuration::class)
             ->disableOriginalConstructor()

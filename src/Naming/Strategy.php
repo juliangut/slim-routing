@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Naming;
 
 /**
- * Route naming interface.
+ * Route naming strategy.
  */
-interface NamingInterface
+interface Strategy
 {
     /**
      * Combine name parts.

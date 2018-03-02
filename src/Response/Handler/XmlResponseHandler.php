@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Response\Handler;
 
-use Jgut\Slim\Routing\Response\PayloadResponseType;
-use Jgut\Slim\Routing\Response\ResponseTypeInterface;
+use Jgut\Slim\Routing\Response\PayloadResponse;
+use Jgut\Slim\Routing\Response\ResponseType;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Body;
 use Slim\Http\Response;
@@ -23,7 +23,7 @@ use Spatie\ArrayToXml\ArrayToXml;
 /**
  * Generic XML response handler.
  */
-class XmlResponseHandler implements ResponseTypeHandlerInterface
+class XmlResponseHandler implements ResponseTypeHandler
 {
     /**
      * XML should be prettified.
@@ -47,24 +47,14 @@ class XmlResponseHandler implements ResponseTypeHandlerInterface
      *
      * @throws \InvalidArgumentException
      */
-    public function handle(ResponseTypeInterface $responseType): ResponseInterface
+    public function handle(ResponseType $responseType): ResponseInterface
     {
-        if (!$responseType instanceof PayloadResponseType) {
-            throw new \InvalidArgumentException(\sprintf('Response type should be %s', PayloadResponseType::class));
+        if (!$responseType instanceof PayloadResponse) {
+            throw new \InvalidArgumentException(
+                \sprintf('Response type should be an instance of %s', PayloadResponse::class)
+            );
         }
 
-        return $this->handleResponse($responseType);
-    }
-
-    /**
-     * Handle response.
-     *
-     * @param PayloadResponseType $responseType
-     *
-     * @return ResponseInterface
-     */
-    protected function handleResponse(PayloadResponseType $responseType): ResponseInterface
-    {
         $converter = new ArrayToXml($responseType->getPayload(), '', false);
         $responseContent = $this->prettify ? $this->prettify($converter) : $this->asSingleLine($converter);
 

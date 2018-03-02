@@ -17,7 +17,7 @@ use Jgut\Slim\Routing\Naming\SnakeCase;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Snake case route naming tests.
+ * Snake case route naming strategy tests.
  */
 class SnakeCaseTest extends TestCase
 {

@@ -17,7 +17,7 @@ use Jgut\Slim\Routing\Naming\Dot;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Snake case route naming tests.
+ * Snake case route naming strategy tests.
  */
 class DotTest extends TestCase
 {

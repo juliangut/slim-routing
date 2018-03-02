@@ -129,17 +129,15 @@ class RouteMetadata extends AbstractMetadata
         if ($this->groupChain === null) {
             $groupChain = [];
 
-            if ($this->group instanceof GroupMetadata) {
-                $parent = $this->group;
-                while ($parent instanceof GroupMetadata) {
-                    if (\in_array($parent, $groupChain, true)) {
-                        throw new MetadataException('Circular group reference detected');
-                    }
-
-                    \array_unshift($groupChain, $parent);
-
-                    $parent = $parent->getParent();
+            $parent = $this->group;
+            while ($parent instanceof GroupMetadata) {
+                if (\in_array($parent, $groupChain, true)) {
+                    throw new MetadataException('Circular group reference detected');
                 }
+
+                \array_unshift($groupChain, $parent);
+
+                $parent = $parent->getParent();
             }
 
             $this->groupChain = $groupChain;

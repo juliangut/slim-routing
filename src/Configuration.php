@@ -16,9 +16,9 @@ namespace Jgut\Slim\Routing;
 use Jgut\Mapping\Driver\DriverInterface;
 use Jgut\Mapping\Metadata\MetadataResolver;
 use Jgut\Slim\Routing\Mapping\Driver\DriverFactory;
-use Jgut\Slim\Routing\Naming\NamingInterface;
 use Jgut\Slim\Routing\Naming\SnakeCase;
-use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandlerInterface;
+use Jgut\Slim\Routing\Naming\Strategy;
+use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandler;
 use Jgut\Slim\Routing\Route\Resolver;
 
 /**
@@ -62,14 +62,14 @@ class Configuration
     /**
      * Naming strategy.
      *
-     * @var NamingInterface
+     * @var Strategy
      */
     protected $namingStrategy;
 
     /**
      * Response handlers.
      *
-     * @var ResponseTypeHandlerInterface[]|string[]
+     * @var ResponseTypeHandler[]|string[]
      */
     protected $responseHandlers = [];
 
@@ -82,7 +82,7 @@ class Configuration
      */
     public function __construct($configurations = [])
     {
-        if (!\is_iterable($configurations)) {
+        if (!\is_array($configurations) && !$configurations instanceof \Traversable) {
             throw new \InvalidArgumentException('Configurations must be an iterable');
         }
 
@@ -272,9 +272,9 @@ class Configuration
     /**
      * Get naming strategy.
      *
-     * @return NamingInterface
+     * @return Strategy
      */
-    public function getNamingStrategy(): NamingInterface
+    public function getNamingStrategy(): Strategy
     {
         if ($this->namingStrategy === null) {
             $this->namingStrategy = new SnakeCase();
@@ -286,11 +286,11 @@ class Configuration
     /**
      * Set naming strategy.
      *
-     * @param NamingInterface $namingStrategy
+     * @param Strategy $namingStrategy
      *
      * @return static
      */
-    public function setNamingStrategy(NamingInterface $namingStrategy): self
+    public function setNamingStrategy(Strategy $namingStrategy): self
     {
         $this->namingStrategy = $namingStrategy;
 
@@ -300,7 +300,7 @@ class Configuration
     /**
      * Get response handlers.
      *
-     * @return ResponseTypeHandlerInterface[]|string[]
+     * @return ResponseTypeHandler[]|string[]
      */
     public function getResponseHandlers(): array
     {
@@ -328,8 +328,8 @@ class Configuration
     /**
      * Add response handler.
      *
-     * @param string                              $response
-     * @param ResponseTypeHandlerInterface|string $handler
+     * @param string                     $response
+     * @param ResponseTypeHandler|string $handler
      *
      * @throws \InvalidArgumentException
      *

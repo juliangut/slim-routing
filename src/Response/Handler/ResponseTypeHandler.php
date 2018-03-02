@@ -13,20 +13,20 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Response\Handler;
 
-use Jgut\Slim\Routing\Response\ResponseTypeInterface;
+use Jgut\Slim\Routing\Response\ResponseType;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Response type handler interface.
+ * Response type handler.
  */
-interface ResponseTypeHandlerInterface
+interface ResponseTypeHandler
 {
     /**
      * Handle response.
      *
-     * @param ResponseTypeInterface $responseType
+     * @param ResponseType $responseType
      *
      * @return ResponseInterface
      */
-    public function handle(ResponseTypeInterface $responseType): ResponseInterface;
+    public function handle(ResponseType $responseType): ResponseInterface;
 }

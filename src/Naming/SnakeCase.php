@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Naming;
 
 /**
- * Snake case route naming.
+ * Snake case route naming strategy.
  */
-class SnakeCase implements NamingInterface
+class SnakeCase implements Strategy
 {
     /**
      * {@inheritdoc}

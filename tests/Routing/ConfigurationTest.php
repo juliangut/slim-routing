@@ -18,7 +18,7 @@ use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Mapping\Driver\DriverFactory;
 use Jgut\Slim\Routing\Naming\CamelCase;
 use Jgut\Slim\Routing\Naming\SnakeCase;
-use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandlerInterface;
+use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandler;
 use Jgut\Slim\Routing\Route\Resolver;
 use PHPUnit\Framework\TestCase;
 
@@ -139,9 +139,9 @@ class ConfigurationTest extends TestCase
 
     public function testResponseHandlers()
     {
-        $handler = $this->getMockBuilder(ResponseTypeHandlerInterface::class)
+        $handler = $this->getMockBuilder(ResponseTypeHandler::class)
             ->getMock();
-        /* @var ResponseTypeHandlerInterface $handler */
+        /* @var ResponseTypeHandler $handler */
         $handlers = [
             'responseTypeClass' => $handler,
         ];

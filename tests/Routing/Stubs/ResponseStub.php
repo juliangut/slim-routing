@@ -11,19 +11,13 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing\Response;
+namespace Jgut\Slim\Routing\Tests\Stubs;
 
-use Psr\Http\Message\ResponseInterface;
+use Jgut\Slim\Routing\Response\AbstractResponse;
 
 /**
- * Response type interface.
+ * Response stub.
  */
-interface ResponseTypeInterface
+class ResponseStub extends AbstractResponse
 {
-    /**
-     * Get PSR-7 response.
-     *
-     * @return ResponseInterface|null
-     */
-    public function getResponse();
 }

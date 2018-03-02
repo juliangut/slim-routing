@@ -17,7 +17,7 @@ use Jgut\Slim\Routing\Naming\CamelCase;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Camel case route naming tests.
+ * Camel case route naming strategy tests.
  */
 class CamelCaseTest extends TestCase
 {

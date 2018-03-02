@@ -15,8 +15,8 @@ namespace Jgut\Slim\Routing\Route;
 
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
-use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandlerInterface;
-use Jgut\Slim\Routing\Response\ResponseTypeInterface;
+use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandler;
+use Jgut\Slim\Routing\Response\ResponseType;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Handlers\Strategies\RequestResponse;
@@ -91,7 +91,7 @@ class Route extends SlimRoute
     {
         $dispatchedResponse = $this->dispatchRoute($request, $response);
 
-        if ($dispatchedResponse instanceof ResponseTypeInterface) {
+        if ($dispatchedResponse instanceof ResponseType) {
             $dispatchedResponse = $this->handleResponseType($dispatchedResponse);
         }
 
@@ -107,7 +107,7 @@ class Route extends SlimRoute
      * @throws \Exception
      * @throws \Throwable
      *
-     * @return ResponseInterface|ResponseTypeInterface
+     * @return ResponseInterface|ResponseType
      *
      * @SuppressWarnings(PMD.CyclomaticComplexity)
      * @SuppressWarnings(PMD.NPathComplexity)
@@ -121,7 +121,7 @@ class Route extends SlimRoute
 
         $dispatchedResponse = $handler($this->callable, $request, $response, $this->arguments);
 
-        if ($dispatchedResponse instanceof ResponseTypeInterface
+        if ($dispatchedResponse instanceof ResponseType
             || $dispatchedResponse instanceof ResponseInterface
         ) {
             $response = $dispatchedResponse;
@@ -137,13 +137,13 @@ class Route extends SlimRoute
     /**
      * Handle response type.
      *
-     * @param ResponseTypeInterface $responseType
+     * @param ResponseType $responseType
      *
      * @throws \RuntimeException
      *
      * @return ResponseInterface
      */
-    protected function handleResponseType(ResponseTypeInterface $responseType): ResponseInterface
+    protected function handleResponseType(ResponseType $responseType): ResponseInterface
     {
         $responseHandlers = $this->configuration->getResponseHandlers();
         $type = \get_class($responseType);
@@ -158,10 +158,10 @@ class Route extends SlimRoute
             $handler = $this->container->get($handler);
         }
 
-        if (!$handler instanceof ResponseTypeHandlerInterface) {
+        if (!$handler instanceof ResponseTypeHandler) {
             throw new \RuntimeException(\sprintf(
                 'Response handler should implement %s, "%s" given',
-                ResponseTypeHandlerInterface::class,
+                ResponseTypeHandler::class,
                 \is_object($handler) ? \get_class($handler) : \gettype($handler)
             ));
         }
