@@ -72,7 +72,7 @@ class RouteTest extends TestCase
             $configuration
         );
 
-        $route($this->request, new Response());
+        $route->run($this->request, new Response());
     }
 
     /**
@@ -113,7 +113,7 @@ class RouteTest extends TestCase
         );
         $route->setContainer($container);
 
-        $route($this->request, new Response());
+        $route->run($this->request, new Response());
     }
 
     public function testNonXmlHttpRequestRequest()
@@ -137,9 +137,9 @@ class RouteTest extends TestCase
             function ($request, $response) {
                 return $response;
             },
-            $configuration
+            $configuration,
+            $metadata
         );
-        $route->setMetadata($metadata);
 
         $response = $route->run($this->request, new Response());
 
@@ -180,9 +180,9 @@ class RouteTest extends TestCase
             function () use ($responseType) {
                 return $responseType;
             },
-            $configuration
+            $configuration,
+            $metadata
         );
-        $route->setMetadata($metadata);
 
         self::assertEquals($metadata, $route->getMetadata());
         self::assertEquals($response, $route->run($this->request, new Response()));

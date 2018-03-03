@@ -15,6 +15,8 @@ namespace Jgut\Slim\Routing;
 
 use FastRoute\Dispatcher;
 use FastRoute\RouteParser;
+use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
+use Jgut\Slim\Routing\Route\Resolver;
 use Jgut\Slim\Routing\Route\Route;
 use Slim\Router as SlimRouter;
 
@@ -35,7 +37,7 @@ class Router extends SlimRouter
      *
      * @var bool
      */
-    protected $routesLoaded = false;
+    private $routesLoaded = false;
 
     /**
      * Router constructor.
@@ -70,20 +72,15 @@ class Router extends SlimRouter
     /**
      * {@inheritdoc}
      */
-    public function getRoutes()
+    public function getRoutes(): array
     {
         if ($this->routesLoaded === false) {
-            $routes = $this->routes;
-            $this->routes = [];
-
             $this->registerRoutes();
-
-            $this->routes = \array_merge($this->routes, $routes);
 
             $this->routesLoaded = true;
         }
 
-        return parent::getRoutes();
+        return $this->routes;
     }
 
     /**
@@ -94,12 +91,13 @@ class Router extends SlimRouter
      */
     protected function registerRoutes()
     {
+        $routes = $this->routes;
+        $this->routes = [];
+
         $resolver = $this->configuration->getRouteResolver();
 
         foreach ($this->getRoutesMetadata() as $route) {
-            /** @var Route $slimRoute */
-            $slimRoute = $this->map($route->getMethods(), $resolver->getPattern($route), $route->getInvokable());
-            $slimRoute->setMetadata($route);
+            $slimRoute = $this->mapMetadataRoute($route, $resolver);
 
             $name = $resolver->getName($route);
             if ($name !== null) {
@@ -110,6 +108,8 @@ class Router extends SlimRouter
                 $slimRoute->add($middleware);
             }
         }
+
+        $this->routes = \array_merge($this->routes, $routes);
     }
 
     /**
@@ -129,15 +129,65 @@ class Router extends SlimRouter
     }
 
     /**
+     * Map new metadata route.
+     *
+     * @param RouteMetadata $metadata
+     * @param Resolver      $resolver
+     *
+     * @return Route
+     */
+    protected function mapMetadataRoute(RouteMetadata $metadata, Resolver $resolver): Route
+    {
+        $pattern = $resolver->getPattern($metadata);
+        if (\count($this->routeGroups) !== 0) {
+            // @codeCoverageIgnoreStart
+            $pattern = $this->processGroups() . $pattern;
+            // @codeCoverageIgnoreEnd
+        }
+
+        $route = $this->createMetadataRoute(
+            \array_map('strtoupper', $metadata->getMethods()),
+            $pattern,
+            $metadata->getInvokable(),
+            $metadata
+        );
+
+        $this->routes[$route->getIdentifier()] = $route;
+        $this->routeCounter++;
+
+        return $route;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function createRoute($methods, $pattern, $callable): Route
     {
+        return $this->createMetadataRoute($methods, $pattern, $callable);
+    }
+
+    /**
+     * Create new metadata aware route.
+     *
+     * @param array              $methods
+     * @param string             $pattern
+     * @param callable           $callable
+     * @param RouteMetadata|null $metadata
+     *
+     * @return Route
+     */
+    protected function createMetadataRoute(
+        array $methods,
+        string $pattern,
+        $callable,
+        RouteMetadata $metadata = null
+    ): Route {
         $route = new Route(
             $methods,
             $pattern,
             $callable,
             $this->configuration,
+            $metadata,
             $this->routeGroups,
             $this->routeCounter
         );

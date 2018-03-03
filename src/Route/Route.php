@@ -38,7 +38,7 @@ class Route extends SlimRoute
     /**
      * Route metadata.
      *
-     * @var RouteMetadata
+     * @var RouteMetadata|null
      */
     protected $metadata;
 
@@ -49,6 +49,7 @@ class Route extends SlimRoute
      * @param string             $pattern
      * @param callable           $callable
      * @param Configuration      $configuration
+     * @param RouteMetadata      $metadata
      * @param \Slim\RouteGroup[] $groups
      * @param int                $identifier
      */
@@ -57,12 +58,14 @@ class Route extends SlimRoute
         string $pattern,
         $callable,
         Configuration $configuration,
+        RouteMetadata $metadata = null,
         array $groups = [],
         int $identifier = 0
     ) {
         parent::__construct($methods, $pattern, $callable, $groups, $identifier);
 
         $this->configuration = $configuration;
+        $this->metadata = $metadata;
     }
 
     /**
@@ -73,16 +76,6 @@ class Route extends SlimRoute
     public function getMetadata()
     {
         return $this->metadata;
-    }
-
-    /**
-     * Set route metadata.
-     *
-     * @param RouteMetadata $metadata
-     */
-    public function setMetadata(RouteMetadata $metadata)
-    {
-        $this->metadata = $metadata;
     }
 
     /**

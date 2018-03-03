@@ -17,19 +17,41 @@ use FastRoute\Dispatcher;
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use Jgut\Slim\Routing\Route\Resolver;
-use Jgut\Slim\Routing\Route\Route;
 use Jgut\Slim\Routing\Router;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Slim\Http\Environment;
 use Slim\Http\Request;
+use Slim\Route;
 
 /**
  * Route loader router tests.
  */
 class RouterTest extends TestCase
 {
+    public function testSlimRouteMappingSupported()
+    {
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->getMock();
+        $container->expects($this->any())
+            ->method('get')
+            ->will($this->returnValue(['outputBuffering' => 'append']));
+        /* @var ContainerInterface $container */
+
+        $configuration = $this->getMockBuilder(Configuration::class)
+            ->setMethods(['getSources', 'getRouteResolver'])
+            ->getMock();
+        /* @var Configuration $configuration */
+
+        $router = new Router($configuration);
+        $router->setContainer($container);
+
+        $route = $router->map(['GET'], '/', '');
+
+        $this->assertInstanceOf(Route::class, $route);
+    }
+
     public function testRoutes()
     {
         $container = $this->getMockBuilder(ContainerInterface::class)
