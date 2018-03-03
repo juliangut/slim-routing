@@ -39,6 +39,7 @@ class RouteTest extends TestCase
         self::assertEquals('', $this->annotation->getName());
         self::assertEquals(['GET'], $this->annotation->getMethods());
         self::assertEquals(0, $this->annotation->getPriority());
+        self::assertFalse($this->annotation->isXmlHttpRequest());
     }
 
     /**
@@ -107,5 +108,12 @@ class RouteTest extends TestCase
         $this->annotation->setPriority(-10);
 
         self::assertEquals(-10, $this->annotation->getPriority());
+    }
+
+    public function testXmlHttpRequest()
+    {
+        $this->annotation->setXmlHttpRequest(true);
+
+        self::assertTrue($this->annotation->isXmlHttpRequest());
     }
 }
