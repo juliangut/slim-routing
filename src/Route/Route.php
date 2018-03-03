@@ -49,7 +49,7 @@ class Route extends SlimRoute
      * @param string             $pattern
      * @param callable           $callable
      * @param Configuration      $configuration
-     * @param RouteMetadata      $metadata
+     * @param RouteMetadata|null $metadata
      * @param \Slim\RouteGroup[] $groups
      * @param int                $identifier
      */

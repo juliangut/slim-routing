@@ -43,6 +43,7 @@ class RouteMetadataTest extends TestCase
         self::assertEquals([], $this->route->getMethods());
         self::assertNull($this->route->getInvokable());
         self::assertEquals(0, $this->route->getPriority());
+        self::assertFalse($this->route->isXmlHttpRequest());
     }
 
     public function testName()
@@ -96,5 +97,12 @@ class RouteMetadataTest extends TestCase
         $this->route->setPriority(-10);
 
         self::assertEquals(-10, $this->route->getPriority());
+    }
+
+    public function testXmlHttpRequest()
+    {
+        $this->route->setXmlHttpRequest(true);
+
+        self::assertTrue($this->route->isXmlHttpRequest());
     }
 }
