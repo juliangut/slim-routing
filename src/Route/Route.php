@@ -20,6 +20,7 @@ use Jgut\Slim\Routing\Response\ResponseType;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Handlers\Strategies\RequestResponse;
+use Slim\Http\Response;
 use Slim\Route as SlimRoute;
 
 /**
@@ -82,6 +83,23 @@ class Route extends SlimRoute
     public function setMetadata(RouteMetadata $metadata)
     {
         $this->metadata = $metadata;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function run(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        if ($this->metadata !== null
+            && $this->metadata->isXmlHttpRequest()
+            && \strtolower($request->getHeaderLine('X-Requested-With')) !== 'xmlhttprequest'
+        ) {
+            return (new Response(400))->withProtocolVersion($response->getProtocolVersion());
+        }
+
+        $this->finalize();
+
+        return $this->callMiddlewareStack($request, $response);
     }
 
     /**

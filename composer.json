@@ -25,7 +25,6 @@
   "require": {
     "php": "^7.0",
     "juliangut/mapping": "~0.4",
-    "psr/http-server-middleware": "^1.0",
     "slim/slim": "^3.8"
   },
   "require-dev": {

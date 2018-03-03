@@ -116,7 +116,37 @@ class RouteTest extends TestCase
         $route($this->request, new Response());
     }
 
-    public function testHandle()
+    public function testNonXmlHttpRequestRequest()
+    {
+        $configuration = $this->getMockBuilder(Configuration::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        /* @var Configuration $configuration */
+
+        $metadata = $this->getMockBuilder(RouteMetadata::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $metadata->expects($this->once())
+            ->method('isXmlHttpRequest')
+            ->will($this->returnValue(true));
+        /* @var RouteMetadata $metadata */
+
+        $route = new Route(
+            'GET',
+            '/',
+            function ($request, $response) {
+                return $response;
+            },
+            $configuration
+        );
+        $route->setMetadata($metadata);
+
+        $response = $route->run($this->request, new Response());
+
+        $this->assertEquals(400, $response->getStatusCode());
+    }
+
+    public function testHandleResponseType()
     {
         $responseType = $this->getMockBuilder(ResponseType::class)
             ->getMock();
@@ -152,16 +182,13 @@ class RouteTest extends TestCase
             },
             $configuration
         );
-
         $route->setMetadata($metadata);
+
         self::assertEquals($metadata, $route->getMetadata());
-
-        $handledResponse = $route($this->request, new Response());
-
-        self::assertEquals($response, $handledResponse);
+        self::assertEquals($response, $route->run($this->request, new Response()));
     }
 
-    public function testResponseInterface()
+    public function testHandleResponseInterface()
     {
         $configuration = $this->getMockBuilder(Configuration::class)
             ->disableOriginalConstructor()
@@ -179,10 +206,10 @@ class RouteTest extends TestCase
             $configuration
         );
 
-        $this->assertEquals($response, $route($this->request, $response));
+        $this->assertEquals($response, $route->run($this->request, $response));
     }
 
-    public function testStringResponse()
+    public function testHandleStringResponse()
     {
         $configuration = $this->getMockBuilder(Configuration::class)
             ->disableOriginalConstructor()
@@ -198,6 +225,6 @@ class RouteTest extends TestCase
             $configuration
         );
 
-        $this->assertEquals('response', (string) $route($this->request, new Response())->getBody());
+        $this->assertEquals('response', (string) $route->run($this->request, new Response())->getBody());
     }
 }
