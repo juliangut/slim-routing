@@ -37,6 +37,7 @@ class RouteTest extends TestCase
     public function testDefaults()
     {
         self::assertEquals('', $this->annotation->getName());
+        self::assertNull($this->annotation->getTransformer());
         self::assertEquals(['GET'], $this->annotation->getMethods());
         self::assertEquals(0, $this->annotation->getPriority());
         self::assertFalse($this->annotation->isXmlHttpRequest());
@@ -65,6 +66,13 @@ class RouteTest extends TestCase
         $this->annotation->setName('routeName');
 
         self::assertEquals('routeName', $this->annotation->getName());
+    }
+
+    public function testTransformer()
+    {
+        $this->annotation->setTransformer('transformer');
+
+        self::assertEquals('transformer', $this->annotation->getTransformer());
     }
 
     /**

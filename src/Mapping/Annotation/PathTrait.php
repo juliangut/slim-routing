@@ -33,6 +33,13 @@ trait PathTrait
     protected $placeholders = [];
 
     /**
+     * Pattern parameters.
+     *
+     * @var array
+     */
+    protected $parameters = [];
+
+    /**
      * Get pattern path.
      *
      * @return string|null
@@ -49,7 +56,7 @@ trait PathTrait
      *
      * @return static
      */
-    public function setPattern(string $pattern)
+    public function setPattern(string $pattern): self
     {
         $this->pattern = $pattern;
 
@@ -73,9 +80,33 @@ trait PathTrait
      *
      * @return static
      */
-    public function setPlaceholders(array $placeholders)
+    public function setPlaceholders(array $placeholders): self
     {
         $this->placeholders = $placeholders;
+
+        return $this;
+    }
+
+    /**
+     * Get parameters.
+     *
+     * @return array
+     */
+    public function getParameters(): array
+    {
+        return $this->parameters;
+    }
+
+    /**
+     * Set parameters.
+     *
+     * @param array $parameters
+     *
+     * @return static
+     */
+    public function setParameters(array $parameters): self
+    {
+        $this->parameters = $parameters;
 
         return $this;
     }

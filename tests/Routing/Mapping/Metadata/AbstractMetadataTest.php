@@ -38,6 +38,7 @@ class AbstractMetadataTest extends TestCase
     {
         self::assertNull($this->metadata->getPattern());
         self::assertEquals([], $this->metadata->getPlaceholders());
+        self::assertEquals([], $this->metadata->getParameters());
         self::assertEquals([], $this->metadata->getMiddleware());
     }
 
@@ -75,6 +76,15 @@ class AbstractMetadataTest extends TestCase
         $this->metadata->setPlaceholders($placeholders);
 
         self::assertEquals($placeholders, $this->metadata->getPlaceholders());
+    }
+
+    public function testParameters()
+    {
+        $parameters = ['id' => 'int'];
+
+        $this->metadata->setParameters($parameters);
+
+        self::assertEquals($parameters, $this->metadata->getParameters());
     }
 
     public function testMiddleware()

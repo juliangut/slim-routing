@@ -14,9 +14,11 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Route;
 
 use Jgut\Slim\Routing\Configuration;
+use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandler;
 use Jgut\Slim\Routing\Response\ResponseType;
+use Jgut\Slim\Routing\Transformer\ParameterTransformer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Handlers\Strategies\RequestResponse;
@@ -25,6 +27,8 @@ use Slim\Route as SlimRoute;
 
 /**
  * Response type aware route.
+ *
+ * @SuppressWarnings(PMD.CouplingBetweenObjects)
  */
 class Route extends SlimRoute
 {
@@ -116,6 +120,8 @@ class Route extends SlimRoute
      * @param ResponseInterface      $response
      *
      * @throws \Exception
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \Throwable
      *
      * @return ResponseInterface|ResponseType
@@ -130,7 +136,12 @@ class Route extends SlimRoute
         /** @var \Slim\Interfaces\InvocationStrategyInterface $handler */
         $handler = isset($this->container) ? $this->container->get('foundHandler') : new RequestResponse();
 
-        $dispatchedResponse = $handler($this->callable, $request, $response, $this->arguments);
+        $dispatchedResponse = $handler(
+            $this->callable,
+            $request,
+            $response,
+            $this->transformArguments($this->arguments)
+        );
 
         if ($dispatchedResponse instanceof ResponseType
             || $dispatchedResponse instanceof ResponseInterface
@@ -146,10 +157,60 @@ class Route extends SlimRoute
     }
 
     /**
+     * Transform route arguments.
+     *
+     * @param array $arguments
+     *
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     *
+     * @return array
+     */
+    protected function transformArguments(array $arguments): array
+    {
+        if ($this->metadata === null) {
+            return $arguments;
+        }
+
+        $transformer = $this->metadata->getTransformer();
+        if (\is_string($transformer) && isset($this->container)) {
+            $transformer = $this->container->get($transformer);
+        }
+
+        if ($transformer instanceof ParameterTransformer) {
+            $arguments = $transformer->transform($arguments, $this->getRouteParameters($this->metadata));
+        }
+
+        return $arguments;
+    }
+
+    /**
+     * Get route parameters.
+     *
+     * @param RouteMetadata $route
+     *
+     * @return array
+     */
+    protected function getRouteParameters(RouteMetadata $route): array
+    {
+        $parameters = \array_filter(\array_map(
+            function (GroupMetadata $group) {
+                return $group->getParameters();
+            },
+            $route->getGroupChain()
+        ));
+        \array_unshift($parameters, $route->getParameters());
+
+        return \array_filter(\array_merge(...$parameters));
+    }
+
+    /**
      * Handle response type.
      *
      * @param ResponseType $responseType
      *
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \RuntimeException
      *
      * @return ResponseInterface

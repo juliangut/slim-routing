@@ -38,6 +38,7 @@ class PathTraitTest extends TestCase
     {
         self::assertEquals('', $this->annotation->getPattern());
         self::assertEquals([], $this->annotation->getPlaceholders());
+        self::assertEquals([], $this->annotation->getParameters());
     }
 
     public function testPattern()
@@ -59,5 +60,17 @@ class PathTraitTest extends TestCase
         $this->annotation->setPlaceholders($placeholders);
 
         self::assertEquals($placeholders, $this->annotation->getPlaceholders());
+    }
+
+    public function testParameters()
+    {
+        $parameters = [
+            'id' => 'int',
+            'exception' => \Exception::class,
+        ];
+
+        $this->annotation->setParameters($parameters);
+
+        self::assertEquals($parameters, $this->annotation->getParameters());
     }
 }

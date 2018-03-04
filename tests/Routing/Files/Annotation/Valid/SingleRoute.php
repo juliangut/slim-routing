@@ -28,11 +28,14 @@ class SingleRoute
      *     pattern="/one/{id}",
      *     priority=-10,
      *     placeholders={"id": "numeric"},
+     *     transformer="fake_transformer",
      *     middleware={"oneMiddleware"},
      *     name="one"
      * )
+     *
+     * @param int $id
      */
-    public function actionOne()
+    public function actionOne(int $id)
     {
     }
 }

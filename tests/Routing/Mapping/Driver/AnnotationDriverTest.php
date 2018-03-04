@@ -180,5 +180,7 @@ class AnnotationDriverTest extends TestCase
         self::assertEquals('one/{id}', $route->getPattern());
         self::assertEquals(['id' => 'numeric'], $route->getPlaceholders());
         self::assertEquals(['oneMiddleware'], $route->getMiddleware());
+        self::assertEquals('fake_transformer', $route->getTransformer());
+        self::assertEquals(['id' => 'int'], $route->getParameters());
     }
 }

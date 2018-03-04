@@ -163,6 +163,30 @@ Provided response types handlers:
 
 You can create you're own response handlers to compose specifically formatted JSON (JSON-API, ...) or use another template engines (Plates, ...)
 
+### Parameter transformation
+
+Route parameters can be transformed before arriving to route callable. The most common use of this feature would be to transform ids from route into actual object/entity used in the callable
+
+To achieve this you need to provide a `\Jgut\Slim\Routing\Transformer\ParameterTransformer` instance defined in the route itself. There is an abstract class `\Jgut\Slim\Routing\Transformer\AbstractTransformer` to easily implement parameters transformation
+
+For example you would want to transform parameters into Doctrine entities
+
+```php
+class CustomTransformer extends AbstractTransformer
+{
+    protected $entityManager;
+    
+    public function __construct(EntityManager $entityManager) {
+        $this->entityManager = $entityManager;
+    }
+
+    protected function transformParameter(string $parameter, string $type)
+    {
+        return $this->entityManager->getRepository($type)->find($parameter);
+    }
+}
+```
+
 ### Routes
 
 Routes can be defined in two basic ways: by setting them in definition files of various formats or directly defined in annotations on controller classes
@@ -231,6 +255,8 @@ class Section
      *     methods={"GET", "POST"},
      *     pattern="do/{action}",
      *     placeholders={"action": "[a-z0-9]+"},
+     *     transformer="CustomTransformer",
+     *     parameters={"action": "\My\Entity"},
      *     middleware={"routeMiddlewareName"},
      *     priority=-10
      * )
@@ -246,6 +272,8 @@ class Section
 * `xmlHttpRequest`, request should be AJAX, false by default
 * `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed in the list (defaults to GET)
 * `placeholders`, optional, array of regex/alias for path placeholders
+* `parameters`, optional, array of definitions of parameters, to be used in transformer
+* `transformer`, optional, reference to a ParameterTransformer instance that will be extracted from the container
 * `middleware`, optional, array of middleware to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
 
@@ -270,6 +298,8 @@ return [
         'priority' => 0
         'pattern' => 'route-pattern',
         'placeholders' => ['route-placeholders'],
+        'parameters' => ['route-parameters'],
+        'transformer' => 'customTransformer',
         'middleware' => ['route-middleware'],
         'invokable' => 'callable',
       ],
@@ -308,6 +338,8 @@ return [
         "priority": 0,
         "pattern": "route-pattern",
         "placeholders": ["route-placeholders"],
+        "parameters": ["route-parameters"],
+        "transformer": "customTransformer",
         "middleware": ["route-middleware"],
         "invokable": "callable"
       },
@@ -349,10 +381,14 @@ return [
                 <placeholders>
                     <placeholder1>route-placeholder</placeholder1>
                 </placeholders>
+                <parameters>
+                    <parameter1>route-parameter</parameter1>
+                </parameters>
+                <transformer>CustomTransformer</transformer>
                 <middleware>
                     <middleware1>route-middleware</middleware1>
                 </middleware>
-                <invokable>callable</invokable>,
+                <invokable>callable</invokable>
             </route1>
             <subgroup1 prefix="prefix" pattern="group-pattern">
                 <placeholders>
@@ -388,6 +424,8 @@ return [
       priority: 0
       pattern: route-pattern
       placeholders: [route-placeholders]
+      parameters: [route-parameters]
+      transformer: CustomTransformer
       middleware: [route-middleware]
       invokable: callable
     # Subgroup
@@ -420,6 +458,8 @@ Defines a route added to Slim
 * `xmlHttpRequest`, request should be AJAX, false by default
 * `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed (defaults to GET)
 * `placeholders`, optional, array of regex for path placeholders
+* `parameters`, optional, array of definitions of parameters, to be used in transformer
+* `transformer`, optional, reference to a ParameterTransformer instance that will be extracted from the container
 * `middleware`, optional, array of middleware to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
 

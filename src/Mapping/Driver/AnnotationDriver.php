@@ -124,6 +124,8 @@ class AnnotationDriver extends AbstractAnnotationDriver
             $group->setPrefix($annotation->getPrefix());
         }
 
+        $group->setParameters($annotation->getParameters());
+
         return $group;
     }
 
@@ -220,6 +222,35 @@ class AnnotationDriver extends AbstractAnnotationDriver
             $route->setGroup($group);
         }
 
+        if ($annotation->getTransformer() !== null) {
+            $route->setTransformer($annotation->getTransformer())
+                ->setParameters($this->getRouteParameters($method, $annotation));
+        }
+
         return $route;
+    }
+
+    /**
+     * Get route parameters.
+     *
+     * @param \ReflectionMethod $method
+     * @param RouteAnnotation   $annotation
+     *
+     * @return array
+     */
+    protected function getRouteParameters(
+        \ReflectionMethod $method,
+        RouteAnnotation $annotation
+    ): array {
+        $parameters = [];
+        foreach ($method->getParameters() as $parameter) {
+            $type = $parameter->getType();
+
+            if ($type !== null) {
+                $parameters[$parameter->getName()] = (string) $type;
+            }
+        }
+
+        return \array_merge($parameters, $annotation->getParameters());
     }
 }

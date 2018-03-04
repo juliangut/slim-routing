@@ -36,6 +36,13 @@ abstract class AbstractMetadata implements MetadataInterface
     protected $placeholders = [];
 
     /**
+     * Pattern parameters.
+     *
+     * @var array
+     */
+    protected $parameters = [];
+
+    /**
      * Middleware list.
      *
      * @var callable[]|string[]
@@ -100,6 +107,30 @@ abstract class AbstractMetadata implements MetadataInterface
     public function setPlaceholders(array $placeholders): self
     {
         $this->placeholders = $placeholders;
+
+        return $this;
+    }
+
+    /**
+     * Get pattern parameters.
+     *
+     * @return array
+     */
+    public function getParameters(): array
+    {
+        return $this->parameters;
+    }
+
+    /**
+     * Set pattern parameters.
+     *
+     * @param array $parameters
+     *
+     * @return static
+     */
+    public function setParameters(array $parameters): self
+    {
+        $this->parameters = $parameters;
 
         return $this;
     }

@@ -124,6 +124,27 @@ class MappingTraitTest extends TestCase
         $driver->getMetadata();
     }
 
+    /**
+     * @expectedException \Jgut\Mapping\Exception\DriverException
+     * @expectedExceptionMessage Parameters keys must be all strings
+     */
+    public function testInvalidParameters()
+    {
+        $driver = $this->getMockForTrait(MappingTrait::class);
+        $driver->expects($this->once())
+            ->method('getMappingData')
+            ->will($this->returnValue([
+                [
+                    'invokable' => 'invokable',
+                    'transformer' => 'fake_transformer',
+                    'parameters' => ['invalid'],
+                ],
+            ]));
+        /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
+
+        $driver->getMetadata();
+    }
+
     public function testRoutes()
     {
         $driver = $this->getMockForTrait(MappingTrait::class);
@@ -182,6 +203,10 @@ class MappingTraitTest extends TestCase
                     'placeholders' => [
                         'id' => 'numeric',
                     ],
+                    'transformer' => 'fake_transformer',
+                    'parameters' => [
+                        'id' => 'int',
+                    ],
                     'middleware' => ['oneMiddleware'],
                     'invokable' => ['OneRoute', 'actionOne'],
                 ],
@@ -229,5 +254,7 @@ class MappingTraitTest extends TestCase
         self::assertEquals('one/{id}', $route->getPattern());
         self::assertEquals(['id' => 'numeric'], $route->getPlaceholders());
         self::assertEquals(['oneMiddleware'], $route->getMiddleware());
+        self::assertEquals('fake_transformer', $route->getTransformer());
+        self::assertEquals(['id' => 'int'], $route->getParameters());
     }
 }

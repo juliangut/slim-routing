@@ -35,6 +35,13 @@ class Route extends AbstractAnnotation
     protected $name;
 
     /**
+     * Parameters transformer.
+     *
+     * @var string
+     */
+    protected $transformer;
+
+    /**
      * Route methods.
      *
      * @var array
@@ -85,6 +92,30 @@ class Route extends AbstractAnnotation
         }
 
         $this->name = \trim($name);
+
+        return $this;
+    }
+
+    /**
+     * Get parameters transformer.
+     *
+     * @return string|null
+     */
+    public function getTransformer()
+    {
+        return $this->transformer;
+    }
+
+    /**
+     * Set parameters transformer.
+     *
+     * @param string $transformer
+     *
+     * @return static
+     */
+    public function setTransformer(string $transformer): self
+    {
+        $this->transformer = $transformer;
 
         return $this;
     }

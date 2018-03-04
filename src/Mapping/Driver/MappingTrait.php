@@ -69,6 +69,7 @@ trait MappingTrait
     {
         $group = (new GroupMetadata())
             ->setPlaceholders($this->getPlaceholders($mapping))
+            ->setParameters($this->getParameters($mapping))
             ->setMiddleware($this->getMiddleware($mapping));
 
         $pattern = $this->getPattern($mapping);
@@ -118,6 +119,12 @@ trait MappingTrait
 
         if ($group !== null) {
             $route->setGroup($group);
+        }
+
+        $transformer = $this->getTransformer($mapping);
+        if ($transformer !== null) {
+            $route->setTransformer($transformer)
+                ->setParameters($this->getParameters($mapping));
         }
 
         return $route;
@@ -193,6 +200,18 @@ trait MappingTrait
     }
 
     /**
+     * Get parameter transformer.
+     *
+     * @param array $mapping
+     *
+     * @return string|null
+     */
+    protected function getTransformer(array $mapping)
+    {
+        return $mapping['transformer'] ?? null;
+    }
+
+    /**
      * Get XmlHttpRequest constraint.
      *
      * @param array $mapping
@@ -228,6 +247,35 @@ trait MappingTrait
         return \array_key_exists('pattern', $mapping) && \trim($mapping['pattern'], ' /') !== ''
             ? \trim($mapping['pattern'], ' /')
             : null;
+    }
+
+    /**
+     * Get mapping parameters.
+     *
+     * @param array $mapping
+     *
+     * @throws DriverException
+     *
+     * @return string[]
+     */
+    protected function getParameters(array $mapping): array
+    {
+        if (!\array_key_exists('parameters', $mapping)) {
+            return [];
+        }
+
+        $parameters = $mapping['parameters'];
+
+        \array_map(
+            function ($key) {
+                if (!\is_string($key)) {
+                    throw new DriverException('Parameters keys must be all strings');
+                }
+            },
+            \array_keys($parameters)
+        );
+
+        return $parameters;
     }
 
     /**

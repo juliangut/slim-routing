@@ -41,6 +41,7 @@ class RouteMetadataTest extends TestCase
         self::assertNull($this->route->getGroup());
         self::assertEquals([], $this->route->getGroupChain());
         self::assertEquals([], $this->route->getMethods());
+        self::assertNull($this->route->getTransformer());
         self::assertNull($this->route->getInvokable());
         self::assertEquals(0, $this->route->getPriority());
         self::assertFalse($this->route->isXmlHttpRequest());
@@ -63,6 +64,13 @@ class RouteMetadataTest extends TestCase
 
         self::assertEquals($group, $this->route->getGroup());
         self::assertEquals([$group], $this->route->getGroupChain());
+    }
+
+    public function testTransformer()
+    {
+        $this->route->setTransformer('transformer');
+
+        self::assertEquals('transformer', $this->route->getTransformer());
     }
 
     public function testMethods()

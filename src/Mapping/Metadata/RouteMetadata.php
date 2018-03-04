@@ -42,6 +42,13 @@ class RouteMetadata extends AbstractMetadata
     protected $groupChain;
 
     /**
+     * Parameters transformer.
+     *
+     * @var string
+     */
+    protected $transformer;
+
+    /**
      * Route methods.
      *
      * @var array
@@ -144,6 +151,30 @@ class RouteMetadata extends AbstractMetadata
         }
 
         return $this->groupChain;
+    }
+
+    /**
+     * Get parameters transformer.
+     *
+     * @return string|null
+     */
+    public function getTransformer()
+    {
+        return $this->transformer;
+    }
+
+    /**
+     * Set parameters transformer.
+     *
+     * @param string $transformer
+     *
+     * @return static
+     */
+    public function setTransformer(string $transformer): self
+    {
+        $this->transformer = $transformer;
+
+        return $this;
     }
 
     /**

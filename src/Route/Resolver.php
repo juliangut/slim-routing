@@ -153,8 +153,9 @@ class Resolver
             },
             $route->getGroupChain()
         ));
-        $placeholders[] = $route->getPlaceholders();
-        $placeholders = \count($placeholders) > 0 ? \array_filter(\array_merge(...$placeholders)) : [];
+        \array_unshift($placeholders, $route->getPlaceholders());
+
+        $placeholders = \array_filter(\array_merge(...$placeholders));
 
         return \array_map(
             function (string $pattern) use ($aliases) {
