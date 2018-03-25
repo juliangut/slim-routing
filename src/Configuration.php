@@ -39,10 +39,15 @@ class Configuration
      * @var array
      */
     protected $placeholderAliases = [
-        'numeric' => '\d+',
-        'alpha' => '[a-zA-Z]+',
-        'alnum' => '[a-zA-Z0-9]+',
         'any' => '[^}]+',
+        'numeric' => '[0-9]+',
+        'number' => '[0-9]+',
+        'alpha' => '[a-zA-Z]+',
+        'word' => '[a-zA-Z]+',
+        'alnum' => '[a-zA-Z0-9]+',
+        'slug' => '[a-zA-Z0-9-]+',
+        'uuid' => '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
+        'mongoid' => '[0-9a-f]{24}',
     ];
 
     /**
