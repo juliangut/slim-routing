@@ -46,7 +46,7 @@ class AbstractTransformerTest extends TestCase
         self::assertEquals('hi', $parameters['one']);
         self::assertEquals(1, $parameters['two']);
         self::assertEquals(5.0, $parameters['three']);
-        self::assertEquals(true, $parameters['four']);
+        self::assertTrue($parameters['four']);
     }
 
     public function testTransformation()
