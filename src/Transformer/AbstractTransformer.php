@@ -58,7 +58,7 @@ abstract class AbstractTransformer implements ParameterTransformer
                 break;
 
             case 'bool':
-                $parameter = \in_array(\trim($parameter), ['1', 'true'], true);
+                $parameter = \in_array(\trim($parameter), ['1', 'on', 'yes', 'true'], true);
                 break;
         }
 
