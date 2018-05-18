@@ -194,9 +194,8 @@ class Router extends SlimRouter
 
         if ($this->container !== null) {
             $route->setContainer($this->container);
+            $route->setOutputBuffering($this->container->get('settings')['outputBuffering']);
         }
-
-        $route->setOutputBuffering($this->container->get('settings')['outputBuffering']);
 
         return $route;
     }
