@@ -97,7 +97,7 @@ trait MappingTrait
      *
      * @return RouteMetadata
      */
-    protected function getRouteMetadata(array $mapping, GroupMetadata $group = null): RouteMetadata
+    protected function getRouteMetadata($mapping, GroupMetadata $group = null): RouteMetadata
     {
         $route = (new RouteMetadata())
             ->setMethods($this->getMethods($mapping))
@@ -347,7 +347,7 @@ trait MappingTrait
      *
      * @return string|array|callable
      */
-    protected function getInvokable(array $mapping)
+    protected function getInvokable($mapping)
     {
         if (!\array_key_exists('invokable', $mapping)) {
             throw new DriverException('Route invokable definition missing');
