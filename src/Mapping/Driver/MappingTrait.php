@@ -97,7 +97,7 @@ trait MappingTrait
      *
      * @return RouteMetadata
      */
-    protected function getRouteMetadata($mapping, GroupMetadata $group = null): RouteMetadata
+    protected function getRouteMetadata(array $mapping, GroupMetadata $group = null): RouteMetadata
     {
         $route = (new RouteMetadata())
             ->setMethods($this->getMethods($mapping))
@@ -232,7 +232,7 @@ trait MappingTrait
      */
     protected function getPriority(array $mapping): int
     {
-        return \array_key_exists('priority', $mapping) ? (int) $mapping['priority'] : 0;
+        return (int) ($mapping['priority'] ?? 0);
     }
 
     /**
@@ -266,14 +266,9 @@ trait MappingTrait
 
         $parameters = $mapping['parameters'];
 
-        \array_map(
-            function ($key) {
-                if (!\is_string($key)) {
-                    throw new DriverException('Parameters keys must be all strings');
-                }
-            },
-            \array_keys($parameters)
-        );
+        if ($parameters !== [] && \array_keys($parameters) === \range(0, \count($parameters) - 1)) {
+            throw new DriverException('Parameters keys must be all strings');
+        }
 
         return $parameters;
     }
@@ -295,14 +290,9 @@ trait MappingTrait
 
         $placeholders = $mapping['placeholders'];
 
-        \array_map(
-            function ($key) {
-                if (!\is_string($key)) {
-                    throw new DriverException('Placeholder keys must be all strings');
-                }
-            },
-            \array_keys($placeholders)
-        );
+        if ($placeholders !== [] && \array_keys($placeholders) === \range(0, \count($placeholders) - 1)) {
+            throw new DriverException('Placeholder keys must be all strings');
+        }
 
         return $placeholders;
     }
