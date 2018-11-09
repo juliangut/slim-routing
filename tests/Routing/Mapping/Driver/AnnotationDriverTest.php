@@ -134,7 +134,7 @@ class AnnotationDriverTest extends TestCase
         self::assertEquals('four', $route->getName());
         self::assertEquals(['GET'], $route->getMethods());
         self::assertEquals(
-            ['Jgut\Slim\Routing\Tests\Files\Annotation\Valid\DependentRoute', 'actionFour'],
+            'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\DependentRoute:actionFour',
             $route->getInvokable()
         );
         self::assertEquals(0, $route->getPriority());
@@ -147,7 +147,7 @@ class AnnotationDriverTest extends TestCase
         self::assertNull($route->getName());
         self::assertEquals(['GET'], $route->getMethods());
         self::assertEquals(
-            ['Jgut\Slim\Routing\Tests\Files\Annotation\Valid\GroupedRoute', 'actionTwo'],
+            'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\GroupedRoute:actionTwo',
             $route->getInvokable()
         );
         self::assertEquals(0, $route->getPriority());
@@ -160,7 +160,7 @@ class AnnotationDriverTest extends TestCase
         self::assertNull($route->getName());
         self::assertEquals(['GET'], $route->getMethods());
         self::assertEquals(
-            ['Jgut\Slim\Routing\Tests\Files\Annotation\Valid\GroupedRoute', 'actionThree'],
+            'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\GroupedRoute:actionThree',
             $route->getInvokable()
         );
         self::assertEquals(0, $route->getPriority());
@@ -173,7 +173,7 @@ class AnnotationDriverTest extends TestCase
         self::assertEquals('one', $route->getName());
         self::assertEquals(['GET', 'POST'], $route->getMethods());
         self::assertEquals(
-            ['Jgut\Slim\Routing\Tests\Files\Annotation\Valid\SingleRoute', 'actionOne'],
+            'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\SingleRoute:actionOne',
             $route->getInvokable()
         );
         self::assertEquals(-10, $route->getPriority());

@@ -97,7 +97,7 @@ trait MappingTrait
      *
      * @return RouteMetadata
      */
-    protected function getRouteMetadata(array $mapping, GroupMetadata $group = null): RouteMetadata
+    protected function getRouteMetadata($mapping, GroupMetadata $group = null): RouteMetadata
     {
         $route = (new RouteMetadata())
             ->setMethods($this->getMethods($mapping))
