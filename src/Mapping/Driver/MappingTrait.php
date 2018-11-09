@@ -347,7 +347,7 @@ trait MappingTrait
      *
      * @return string|array|callable
      */
-    protected function getInvokable($mapping)
+    protected function getInvokable(array $mapping)
     {
         if (!\array_key_exists('invokable', $mapping)) {
             throw new DriverException('Route invokable definition missing');
