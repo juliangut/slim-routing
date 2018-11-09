@@ -166,7 +166,7 @@ class MappingTraitTest extends TestCase
                                     'methods' => ['GET'],
                                     'pattern' => '/four',
                                     'middleware' => ['fourMiddleware'],
-                                    'invokable' => ['FourRoute', 'actionFour'],
+                                    'invokable' => 'FourRoute' . ':' . 'actionFour',
                                 ],
                             ],
                         ],
@@ -183,7 +183,7 @@ class MappingTraitTest extends TestCase
                             'methods' => ['GET'],
                             'pattern' => '/two/{id}',
                             'middleware' => ['twoMiddleware'],
-                            'invokable' => ['TwoRoute', 'actionTwo'],
+                            'invokable' => 'TwoRoute' . ':' . 'actionTwo',
                         ],
                         [
                             'methods' => ['GET'],
@@ -191,7 +191,7 @@ class MappingTraitTest extends TestCase
                             'placeholders' => [
                                 'id' => '\d+',
                             ],
-                            'invokable' => ['ThreeRoute', 'actionThree'],
+                            'invokable' => 'ThreeRoute' . ':' . 'actionThree',
                         ],
                     ],
                 ],
@@ -208,7 +208,7 @@ class MappingTraitTest extends TestCase
                         'id' => 'int',
                     ],
                     'middleware' => ['oneMiddleware'],
-                    'invokable' => ['OneRoute', 'actionOne'],
+                    'invokable' => 'OneRoute' . ':' . 'actionOne',
                 ],
             ]));
         /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
@@ -220,7 +220,7 @@ class MappingTraitTest extends TestCase
         self::assertEquals('four', $route->getName());
         self::assertEquals(['GET'], $route->getMethods());
         self::assertEquals(0, $route->getPriority());
-        self::assertEquals(['FourRoute', 'actionFour'], $route->getInvokable());
+        self::assertEquals('FourRoute' . ':' . 'actionFour', $route->getInvokable());
         self::assertEquals('four', $route->getPattern());
         self::assertEquals([], $route->getPlaceholders());
         self::assertEquals(['fourMiddleware'], $route->getMiddleware());
@@ -230,7 +230,7 @@ class MappingTraitTest extends TestCase
         self::assertNull($route->getName());
         self::assertEquals(['GET'], $route->getMethods());
         self::assertEquals(0, $route->getPriority());
-        self::assertEquals(['TwoRoute', 'actionTwo'], $route->getInvokable());
+        self::assertEquals('TwoRoute' . ':' . 'actionTwo', $route->getInvokable());
         self::assertEquals('two/{id}', $route->getPattern());
         self::assertEquals([], $route->getPlaceholders());
         self::assertEquals(['twoMiddleware'], $route->getMiddleware());
@@ -239,7 +239,7 @@ class MappingTraitTest extends TestCase
         self::assertInstanceOf(RouteMetadata::class, $route);
         self::assertEquals('', $route->getName());
         self::assertEquals(['GET'], $route->getMethods());
-        self::assertEquals(['ThreeRoute', 'actionThree'], $route->getInvokable());
+        self::assertEquals('ThreeRoute' . ':' . 'actionThree', $route->getInvokable());
         self::assertEquals(0, $route->getPriority());
         self::assertEquals('three/{id}', $route->getPattern());
         self::assertEquals(['id' => '\d+'], $route->getPlaceholders());
@@ -250,7 +250,7 @@ class MappingTraitTest extends TestCase
         self::assertEquals('one', $route->getName());
         self::assertEquals(['GET', 'POST'], $route->getMethods());
         self::assertEquals(-10, $route->getPriority());
-        self::assertEquals(['OneRoute', 'actionOne'], $route->getInvokable());
+        self::assertEquals('OneRoute' . ':' . 'actionOne', $route->getInvokable());
         self::assertEquals('one/{id}', $route->getPattern());
         self::assertEquals(['id' => 'numeric'], $route->getPlaceholders());
         self::assertEquals(['oneMiddleware'], $route->getMiddleware());
