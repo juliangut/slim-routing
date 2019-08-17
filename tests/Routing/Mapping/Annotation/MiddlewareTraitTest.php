@@ -36,7 +36,7 @@ class MiddlewareTraitTest extends TestCase
 
     public function testDefaults(): void
     {
-        self::assertEquals([], $this->annotation->getMiddleware());
+        static::assertEquals([], $this->annotation->getMiddleware());
     }
 
     public function testInvalidMiddleware(): void
@@ -56,6 +56,6 @@ class MiddlewareTraitTest extends TestCase
 
         $this->annotation->setMiddleware($middleware);
 
-        self::assertEquals($middleware, $this->annotation->getMiddleware());
+        static::assertEquals($middleware, $this->annotation->getMiddleware());
     }
 }

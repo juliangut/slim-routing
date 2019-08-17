@@ -43,10 +43,10 @@ class AbstractTransformerTest extends TestCase
 
         $parameters = $transformer->transform($parameters, $definitions);
 
-        self::assertEquals('hi', $parameters['one']);
-        self::assertEquals(1, $parameters['two']);
-        self::assertEquals(5.0, $parameters['three']);
-        self::assertTrue($parameters['four']);
+        static::assertEquals('hi', $parameters['one']);
+        static::assertEquals(1, $parameters['two']);
+        static::assertEquals(5.0, $parameters['three']);
+        static::assertTrue($parameters['four']);
     }
 
     public function testTransformation(): void
@@ -65,6 +65,6 @@ class AbstractTransformerTest extends TestCase
 
         $parameters = $transformer->transform($parameters, $definitions);
 
-        self::assertSame($exception, $parameters['one']);
+        static::assertSame($exception, $parameters['one']);
     }
 }

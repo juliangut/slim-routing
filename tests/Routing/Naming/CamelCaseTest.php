@@ -36,11 +36,11 @@ class CamelCaseTest extends TestCase
 
     public function testSinglePartName(): void
     {
-        self::assertEquals('name', $this->naming->combine(['name']));
+        static::assertEquals('name', $this->naming->combine(['name']));
     }
 
     public function testMultiPartName(): void
     {
-        self::assertEquals('multiPartName', $this->naming->combine(['multi', 'part', 'name']));
+        static::assertEquals('multiPartName', $this->naming->combine(['multi', 'part', 'name']));
     }
 }

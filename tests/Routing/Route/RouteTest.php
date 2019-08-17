@@ -50,7 +50,7 @@ class RouteTest extends TestCase
         $metadata = $this->getMockBuilder(RouteMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $metadata->expects($this->once())
+        $metadata->expects(static::once())
             ->method('isXmlHttpRequest')
             ->will($this->returnValue(true));
         /* @var RouteMetadata $metadata */
@@ -83,7 +83,7 @@ class RouteTest extends TestCase
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $container->expects($this->any())
+        $container->expects(static::any())
             ->method('get')
             ->will($this->returnValue(new \stdClass()));
         /* @var ContainerInterface $container */
@@ -91,7 +91,7 @@ class RouteTest extends TestCase
         $metadata = $this->getMockBuilder(RouteMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $metadata->expects($this->once())
+        $metadata->expects(static::once())
             ->method('getTransformer')
             ->will($this->returnValue('transformer'));
         /* @var RouteMetadata $metadata */
@@ -119,14 +119,14 @@ class RouteTest extends TestCase
         };
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
-        $callableResolver->expects($this->any())
+        $callableResolver->expects(static::any())
             ->method('resolve')
             ->will($this->returnValue($callable));
         /** @var CallableResolverInterface $callableResolver */
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $container->expects($this->any())
+        $container->expects(static::any())
             ->method('get')
             ->will($this->returnValue(new AbstractTransformerStub(10)));
         /* @var ContainerInterface $container */
@@ -134,10 +134,10 @@ class RouteTest extends TestCase
         $metadata = $this->getMockBuilder(RouteMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $metadata->expects($this->once())
+        $metadata->expects(static::once())
             ->method('getTransformer')
             ->will($this->returnValue('transformer'));
-        $metadata->expects($this->once())
+        $metadata->expects(static::once())
             ->method('getParameters')
             ->will($this->returnValue(['id' => 'int']));
         /* @var RouteMetadata $metadata */
@@ -163,7 +163,7 @@ class RouteTest extends TestCase
         };
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
-        $callableResolver->expects($this->any())
+        $callableResolver->expects(static::any())
             ->method('resolve')
             ->will($this->returnValue($callable));
         /** @var CallableResolverInterface $callableResolver */

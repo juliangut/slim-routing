@@ -126,58 +126,58 @@ class AnnotationDriverTest extends TestCase
         $routes = $driver->getMetadata();
 
         $route = $routes[0];
-        self::assertInstanceOf(RouteMetadata::class, $route);
-        self::assertInstanceOf(GroupMetadata::class, $route->getGroup());
-        self::assertEquals('four', $route->getName());
-        self::assertEquals(['GET'], $route->getMethods());
-        self::assertEquals(
+        static::assertInstanceOf(RouteMetadata::class, $route);
+        static::assertInstanceOf(GroupMetadata::class, $route->getGroup());
+        static::assertEquals('four', $route->getName());
+        static::assertEquals(['GET'], $route->getMethods());
+        static::assertEquals(
             'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\DependentRoute:actionFour',
             $route->getInvocable()
         );
-        self::assertEquals(0, $route->getPriority());
-        self::assertEquals('four', $route->getPattern());
-        self::assertEquals([], $route->getPlaceholders());
-        self::assertEquals(['fourMiddleware'], $route->getMiddleware());
+        static::assertEquals(0, $route->getPriority());
+        static::assertEquals('four', $route->getPattern());
+        static::assertEquals([], $route->getPlaceholders());
+        static::assertEquals(['fourMiddleware'], $route->getMiddleware());
 
         $route = $routes[1];
-        self::assertInstanceOf(RouteMetadata::class, $route);
-        self::assertNull($route->getName());
-        self::assertEquals(['GET'], $route->getMethods());
-        self::assertEquals(
+        static::assertInstanceOf(RouteMetadata::class, $route);
+        static::assertNull($route->getName());
+        static::assertEquals(['GET'], $route->getMethods());
+        static::assertEquals(
             'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\GroupedRoute:actionTwo',
             $route->getInvocable()
         );
-        self::assertEquals(0, $route->getPriority());
-        self::assertEquals('two/{id}', $route->getPattern());
-        self::assertEquals([], $route->getPlaceholders());
-        self::assertEquals(['twoMiddleware'], $route->getMiddleware());
+        static::assertEquals(0, $route->getPriority());
+        static::assertEquals('two/{id}', $route->getPattern());
+        static::assertEquals([], $route->getPlaceholders());
+        static::assertEquals(['twoMiddleware'], $route->getMiddleware());
 
         $route = $routes[2];
-        self::assertInstanceOf(RouteMetadata::class, $route);
-        self::assertNull($route->getName());
-        self::assertEquals(['GET'], $route->getMethods());
-        self::assertEquals(
+        static::assertInstanceOf(RouteMetadata::class, $route);
+        static::assertNull($route->getName());
+        static::assertEquals(['GET'], $route->getMethods());
+        static::assertEquals(
             'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\GroupedRoute:actionThree',
             $route->getInvocable()
         );
-        self::assertEquals(0, $route->getPriority());
-        self::assertEquals('three/{id}', $route->getPattern());
-        self::assertEquals(['id' => '\d+'], $route->getPlaceholders());
-        self::assertEquals([], $route->getMiddleware());
+        static::assertEquals(0, $route->getPriority());
+        static::assertEquals('three/{id}', $route->getPattern());
+        static::assertEquals(['id' => '\d+'], $route->getPlaceholders());
+        static::assertEquals([], $route->getMiddleware());
 
         $route = $routes[3];
-        self::assertInstanceOf(RouteMetadata::class, $route);
-        self::assertEquals('one', $route->getName());
-        self::assertEquals(['GET', 'POST'], $route->getMethods());
-        self::assertEquals(
+        static::assertInstanceOf(RouteMetadata::class, $route);
+        static::assertEquals('one', $route->getName());
+        static::assertEquals(['GET', 'POST'], $route->getMethods());
+        static::assertEquals(
             'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\SingleRoute:actionOne',
             $route->getInvocable()
         );
-        self::assertEquals(-10, $route->getPriority());
-        self::assertEquals('one/{id}', $route->getPattern());
-        self::assertEquals(['id' => 'numeric'], $route->getPlaceholders());
-        self::assertEquals(['oneMiddleware'], $route->getMiddleware());
-        self::assertEquals('fake_transformer', $route->getTransformer());
-        self::assertEquals(['id' => 'int'], $route->getParameters());
+        static::assertEquals(-10, $route->getPriority());
+        static::assertEquals('one/{id}', $route->getPattern());
+        static::assertEquals(['id' => 'numeric'], $route->getPlaceholders());
+        static::assertEquals(['oneMiddleware'], $route->getMiddleware());
+        static::assertEquals('fake_transformer', $route->getTransformer());
+        static::assertEquals(['id' => 'int'], $route->getParameters());
     }
 }

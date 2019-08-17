@@ -36,10 +36,10 @@ class AbstractMetadataTest extends TestCase
 
     public function testDefaults(): void
     {
-        self::assertNull($this->metadata->getPattern());
-        self::assertEquals([], $this->metadata->getPlaceholders());
-        self::assertEquals([], $this->metadata->getParameters());
-        self::assertEquals([], $this->metadata->getMiddleware());
+        static::assertNull($this->metadata->getPattern());
+        static::assertEquals([], $this->metadata->getPlaceholders());
+        static::assertEquals([], $this->metadata->getParameters());
+        static::assertEquals([], $this->metadata->getMiddleware());
     }
 
     public function testEmptyPattern(): void
@@ -64,7 +64,7 @@ class AbstractMetadataTest extends TestCase
 
         $this->metadata->setPattern('/' . $path);
 
-        self::assertEquals($path, $this->metadata->getPattern());
+        static::assertEquals($path, $this->metadata->getPattern());
     }
 
     public function testPlaceholders(): void
@@ -73,7 +73,7 @@ class AbstractMetadataTest extends TestCase
 
         $this->metadata->setPlaceholders($placeholders);
 
-        self::assertEquals($placeholders, $this->metadata->getPlaceholders());
+        static::assertEquals($placeholders, $this->metadata->getPlaceholders());
     }
 
     public function testParameters(): void
@@ -82,7 +82,7 @@ class AbstractMetadataTest extends TestCase
 
         $this->metadata->setParameters($parameters);
 
-        self::assertEquals($parameters, $this->metadata->getParameters());
+        static::assertEquals($parameters, $this->metadata->getParameters());
     }
 
     public function testMiddleware(): void
@@ -91,6 +91,6 @@ class AbstractMetadataTest extends TestCase
 
         $this->metadata->setMiddleware($middleware);
 
-        self::assertEquals($middleware, $this->metadata->getMiddleware());
+        static::assertEquals($middleware, $this->metadata->getMiddleware());
     }
 }

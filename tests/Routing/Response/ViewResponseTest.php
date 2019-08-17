@@ -30,7 +30,7 @@ class ViewResponseTest extends TestCase
 
         $responseType = new ViewResponse('template_name', ['parameter' => 'value'], $request);
 
-        self::assertEquals('template_name', $responseType->getTemplate());
-        self::assertEquals(['parameter' => 'value'], $responseType->getParameters());
+        static::assertEquals('template_name', $responseType->getTemplate());
+        static::assertEquals(['parameter' => 'value'], $responseType->getParameters());
     }
 }

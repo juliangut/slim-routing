@@ -36,14 +36,14 @@ class GroupTest extends TestCase
 
     public function testDefaults(): void
     {
-        self::assertEquals('', $this->annotation->getParent());
+        static::assertEquals('', $this->annotation->getParent());
     }
 
     public function testParent(): void
     {
         $this->annotation->setParent('groupName');
 
-        self::assertEquals('groupName', $this->annotation->getParent());
+        static::assertEquals('groupName', $this->annotation->getParent());
     }
 
     public function testWrongPrefix(): void
@@ -58,6 +58,6 @@ class GroupTest extends TestCase
     {
         $this->annotation->setPrefix('prefix');
 
-        self::assertEquals('prefix', $this->annotation->getPrefix());
+        static::assertEquals('prefix', $this->annotation->getPrefix());
     }
 }

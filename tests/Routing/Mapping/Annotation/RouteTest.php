@@ -36,11 +36,11 @@ class RouteTest extends TestCase
 
     public function testDefaults(): void
     {
-        self::assertEquals('', $this->annotation->getName());
-        self::assertNull($this->annotation->getTransformer());
-        self::assertEquals(['GET'], $this->annotation->getMethods());
-        self::assertEquals(0, $this->annotation->getPriority());
-        self::assertFalse($this->annotation->isXmlHttpRequest());
+        static::assertEquals('', $this->annotation->getName());
+        static::assertNull($this->annotation->getTransformer());
+        static::assertEquals(['GET'], $this->annotation->getMethods());
+        static::assertEquals(0, $this->annotation->getPriority());
+        static::assertFalse($this->annotation->isXmlHttpRequest());
     }
 
     public function testWrongName(): void
@@ -63,14 +63,14 @@ class RouteTest extends TestCase
     {
         $this->annotation->setName('routeName');
 
-        self::assertEquals('routeName', $this->annotation->getName());
+        static::assertEquals('routeName', $this->annotation->getName());
     }
 
     public function testTransformer(): void
     {
         $this->annotation->setTransformer('transformer');
 
-        self::assertEquals('transformer', $this->annotation->getTransformer());
+        static::assertEquals('transformer', $this->annotation->getTransformer());
     }
 
     public function testInvalidMethodsType(): void
@@ -103,20 +103,20 @@ class RouteTest extends TestCase
 
         $this->annotation->setMethods($methods);
 
-        self::assertEquals($methods, $this->annotation->getMethods());
+        static::assertEquals($methods, $this->annotation->getMethods());
     }
 
     public function testPriority(): void
     {
         $this->annotation->setPriority(-10);
 
-        self::assertEquals(-10, $this->annotation->getPriority());
+        static::assertEquals(-10, $this->annotation->getPriority());
     }
 
     public function testXmlHttpRequest(): void
     {
         $this->annotation->setXmlHttpRequest(true);
 
-        self::assertTrue($this->annotation->isXmlHttpRequest());
+        static::assertTrue($this->annotation->isXmlHttpRequest());
     }
 }

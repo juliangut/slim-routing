@@ -48,7 +48,7 @@ class DriverFactoryTest extends TestCase
 
     public function testAnnotationDriver(): void
     {
-        self::assertInstanceOf(
+        static::assertInstanceOf(
             AnnotationDriver::class,
             $this->factory->getDriver(['type' => DriverFactory::DRIVER_ANNOTATION, 'path' => '/path'])
         );
@@ -56,7 +56,7 @@ class DriverFactoryTest extends TestCase
 
     public function testPhpDriver(): void
     {
-        self::assertInstanceOf(
+        static::assertInstanceOf(
             AbstractMappingDriver::class,
             $this->factory->getDriver(['type' => DriverFactory::DRIVER_PHP, 'path' => '/path'])
         );
@@ -64,7 +64,7 @@ class DriverFactoryTest extends TestCase
 
     public function testJsonDriver(): void
     {
-        self::assertInstanceOf(
+        static::assertInstanceOf(
             AbstractMappingDriver::class,
             $this->factory->getDriver(['type' => DriverFactory::DRIVER_JSON, 'path' => '/path'])
         );
@@ -72,7 +72,7 @@ class DriverFactoryTest extends TestCase
 
     public function testXmlDriver(): void
     {
-        self::assertInstanceOf(
+        static::assertInstanceOf(
             AbstractMappingDriver::class,
             $this->factory->getDriver(['type' => DriverFactory::DRIVER_XML, 'path' => '/path'])
         );
@@ -80,7 +80,7 @@ class DriverFactoryTest extends TestCase
 
     public function testYamlDriver(): void
     {
-        self::assertInstanceOf(
+        static::assertInstanceOf(
             AbstractMappingDriver::class,
             $this->factory->getDriver(['type' => DriverFactory::DRIVER_YAML, 'path' => '/path'])
         );

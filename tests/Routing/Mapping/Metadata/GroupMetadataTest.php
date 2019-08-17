@@ -36,8 +36,8 @@ class GroupMetadataTest extends TestCase
 
     public function testDefaults(): void
     {
-        self::assertNull($this->group->getParent());
-        self::assertNull($this->group->getPrefix());
+        static::assertNull($this->group->getParent());
+        static::assertNull($this->group->getPrefix());
     }
 
     public function testParent(): void
@@ -48,13 +48,13 @@ class GroupMetadataTest extends TestCase
 
         $this->group->setParent($group);
 
-        self::assertEquals($group, $this->group->getParent());
+        static::assertEquals($group, $this->group->getParent());
     }
 
     public function testPrefix(): void
     {
         $this->group->setPrefix('prefix');
 
-        self::assertEquals('prefix', $this->group->getPrefix());
+        static::assertEquals('prefix', $this->group->getPrefix());
     }
 }

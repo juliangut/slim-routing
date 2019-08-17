@@ -34,7 +34,7 @@ class AbstractResponseTest extends TestCase
 
         $responseType = new ResponseStub($request, $response);
 
-        self::assertEquals($request, $responseType->getRequest());
-        self::assertEquals($response, $responseType->getResponse());
+        static::assertEquals($request, $responseType->getRequest());
+        static::assertEquals($response, $responseType->getResponse());
     }
 }

@@ -30,6 +30,6 @@ class PayloadResponseTest extends TestCase
 
         $responseType = new PayloadResponse(['parameter' => 'value'], $request);
 
-        self::assertEquals(['parameter' => 'value'], $responseType->getPayload());
+        static::assertEquals(['parameter' => 'value'], $responseType->getPayload());
     }
 }

@@ -36,11 +36,11 @@ class DotTest extends TestCase
 
     public function testSinglePartName(): void
     {
-        self::assertEquals('name', $this->naming->combine(['name']));
+        static::assertEquals('name', $this->naming->combine(['name']));
     }
 
     public function testMultiPartName(): void
     {
-        self::assertEquals('multi.part.name', $this->naming->combine(['multi', 'part', 'name']));
+        static::assertEquals('multi.part.name', $this->naming->combine(['multi', 'part', 'name']));
     }
 }

@@ -45,7 +45,7 @@ class ResolverTest extends TestCase
      */
     public function testRouteName(RouteMetadata $route, string $name = null): void
     {
-        self::assertEquals($name, $this->resolver->getName($route));
+        static::assertEquals($name, $this->resolver->getName($route));
     }
 
     /**
@@ -75,7 +75,7 @@ class ResolverTest extends TestCase
      */
     public function testRouteMiddleware(RouteMetadata $route, array $middleware): void
     {
-        self::assertEquals($middleware, $this->resolver->getMiddleware($route));
+        static::assertEquals($middleware, $this->resolver->getMiddleware($route));
     }
 
     /**
@@ -105,7 +105,7 @@ class ResolverTest extends TestCase
      */
     public function testRoutePattern(RouteMetadata $route, string $pattern): void
     {
-        self::assertEquals($pattern, $this->resolver->getPattern($route));
+        static::assertEquals($pattern, $this->resolver->getPattern($route));
     }
 
     /**
@@ -186,9 +186,9 @@ class ResolverTest extends TestCase
 
         $sortedRoutes = $this->resolver->sort($routes);
 
-        self::assertEquals(-10, $sortedRoutes[0]->getPriority());
-        self::assertEquals(0, $sortedRoutes[1]->getPriority());
-        self::assertEquals(10, $sortedRoutes[2]->getPriority());
+        static::assertEquals(-10, $sortedRoutes[0]->getPriority());
+        static::assertEquals(0, $sortedRoutes[1]->getPriority());
+        static::assertEquals(10, $sortedRoutes[2]->getPriority());
     }
 
     public function testDuplicatedRouteName(): void

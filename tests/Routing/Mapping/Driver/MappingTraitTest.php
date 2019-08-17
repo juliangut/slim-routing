@@ -28,7 +28,7 @@ class MappingTraitTest extends TestCase
         $this->expectExceptionMessage('Route methods can not be empty');
 
         $driver = $this->getMockForTrait(MappingTrait::class);
-        $driver->expects($this->once())
+        $driver->expects(static::once())
             ->method('getMappingData')
             ->will($this->returnValue([
                 ['methods' => ''],
@@ -44,7 +44,7 @@ class MappingTraitTest extends TestCase
         $this->expectExceptionMessage('Route methods must be a string or string array. "integer" given');
 
         $driver = $this->getMockForTrait(MappingTrait::class);
-        $driver->expects($this->once())
+        $driver->expects(static::once())
             ->method('getMappingData')
             ->will($this->returnValue([
                 ['methods' => 10],
@@ -60,7 +60,7 @@ class MappingTraitTest extends TestCase
         $this->expectExceptionMessage('Placeholder keys must be all strings');
 
         $driver = $this->getMockForTrait(MappingTrait::class);
-        $driver->expects($this->once())
+        $driver->expects(static::once())
             ->method('getMappingData')
             ->will($this->returnValue([
                 ['placeholders' => ['invalid']],
@@ -76,7 +76,7 @@ class MappingTraitTest extends TestCase
         $this->expectExceptionMessage('Middleware must be a string or string array. "integer" given');
 
         $driver = $this->getMockForTrait(MappingTrait::class);
-        $driver->expects($this->once())
+        $driver->expects(static::once())
             ->method('getMappingData')
             ->will($this->returnValue([
                 ['middleware' => 10],
@@ -92,7 +92,7 @@ class MappingTraitTest extends TestCase
         $this->expectExceptionMessage('Route invocable definition missing');
 
         $driver = $this->getMockForTrait(MappingTrait::class);
-        $driver->expects($this->once())
+        $driver->expects(static::once())
             ->method('getMappingData')
             ->will($this->returnValue([
                 [],
@@ -108,7 +108,7 @@ class MappingTraitTest extends TestCase
         $this->expectExceptionMessage('Route invocable does not seam to be supported by Slim router');
 
         $driver = $this->getMockForTrait(MappingTrait::class);
-        $driver->expects($this->once())
+        $driver->expects(static::once())
             ->method('getMappingData')
             ->will($this->returnValue([
                 ['invocable' => 10],
@@ -124,7 +124,7 @@ class MappingTraitTest extends TestCase
         $this->expectExceptionMessage('Parameters keys must be all strings');
 
         $driver = $this->getMockForTrait(MappingTrait::class);
-        $driver->expects($this->once())
+        $driver->expects(static::once())
             ->method('getMappingData')
             ->will($this->returnValue([
                 [
@@ -141,7 +141,7 @@ class MappingTraitTest extends TestCase
     public function testRoutes(): void
     {
         $driver = $this->getMockForTrait(MappingTrait::class);
-        $driver->expects($this->once())
+        $driver->expects(static::once())
             ->method('getMappingData')
             ->will($this->returnValue([
                 [
@@ -209,45 +209,45 @@ class MappingTraitTest extends TestCase
         $routes = $driver->getMetadata();
 
         $route = $routes[0];
-        self::assertInstanceOf(RouteMetadata::class, $route);
-        self::assertEquals('four', $route->getName());
-        self::assertEquals(['GET'], $route->getMethods());
-        self::assertEquals(0, $route->getPriority());
-        self::assertEquals('FourRoute' . ':' . 'actionFour', $route->getinvocable());
-        self::assertEquals('four', $route->getPattern());
-        self::assertEquals([], $route->getPlaceholders());
-        self::assertEquals(['fourMiddleware'], $route->getMiddleware());
+        static::assertInstanceOf(RouteMetadata::class, $route);
+        static::assertEquals('four', $route->getName());
+        static::assertEquals(['GET'], $route->getMethods());
+        static::assertEquals(0, $route->getPriority());
+        static::assertEquals('FourRoute' . ':' . 'actionFour', $route->getinvocable());
+        static::assertEquals('four', $route->getPattern());
+        static::assertEquals([], $route->getPlaceholders());
+        static::assertEquals(['fourMiddleware'], $route->getMiddleware());
 
         $route = $routes[1];
-        self::assertInstanceOf(RouteMetadata::class, $route);
-        self::assertNull($route->getName());
-        self::assertEquals(['GET'], $route->getMethods());
-        self::assertEquals(0, $route->getPriority());
-        self::assertEquals('TwoRoute' . ':' . 'actionTwo', $route->getinvocable());
-        self::assertEquals('two/{id}', $route->getPattern());
-        self::assertEquals([], $route->getPlaceholders());
-        self::assertEquals(['twoMiddleware'], $route->getMiddleware());
+        static::assertInstanceOf(RouteMetadata::class, $route);
+        static::assertNull($route->getName());
+        static::assertEquals(['GET'], $route->getMethods());
+        static::assertEquals(0, $route->getPriority());
+        static::assertEquals('TwoRoute' . ':' . 'actionTwo', $route->getinvocable());
+        static::assertEquals('two/{id}', $route->getPattern());
+        static::assertEquals([], $route->getPlaceholders());
+        static::assertEquals(['twoMiddleware'], $route->getMiddleware());
 
         $route = $routes[2];
-        self::assertInstanceOf(RouteMetadata::class, $route);
-        self::assertEquals('', $route->getName());
-        self::assertEquals(['GET'], $route->getMethods());
-        self::assertEquals('ThreeRoute' . ':' . 'actionThree', $route->getinvocable());
-        self::assertEquals(0, $route->getPriority());
-        self::assertEquals('three/{id}', $route->getPattern());
-        self::assertEquals(['id' => '\d+'], $route->getPlaceholders());
-        self::assertEquals([], $route->getMiddleware());
+        static::assertInstanceOf(RouteMetadata::class, $route);
+        static::assertEquals('', $route->getName());
+        static::assertEquals(['GET'], $route->getMethods());
+        static::assertEquals('ThreeRoute' . ':' . 'actionThree', $route->getinvocable());
+        static::assertEquals(0, $route->getPriority());
+        static::assertEquals('three/{id}', $route->getPattern());
+        static::assertEquals(['id' => '\d+'], $route->getPlaceholders());
+        static::assertEquals([], $route->getMiddleware());
 
         $route = $routes[3];
-        self::assertInstanceOf(RouteMetadata::class, $route);
-        self::assertEquals('one', $route->getName());
-        self::assertEquals(['GET', 'POST'], $route->getMethods());
-        self::assertEquals(-10, $route->getPriority());
-        self::assertEquals('OneRoute' . ':' . 'actionOne', $route->getinvocable());
-        self::assertEquals('one/{id}', $route->getPattern());
-        self::assertEquals(['id' => 'numeric'], $route->getPlaceholders());
-        self::assertEquals(['oneMiddleware'], $route->getMiddleware());
-        self::assertEquals('fake_transformer', $route->getTransformer());
-        self::assertEquals(['id' => 'int'], $route->getParameters());
+        static::assertInstanceOf(RouteMetadata::class, $route);
+        static::assertEquals('one', $route->getName());
+        static::assertEquals(['GET', 'POST'], $route->getMethods());
+        static::assertEquals(-10, $route->getPriority());
+        static::assertEquals('OneRoute' . ':' . 'actionOne', $route->getinvocable());
+        static::assertEquals('one/{id}', $route->getPattern());
+        static::assertEquals(['id' => 'numeric'], $route->getPlaceholders());
+        static::assertEquals(['oneMiddleware'], $route->getMiddleware());
+        static::assertEquals('fake_transformer', $route->getTransformer());
+        static::assertEquals(['id' => 'int'], $route->getParameters());
     }
 }

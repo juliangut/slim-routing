@@ -50,11 +50,11 @@ class ConfigurationTest extends TestCase
 
         $configuration = new Configuration();
 
-        self::assertEmpty($configuration->getSources());
-        self::assertEquals($defaultAliasList, $configuration->getPlaceholderAliases());
-        self::assertInstanceOf(MetadataResolver::class, $configuration->getMetadataResolver());
-        self::assertInstanceOf(RouteResolver::class, $configuration->getRouteResolver());
-        self::assertInstanceOf(SnakeCase::class, $configuration->getNamingStrategy());
+        static::assertEmpty($configuration->getSources());
+        static::assertEquals($defaultAliasList, $configuration->getPlaceholderAliases());
+        static::assertInstanceOf(MetadataResolver::class, $configuration->getMetadataResolver());
+        static::assertInstanceOf(RouteResolver::class, $configuration->getRouteResolver());
+        static::assertInstanceOf(SnakeCase::class, $configuration->getNamingStrategy());
     }
 
     public function testUnknownParameter(): void
@@ -84,7 +84,7 @@ class ConfigurationTest extends TestCase
 
         $configuration = new Configuration(['sources' => $paths]);
 
-        self::assertEquals($paths, $configuration->getSources());
+        static::assertEquals($paths, $configuration->getSources());
     }
 
     public function testBadPlaceholderAlias(): void
@@ -116,7 +116,7 @@ class ConfigurationTest extends TestCase
             ],
         ]);
 
-        self::assertEquals($aliasList, $configuration->getPlaceholderAliases());
+        static::assertEquals($aliasList, $configuration->getPlaceholderAliases());
     }
 
     public function testMetadataResolver(): void
@@ -125,7 +125,7 @@ class ConfigurationTest extends TestCase
 
         $configuration = new Configuration(['metadataResolver' => $metadataResolver]);
 
-        self::assertEquals($metadataResolver, $configuration->getMetadataResolver());
+        static::assertEquals($metadataResolver, $configuration->getMetadataResolver());
     }
 
     public function testRouteResolver(): void
@@ -134,13 +134,13 @@ class ConfigurationTest extends TestCase
 
         $configuration = new Configuration(['routeResolver' => $routeResolver]);
 
-        self::assertEquals($routeResolver, $configuration->getRouteResolver());
+        static::assertEquals($routeResolver, $configuration->getRouteResolver());
     }
 
     public function testNamingStrategy(): void
     {
         $configuration = new Configuration(['namingStrategy' => new CamelCase()]);
 
-        self::assertInstanceOf(CamelCase::class, $configuration->getNamingStrategy());
+        static::assertInstanceOf(CamelCase::class, $configuration->getNamingStrategy());
     }
 }

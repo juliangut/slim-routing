@@ -60,7 +60,7 @@ class RouteCollectorTest extends TestCase
         $configuration = $this->getMockBuilder(Configuration::class)
             ->setMethods(['getSources', 'getRouteResolver'])
             ->getMock();
-        $configuration->expects($this->once())
+        $configuration->expects(static::once())
             ->method('getSources')
             ->will($this->returnValue([__DIR__ . '/Files/Annotation/Valid']));
 
@@ -83,12 +83,12 @@ class RouteCollectorTest extends TestCase
             ->setConstructorArgs([$configuration])
             ->setMethods(['sort'])
             ->getMock();
-        $resolver->expects($this->once())
+        $resolver->expects(static::once())
             ->method('sort')
             ->will($this->returnValue($routesMetadata));
         /* @var RouteResolver $resolver */
 
-        $configuration->expects($this->any())
+        $configuration->expects(static::any())
             ->method('getRouteResolver')
             ->will($this->returnValue($resolver));
         /* @var Configuration $configuration */

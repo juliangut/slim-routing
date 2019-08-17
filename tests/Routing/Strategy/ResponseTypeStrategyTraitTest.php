@@ -128,7 +128,7 @@ class ResponseTypeStrategyTraitTest extends TestCase
         /* @var ResponseType $responseType */
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
-        $container->expects($this->once())
+        $container->expects(static::once())
             ->method('get')
             ->will($this->returnValue(new \stdClass()));
         /* @var ContainerInterface $container */
@@ -160,14 +160,14 @@ class ResponseTypeStrategyTraitTest extends TestCase
             ->getMock();
         $resultResponse = $responseFactory->createResponse();
         $resultResponse->getBody()->write('Return content');
-        $responseHandler->expects($this->once())
+        $responseHandler->expects(static::once())
             ->method('handle')
             ->will($this->returnValue($resultResponse));
         /* @var ResponseType $responseType */
 
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
-        $container->expects($this->once())
+        $container->expects(static::once())
             ->method('get')
             ->will($this->returnValue($responseHandler));
         /* @var ContainerInterface $container */

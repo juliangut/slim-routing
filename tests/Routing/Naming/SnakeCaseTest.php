@@ -36,11 +36,11 @@ class SnakeCaseTest extends TestCase
 
     public function testSinglePartName(): void
     {
-        self::assertEquals('name', $this->naming->combine(['name']));
+        static::assertEquals('name', $this->naming->combine(['name']));
     }
 
     public function testMultiPartName(): void
     {
-        self::assertEquals('multi_part_name', $this->naming->combine(['multi', 'part', 'name']));
+        static::assertEquals('multi_part_name', $this->naming->combine(['multi', 'part', 'name']));
     }
 }

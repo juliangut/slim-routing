@@ -62,8 +62,8 @@ class JsonResponseHandlerTest extends TestCase
         $response = (new JsonResponseHandler($responseFactory))
             ->handle(new PayloadResponse(['data' => ['param' => 'value']], $this->request));
 
-        self::assertInstanceOf(ResponseInterface::class, $response);
-        self::assertEquals('{"data":{"param":"value"}}', (string) $response->getBody());
+        static::assertInstanceOf(ResponseInterface::class, $response);
+        static::assertEquals('{"data":{"param":"value"}}', (string) $response->getBody());
     }
 
     public function testHandlePrettified(): void
@@ -73,7 +73,7 @@ class JsonResponseHandlerTest extends TestCase
         $response = (new JsonResponseHandler($responseFactory, true))
             ->handle(new PayloadResponse(['data' => ['param' => 'value']], $this->request));
 
-        self::assertInstanceOf(ResponseInterface::class, $response);
+        static::assertInstanceOf(ResponseInterface::class, $response);
 
         $responseContent = <<<'JSON'
 {
@@ -82,6 +82,6 @@ class JsonResponseHandlerTest extends TestCase
     }
 }
 JSON;
-        self::assertEquals($responseContent, (string) $response->getBody());
+        static::assertEquals($responseContent, (string) $response->getBody());
     }
 }

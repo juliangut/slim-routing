@@ -62,8 +62,8 @@ class XmlResponseHandlerTest extends TestCase
         $response = (new XmlResponseHandler($responseFactory))
             ->handle(new PayloadResponse(['data' => ['param' => 'value']], $this->request));
 
-        self::assertInstanceOf(ResponseInterface::class, $response);
-        self::assertEquals(
+        static::assertInstanceOf(ResponseInterface::class, $response);
+        static::assertEquals(
             '<?xml version="1.0"?><root><data><param>value</param></data></root>',
             (string) $response->getBody()
         );
@@ -76,7 +76,7 @@ class XmlResponseHandlerTest extends TestCase
         $response = (new XmlResponseHandler($responseFactory, true))
             ->handle(new PayloadResponse(['data' => ['param' => 'value']], $this->request));
 
-        self::assertInstanceOf(ResponseInterface::class, $response);
+        static::assertInstanceOf(ResponseInterface::class, $response);
 
         $responseContent = <<<'XML'
 <?xml version="1.0"?>
@@ -86,6 +86,6 @@ class XmlResponseHandlerTest extends TestCase
   </data>
 </root>
 XML;
-        self::assertEquals($responseContent, (string) $response->getBody());
+        static::assertEquals($responseContent, (string) $response->getBody());
     }
 }

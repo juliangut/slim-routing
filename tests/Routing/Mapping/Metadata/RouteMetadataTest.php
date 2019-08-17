@@ -37,21 +37,21 @@ class RouteMetadataTest extends TestCase
 
     public function testDefaults(): void
     {
-        self::assertNull($this->route->getName());
-        self::assertNull($this->route->getGroup());
-        self::assertEquals([], $this->route->getGroupChain());
-        self::assertEquals([], $this->route->getMethods());
-        self::assertNull($this->route->getTransformer());
-        self::assertNull($this->route->getInvocable());
-        self::assertEquals(0, $this->route->getPriority());
-        self::assertFalse($this->route->isXmlHttpRequest());
+        static::assertNull($this->route->getName());
+        static::assertNull($this->route->getGroup());
+        static::assertEquals([], $this->route->getGroupChain());
+        static::assertEquals([], $this->route->getMethods());
+        static::assertNull($this->route->getTransformer());
+        static::assertNull($this->route->getInvocable());
+        static::assertEquals(0, $this->route->getPriority());
+        static::assertFalse($this->route->isXmlHttpRequest());
     }
 
     public function testName(): void
     {
         $this->route->setName('route');
 
-        self::assertEquals('route', $this->route->getName());
+        static::assertEquals('route', $this->route->getName());
     }
 
     public function testGroup(): void
@@ -62,15 +62,15 @@ class RouteMetadataTest extends TestCase
 
         $this->route->setGroup($group);
 
-        self::assertEquals($group, $this->route->getGroup());
-        self::assertEquals([$group], $this->route->getGroupChain());
+        static::assertEquals($group, $this->route->getGroup());
+        static::assertEquals([$group], $this->route->getGroupChain());
     }
 
     public function testTransformer(): void
     {
         $this->route->setTransformer('transformer');
 
-        self::assertEquals('transformer', $this->route->getTransformer());
+        static::assertEquals('transformer', $this->route->getTransformer());
     }
 
     public function testMethods(): void
@@ -79,7 +79,7 @@ class RouteMetadataTest extends TestCase
 
         $this->route->setMethods($methods);
 
-        self::assertEquals($methods, $this->route->getMethods());
+        static::assertEquals($methods, $this->route->getMethods());
     }
 
     public function testInvalidInvocable(): void
@@ -96,20 +96,20 @@ class RouteMetadataTest extends TestCase
 
         $this->route->setInvocable($callable);
 
-        self::assertEquals($callable, $this->route->getInvocable());
+        static::assertEquals($callable, $this->route->getInvocable());
     }
 
     public function testPriority(): void
     {
         $this->route->setPriority(-10);
 
-        self::assertEquals(-10, $this->route->getPriority());
+        static::assertEquals(-10, $this->route->getPriority());
     }
 
     public function testXmlHttpRequest(): void
     {
         $this->route->setXmlHttpRequest(true);
 
-        self::assertTrue($this->route->isXmlHttpRequest());
+        static::assertTrue($this->route->isXmlHttpRequest());
     }
 }
