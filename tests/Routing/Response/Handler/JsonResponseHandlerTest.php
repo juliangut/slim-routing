@@ -41,12 +41,13 @@ class JsonResponseHandlerTest extends TestCase
             ->getMock();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Response type should be an instance of Jgut\Slim\Routing\Response\PayloadResponse
-     */
     public function testInvalidResponseType(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Response type should be an instance of Jgut\Slim\Routing\Response\PayloadResponse'
+        );
+
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->getMock();
         /* @var ResponseFactoryInterface $responseFactory */

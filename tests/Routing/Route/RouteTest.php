@@ -70,12 +70,13 @@ class RouteTest extends TestCase
         $this->assertEquals(400, $response->getStatusCode());
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessageRegExp /^Parameter transformer should implement .+\\ParameterTransformer, ".+" given$/
-     */
     public function testWrongParameterTransformer(): void
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessageRegExp(
+            '/^Parameter transformer should implement .+\\ParameterTransformer, ".+" given$/'
+        );
+
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
         /** @var CallableResolverInterface $callableResolver */

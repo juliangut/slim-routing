@@ -42,21 +42,19 @@ class AbstractMetadataTest extends TestCase
         self::assertEquals([], $this->metadata->getMiddleware());
     }
 
-    /**
-     * @expectedException \Jgut\Mapping\Exception\MetadataException
-     * @expectedExceptionMessage Pattern can not be empty
-     */
     public function testEmptyPattern(): void
     {
+        $this->expectException(\Jgut\Mapping\Exception\MetadataException::class);
+        $this->expectExceptionMessage('Pattern can not be empty');
+
         $this->metadata->setPattern('');
     }
 
-    /**
-     * @expectedException \Jgut\Mapping\Exception\MetadataException
-     * @expectedExceptionMessage Placeholder matching "[0-9]+" must be defined on placeholders parameter
-     */
     public function testInvalidPattern(): void
     {
+        $this->expectException(\Jgut\Mapping\Exception\MetadataException::class);
+        $this->expectExceptionMessage('Placeholder matching "[0-9]+" must be defined on placeholders parameter');
+
         $this->metadata->setPattern('{path}/to/{id:[0-9]+}');
     }
 

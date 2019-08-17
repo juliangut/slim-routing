@@ -58,7 +58,7 @@ class RouteCollectorTest extends TestCase
             ->getMock();
         /** @var CallableResolverInterface $callableResolver */
         $configuration = $this->getMockBuilder(Configuration::class)
-            ->onlyMethods(['getSources', 'getRouteResolver'])
+            ->setMethods(['getSources', 'getRouteResolver'])
             ->getMock();
         $configuration->expects($this->once())
             ->method('getSources')
@@ -81,7 +81,7 @@ class RouteCollectorTest extends TestCase
 
         $resolver = $this->getMockBuilder(RouteResolver::class)
             ->setConstructorArgs([$configuration])
-            ->onlyMethods(['sort'])
+            ->setMethods(['sort'])
             ->getMock();
         $resolver->expects($this->once())
             ->method('sort')

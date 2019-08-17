@@ -39,12 +39,11 @@ class MiddlewareTraitTest extends TestCase
         self::assertEquals([], $this->annotation->getMiddleware());
     }
 
-    /**
-     * @expectedException \Jgut\Mapping\Exception\AnnotationException
-     * @expectedExceptionMessage Route annotation middleware must be strings. "integer" given
-     */
     public function testInvalidMiddleware(): void
     {
+        $this->expectException(\Jgut\Mapping\Exception\AnnotationException::class);
+        $this->expectExceptionMessage('Route annotation middleware must be strings. "integer" given');
+
         $this->annotation->setMiddleware(10);
     }
 

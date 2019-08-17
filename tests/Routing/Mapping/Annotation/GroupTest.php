@@ -46,12 +46,11 @@ class GroupTest extends TestCase
         self::assertEquals('groupName', $this->annotation->getParent());
     }
 
-    /**
-     * @expectedException \Jgut\Mapping\Exception\AnnotationException
-     * @expectedExceptionMessage Group prefixes must not contain spaces
-     */
     public function testWrongPrefix(): void
     {
+        $this->expectException(\Jgut\Mapping\Exception\AnnotationException::class);
+        $this->expectExceptionMessage('Group prefixes must not contain spaces');
+
         new Group(['prefix' => 'a prefix']);
     }
 

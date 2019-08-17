@@ -154,12 +154,11 @@ class ResolverTest extends TestCase
         ];
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage There are duplicated route parameters: id
-     */
     public function testDuplicatedParameter(): void
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('There are duplicated route parameters: id');
+
         $route = (new RouteMetadata())
             ->setPattern('entity/{id}')
             ->setGroup((new GroupMetadata())->setPattern('parent/{id}'));
@@ -167,12 +166,11 @@ class ResolverTest extends TestCase
         $this->resolver->getPattern($route);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Placeholder "~245" is not a known alias or a valid regex pattern
-     */
     public function testInvalidPlaceholder(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Placeholder "~245" is not a known alias or a valid regex pattern');
+
         $route = (new RouteMetadata())->setPlaceholders(['id', '~245']);
 
         $this->resolver->getPattern($route);
@@ -193,12 +191,11 @@ class ResolverTest extends TestCase
         self::assertEquals(10, $sortedRoutes[2]->getPriority());
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage There are duplicated route names: route, name
-     */
     public function testDuplicatedRouteName(): void
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('There are duplicated route names: route, name');
+
         $routes = [
             (new RouteMetadata())->setName('route'),
             (new RouteMetadata())->setName('route'),
@@ -209,12 +206,11 @@ class ResolverTest extends TestCase
         $this->resolver->checkDuplicatedRoutes($routes);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage There are duplicated routes: GET /route/{[a-zA-Z0-9]+}
-     */
     public function testDuplicatedRoutePath(): void
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('There are duplicated routes: GET /route/{[a-zA-Z0-9]+}');
+
         $nonDuplicatedRoutes = [
             (new RouteMetadata())
                 ->setMethods(['GET'])

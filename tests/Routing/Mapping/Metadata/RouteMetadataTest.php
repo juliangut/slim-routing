@@ -82,16 +82,15 @@ class RouteMetadataTest extends TestCase
         self::assertEquals($methods, $this->route->getMethods());
     }
 
-    /**
-     * @expectedException \Jgut\Mapping\Exception\MetadataException
-     * @expectedExceptionMessage Route invocable does not seem to be supported by Slim router
-     */
-    public function testInvalidinvocable(): void
+    public function testInvalidInvocable(): void
     {
+        $this->expectException(\Jgut\Mapping\Exception\MetadataException::class);
+        $this->expectExceptionMessage('Route invocable does not seem to be supported by Slim router');
+
         $this->route->setInvocable(10);
     }
 
-    public function testinvocable(): void
+    public function testInvocable(): void
     {
         $callable = ['containerKey', 'method'];
 
