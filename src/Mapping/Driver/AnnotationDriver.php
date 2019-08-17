@@ -247,7 +247,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
             $type = $parameter->getType();
 
             if ($type !== null) {
-                $parameters[$parameter->getName()] = (string) $type;
+                $parameters[$parameter->getName()] = $type->getName();
             }
         }
 
