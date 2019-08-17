@@ -39,7 +39,7 @@ trait MappingTrait
     /**
      * Get routes metadata.
      *
-     * @param array              $mappingData
+     * @param mixed[]            $mappingData
      * @param GroupMetadata|null $group
      *
      * @return RouteMetadata[]
@@ -60,17 +60,17 @@ trait MappingTrait
     /**
      * Get group metadata.
      *
-     * @param array              $mapping
+     * @param mixed[]            $mapping
      * @param GroupMetadata|null $parentGroup
      *
      * @return GroupMetadata
      */
     protected function getGroupMetadata(array $mapping, GroupMetadata $parentGroup = null): GroupMetadata
     {
-        $group = (new GroupMetadata())
-            ->setPlaceholders($this->getPlaceholders($mapping))
-            ->setParameters($this->getParameters($mapping))
-            ->setMiddleware($this->getMiddleware($mapping));
+        $group = new GroupMetadata();
+        $group->setPlaceholders($this->getPlaceholders($mapping));
+        $group->setParameters($this->getParameters($mapping));
+        $group->setMiddleware($this->getMiddleware($mapping));
 
         $pattern = $this->getPattern($mapping);
         if ($pattern !== null) {
@@ -92,20 +92,20 @@ trait MappingTrait
     /**
      * Get route metadata.
      *
-     * @param array              $mapping
+     * @param mixed[]            $mapping
      * @param GroupMetadata|null $group
      *
      * @return RouteMetadata
      */
     protected function getRouteMetadata(array $mapping, GroupMetadata $group = null): RouteMetadata
     {
-        $route = (new RouteMetadata())
-            ->setMethods($this->getMethods($mapping))
-            ->setXmlHttpRequest($this->isXmlHttpRequest($mapping))
-            ->setPriority($this->getPriority($mapping))
-            ->setPlaceholders($this->getPlaceholders($mapping))
-            ->setMiddleware($this->getMiddleware($mapping))
-            ->setInvokable($this->getInvokable($mapping));
+        $route = new RouteMetadata();
+        $route->setMethods($this->getMethods($mapping));
+        $route->setXmlHttpRequest($this->isXmlHttpRequest($mapping));
+        $route->setPriority($this->getPriority($mapping));
+        $route->setPlaceholders($this->getPlaceholders($mapping));
+        $route->setMiddleware($this->getMiddleware($mapping));
+        $route->setInvocable($this->getInvocable($mapping));
 
         $pattern = $this->getPattern($mapping);
         if ($pattern !== null) {
@@ -133,11 +133,11 @@ trait MappingTrait
     /**
      * Get mapping prefix.
      *
-     * @param array $mapping
+     * @param mixed[] $mapping
      *
      * @return string|null
      */
-    protected function getPrefix(array $mapping)
+    protected function getPrefix(array $mapping): ?string
     {
         return \array_key_exists('prefix', $mapping) && \trim($mapping['prefix']) !== ''
             ? \trim($mapping['prefix'])
@@ -147,11 +147,11 @@ trait MappingTrait
     /**
      * Get mapping name.
      *
-     * @param array $mapping
+     * @param mixed[] $mapping
      *
      * @return string|null
      */
-    protected function getName(array $mapping)
+    protected function getName(array $mapping): ?string
     {
         return \array_key_exists('name', $mapping) && \trim($mapping['name']) !== ''
             ? \trim($mapping['name'])
@@ -161,7 +161,7 @@ trait MappingTrait
     /**
      * Get mapping methods.
      *
-     * @param array $mapping
+     * @param mixed[] $mapping
      *
      * @throws DriverException
      *
@@ -202,11 +202,11 @@ trait MappingTrait
     /**
      * Get parameter transformer.
      *
-     * @param array $mapping
+     * @param mixed[] $mapping
      *
      * @return string|null
      */
-    protected function getTransformer(array $mapping)
+    protected function getTransformer(array $mapping): ?string
     {
         return $mapping['transformer'] ?? null;
     }
@@ -214,7 +214,7 @@ trait MappingTrait
     /**
      * Get XmlHttpRequest constraint.
      *
-     * @param array $mapping
+     * @param mixed[] $mapping
      *
      * @return bool
      */
@@ -226,7 +226,7 @@ trait MappingTrait
     /**
      * Get mapping priority.
      *
-     * @param array $mapping
+     * @param mixed[] $mapping
      *
      * @return int
      */
@@ -238,11 +238,11 @@ trait MappingTrait
     /**
      * Get mapping pattern.
      *
-     * @param array $mapping
+     * @param mixed[] $mapping
      *
      * @return string|null
      */
-    protected function getPattern(array $mapping)
+    protected function getPattern(array $mapping): ?string
     {
         return \array_key_exists('pattern', $mapping) && \trim($mapping['pattern'], ' /') !== ''
             ? \trim($mapping['pattern'], ' /')
@@ -252,7 +252,7 @@ trait MappingTrait
     /**
      * Get mapping parameters.
      *
-     * @param array $mapping
+     * @param mixed[] $mapping
      *
      * @throws DriverException
      *
@@ -276,7 +276,7 @@ trait MappingTrait
     /**
      * Get mapping placeholders.
      *
-     * @param array $mapping
+     * @param mixed[] $mapping
      *
      * @throws DriverException
      *
@@ -300,11 +300,11 @@ trait MappingTrait
     /**
      * Get mapping middleware.
      *
-     * @param array $mapping
+     * @param mixed[] $mapping
      *
      * @throws DriverException
      *
-     * @return array
+     * @return mixed[]
      */
     protected function getMiddleware(array $mapping): array
     {
@@ -329,26 +329,26 @@ trait MappingTrait
     }
 
     /**
-     * Get mapping invokable.
+     * Get mapping invocable.
      *
-     * @param array $mapping
+     * @param mixed[] $mapping
      *
      * @throws DriverException
      *
      * @return string|array|callable
      */
-    protected function getInvokable(array $mapping)
+    protected function getInvocable(array $mapping)
     {
-        if (!\array_key_exists('invokable', $mapping)) {
-            throw new DriverException('Route invokable definition missing');
+        if (!\array_key_exists('invocable', $mapping)) {
+            throw new DriverException('Route invocable definition missing');
         }
 
-        $invokable = $mapping['invokable'];
+        $invocable = $mapping['invocable'];
 
-        if (!\is_string($invokable) && !\is_array($invokable) && !\is_callable($invokable)) {
-            throw new DriverException('Route invokable does not seam to be supported by Slim router');
+        if (!\is_string($invocable) && !\is_array($invocable) && !\is_callable($invocable)) {
+            throw new DriverException('Route invocable does not seam to be supported by Slim router');
         }
 
-        return $invokable;
+        return $invocable;
     }
 }

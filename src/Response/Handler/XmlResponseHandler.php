@@ -15,15 +15,14 @@ namespace Jgut\Slim\Routing\Response\Handler;
 
 use Jgut\Slim\Routing\Response\PayloadResponse;
 use Jgut\Slim\Routing\Response\ResponseType;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Slim\Http\Body;
-use Slim\Http\Response;
 use Spatie\ArrayToXml\ArrayToXml;
 
 /**
  * Generic XML response handler.
  */
-class XmlResponseHandler implements ResponseTypeHandler
+class XmlResponseHandler extends AbstractResponseHandler
 {
     /**
      * XML should be prettified.
@@ -37,8 +36,10 @@ class XmlResponseHandler implements ResponseTypeHandler
      *
      * @param bool $prettify
      */
-    public function __construct(bool $prettify = false)
+    public function __construct(ResponseFactoryInterface $responseFactory, bool $prettify = false)
     {
+        parent::__construct($responseFactory);
+
         $this->prettify = $prettify;
     }
 
@@ -58,15 +59,10 @@ class XmlResponseHandler implements ResponseTypeHandler
         $converter = new ArrayToXml($responseType->getPayload(), '', false);
         $responseContent = $this->prettify ? $this->prettify($converter) : $this->asSingleLine($converter);
 
-        $response = $responseType->getResponse();
-        if (!$response instanceof ResponseInterface) {
-            $response = new Response();
-        }
+        $response = $this->getResponse($responseType);
+        $response->getBody()->write($responseContent);
 
-        $body = new Body(\fopen('php://temp', 'rb+'));
-        $body->write($responseContent);
-
-        return $response->withBody($body);
+        return $response;
     }
 
     /**

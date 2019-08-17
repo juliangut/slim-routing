@@ -112,9 +112,9 @@ class AnnotationDriver extends AbstractAnnotationDriver
      */
     protected function getGroupMetadata(GroupAnnotation $annotation): GroupMetadata
     {
-        $group = (new GroupMetadata())
-            ->setPlaceholders($annotation->getPlaceholders())
-            ->setMiddleware($annotation->getMiddleware());
+        $group = new GroupMetadata();
+        $group->setPlaceholders($annotation->getPlaceholders());
+        $group->setMiddleware($annotation->getMiddleware());
 
         if ($annotation->getPattern() !== null) {
             $group->setPattern($annotation->getPattern());
@@ -202,13 +202,13 @@ class AnnotationDriver extends AbstractAnnotationDriver
         RouteAnnotation $annotation,
         GroupMetadata $group = null
     ): RouteMetadata {
-        $route = (new RouteMetadata())
-            ->setPlaceholders($annotation->getPlaceholders())
-            ->setMiddleware($annotation->getMiddleware())
-            ->setMethods($annotation->getMethods())
-            ->setXmlHttpRequest($annotation->isXmlHttpRequest())
-            ->setInvokable($class->name . ':' . $method->name)
-            ->setPriority($annotation->getPriority());
+        $route = (new RouteMetadata());
+        $route->setPlaceholders($annotation->getPlaceholders());
+        $route->setMiddleware($annotation->getMiddleware());
+        $route->setMethods($annotation->getMethods());
+        $route->setXmlHttpRequest($annotation->isXmlHttpRequest());
+        $route->setInvocable($class->name . ':' . $method->name);
+        $route->setPriority($annotation->getPriority());
 
         if ($annotation->getPattern() !== null) {
             $route->setPattern($annotation->getPattern());
@@ -236,7 +236,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
      * @param \ReflectionMethod $method
      * @param RouteAnnotation   $annotation
      *
-     * @return array
+     * @return mixed[]
      */
     protected function getRouteParameters(
         \ReflectionMethod $method,

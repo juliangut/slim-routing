@@ -30,31 +30,31 @@ class RouteMetadataTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->route = new RouteMetadata();
     }
 
-    public function testDefaults()
+    public function testDefaults(): void
     {
         self::assertNull($this->route->getName());
         self::assertNull($this->route->getGroup());
         self::assertEquals([], $this->route->getGroupChain());
         self::assertEquals([], $this->route->getMethods());
         self::assertNull($this->route->getTransformer());
-        self::assertNull($this->route->getInvokable());
+        self::assertNull($this->route->getInvocable());
         self::assertEquals(0, $this->route->getPriority());
         self::assertFalse($this->route->isXmlHttpRequest());
     }
 
-    public function testName()
+    public function testName(): void
     {
         $this->route->setName('route');
 
         self::assertEquals('route', $this->route->getName());
     }
 
-    public function testGroup()
+    public function testGroup(): void
     {
         $group = $this->getMockBuilder(GroupMetadata::class)
             ->getMock();
@@ -66,14 +66,14 @@ class RouteMetadataTest extends TestCase
         self::assertEquals([$group], $this->route->getGroupChain());
     }
 
-    public function testTransformer()
+    public function testTransformer(): void
     {
         $this->route->setTransformer('transformer');
 
         self::assertEquals('transformer', $this->route->getTransformer());
     }
 
-    public function testMethods()
+    public function testMethods(): void
     {
         $methods = ['GET', 'POST', 'DELETE'];
 
@@ -84,30 +84,30 @@ class RouteMetadataTest extends TestCase
 
     /**
      * @expectedException \Jgut\Mapping\Exception\MetadataException
-     * @expectedExceptionMessage Route invokable does not seem to be supported by Slim router
+     * @expectedExceptionMessage Route invocable does not seem to be supported by Slim router
      */
-    public function testInvalidInvokable()
+    public function testInvalidinvocable(): void
     {
-        $this->route->setInvokable(10);
+        $this->route->setInvocable(10);
     }
 
-    public function testInvokable()
+    public function testinvocable(): void
     {
         $callable = ['containerKey', 'method'];
 
-        $this->route->setInvokable($callable);
+        $this->route->setInvocable($callable);
 
-        self::assertEquals($callable, $this->route->getInvokable());
+        self::assertEquals($callable, $this->route->getInvocable());
     }
 
-    public function testPriority()
+    public function testPriority(): void
     {
         $this->route->setPriority(-10);
 
         self::assertEquals(-10, $this->route->getPriority());
     }
 
-    public function testXmlHttpRequest()
+    public function testXmlHttpRequest(): void
     {
         $this->route->setXmlHttpRequest(true);
 

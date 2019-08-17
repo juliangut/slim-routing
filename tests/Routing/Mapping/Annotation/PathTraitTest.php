@@ -29,19 +29,19 @@ class PathTraitTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->annotation = new PathStub();
     }
 
-    public function testDefaults()
+    public function testDefaults(): void
     {
         self::assertEquals('', $this->annotation->getPattern());
         self::assertEquals([], $this->annotation->getPlaceholders());
         self::assertEquals([], $this->annotation->getParameters());
     }
 
-    public function testPattern()
+    public function testPattern(): void
     {
         $path = '/home/route/path/{id}';
 
@@ -50,7 +50,7 @@ class PathTraitTest extends TestCase
         self::assertEquals($path, $this->annotation->getPattern());
     }
 
-    public function testPlaceholders()
+    public function testPlaceholders(): void
     {
         $placeholders = [
             'id' => '[0-9]+',
@@ -62,7 +62,7 @@ class PathTraitTest extends TestCase
         self::assertEquals($placeholders, $this->annotation->getPlaceholders());
     }
 
-    public function testParameters()
+    public function testParameters(): void
     {
         $parameters = [
             'id' => 'int',

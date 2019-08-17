@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
  */
 class AbstractTransformerTest extends TestCase
 {
-    public function testPrimitiveTransformation()
+    public function testPrimitiveTransformation(): void
     {
         $parameters = [
             'one' => 'hi',
@@ -49,7 +49,7 @@ class AbstractTransformerTest extends TestCase
         self::assertTrue($parameters['four']);
     }
 
-    public function testTransformation()
+    public function testTransformation(): void
     {
         $parameters = [
             'one' => 'other',

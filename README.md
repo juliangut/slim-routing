@@ -1,4 +1,4 @@
-[![PHP version](https://img.shields.io/badge/PHP-%3E%3D7.0-8892BF.svg?style=flat-square)](http://php.net)
+[![PHP version](https://img.shields.io/badge/PHP-%3E%3D7.1-8892BF.svg?style=flat-square)](http://php.net)
 [![Latest Version](https://img.shields.io/packagist/v/juliangut/slim-routing.svg?style=flat-square)](https://packagist.org/packages/juliangut/slim-routing)
 [![License](https://img.shields.io/github/license/juliangut/slim-routing.svg?style=flat-square)](https://github.com/juliangut/slim-routing/blob/master/LICENSE)
 
@@ -14,16 +14,16 @@
 
 A replacement for Slim's router that adds annotation and configuration based routing as well as expands the possibilities of your route callbacks by handling different response types
 
-Thanks to this library, instead of configuring routes by hand one by one and including them into Slim's router you can create mapping files that define and structure your routes and let them be included into the router.
+Thanks to this library, instead of configuring routes by hand one by one and including them into Slim's routing you can create mapping files that define and structure your routes and let them be included automatically instead
 
-If you're familiar with how Doctrine defines entities mappings you'll feel at home with slim-routing because much as how Doctrine does route mappings are defined either
+If you're familiar with how Doctrine defines entities mappings you'll feel at home with slim-routing because route mappings are defined the same way
 
 * On class annotations (in controller classes)
 * In routing definition files, currently supported in PHP, JSON, XML and YAML
 
-> Routing gathering and compilation can be quite a heavy load process depending on how many classes/files and routes are defined, specially for annotations. For this reason it's advised to always use [Slim's router cache](https://www.slimframework.com/docs/objects/application.html#slim-default-settings) on production applications and invalidate cache on deployment
+> Route gathering and compilation can be quite a heavy load process depending on how many classes/files and routes are defined, specially for annotations. For this reason it's advised to always use [Slim's route collector caching](https://www.slimframework.com/docs/v4/objects/routing.html#router-caching) on production applications and invalidate cache on deployment
 
-Route callbacks can now return `\Jgut\Slim\Routing\Response\ResponseType` responses that will be later transformed into the mandatory `Psr\Message\ResponseInterface` in a way that lets you decouple view from controller 
+Route callbacks can now return `\Jgut\Slim\Routing\Response\ResponseType` objects that will be later transformed into the mandatory `Psr\Message\ResponseInterface` in a way that lets you decouple view from controller 
 
 ## Installation
 
@@ -66,37 +66,37 @@ require './vendor/autoload.php';
 ```
 
 ```php
+use Jgut\Slim\Routing\AppFactory;
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Response\PayloadResponse;
 use Jgut\Slim\Routing\Response\Handler\JsonResponseHandler;
-use Jgut\Slim\Routing\Router;
-use Slim\App;
+use Jgut\Slim\Routing\RouteCollector;
+use Jgut\Slim\Routing\Strategy\RequestHandler;
 
-$app = new App();
+$configuration = new Configuration([
+    'sources' => ['/path/to/routing/files'],
+]);
+AppFactory::setRouteCollectorConfiguration($configuration);
 
-$container = $app->getContainer();
+// Instantiate the app
+$app = AppFactory::create();
 
-$container['router'] = function ($container) {
-    $configuration = new Configuration([
-        'sources' => ['/path/to/routing/files'],
-        'responseHandlers' => [
-            PayloadResponse::class => new JsonResponseHandler(),
-        ],
-    ]);
-    $router = new Router($configuration);
-    $router->setContainer($container); // Be sure to set the container
+// Register custom invocation strategy to handle ResponseType objects
+$invocationStrategy = new RequestHandler(
+    $responseHandlers = [
+        PayloadResponse::class => JsonResponseHandler::class,
+    ],
+    $app->getResponseFactory(),
+    $app->getContainer()
+);
+$app->getRouteCollector()->setDefaultInvocationStrategy($invocationStrategy);
 
-    $routerCacheFile = false;
-    if (isset($container->get('settings')['routerCacheFile'])) {
-        $routerCacheFile = $container->get('settings')['routerCacheFile'];
-    }
-    $router->setCacheFile($routerCacheFile);
+// Not mandatory but recommended if more routes are added
+$routeCollector()->registerRoutes();
 
-    return $router;
-};
-
-$app->get('/', function(ServerRequestInterface $request, ResponseInterface $response) {
-    return (new PayloadResponse())->setResponse($response)->setPayload(['param' => 'value']);
+// Set other routes
+$app->get('/', function(ServerRequestInterface $request) {
+    return (new PayloadResponse())->setPayload(['param' => 'value']);
 });
 
 $app->run();
@@ -112,9 +112,11 @@ $app->run();
   * numeric => `\d+`
   * alpha => `[a-zA-Z]+`
   * alnum => `[a-zA-Z0-9]+`
+  * slug' -> `[a-zA-Z0-9-]+`
+  * uuid -> `[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`
+  * mongoid -> `[0-9a-f]{24}`
   * any => `[^}]+`
 * `namingStrategy`, instance of \Jgut\Slim\Routing\Naming\NamingInterface (\Jgut\Slim\Routing\Naming\SnakeCase by default)
-* `responseHandlers` array of \Jgut\Slim\Routing\Response\ResponseType::class => \Jgut\Slim\Routing\Response\Handler\ResponseHandlerInterface or container entry
 
 ## Response handling
 
@@ -131,6 +133,14 @@ $app->get('/hello/{name}', function ($request, $response, $args) {
 Route callbacks normally respond with a `Psr\Message\ResponseInterface` object, but thanks to slim-routing they can now respond with a more intent expressive ResponseType object that will be handled afterwards
 
 Of course normal ResponseInterface responses from route callback will be treated as usual
+
+### ResponseType aware invocation strategies
+
+For the new response handling to work you need to register a new invocation strategy provided by this library, there are three strategies provided out of the box that plainly mimic the defaults provided by Slim itself
+
+* `Jgut\Slim\Routing\Strategy\RequestHandler`
+* `Jgut\Slim\Routing\Strategy\RequestResponse`
+* `Jgut\Slim\Routing\Strategy\RequestResponseArgs`
 
 ### Response type
 
@@ -151,7 +161,7 @@ Provided response types:
 
 ### Response type handler
 
-Mapped on configuration's "responseHandlers" key, a response handler will be responsible of returning a `Psr\Message\ResponseInterface` from the received `\Jgut\Slim\Routing\Response\ResponseType`
+Mapped on invocation strategy, a response handler will be responsible of returning a `Psr\Message\ResponseInterface` from the received `\Jgut\Slim\Routing\Response\ResponseType`
 
 Typically they will agglutinate presentation logic: how to represent the data contained in the response type, such as transform it into JSON, XML, etc, or render it with a template engine such as Twig or Plates
 
@@ -161,7 +171,7 @@ Provided response types handlers:
 * `XmlResponseHandler` receives a PayloadResponse and returns a XML response (requires [spatie/array-to-xml](https://github.com/spatie/array-to-xml))
 * `TwigViewResponseHandler` receives a generic ViewResponse and returns a template rendered thanks to [slim/twig-view](https://github.com/slimphp/Twig-View)
 
-You can create you're own response handlers to compose specifically formatted JSON (JSON-API, ...) or use another template engines (Plates, ...)
+You can create your own response handlers to compose specifically formatted JSON (JSON-API, ...) or use another template engines (Plates, ...)
 
 ### Parameter transformation
 
@@ -250,7 +260,7 @@ class Section
 {
     /**
      * @JSR\Route(
-     *     name="routeNamme",
+     *     name="routeName",
      *     xmlHttpRequest=true,
      *     methods={"GET", "POST"},
      *     pattern="do/{action}",
@@ -490,6 +500,12 @@ Resulting middleware added to a route will be the result of combining group midd
 * Firstly route middleware will be set to the route **in the order they are defined**
 * Then route group (if any) middleware are to be set into the route **in the same order they are defined**
 * If group has a parent then parent's middleware are set **in the order they are defined**, and this goes up until no parent group is left
+
+## Migration from 1.x
+
+* Minimum Slim version is now 4.0
+* ResponseType handling is NOT automatically available due to how Slim 4 handles routing, it has been moved into custom RequestHandlerInvocationStrategyInterface implementations and thus must be registered on RouteCollector
+* Response handlers list configuration have been moved to each RequestHandlerInvocationStrategyInterface implementation
 
 ## Contributing
 

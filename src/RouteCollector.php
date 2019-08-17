@@ -13,17 +13,23 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing;
 
-use FastRoute\Dispatcher;
-use FastRoute\RouteParser;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
-use Jgut\Slim\Routing\Route\Resolver;
 use Jgut\Slim\Routing\Route\Route;
-use Slim\Router as SlimRouter;
+use Jgut\Slim\Routing\Route\RouteResolver;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Slim\Interfaces\CallableResolverInterface;
+use Slim\Interfaces\InvocationStrategyInterface;
+use Slim\Interfaces\RouteInterface;
+use Slim\Interfaces\RouteParserInterface;
+use Slim\Routing\RouteCollector as SlimRouteCollector;
 
 /**
- * Route loader router.
+ * Route loader collector.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class Router extends SlimRouter
+class RouteCollector extends SlimRouteCollector
 {
     /**
      * Routing configuration.
@@ -37,19 +43,38 @@ class Router extends SlimRouter
      *
      * @var bool
      */
-    private $routesLoaded = false;
+    private $routesRegistered = false;
 
     /**
-     * Router constructor.
+     * RouteCollector constructor.
      *
-     * @param Configuration    $configuration
-     * @param RouteParser|null $parser
+     * @param Configuration                    $configuration
+     * @param ResponseFactoryInterface         $responseFactory
+     * @param CallableResolverInterface        $callableResolver
+     * @param ContainerInterface|null          $container
+     * @param InvocationStrategyInterface|null $defaultInvocationStrategy
+     * @param RouteParserInterface|null        $routeParser
+     * @param string|null                      $cacheFile
+     *
+     * @SuppressWarnings(PHPMD.LongVariable)
      */
     public function __construct(
         Configuration $configuration,
-        RouteParser $parser = null
+        ResponseFactoryInterface $responseFactory,
+        CallableResolverInterface $callableResolver,
+        ?ContainerInterface $container = null,
+        ?InvocationStrategyInterface $defaultInvocationStrategy = null,
+        ?RouteParserInterface $routeParser = null,
+        ?string $cacheFile = null
     ) {
-        parent::__construct($parser);
+        parent::__construct(
+            $responseFactory,
+            $callableResolver,
+            $container,
+            $defaultInvocationStrategy,
+            $routeParser,
+            $cacheFile
+        );
 
         $this->configuration = $configuration;
     }
@@ -57,27 +82,10 @@ class Router extends SlimRouter
     /**
      * {@inheritdoc}
      */
-    protected function createDispatcher(): Dispatcher
-    {
-        if ($this->dispatcher === null
-            && $this->routesLoaded === false
-            && $this->cacheFile !== false && \file_exists($this->cacheFile)
-        ) {
-            $this->getRoutes();
-        }
-
-        return parent::createDispatcher();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getRoutes(): array
     {
-        if ($this->routesLoaded === false) {
+        if ($this->routesRegistered === false) {
             $this->registerRoutes();
-
-            $this->routesLoaded = true;
         }
 
         return $this->routes;
@@ -89,27 +97,29 @@ class Router extends SlimRouter
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    protected function registerRoutes()
+    final public function registerRoutes(): void
     {
         $routes = $this->routes;
         $this->routes = [];
 
         $resolver = $this->configuration->getRouteResolver();
 
-        foreach ($this->getRoutesMetadata() as $route) {
-            $slimRoute = $this->mapMetadataRoute($route, $resolver);
+        foreach ($this->getRoutesMetadata() as $routeMetadata) {
+            $route = $this->mapMetadataRoute($routeMetadata, $resolver);
 
-            $name = $resolver->getName($route);
+            $name = $resolver->getName($routeMetadata);
             if ($name !== null) {
-                $slimRoute->setName($name);
+                $route->setName($name);
             }
 
-            foreach ($resolver->getMiddleware($route) as $middleware) {
-                $slimRoute->add($middleware);
+            foreach ($resolver->getMiddleware($routeMetadata) as $middleware) {
+                $route->add($middleware);
             }
         }
 
         $this->routes = \array_merge($this->routes, $routes);
+
+        $this->routesRegistered = true;
     }
 
     /**
@@ -132,23 +142,16 @@ class Router extends SlimRouter
      * Map new metadata route.
      *
      * @param RouteMetadata $metadata
-     * @param Resolver      $resolver
+     * @param RouteResolver $resolver
      *
      * @return Route
      */
-    protected function mapMetadataRoute(RouteMetadata $metadata, Resolver $resolver): Route
+    protected function mapMetadataRoute(RouteMetadata $metadata, RouteResolver $resolver): Route
     {
-        $pattern = $resolver->getPattern($metadata);
-        if (\count($this->routeGroups) !== 0) {
-            // @codeCoverageIgnoreStart
-            $pattern = $this->processGroups() . $pattern;
-            // @codeCoverageIgnoreEnd
-        }
-
         $route = $this->createMetadataRoute(
             \array_map('strtoupper', $metadata->getMethods()),
-            $pattern,
-            $metadata->getInvokable(),
+            $resolver->getPattern($metadata),
+            $metadata->getInvocable(),
             $metadata
         );
 
@@ -159,9 +162,13 @@ class Router extends SlimRouter
     }
 
     /**
-     * {@inheritdoc}
+     * @param mixed[] $methods
+     * @param string  $pattern
+     * @param mixed   $callable
+     *
+     * @return RouteInterface
      */
-    protected function createRoute($methods, $pattern, $callable): Route
+    final protected function createRoute(array $methods, string $pattern, $callable): RouteInterface
     {
         return $this->createMetadataRoute($methods, $pattern, $callable);
     }
@@ -169,9 +176,9 @@ class Router extends SlimRouter
     /**
      * Create new metadata aware route.
      *
-     * @param array              $methods
+     * @param string[]           $methods
      * @param string             $pattern
-     * @param callable           $callable
+     * @param mixed              $callable
      * @param RouteMetadata|null $metadata
      *
      * @return Route
@@ -181,22 +188,18 @@ class Router extends SlimRouter
         string $pattern,
         $callable,
         RouteMetadata $metadata = null
-    ): Route {
-        $route = new Route(
+    ): RouteInterface {
+        return new Route(
             $methods,
             $pattern,
             $callable,
-            $this->configuration,
+            $this->responseFactory,
+            $this->callableResolver,
             $metadata,
+            $this->container,
+            $this->defaultInvocationStrategy,
             $this->routeGroups,
             $this->routeCounter
         );
-
-        if ($this->container !== null) {
-            $route->setContainer($this->container);
-            $route->setOutputBuffering($this->container->get('settings')['outputBuffering']);
-        }
-
-        return $route;
     }
 }

@@ -18,8 +18,7 @@ use Jgut\Mapping\Metadata\MetadataResolver;
 use Jgut\Slim\Routing\Mapping\Driver\DriverFactory;
 use Jgut\Slim\Routing\Naming\SnakeCase;
 use Jgut\Slim\Routing\Naming\Strategy;
-use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandler;
-use Jgut\Slim\Routing\Route\Resolver;
+use Jgut\Slim\Routing\Route\RouteResolver;
 
 /**
  * Routing configuration.
@@ -29,7 +28,7 @@ class Configuration
     /**
      * Routing sources.
      *
-     * @var array
+     * @var mixed[]
      */
     protected $sources = [];
 
@@ -60,7 +59,7 @@ class Configuration
     /**
      * Route resolver.
      *
-     * @var Resolver
+     * @var RouteResolver
      */
     protected $routeResolver;
 
@@ -72,16 +71,9 @@ class Configuration
     protected $namingStrategy;
 
     /**
-     * Response handlers.
-     *
-     * @var ResponseTypeHandler[]|string[]
-     */
-    protected $responseHandlers = [];
-
-    /**
      * Configuration constructor.
      *
-     * @param array|\Traversable $configurations
+     * @param mixed $configurations
      *
      * @throws \InvalidArgumentException
      */
@@ -89,6 +81,9 @@ class Configuration
     {
         if (!\is_array($configurations) && !$configurations instanceof \Traversable) {
             throw new \InvalidArgumentException('Configurations must be an iterable');
+        }
+        if ($configurations instanceof \Traversable) {
+            $configurations = \iterator_to_array($configurations);
         }
 
         $configs = \array_keys(\get_object_vars($this));
@@ -107,10 +102,12 @@ class Configuration
             if (isset($configurations[$config])) {
                 $callback = [
                     $this,
-                    $config === 'placeholderAliases' ? 'addPlaceholderAliases' : 'set' . \ucfirst($config),
+                    $config === 'placeholderAliases' ? 'addPlaceholderAliases' : 'set' . \ucfirst((string) $config),
                 ];
 
-                \call_user_func($callback, $configurations[$config]);
+                if (\is_callable($callback)) {
+                    \call_user_func($callback, $configurations[$config]);
+                }
             }
         }
     }
@@ -118,7 +115,7 @@ class Configuration
     /**
      * Get routing paths.
      *
-     * @return array
+     * @return mixed[]
      */
     public function getSources(): array
     {
@@ -128,9 +125,9 @@ class Configuration
     /**
      * Set routing paths.
      *
-     * @param array $sources
+     * @param mixed[] $sources
      *
-     * @return static
+     * @return self
      */
     public function setSources(array $sources): self
     {
@@ -146,11 +143,11 @@ class Configuration
     /**
      * Add mapping source.
      *
-     * @param string|mixed[]|DriverInterface[] $source
+     * @param mixed $source
      *
      * @throws \InvalidArgumentException
      *
-     * @return static
+     * @return self
      */
     public function addSource($source): self
     {
@@ -170,7 +167,7 @@ class Configuration
     /**
      * Get placeholder aliases.
      *
-     * @return array
+     * @return string[]
      */
     public function getPlaceholderAliases(): array
     {
@@ -180,11 +177,11 @@ class Configuration
     /**
      * Add placeholder aliases.
      *
-     * @param array $aliases
+     * @param string[] $aliases
      *
      * @throws \InvalidArgumentException
      *
-     * @return static
+     * @return self
      */
     public function addPlaceholderAliases(array $aliases): self
     {
@@ -203,7 +200,7 @@ class Configuration
      *
      * @throws \InvalidArgumentException
      *
-     * @return static
+     * @return self
      */
     public function addPlaceholderAlias(string $alias, string $pattern): self
     {
@@ -237,7 +234,7 @@ class Configuration
      *
      * @param MetadataResolver $metadataResolver
      *
-     * @return static
+     * @return self
      */
     public function setMetadataResolver(MetadataResolver $metadataResolver): self
     {
@@ -249,12 +246,12 @@ class Configuration
     /**
      * Get route resolver.
      *
-     * @return Resolver
+     * @return RouteResolver
      */
-    public function getRouteResolver(): Resolver
+    public function getRouteResolver(): RouteResolver
     {
         if ($this->routeResolver === null) {
-            $this->routeResolver = new Resolver($this);
+            $this->routeResolver = new RouteResolver($this);
         }
 
         return $this->routeResolver;
@@ -263,11 +260,11 @@ class Configuration
     /**
      * Set route resolver.
      *
-     * @param Resolver $routeResolver
+     * @param RouteResolver $routeResolver
      *
-     * @return static
+     * @return self
      */
-    public function setRouteResolver(Resolver $routeResolver): self
+    public function setRouteResolver(RouteResolver $routeResolver): self
     {
         $this->routeResolver = $routeResolver;
 
@@ -293,56 +290,11 @@ class Configuration
      *
      * @param Strategy $namingStrategy
      *
-     * @return static
+     * @return self
      */
     public function setNamingStrategy(Strategy $namingStrategy): self
     {
         $this->namingStrategy = $namingStrategy;
-
-        return $this;
-    }
-
-    /**
-     * Get response handlers.
-     *
-     * @return ResponseTypeHandler[]|string[]
-     */
-    public function getResponseHandlers(): array
-    {
-        return $this->responseHandlers;
-    }
-
-    /**
-     * Set response handlers.
-     *
-     * @param array $handlers
-     *
-     * @return static
-     */
-    public function setResponseHandlers(array $handlers): self
-    {
-        $this->responseHandlers = [];
-
-        foreach ($handlers as $responseType => $responseHandler) {
-            $this->addResponseHandler($responseType, $responseHandler);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Add response handler.
-     *
-     * @param string                     $response
-     * @param ResponseTypeHandler|string $handler
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return static
-     */
-    public function addResponseHandler(string $response, $handler): self
-    {
-        $this->responseHandlers[$response] = $handler;
 
         return $this;
     }

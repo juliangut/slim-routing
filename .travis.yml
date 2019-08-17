@@ -13,21 +13,23 @@ env:
   - COMPOSER_FLAGS="--prefer-stable --prefer-dist"
 
 php:
-  - 7.1
   - 7.2
+  - 7.3
+  - 7.4snapshot
   - nightly
 
 matrix:
   fast_finish: true
   include:
-    - php: 7
+    - php: 7.1
       env:
         - COMPOSER_FLAGS="--prefer-lowest --prefer-stable --prefer-dist"
-    - php: 7
+    - php: 7.1
       env:
         - TEST_VERSION=true
         - COMPOSER_FLAGS="--prefer-stable --prefer-dist"
   allow_failures:
+    - php: 7.4snapshot
     - php: nightly
 
 before_install:
@@ -40,9 +42,8 @@ install:
   - if [[ $TEST_VERSION ]]; then travis_retry composer require php-coveralls/php-coveralls $COMPOSER_FLAGS --no-interaction --no-scripts --no-progress ; fi
 
 script:
-  - if [[ $TEST_VERSION ]]; then composer qa && composer phpunit-clover ; fi
-
-  - if [[ -z $TEST_VERSION ]]; then composer phpunit ; fi
+  - if [[ $TEST_VERSION ]]; then composer qa && composer report-phpunit-clover ; fi
+  - if [[ -z $TEST_VERSION ]]; then composer test-phpunit ; fi
 
 after_script:
   - if [[ $TEST_VERSION ]]; then travis_retry php vendor/bin/php-coveralls --verbose ; fi

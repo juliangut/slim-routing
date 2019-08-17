@@ -32,7 +32,7 @@ class AnnotationDriverTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->reader = new AnnotationReader();
     }
@@ -41,7 +41,7 @@ class AnnotationDriverTest extends TestCase
      * @expectedException \Jgut\Mapping\Exception\DriverException
      * @expectedExceptionMessageRegExp /Routes can not be defined in constructor or destructor in class .+$/
      */
-    public function testConstructorDefinedRoute()
+    public function testConstructorDefinedRoute(): void
     {
         $paths = [
             \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/ConstructorDefined/ConstructorDefinedRoute.php',
@@ -56,7 +56,7 @@ class AnnotationDriverTest extends TestCase
      * @expectedException \RuntimeException
      * @expectedExceptionMessageRegExp /Routes can not be defined in private or protected methods in class .+$/
      */
-    public function testPrivateDefinedRoute()
+    public function testPrivateDefinedRoute(): void
     {
         $paths = [
             \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/PrivateDefined/PrivateDefinedRoute.php',
@@ -71,7 +71,7 @@ class AnnotationDriverTest extends TestCase
      * @expectedException \RuntimeException
      * @expectedExceptionMessageRegExp /Class .+ does not define any route$/
      */
-    public function testNoRoutesRoute()
+    public function testNoRoutesRoute(): void
     {
         $paths = [
             \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/NoRoutes/NoRoutesRoute.php',
@@ -86,7 +86,7 @@ class AnnotationDriverTest extends TestCase
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Parent group unknown does not exist
      */
-    public function testUnknownGroupRoute()
+    public function testUnknownGroupRoute(): void
     {
         $paths = [
             \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/UnknownGroup/UnknownGroupRoute.php',
@@ -101,7 +101,7 @@ class AnnotationDriverTest extends TestCase
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Circular group reference detected
      */
-    public function testCircularReferenceRoute()
+    public function testCircularReferenceRoute(): void
     {
         $paths = [
             \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/CircularReference/CircularReferenceRoute.php',
@@ -114,7 +114,7 @@ class AnnotationDriverTest extends TestCase
         $route->getGroupChain();
     }
 
-    public function testRoutes()
+    public function testRoutes(): void
     {
         $paths = [
             \dirname(__DIR__, 2) . '/Files/Annotation/Valid/AbstractRoute.php',
@@ -135,7 +135,7 @@ class AnnotationDriverTest extends TestCase
         self::assertEquals(['GET'], $route->getMethods());
         self::assertEquals(
             'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\DependentRoute:actionFour',
-            $route->getInvokable()
+            $route->getInvocable()
         );
         self::assertEquals(0, $route->getPriority());
         self::assertEquals('four', $route->getPattern());
@@ -148,7 +148,7 @@ class AnnotationDriverTest extends TestCase
         self::assertEquals(['GET'], $route->getMethods());
         self::assertEquals(
             'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\GroupedRoute:actionTwo',
-            $route->getInvokable()
+            $route->getInvocable()
         );
         self::assertEquals(0, $route->getPriority());
         self::assertEquals('two/{id}', $route->getPattern());
@@ -161,7 +161,7 @@ class AnnotationDriverTest extends TestCase
         self::assertEquals(['GET'], $route->getMethods());
         self::assertEquals(
             'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\GroupedRoute:actionThree',
-            $route->getInvokable()
+            $route->getInvocable()
         );
         self::assertEquals(0, $route->getPriority());
         self::assertEquals('three/{id}', $route->getPattern());
@@ -174,7 +174,7 @@ class AnnotationDriverTest extends TestCase
         self::assertEquals(['GET', 'POST'], $route->getMethods());
         self::assertEquals(
             'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\SingleRoute:actionOne',
-            $route->getInvokable()
+            $route->getInvocable()
         );
         self::assertEquals(-10, $route->getPriority());
         self::assertEquals('one/{id}', $route->getPattern());

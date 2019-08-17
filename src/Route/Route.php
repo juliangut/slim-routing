@@ -13,32 +13,24 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Route;
 
-use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
-use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandler;
-use Jgut\Slim\Routing\Response\ResponseType;
 use Jgut\Slim\Routing\Transformer\ParameterTransformer;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\Handlers\Strategies\RequestResponse;
-use Slim\Http\Response;
-use Slim\Route as SlimRoute;
+use Slim\Interfaces\CallableResolverInterface;
+use Slim\Interfaces\InvocationStrategyInterface;
+use Slim\Routing\Route as SlimRoute;
 
 /**
- * Response type aware route.
+ * Metadata aware route.
  *
- * @SuppressWarnings(PMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Route extends SlimRoute
 {
-    /**
-     * Routing configuration.
-     *
-     * @var Configuration
-     */
-    protected $configuration;
-
     /**
      * Route metadata.
      *
@@ -49,26 +41,43 @@ class Route extends SlimRoute
     /**
      * Route constructor.
      *
-     * @param string|string[]    $methods
-     * @param string             $pattern
-     * @param callable           $callable
-     * @param Configuration      $configuration
-     * @param RouteMetadata|null $metadata
-     * @param \Slim\RouteGroup[] $groups
-     * @param int                $identifier
+     * @param array                            $methods
+     * @param string                           $pattern
+     * @param callable                         $callable
+     * @param ResponseFactoryInterface         $responseFactory
+     * @param CallableResolverInterface        $callableResolver
+     * @param RouteMetadata|null               $metadata
+     * @param ContainerInterface|null          $container
+     * @param InvocationStrategyInterface|null $invocationStrategy
+     * @param \Slim\Routing\RouteGroup[]       $groups
+     * @param int                              $identifier
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
-        $methods,
+        array $methods,
         string $pattern,
         $callable,
-        Configuration $configuration,
-        RouteMetadata $metadata = null,
+        ResponseFactoryInterface $responseFactory,
+        CallableResolverInterface $callableResolver,
+        ?RouteMetadata $metadata = null,
+        ?ContainerInterface $container = null,
+        ?InvocationStrategyInterface $invocationStrategy = null,
         array $groups = [],
         int $identifier = 0
     ) {
-        parent::__construct($methods, $pattern, $callable, $groups, $identifier);
+        parent::__construct(
+            $methods,
+            $pattern,
+            $callable,
+            $responseFactory,
+            $callableResolver,
+            $container,
+            $invocationStrategy,
+            $groups,
+            $identifier
+        );
 
-        $this->configuration = $configuration;
         $this->metadata = $metadata;
     }
 
@@ -77,7 +86,7 @@ class Route extends SlimRoute
      *
      * @return RouteMetadata|null
      */
-    public function getMetadata()
+    public function getMetadata(): ?RouteMetadata
     {
         return $this->metadata;
     }
@@ -85,72 +94,34 @@ class Route extends SlimRoute
     /**
      * {@inheritdoc}
      */
-    public function run(ServerRequestInterface $request, ResponseInterface $response)
+    public function run(ServerRequestInterface $request): ResponseInterface
     {
+        if (!$this->groupMiddlewareAppended) {
+            $this->appendGroupMiddlewareToRoute();
+        }
+
         if ($this->metadata !== null
             && $this->metadata->isXmlHttpRequest()
             && \strtolower($request->getHeaderLine('X-Requested-With')) !== 'xmlhttprequest'
         ) {
-            return (new Response(400))->withProtocolVersion($response->getProtocolVersion());
+            return $this->responseFactory->createResponse(400);
         }
 
-        $this->finalize();
-
-        return $this->callMiddlewareStack($request, $response);
+        return $this->middlewareDispatcher->handle($request);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $dispatchedResponse = $this->dispatchRoute($request, $response);
+        $arguments = $this->arguments;
+        $this->arguments = $this->transformArguments($arguments);
 
-        if ($dispatchedResponse instanceof ResponseType) {
-            $dispatchedResponse = $this->handleResponseType($dispatchedResponse);
-        }
-
-        return $dispatchedResponse;
-    }
-
-    /**
-     * Dispatch route.
-     *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
-     *
-     * @throws \Exception
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \Throwable
-     *
-     * @return ResponseInterface|ResponseType
-     *
-     * @SuppressWarnings(PMD.CyclomaticComplexity)
-     * @SuppressWarnings(PMD.NPathComplexity)
-     */
-    protected function dispatchRoute(ServerRequestInterface $request, ResponseInterface $response)
-    {
-        $this->callable = $this->resolveCallable($this->callable);
-
-        /** @var \Slim\Interfaces\InvocationStrategyInterface $handler */
-        $handler = isset($this->container) ? $this->container->get('foundHandler') : new RequestResponse();
-
-        $dispatchedResponse = $handler(
-            $this->callable,
-            $request,
-            $response,
-            $this->transformArguments($this->arguments)
-        );
-
-        if ($dispatchedResponse instanceof ResponseType
-            || $dispatchedResponse instanceof ResponseInterface
-        ) {
-            $response = $dispatchedResponse;
-        } elseif (\is_string($dispatchedResponse)) {
-            if ($response->getBody()->isWritable()) {
-                $response->getBody()->write($dispatchedResponse);
-            }
+        try {
+            $response = parent::handle($request);
+        } finally {
+            $this->arguments = $arguments;
         }
 
         return $response;
@@ -159,12 +130,11 @@ class Route extends SlimRoute
     /**
      * Transform route arguments.
      *
-     * @param array $arguments
+     * @param mixed[] $arguments
      *
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \RuntimeException
      *
-     * @return array
+     * @return mixed[]
      */
     protected function transformArguments(array $arguments): array
     {
@@ -173,11 +143,19 @@ class Route extends SlimRoute
         }
 
         $transformer = $this->metadata->getTransformer();
-        if (\is_string($transformer) && isset($this->container)) {
-            $transformer = $this->container->get($transformer);
-        }
+        if ($transformer !== null) {
+            if (isset($this->container)) {
+                $transformer = $this->container->get($transformer);
+            }
 
-        if ($transformer instanceof ParameterTransformer) {
+            if (!$transformer instanceof ParameterTransformer) {
+                throw new \RuntimeException(\sprintf(
+                    'Parameter transformer should implement %s, "%s" given',
+                    ParameterTransformer::class,
+                    \is_object($transformer) ? \get_class($transformer) : \gettype($transformer)
+                ));
+            }
+
             $arguments = $transformer->transform($arguments, $this->getRouteParameters($this->metadata));
         }
 
@@ -189,7 +167,7 @@ class Route extends SlimRoute
      *
      * @param RouteMetadata $route
      *
-     * @return array
+     * @return mixed[]
      */
     protected function getRouteParameters(RouteMetadata $route): array
     {
@@ -202,42 +180,5 @@ class Route extends SlimRoute
         \array_unshift($parameters, $route->getParameters());
 
         return \array_filter(\array_merge(...$parameters));
-    }
-
-    /**
-     * Handle response type.
-     *
-     * @param ResponseType $responseType
-     *
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     * @throws \RuntimeException
-     *
-     * @return ResponseInterface
-     */
-    protected function handleResponseType(ResponseType $responseType): ResponseInterface
-    {
-        $responseHandlers = $this->configuration->getResponseHandlers();
-        $type = \get_class($responseType);
-
-        if (!\array_key_exists($type, $responseHandlers)) {
-            throw new \RuntimeException(\sprintf('No handler registered for response type "%s"', $type));
-        }
-
-        $handler = $responseHandlers[$type];
-
-        if (\is_string($handler) && isset($this->container)) {
-            $handler = $this->container->get($handler);
-        }
-
-        if (!$handler instanceof ResponseTypeHandler) {
-            throw new \RuntimeException(\sprintf(
-                'Response handler should implement %s, "%s" given',
-                ResponseTypeHandler::class,
-                \is_object($handler) ? \get_class($handler) : \gettype($handler)
-            ));
-        }
-
-        return $handler->handle($responseType);
     }
 }

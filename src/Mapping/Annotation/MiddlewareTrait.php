@@ -23,14 +23,14 @@ trait MiddlewareTrait
     /**
      * Middleware list.
      *
-     * @var array
+     * @var string[]
      */
     protected $middleware = [];
 
     /**
      * Get middleware list.
      *
-     * @return array
+     * @return string[]
      */
     public function getMiddleware(): array
     {
@@ -40,13 +40,13 @@ trait MiddlewareTrait
     /**
      * Set middleware list.
      *
-     * @param array|string $middlewareList
+     * @param mixed $middlewareList
      *
      * @throws AnnotationException
      *
-     * @return static
+     * @return self
      */
-    public function setMiddleware($middlewareList)
+    public function setMiddleware($middlewareList): self
     {
         $this->middleware = [];
 

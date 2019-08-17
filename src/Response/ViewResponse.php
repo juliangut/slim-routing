@@ -68,7 +68,7 @@ class ViewResponse extends AbstractResponse
     /**
      * Get template parameters.
      *
-     * @return array
+     * @return mixed[]
      */
     public function getParameters(): array
     {

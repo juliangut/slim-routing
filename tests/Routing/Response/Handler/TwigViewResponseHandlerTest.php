@@ -17,9 +17,11 @@ use Jgut\Slim\Routing\Response\Handler\TwigViewResponseHandler;
 use Jgut\Slim\Routing\Response\ViewResponse;
 use Jgut\Slim\Routing\Tests\Stubs\ResponseStub;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Views\Twig;
+use Zend\Diactoros\ResponseFactory;
 
 /**
  * Twig view renderer response handler tests.
@@ -34,7 +36,7 @@ class TwigViewResponseHandlerTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
@@ -44,18 +46,22 @@ class TwigViewResponseHandlerTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Response type should be an instance of Jgut\Slim\Routing\Response\ViewResponse
      */
-    public function testInvalidResponseType()
+    public function testInvalidResponseType(): void
     {
+        $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
+            ->getMock();
+        /* @var ResponseFactoryInterface $responseFactory */
         $twig = $this->getMockBuilder(Twig::class)
             ->disableOriginalConstructor()
             ->getMock();
         /* @var Twig $twig */
 
-        (new TwigViewResponseHandler($twig))->handle(new ResponseStub($this->request));
+        (new TwigViewResponseHandler($responseFactory, $twig))->handle(new ResponseStub($this->request));
     }
 
-    public function testHandlePrettified()
+    public function testHandlePrettified(): void
     {
+        $responseFactory = new ResponseFactory();
         $twig = $this->getMockBuilder(Twig::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -64,7 +70,7 @@ class TwigViewResponseHandlerTest extends TestCase
             ->will($this->returnValue('Template rendered!'));
         /* @var Twig $twig */
 
-        $response = (new TwigViewResponseHandler($twig))
+        $response = (new TwigViewResponseHandler($responseFactory, $twig))
             ->handle(new ViewResponse('template.twig', [], $this->request));
 
         self::assertInstanceOf(ResponseInterface::class, $response);

@@ -67,7 +67,7 @@ class Route extends AbstractAnnotation
      *
      * @return string|null
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -79,7 +79,7 @@ class Route extends AbstractAnnotation
      *
      * @throws AnnotationException
      *
-     * @return static
+     * @return self
      */
     public function setName(string $name): self
     {
@@ -101,7 +101,7 @@ class Route extends AbstractAnnotation
      *
      * @return string|null
      */
-    public function getTransformer()
+    public function getTransformer(): ?string
     {
         return $this->transformer;
     }
@@ -111,7 +111,7 @@ class Route extends AbstractAnnotation
      *
      * @param string $transformer
      *
-     * @return static
+     * @return self
      */
     public function setTransformer(string $transformer): self
     {
@@ -123,7 +123,7 @@ class Route extends AbstractAnnotation
     /**
      * Get route methods.
      *
-     * @return array
+     * @return string[]
      */
     public function getMethods(): array
     {
@@ -133,11 +133,11 @@ class Route extends AbstractAnnotation
     /**
      * Set route methods.
      *
-     * @param array|string $methods
+     * @param mixed $methods
      *
      * @throws AnnotationException
      *
-     * @return static
+     * @return self
      */
     public function setMethods($methods): self
     {
@@ -210,7 +210,7 @@ class Route extends AbstractAnnotation
      *
      * @param int $priority
      *
-     * @return static
+     * @return self
      */
     public function setPriority(int $priority): self
     {

@@ -26,7 +26,7 @@ class MappingTraitTest extends TestCase
      * @expectedException \Jgut\Mapping\Exception\DriverException
      * @expectedExceptionMessage Route methods can not be empty
      */
-    public function testEmptyMethods()
+    public function testEmptyMethods(): void
     {
         $driver = $this->getMockForTrait(MappingTrait::class);
         $driver->expects($this->once())
@@ -43,7 +43,7 @@ class MappingTraitTest extends TestCase
      * @expectedException \Jgut\Mapping\Exception\DriverException
      * @expectedExceptionMessage Route methods must be a string or string array. "integer" given
      */
-    public function testInvalidMethods()
+    public function testInvalidMethods(): void
     {
         $driver = $this->getMockForTrait(MappingTrait::class);
         $driver->expects($this->once())
@@ -60,7 +60,7 @@ class MappingTraitTest extends TestCase
      * @expectedException \Jgut\Mapping\Exception\DriverException
      * @expectedExceptionMessage Placeholder keys must be all strings
      */
-    public function testInvalidPlaceholders()
+    public function testInvalidPlaceholders(): void
     {
         $driver = $this->getMockForTrait(MappingTrait::class);
         $driver->expects($this->once())
@@ -77,7 +77,7 @@ class MappingTraitTest extends TestCase
      * @expectedException \Jgut\Mapping\Exception\DriverException
      * @expectedExceptionMessage Middleware must be a string or string array. "integer" given
      */
-    public function testInvalidMiddleware()
+    public function testInvalidMiddleware(): void
     {
         $driver = $this->getMockForTrait(MappingTrait::class);
         $driver->expects($this->once())
@@ -92,9 +92,9 @@ class MappingTraitTest extends TestCase
 
     /**
      * @expectedException \Jgut\Mapping\Exception\DriverException
-     * @expectedExceptionMessage Route invokable definition missing
+     * @expectedExceptionMessage Route invocable definition missing
      */
-    public function testMissingInvokable()
+    public function testMissinginvocable(): void
     {
         $driver = $this->getMockForTrait(MappingTrait::class);
         $driver->expects($this->once())
@@ -109,15 +109,15 @@ class MappingTraitTest extends TestCase
 
     /**
      * @expectedException \Jgut\Mapping\Exception\DriverException
-     * @expectedExceptionMessage Route invokable does not seam to be supported by Slim router
+     * @expectedExceptionMessage Route invocable does not seam to be supported by Slim router
      */
-    public function testInvalidInvokable()
+    public function testInvalidinvocable(): void
     {
         $driver = $this->getMockForTrait(MappingTrait::class);
         $driver->expects($this->once())
             ->method('getMappingData')
             ->will($this->returnValue([
-                ['invokable' => 10],
+                ['invocable' => 10],
             ]));
         /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
 
@@ -128,14 +128,14 @@ class MappingTraitTest extends TestCase
      * @expectedException \Jgut\Mapping\Exception\DriverException
      * @expectedExceptionMessage Parameters keys must be all strings
      */
-    public function testInvalidParameters()
+    public function testInvalidParameters(): void
     {
         $driver = $this->getMockForTrait(MappingTrait::class);
         $driver->expects($this->once())
             ->method('getMappingData')
             ->will($this->returnValue([
                 [
-                    'invokable' => 'invokable',
+                    'invocable' => 'invocable',
                     'transformer' => 'fake_transformer',
                     'parameters' => ['invalid'],
                 ],
@@ -145,7 +145,7 @@ class MappingTraitTest extends TestCase
         $driver->getMetadata();
     }
 
-    public function testRoutes()
+    public function testRoutes(): void
     {
         $driver = $this->getMockForTrait(MappingTrait::class);
         $driver->expects($this->once())
@@ -166,7 +166,7 @@ class MappingTraitTest extends TestCase
                                     'methods' => ['GET'],
                                     'pattern' => '/four',
                                     'middleware' => ['fourMiddleware'],
-                                    'invokable' => 'FourRoute' . ':' . 'actionFour',
+                                    'invocable' => 'FourRoute' . ':' . 'actionFour',
                                 ],
                             ],
                         ],
@@ -183,7 +183,7 @@ class MappingTraitTest extends TestCase
                             'methods' => ['GET'],
                             'pattern' => '/two/{id}',
                             'middleware' => ['twoMiddleware'],
-                            'invokable' => 'TwoRoute' . ':' . 'actionTwo',
+                            'invocable' => 'TwoRoute' . ':' . 'actionTwo',
                         ],
                         [
                             'methods' => ['GET'],
@@ -191,7 +191,7 @@ class MappingTraitTest extends TestCase
                             'placeholders' => [
                                 'id' => '\d+',
                             ],
-                            'invokable' => 'ThreeRoute' . ':' . 'actionThree',
+                            'invocable' => 'ThreeRoute' . ':' . 'actionThree',
                         ],
                     ],
                 ],
@@ -208,7 +208,7 @@ class MappingTraitTest extends TestCase
                         'id' => 'int',
                     ],
                     'middleware' => ['oneMiddleware'],
-                    'invokable' => 'OneRoute' . ':' . 'actionOne',
+                    'invocable' => 'OneRoute' . ':' . 'actionOne',
                 ],
             ]));
         /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
@@ -220,7 +220,7 @@ class MappingTraitTest extends TestCase
         self::assertEquals('four', $route->getName());
         self::assertEquals(['GET'], $route->getMethods());
         self::assertEquals(0, $route->getPriority());
-        self::assertEquals('FourRoute' . ':' . 'actionFour', $route->getInvokable());
+        self::assertEquals('FourRoute' . ':' . 'actionFour', $route->getinvocable());
         self::assertEquals('four', $route->getPattern());
         self::assertEquals([], $route->getPlaceholders());
         self::assertEquals(['fourMiddleware'], $route->getMiddleware());
@@ -230,7 +230,7 @@ class MappingTraitTest extends TestCase
         self::assertNull($route->getName());
         self::assertEquals(['GET'], $route->getMethods());
         self::assertEquals(0, $route->getPriority());
-        self::assertEquals('TwoRoute' . ':' . 'actionTwo', $route->getInvokable());
+        self::assertEquals('TwoRoute' . ':' . 'actionTwo', $route->getinvocable());
         self::assertEquals('two/{id}', $route->getPattern());
         self::assertEquals([], $route->getPlaceholders());
         self::assertEquals(['twoMiddleware'], $route->getMiddleware());
@@ -239,7 +239,7 @@ class MappingTraitTest extends TestCase
         self::assertInstanceOf(RouteMetadata::class, $route);
         self::assertEquals('', $route->getName());
         self::assertEquals(['GET'], $route->getMethods());
-        self::assertEquals('ThreeRoute' . ':' . 'actionThree', $route->getInvokable());
+        self::assertEquals('ThreeRoute' . ':' . 'actionThree', $route->getinvocable());
         self::assertEquals(0, $route->getPriority());
         self::assertEquals('three/{id}', $route->getPattern());
         self::assertEquals(['id' => '\d+'], $route->getPlaceholders());
@@ -250,7 +250,7 @@ class MappingTraitTest extends TestCase
         self::assertEquals('one', $route->getName());
         self::assertEquals(['GET', 'POST'], $route->getMethods());
         self::assertEquals(-10, $route->getPriority());
-        self::assertEquals('OneRoute' . ':' . 'actionOne', $route->getInvokable());
+        self::assertEquals('OneRoute' . ':' . 'actionOne', $route->getinvocable());
         self::assertEquals('one/{id}', $route->getPattern());
         self::assertEquals(['id' => 'numeric'], $route->getPlaceholders());
         self::assertEquals(['oneMiddleware'], $route->getMiddleware());

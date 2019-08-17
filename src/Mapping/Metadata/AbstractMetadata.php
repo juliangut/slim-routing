@@ -38,7 +38,7 @@ abstract class AbstractMetadata implements MetadataInterface
     /**
      * Pattern parameters.
      *
-     * @var array
+     * @var mixed[]
      */
     protected $parameters = [];
 
@@ -54,7 +54,7 @@ abstract class AbstractMetadata implements MetadataInterface
      *
      * @return string|null
      */
-    public function getPattern()
+    public function getPattern(): ?string
     {
         return $this->pattern;
     }
@@ -66,7 +66,7 @@ abstract class AbstractMetadata implements MetadataInterface
      *
      * @throws MetadataException
      *
-     * @return static
+     * @return self
      */
     public function setPattern(string $pattern): self
     {
@@ -76,7 +76,7 @@ abstract class AbstractMetadata implements MetadataInterface
 
         $pattern = \trim($pattern, ' /');
 
-        if (\preg_match('/\{([a-zA-Z_][a-zA-Z0-9_-]*):([^}]+)?\}/', $pattern, $matches)) {
+        if ((bool) \preg_match('/\{([a-zA-Z_][a-zA-Z0-9_-]*):([^}]+)?\}/', $pattern, $matches) !== false) {
             throw new MetadataException(
                 \sprintf('Placeholder matching "%s" must be defined on placeholders parameter', $matches[2])
             );
@@ -90,7 +90,7 @@ abstract class AbstractMetadata implements MetadataInterface
     /**
      * Get parameters restrictions.
      *
-     * @return array
+     * @return string[]
      */
     public function getPlaceholders(): array
     {
@@ -102,7 +102,7 @@ abstract class AbstractMetadata implements MetadataInterface
      *
      * @param string[] $placeholders
      *
-     * @return static
+     * @return self
      */
     public function setPlaceholders(array $placeholders): self
     {
@@ -114,7 +114,7 @@ abstract class AbstractMetadata implements MetadataInterface
     /**
      * Get pattern parameters.
      *
-     * @return array
+     * @return mixed[]
      */
     public function getParameters(): array
     {
@@ -124,9 +124,9 @@ abstract class AbstractMetadata implements MetadataInterface
     /**
      * Set pattern parameters.
      *
-     * @param array $parameters
+     * @param mixed[] $parameters
      *
-     * @return static
+     * @return self
      */
     public function setParameters(array $parameters): self
     {
@@ -150,7 +150,7 @@ abstract class AbstractMetadata implements MetadataInterface
      *
      * @param callable[]|string[] $middleware
      *
-     * @return static
+     * @return self
      */
     public function setMiddleware(array $middleware): self
     {

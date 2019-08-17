@@ -45,7 +45,7 @@ class PayloadResponse extends AbstractResponse
     /**
      * Get payload.
      *
-     * @return array
+     * @return mixed[]
      */
     public function getPayload(): array
     {

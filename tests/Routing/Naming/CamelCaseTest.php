@@ -29,17 +29,17 @@ class CamelCaseTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->naming = new CamelCase();
     }
 
-    public function testSinglePartName()
+    public function testSinglePartName(): void
     {
         self::assertEquals('name', $this->naming->combine(['name']));
     }
 
-    public function testMultiPartName()
+    public function testMultiPartName(): void
     {
         self::assertEquals('multiPartName', $this->naming->combine(['multi', 'part', 'name']));
     }

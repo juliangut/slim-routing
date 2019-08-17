@@ -33,5 +33,5 @@ interface ResponseType
      *
      * @return ResponseInterface|null
      */
-    public function getResponse();
+    public function getResponse(): ?ResponseInterface;
 }

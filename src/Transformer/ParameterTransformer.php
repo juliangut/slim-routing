@@ -21,10 +21,10 @@ interface ParameterTransformer
     /**
      * Transform parameters.
      *
-     * @param array $parameters
-     * @param array $definitions
+     * @param mixed[] $parameters
+     * @param mixed[] $definitions
      *
-     * @return array
+     * @return mixed[]
      */
     public function transform(array $parameters, array $definitions): array;
 }

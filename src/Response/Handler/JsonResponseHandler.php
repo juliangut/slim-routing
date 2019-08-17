@@ -15,14 +15,13 @@ namespace Jgut\Slim\Routing\Response\Handler;
 
 use Jgut\Slim\Routing\Response\PayloadResponse;
 use Jgut\Slim\Routing\Response\ResponseType;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Slim\Http\Body;
-use Slim\Http\Response;
 
 /**
  * Generic JSON response handler.
  */
-class JsonResponseHandler implements ResponseTypeHandler
+class JsonResponseHandler extends AbstractResponseHandler
 {
     /**
      * Json encode flags.
@@ -32,12 +31,15 @@ class JsonResponseHandler implements ResponseTypeHandler
     protected $jsonFlags;
 
     /**
-     * JsonResponseTypeHandler constructor.
+     * JsonResponseHandler constructor.
      *
-     * @param bool $prettify
+     * @param ResponseFactoryInterface $responseFactory
+     * @param bool                     $prettify
      */
-    public function __construct(bool $prettify = false)
+    public function __construct(ResponseFactoryInterface $responseFactory, bool $prettify = false)
     {
+        parent::__construct($responseFactory);
+
         $jsonFlags = \JSON_UNESCAPED_UNICODE | \JSON_UNESCAPED_SLASHES | \JSON_PRESERVE_ZERO_FRACTION;
         if ($prettify) {
             $jsonFlags |= \JSON_PRETTY_PRINT;
@@ -61,14 +63,9 @@ class JsonResponseHandler implements ResponseTypeHandler
 
         $responseContent = \json_encode($responseType->getPayload(), $this->jsonFlags);
 
-        $response = $responseType->getResponse();
-        if (!$response instanceof ResponseInterface) {
-            $response = new Response();
-        }
+        $response = $this->getResponse($responseType);
+        $response->getBody()->write((string) $responseContent);
 
-        $body = new Body(\fopen('php://temp', 'rb+'));
-        $body->write($responseContent);
-
-        return $response->withBody($body);
+        return $response;
     }
 }

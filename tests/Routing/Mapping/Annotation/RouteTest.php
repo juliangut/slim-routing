@@ -29,12 +29,12 @@ class RouteTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->annotation = new Route([]);
     }
 
-    public function testDefaults()
+    public function testDefaults(): void
     {
         self::assertEquals('', $this->annotation->getName());
         self::assertNull($this->annotation->getTransformer());
@@ -47,7 +47,7 @@ class RouteTest extends TestCase
      * @expectedException \Jgut\Mapping\Exception\AnnotationException
      * @expectedExceptionMessage Route name must not contain spaces
      */
-    public function testWrongName()
+    public function testWrongName(): void
     {
         $this->annotation->setName('a name');
     }
@@ -56,19 +56,19 @@ class RouteTest extends TestCase
      * @expectedException \Jgut\Mapping\Exception\AnnotationException
      * @expectedExceptionMessage Route name can not be empty
      */
-    public function testEmptyName()
+    public function testEmptyName(): void
     {
         $this->annotation->setName('');
     }
 
-    public function testName()
+    public function testName(): void
     {
         $this->annotation->setName('routeName');
 
         self::assertEquals('routeName', $this->annotation->getName());
     }
 
-    public function testTransformer()
+    public function testTransformer(): void
     {
         $this->annotation->setTransformer('transformer');
 
@@ -79,7 +79,7 @@ class RouteTest extends TestCase
      * @expectedException \Jgut\Mapping\Exception\AnnotationException
      * @expectedExceptionMessage Route annotation methods must be strings. "integer" given
      */
-    public function testInvalidMethodsType()
+    public function testInvalidMethodsType(): void
     {
         $this->annotation->setMethods([10]);
     }
@@ -88,7 +88,7 @@ class RouteTest extends TestCase
      * @expectedException \Jgut\Mapping\Exception\AnnotationException
      * @expectedExceptionMessage Route annotation methods can not be empty
      */
-    public function testEmptyMethods()
+    public function testEmptyMethods(): void
     {
         $this->annotation->setMethods('');
     }
@@ -97,12 +97,12 @@ class RouteTest extends TestCase
      * @expectedException \Jgut\Mapping\Exception\AnnotationException
      * @expectedExceptionMessage Route "ANY" method cannot be defined with other methods
      */
-    public function testWrongMethodCount()
+    public function testWrongMethodCount(): void
     {
         $this->annotation->setMethods(['GET', 'ANY']);
     }
 
-    public function testMethods()
+    public function testMethods(): void
     {
         $methods = ['GET', 'POST'];
 
@@ -111,14 +111,14 @@ class RouteTest extends TestCase
         self::assertEquals($methods, $this->annotation->getMethods());
     }
 
-    public function testPriority()
+    public function testPriority(): void
     {
         $this->annotation->setPriority(-10);
 
         self::assertEquals(-10, $this->annotation->getPriority());
     }
 
-    public function testXmlHttpRequest()
+    public function testXmlHttpRequest(): void
     {
         $this->annotation->setXmlHttpRequest(true);
 

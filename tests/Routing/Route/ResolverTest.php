@@ -16,7 +16,7 @@ namespace Jgut\Slim\Routing\Tests\Route;
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
-use Jgut\Slim\Routing\Route\Resolver;
+use Jgut\Slim\Routing\Route\RouteResolver;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -25,16 +25,16 @@ use PHPUnit\Framework\TestCase;
 class ResolverTest extends TestCase
 {
     /**
-     * @var Resolver
+     * @var RouteResolver
      */
     protected $resolver;
 
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->resolver = new Resolver(new Configuration());
+        $this->resolver = new RouteResolver(new Configuration());
     }
 
     /**
@@ -43,7 +43,7 @@ class ResolverTest extends TestCase
      * @param RouteMetadata $route
      * @param string        $name
      */
-    public function testRouteName(RouteMetadata $route, string $name = null)
+    public function testRouteName(RouteMetadata $route, string $name = null): void
     {
         self::assertEquals($name, $this->resolver->getName($route));
     }
@@ -73,7 +73,7 @@ class ResolverTest extends TestCase
      * @param RouteMetadata $route
      * @param array         $middleware
      */
-    public function testRouteMiddleware(RouteMetadata $route, array $middleware)
+    public function testRouteMiddleware(RouteMetadata $route, array $middleware): void
     {
         self::assertEquals($middleware, $this->resolver->getMiddleware($route));
     }
@@ -103,7 +103,7 @@ class ResolverTest extends TestCase
      * @param RouteMetadata $route
      * @param string        $pattern
      */
-    public function testRoutePattern(RouteMetadata $route, string $pattern)
+    public function testRoutePattern(RouteMetadata $route, string $pattern): void
     {
         self::assertEquals($pattern, $this->resolver->getPattern($route));
     }
@@ -158,7 +158,7 @@ class ResolverTest extends TestCase
      * @expectedException \RuntimeException
      * @expectedExceptionMessage There are duplicated route parameters: id
      */
-    public function testDuplicatedParameter()
+    public function testDuplicatedParameter(): void
     {
         $route = (new RouteMetadata())
             ->setPattern('entity/{id}')
@@ -171,14 +171,14 @@ class ResolverTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Placeholder "~245" is not a known alias or a valid regex pattern
      */
-    public function testInvalidPlaceholder()
+    public function testInvalidPlaceholder(): void
     {
         $route = (new RouteMetadata())->setPlaceholders(['id', '~245']);
 
         $this->resolver->getPattern($route);
     }
 
-    public function testRouteSorting()
+    public function testRouteSorting(): void
     {
         $routes = [
             (new RouteMetadata())->setPriority(10),
@@ -197,7 +197,7 @@ class ResolverTest extends TestCase
      * @expectedException \RuntimeException
      * @expectedExceptionMessage There are duplicated route names: route, name
      */
-    public function testDuplicatedRouteName()
+    public function testDuplicatedRouteName(): void
     {
         $routes = [
             (new RouteMetadata())->setName('route'),
@@ -213,7 +213,7 @@ class ResolverTest extends TestCase
      * @expectedException \RuntimeException
      * @expectedExceptionMessage There are duplicated routes: GET /route/{[a-zA-Z0-9]+}
      */
-    public function testDuplicatedRoutePath()
+    public function testDuplicatedRoutePath(): void
     {
         $nonDuplicatedRoutes = [
             (new RouteMetadata())

@@ -46,7 +46,7 @@ class Group extends AbstractAnnotation
      *
      * @return string|null
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return $this->parent;
     }
@@ -56,7 +56,7 @@ class Group extends AbstractAnnotation
      *
      * @param string $parent
      *
-     * @return static
+     * @return self
      */
     public function setParent(string $parent): self
     {
@@ -70,7 +70,7 @@ class Group extends AbstractAnnotation
      *
      * @return string|null
      */
-    public function getPrefix()
+    public function getPrefix(): ?string
     {
         return $this->prefix;
     }
@@ -82,7 +82,7 @@ class Group extends AbstractAnnotation
      *
      * @throws AnnotationException
      *
-     * @return static
+     * @return self
      */
     public function setPrefix(string $prefix): self
     {

@@ -29,18 +29,18 @@ class GroupMetadataTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->group = new GroupMetadata();
     }
 
-    public function testDefaults()
+    public function testDefaults(): void
     {
         self::assertNull($this->group->getParent());
         self::assertNull($this->group->getPrefix());
     }
 
-    public function testParent()
+    public function testParent(): void
     {
         $group = $this->getMockBuilder(GroupMetadata::class)
             ->getMock();
@@ -51,7 +51,7 @@ class GroupMetadataTest extends TestCase
         self::assertEquals($group, $this->group->getParent());
     }
 
-    public function testPrefix()
+    public function testPrefix(): void
     {
         $this->group->setPrefix('prefix');
 

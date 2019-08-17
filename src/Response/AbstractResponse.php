@@ -41,7 +41,7 @@ abstract class AbstractResponse implements ResponseType
      * @param ServerRequestInterface $request
      * @param ResponseInterface|null $response
      */
-    public function __construct(ServerRequestInterface $request, ResponseInterface $response = null)
+    public function __construct(ServerRequestInterface $request, ?ResponseInterface $response = null)
     {
         $this->request = $request;
         $this->response = $response;
@@ -58,7 +58,7 @@ abstract class AbstractResponse implements ResponseType
     /**
      * {@inheritdoc}
      */
-    public function getResponse()
+    public function getResponse(): ?ResponseInterface
     {
         return $this->response;
     }

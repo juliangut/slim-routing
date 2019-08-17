@@ -35,7 +35,7 @@ class SingleRoute
      *
      * @param int $id
      */
-    public function actionOne(int $id)
+    public function actionOne(int $id): void
     {
     }
 }

@@ -22,7 +22,7 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class PayloadResponseTest extends TestCase
 {
-    public function testResponseType()
+    public function testResponseType(): void
     {
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();

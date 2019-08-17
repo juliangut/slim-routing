@@ -25,7 +25,7 @@ abstract class AbstractTransformer implements ParameterTransformer
     {
         \array_walk(
             $parameters,
-            function (string &$parameter, string $name) use ($definitions) {
+            function (&$parameter, string $name) use ($definitions): void {
                 if (isset($definitions[$name])) {
                     $type = $definitions[$name];
                     $parameter = \in_array($type, ['string', 'int', 'float', 'bool'], true)

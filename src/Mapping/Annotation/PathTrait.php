@@ -44,7 +44,7 @@ trait PathTrait
      *
      * @return string|null
      */
-    public function getPattern()
+    public function getPattern(): ?string
     {
         return $this->pattern;
     }
@@ -54,7 +54,7 @@ trait PathTrait
      *
      * @param string $pattern
      *
-     * @return static
+     * @return self
      */
     public function setPattern(string $pattern): self
     {
@@ -66,7 +66,7 @@ trait PathTrait
     /**
      * Get pattern placeholders regex.
      *
-     * @return array
+     * @return string[]
      */
     public function getPlaceholders(): array
     {
@@ -76,9 +76,9 @@ trait PathTrait
     /**
      * Set pattern placeholders regex.
      *
-     * @param array $placeholders
+     * @param string[] $placeholders
      *
-     * @return static
+     * @return self
      */
     public function setPlaceholders(array $placeholders): self
     {
@@ -90,7 +90,7 @@ trait PathTrait
     /**
      * Get parameters.
      *
-     * @return array
+     * @return mixed[]
      */
     public function getParameters(): array
     {
@@ -100,9 +100,9 @@ trait PathTrait
     /**
      * Set parameters.
      *
-     * @param array $parameters
+     * @param mixed[] $parameters
      *
-     * @return static
+     * @return self
      */
     public function setParameters(array $parameters): self
     {

@@ -13,21 +13,16 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Route;
 
-use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
-use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandler;
-use Jgut\Slim\Routing\Response\ResponseType;
 use Jgut\Slim\Routing\Route\Route;
 use Jgut\Slim\Routing\Tests\Stubs\AbstractTransformerStub;
-use Jgut\Slim\Routing\Tests\Stubs\RouteStub;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\Handlers\Strategies\RequestResponse;
-use Slim\Http\Environment;
-use Slim\Http\Request;
-use Slim\Http\Response;
 use Slim\Interfaces\CallableResolverInterface;
+use Zend\Diactoros\ResponseFactory;
+use Zend\Diactoros\ServerRequestFactory;
 
 /**
  * Response type aware route tests.
@@ -42,89 +37,16 @@ class RouteTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->request = Request::createFromEnvironment(Environment::mock());
+        $this->request = (new ServerRequestFactory())->createServerRequest('GET', '/');
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessageRegExp /No handler registered for response type ".+"/
-     */
-    public function testNoHandler()
+    public function testNonXmlHttpRequestRequest(): void
     {
-        $responseType = $this->getMockBuilder(ResponseType::class)
+        $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
-        /* @var ResponseType $responseType */
-
-        $configuration = $this->getMockBuilder(Configuration::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $configuration->expects($this->once())
-            ->method('getResponseHandlers')
-            ->will($this->returnValue([]));
-        /* @var Configuration $configuration */
-
-        $route = new Route(
-            'GET',
-            '/',
-            function () use ($responseType) {
-                return $responseType;
-            },
-            $configuration
-        );
-
-        $route->run($this->request, new Response());
-    }
-
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessageRegExp /Response handler should implement .+, "stdClass" given/
-     */
-    public function testInvalidHandler()
-    {
-        $responseType = $this->getMockBuilder(ResponseType::class)
-            ->getMock();
-        /* @var ResponseType $responseType */
-
-        $configuration = $this->getMockBuilder(Configuration::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $configuration->expects($this->once())
-            ->method('getResponseHandlers')
-            ->will($this->returnValue([\get_class($responseType) => 'unknown']));
-        /* @var Configuration $configuration */
-
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->getMock();
-        $container->expects($this->any())
-            ->method('get')
-            ->will($this->returnValueMap([
-                ['foundHandler', new RequestResponse()],
-                ['unknown', new \stdClass()],
-            ]));
-        /* @var ContainerInterface $container */
-
-        $route = new RouteStub(
-            'GET',
-            '/',
-            function () use ($responseType) {
-                return $responseType;
-            },
-            $configuration
-        );
-        $route->setContainer($container);
-
-        $route->run($this->request, new Response());
-    }
-
-    public function testNonXmlHttpRequestRequest()
-    {
-        $configuration = $this->getMockBuilder(Configuration::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var Configuration $configuration */
-
+        /** @var CallableResolverInterface $callableResolver */
         $metadata = $this->getMockBuilder(RouteMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -134,42 +56,78 @@ class RouteTest extends TestCase
         /* @var RouteMetadata $metadata */
 
         $route = new Route(
-            'GET',
+            ['GET'],
             '/',
-            function ($request, $response) {
-                return $response;
+            function (): void {
             },
-            $configuration,
+            new ResponseFactory(),
+            $callableResolver,
             $metadata
         );
 
-        $response = $route->run($this->request, new Response());
+        $response = $route->run($this->request);
 
         $this->assertEquals(400, $response->getStatusCode());
     }
 
-    public function testParametersTransform()
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessageRegExp /^Parameter transformer should implement .+\\ParameterTransformer, ".+" given$/
+     */
+    public function testWrongParameterTransformer(): void
     {
-        $configuration = $this->getMockBuilder(Configuration::class)
-            ->disableOriginalConstructor()
+        $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
-        /* @var Configuration $configuration */
-
-        $resolver = $this->getMockBuilder(CallableResolverInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $resolver->expects($this->once())
-            ->method('resolve')
-            ->will($this->returnValue(function () {
-            }));
-        /* @var CallableResolverInterface $resolver */
-
+        /** @var CallableResolverInterface $callableResolver */
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $container->expects($this->any())
             ->method('get')
-            ->will($this->onConsecutiveCalls($resolver, new RequestResponse(), new AbstractTransformerStub(10)));
+            ->will($this->returnValue(new \stdClass()));
+        /* @var ContainerInterface $container */
+
+        $metadata = $this->getMockBuilder(RouteMetadata::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $metadata->expects($this->once())
+            ->method('getTransformer')
+            ->will($this->returnValue('transformer'));
+        /* @var RouteMetadata $metadata */
+
+        $route = new Route(
+            ['GET'],
+            '/',
+            function (): void {
+            },
+            new ResponseFactory(),
+            $callableResolver,
+            $metadata,
+            $container
+        );
+
+        $route->run($this->request);
+    }
+
+    public function testParametersTransform(): void
+    {
+        $callable = function ($request, $response, array $args) {
+            $this->assertEquals(10, $args['id']);
+
+            return $response;
+        };
+        $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
+            ->getMock();
+        $callableResolver->expects($this->any())
+            ->method('resolve')
+            ->will($this->returnValue($callable));
+        /** @var CallableResolverInterface $callableResolver */
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $container->expects($this->any())
+            ->method('get')
+            ->will($this->returnValue(new AbstractTransformerStub(10)));
         /* @var ContainerInterface $container */
 
         $metadata = $this->getMockBuilder(RouteMetadata::class)
@@ -184,100 +142,38 @@ class RouteTest extends TestCase
         /* @var RouteMetadata $metadata */
 
         $route = new Route(
-            'GET',
+            ['GET'],
             '/',
-            function ($request, $response, int $id) {
-                $this->assertEquals(10, $id);
-
-                return $response;
-            },
-            $configuration,
-            $metadata
+            $callable,
+            new ResponseFactory(),
+            $callableResolver,
+            $metadata,
+            $container
         );
-        $route->setContainer($container);
+        $route->setArgument('id', '10');
 
-        $route->run($this->request, new Response());
+        $route->run($this->request);
     }
 
-    public function testHandleResponseType()
+    public function testHandleResponse(): void
     {
-        $responseType = $this->getMockBuilder(ResponseType::class)
+        $callable = function ($request, $response) {
+            return $response;
+        };
+        $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
-        /* @var ResponseType $responseType */
-
-        $response = new Response();
-
-        $responseHandler = $this->getMockBuilder(ResponseTypeHandler::class)
-            ->getMock();
-        $responseHandler->expects($this->once())
-            ->method('handle')
-            ->will($this->returnValue($response));
-        /* @var ResponseTypeHandler $responseHandler */
-
-        $configuration = $this->getMockBuilder(Configuration::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $configuration->expects($this->once())
-            ->method('getResponseHandlers')
-            ->will($this->returnValue([\get_class($responseType) => $responseHandler]));
-        /* @var Configuration $configuration */
-
-        $metadata = $this->getMockBuilder(RouteMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var RouteMetadata $metadata */
-
+        $callableResolver->expects($this->any())
+            ->method('resolve')
+            ->will($this->returnValue($callable));
+        /** @var CallableResolverInterface $callableResolver */
         $route = new Route(
-            'GET',
+            ['GET'],
             '/',
-            function () use ($responseType) {
-                return $responseType;
-            },
-            $configuration,
-            $metadata
+            $callable,
+            new ResponseFactory(),
+            $callableResolver
         );
 
-        self::assertEquals($metadata, $route->getMetadata());
-        self::assertEquals($response, $route->run($this->request, new Response()));
-    }
-
-    public function testHandleResponseInterface()
-    {
-        $configuration = $this->getMockBuilder(Configuration::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var Configuration $configuration */
-
-        $response = new Response();
-
-        $route = new Route(
-            'GET',
-            '/',
-            function ($request, $response) {
-                return $response;
-            },
-            $configuration
-        );
-
-        $this->assertEquals($response, $route->run($this->request, $response));
-    }
-
-    public function testHandleStringResponse()
-    {
-        $configuration = $this->getMockBuilder(Configuration::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /* @var Configuration $configuration */
-
-        $route = new Route(
-            'GET',
-            '/',
-            function () {
-                return 'response';
-            },
-            $configuration
-        );
-
-        $this->assertEquals('response', (string) $route->run($this->request, new Response())->getBody());
+        $this->assertInstanceOf(ResponseInterface::class, $route->run($this->request));
     }
 }

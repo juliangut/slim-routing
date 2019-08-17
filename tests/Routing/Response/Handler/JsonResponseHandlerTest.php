@@ -17,8 +17,10 @@ use Jgut\Slim\Routing\Response\Handler\JsonResponseHandler;
 use Jgut\Slim\Routing\Response\PayloadResponse;
 use Jgut\Slim\Routing\Tests\Stubs\ResponseStub;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\ResponseFactory;
 
 /**
  * Generic JSON response handler tests.
@@ -33,7 +35,7 @@ class JsonResponseHandlerTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
@@ -43,23 +45,31 @@ class JsonResponseHandlerTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Response type should be an instance of Jgut\Slim\Routing\Response\PayloadResponse
      */
-    public function testInvalidResponseType()
+    public function testInvalidResponseType(): void
     {
-        (new JsonResponseHandler())->handle(new ResponseStub($this->request));
+        $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
+            ->getMock();
+        /* @var ResponseFactoryInterface $responseFactory */
+
+        (new JsonResponseHandler($responseFactory))->handle(new ResponseStub($this->request));
     }
 
-    public function testHandleCollapsed()
+    public function testHandleCollapsed(): void
     {
-        $response = (new JsonResponseHandler())
+        $responseFactory = new ResponseFactory();
+
+        $response = (new JsonResponseHandler($responseFactory))
             ->handle(new PayloadResponse(['data' => ['param' => 'value']], $this->request));
 
         self::assertInstanceOf(ResponseInterface::class, $response);
         self::assertEquals('{"data":{"param":"value"}}', (string) $response->getBody());
     }
 
-    public function testHandlePrettified()
+    public function testHandlePrettified(): void
     {
-        $response = (new JsonResponseHandler(true))
+        $responseFactory = new ResponseFactory();
+
+        $response = (new JsonResponseHandler($responseFactory, true))
             ->handle(new PayloadResponse(['data' => ['param' => 'value']], $this->request));
 
         self::assertInstanceOf(ResponseInterface::class, $response);

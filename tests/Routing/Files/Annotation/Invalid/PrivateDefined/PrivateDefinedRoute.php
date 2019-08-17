@@ -27,7 +27,7 @@ class PrivateDefinedRoute
      *     pattern="/private"
      * )
      */
-    private function privateAction()
+    private function privateAction(): void
     {
     }
 }

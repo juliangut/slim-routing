@@ -20,7 +20,7 @@ use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 /**
  * Route resolver.
  */
-class Resolver
+class RouteResolver
 {
     /**
      * Routing configuration.
@@ -46,7 +46,7 @@ class Resolver
      *
      * @return string|null
      */
-    public function getName(RouteMetadata $route)
+    public function getName(RouteMetadata $route): ?string
     {
         if ($route->getName() === null) {
             return null;
@@ -110,7 +110,7 @@ class Resolver
         $pattern = '/' . (\count($patterns) === 0 ? '' : \implode('/', $patterns));
         $placeholders = $this->getPlaceholders($route);
 
-        if (\preg_match_all('/\{([a-zA-Z_][a-zA-Z0-9_-]*)\}/', $pattern, $parameter)) {
+        if ((bool) \preg_match_all('/\{([a-zA-Z_][a-zA-Z0-9_-]*)\}/', $pattern, $parameter) !== false) {
             $parameters = $parameter[1];
 
             $duplicatedParameters = \array_unique(\array_diff_assoc($parameters, \array_unique($parameters)));
@@ -120,11 +120,11 @@ class Resolver
                 );
             }
 
-            foreach ($parameters as $parameter) {
-                if (\array_key_exists($parameter, $placeholders)) {
+            foreach ($parameters as $param) {
+                if (\array_key_exists($param, $placeholders)) {
                     $pattern = \str_replace(
-                        '{' . $parameter . '}',
-                        \sprintf('{%s:%s}', $parameter, $placeholders[$parameter]),
+                        '{' . $param . '}',
+                        \sprintf('{%s:%s}', $param, $placeholders[$param]),
                         $pattern
                     );
                 }
@@ -141,7 +141,7 @@ class Resolver
      *
      * @throws \InvalidArgumentException
      *
-     * @return array
+     * @return string[]
      */
     protected function getPlaceholders(RouteMetadata $route): array
     {
@@ -182,7 +182,7 @@ class Resolver
      *
      * @throws \RuntimeException
      */
-    public function checkDuplicatedRoutes(array $routes)
+    public function checkDuplicatedRoutes(array $routes): void
     {
         $this->checkDuplicatedRouteNames($routes);
         $this->checkDuplicatedRoutePaths($routes);
@@ -195,7 +195,7 @@ class Resolver
      *
      * @throws \RuntimeException
      */
-    protected function checkDuplicatedRouteNames(array $routes)
+    protected function checkDuplicatedRouteNames(array $routes): void
     {
         $names = \array_filter(\array_map(
             function (RouteMetadata $route) {
@@ -217,7 +217,7 @@ class Resolver
      *
      * @throws \RuntimeException
      */
-    protected function checkDuplicatedRoutePaths(array $routes)
+    protected function checkDuplicatedRoutePaths(array $routes): void
     {
         $paths = \array_map(
             function (RouteMetadata $route) {
@@ -266,8 +266,8 @@ class Resolver
      * Stable usort.
      * Keeps original order when sorting function returns 0.
      *
-     * @param array    $array
-     * @param callable $sortFunction
+     * @param RouteMetadata[] $array
+     * @param callable        $sortFunction
      *
      * @return bool
      */
@@ -275,7 +275,7 @@ class Resolver
     {
         \array_walk(
             $array,
-            function (&$item, $key) {
+            function (&$item, $key): void {
                 $item = [$key, $item];
             }
         );
@@ -291,7 +291,7 @@ class Resolver
 
         \array_walk(
             $array,
-            function (&$item) {
+            function (&$item): void {
                 $item = $item[1];
             }
         );

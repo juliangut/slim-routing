@@ -29,17 +29,17 @@ class SnakeCaseTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->naming = new SnakeCase();
     }
 
-    public function testSinglePartName()
+    public function testSinglePartName(): void
     {
         self::assertEquals('name', $this->naming->combine(['name']));
     }
 
-    public function testMultiPartName()
+    public function testMultiPartName(): void
     {
         self::assertEquals('multi_part_name', $this->naming->combine(['multi', 'part', 'name']));
     }

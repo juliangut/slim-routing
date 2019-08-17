@@ -17,8 +17,10 @@ use Jgut\Slim\Routing\Response\Handler\XmlResponseHandler;
 use Jgut\Slim\Routing\Response\PayloadResponse;
 use Jgut\Slim\Routing\Tests\Stubs\ResponseStub;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\ResponseFactory;
 
 /**
  * Generic XML response handler tests.
@@ -33,7 +35,7 @@ class XmlResponseHandlerTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
@@ -43,14 +45,20 @@ class XmlResponseHandlerTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Response type should be an instance of Jgut\Slim\Routing\Response\PayloadResponse
      */
-    public function testInvalidResponseType()
+    public function testInvalidResponseType(): void
     {
-        (new XmlResponseHandler())->handle(new ResponseStub($this->request));
+        $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
+            ->getMock();
+        /* @var ResponseFactoryInterface $responseFactory */
+
+        (new XmlResponseHandler($responseFactory))->handle(new ResponseStub($this->request));
     }
 
-    public function testHandleCollapsed()
+    public function testHandleCollapsed(): void
     {
-        $response = (new XmlResponseHandler())
+        $responseFactory = new ResponseFactory();
+
+        $response = (new XmlResponseHandler($responseFactory))
             ->handle(new PayloadResponse(['data' => ['param' => 'value']], $this->request));
 
         self::assertInstanceOf(ResponseInterface::class, $response);
@@ -60,9 +68,11 @@ class XmlResponseHandlerTest extends TestCase
         );
     }
 
-    public function testHandlePrettified()
+    public function testHandlePrettified(): void
     {
-        $response = (new XmlResponseHandler(true))
+        $responseFactory = new ResponseFactory();
+
+        $response = (new XmlResponseHandler($responseFactory, true))
             ->handle(new PayloadResponse(['data' => ['param' => 'value']], $this->request));
 
         self::assertInstanceOf(ResponseInterface::class, $response);

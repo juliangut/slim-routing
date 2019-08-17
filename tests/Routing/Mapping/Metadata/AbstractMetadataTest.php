@@ -29,12 +29,12 @@ class AbstractMetadataTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->metadata = new AbstractMetadataStub();
     }
 
-    public function testDefaults()
+    public function testDefaults(): void
     {
         self::assertNull($this->metadata->getPattern());
         self::assertEquals([], $this->metadata->getPlaceholders());
@@ -46,7 +46,7 @@ class AbstractMetadataTest extends TestCase
      * @expectedException \Jgut\Mapping\Exception\MetadataException
      * @expectedExceptionMessage Pattern can not be empty
      */
-    public function testEmptyPattern()
+    public function testEmptyPattern(): void
     {
         $this->metadata->setPattern('');
     }
@@ -55,12 +55,12 @@ class AbstractMetadataTest extends TestCase
      * @expectedException \Jgut\Mapping\Exception\MetadataException
      * @expectedExceptionMessage Placeholder matching "[0-9]+" must be defined on placeholders parameter
      */
-    public function testInvalidPattern()
+    public function testInvalidPattern(): void
     {
         $this->metadata->setPattern('{path}/to/{id:[0-9]+}');
     }
 
-    public function testPattern()
+    public function testPattern(): void
     {
         $path = 'home/route/path/{id}';
 
@@ -69,7 +69,7 @@ class AbstractMetadataTest extends TestCase
         self::assertEquals($path, $this->metadata->getPattern());
     }
 
-    public function testPlaceholders()
+    public function testPlaceholders(): void
     {
         $placeholders = ['id' => '[0-9]{5}'];
 
@@ -78,7 +78,7 @@ class AbstractMetadataTest extends TestCase
         self::assertEquals($placeholders, $this->metadata->getPlaceholders());
     }
 
-    public function testParameters()
+    public function testParameters(): void
     {
         $parameters = ['id' => 'int'];
 
@@ -87,7 +87,7 @@ class AbstractMetadataTest extends TestCase
         self::assertEquals($parameters, $this->metadata->getParameters());
     }
 
-    public function testMiddleware()
+    public function testMiddleware(): void
     {
         $middleware = ['middlewareOne', 'middlewareTwo'];
 

@@ -18,8 +18,7 @@ use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Mapping\Driver\DriverFactory;
 use Jgut\Slim\Routing\Naming\CamelCase;
 use Jgut\Slim\Routing\Naming\SnakeCase;
-use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandler;
-use Jgut\Slim\Routing\Route\Resolver;
+use Jgut\Slim\Routing\Route\RouteResolver;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -31,12 +30,12 @@ class ConfigurationTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Configurations must be an iterable
      */
-    public function testInvalidConfigurations()
+    public function testInvalidConfigurations(): void
     {
         new Configuration('');
     }
 
-    public function testDefaults()
+    public function testDefaults(): void
     {
         $defaultAliasList = [
             'any' => '[^}]+',
@@ -55,7 +54,7 @@ class ConfigurationTest extends TestCase
         self::assertEmpty($configuration->getSources());
         self::assertEquals($defaultAliasList, $configuration->getPlaceholderAliases());
         self::assertInstanceOf(MetadataResolver::class, $configuration->getMetadataResolver());
-        self::assertInstanceOf(Resolver::class, $configuration->getRouteResolver());
+        self::assertInstanceOf(RouteResolver::class, $configuration->getRouteResolver());
         self::assertInstanceOf(SnakeCase::class, $configuration->getNamingStrategy());
     }
 
@@ -63,21 +62,21 @@ class ConfigurationTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The following configuration parameters are not recognized: unknown
      */
-    public function testUnknownParameter()
+    public function testUnknownParameter(): void
     {
-        new Configuration(['unknown' => 'unknown']);
+        new Configuration(new \ArrayIterator(['unknown' => 'unknown']));
     }
 
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessageRegExp /Mapping source must be a string, array or .+\DriverInterface, integer given/
      */
-    public function testBadSource()
+    public function testBadSource(): void
     {
         new Configuration(['sources' => [10]]);
     }
 
-    public function testSourcePaths()
+    public function testSourcePaths(): void
     {
         $paths = [
             '/path/to/directory',
@@ -93,12 +92,12 @@ class ConfigurationTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Placeholder pattern "notRegex~" is not a valid regex
      */
-    public function testBadPlaceholderAlias()
+    public function testBadPlaceholderAlias(): void
     {
         new Configuration(['placeholderAliases' => ['tlf' => 'notRegex~']]);
     }
 
-    public function testPlaceholderAliases()
+    public function testPlaceholderAliases(): void
     {
         $aliasList = [
             'any' => '[^}]+',
@@ -122,7 +121,7 @@ class ConfigurationTest extends TestCase
         self::assertEquals($aliasList, $configuration->getPlaceholderAliases());
     }
 
-    public function testMetadataResolver()
+    public function testMetadataResolver(): void
     {
         $metadataResolver = new MetadataResolver(new DriverFactory());
 
@@ -131,35 +130,19 @@ class ConfigurationTest extends TestCase
         self::assertEquals($metadataResolver, $configuration->getMetadataResolver());
     }
 
-    public function testRouteResolver()
+    public function testRouteResolver(): void
     {
-        $routeResolver = new Resolver(new Configuration());
+        $routeResolver = new RouteResolver(new Configuration());
 
         $configuration = new Configuration(['routeResolver' => $routeResolver]);
 
         self::assertEquals($routeResolver, $configuration->getRouteResolver());
     }
 
-    public function testNamingStrategy()
+    public function testNamingStrategy(): void
     {
         $configuration = new Configuration(['namingStrategy' => new CamelCase()]);
 
         self::assertInstanceOf(CamelCase::class, $configuration->getNamingStrategy());
-    }
-
-    public function testResponseHandlers()
-    {
-        $handler = $this->getMockBuilder(ResponseTypeHandler::class)
-            ->getMock();
-        /* @var ResponseTypeHandler $handler */
-        $handlers = [
-            'responseTypeClass' => $handler,
-        ];
-
-        $configuration = new Configuration([
-            'responseHandlers' => $handlers,
-        ]);
-
-        self::assertEquals($handlers, $configuration->getResponseHandlers());
     }
 }

@@ -23,7 +23,7 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class AbstractResponseTest extends TestCase
 {
-    public function testResponseType()
+    public function testResponseType(): void
     {
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();

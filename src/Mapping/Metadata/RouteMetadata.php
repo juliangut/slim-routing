@@ -63,11 +63,11 @@ class RouteMetadata extends AbstractMetadata
     protected $xmlHttpRequest = false;
 
     /**
-     * Route invokable.
+     * Route invocable.
      *
-     * @var callable
+     * @var callable|mixed[]|string
      */
-    protected $invokable;
+    protected $invocable;
 
     /**
      * Route load priority.
@@ -81,7 +81,7 @@ class RouteMetadata extends AbstractMetadata
      *
      * @return string|null
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -91,7 +91,7 @@ class RouteMetadata extends AbstractMetadata
      *
      * @param string $name
      *
-     * @return static
+     * @return self
      */
     public function setName(string $name): self
     {
@@ -105,7 +105,7 @@ class RouteMetadata extends AbstractMetadata
      *
      * @return GroupMetadata|null
      */
-    public function getGroup()
+    public function getGroup(): ?GroupMetadata
     {
         return $this->group;
     }
@@ -115,7 +115,7 @@ class RouteMetadata extends AbstractMetadata
      *
      * @param GroupMetadata $group
      *
-     * @return static
+     * @return self
      */
     public function setGroup(GroupMetadata $group): self
     {
@@ -158,7 +158,7 @@ class RouteMetadata extends AbstractMetadata
      *
      * @return string|null
      */
-    public function getTransformer()
+    public function getTransformer(): ?string
     {
         return $this->transformer;
     }
@@ -168,7 +168,7 @@ class RouteMetadata extends AbstractMetadata
      *
      * @param string $transformer
      *
-     * @return static
+     * @return self
      */
     public function setTransformer(string $transformer): self
     {
@@ -180,7 +180,7 @@ class RouteMetadata extends AbstractMetadata
     /**
      * Get route methods.
      *
-     * @return array
+     * @return string[]
      */
     public function getMethods(): array
     {
@@ -190,9 +190,9 @@ class RouteMetadata extends AbstractMetadata
     /**
      * Set route methods.
      *
-     * @param array $methods
+     * @param string[] $methods
      *
-     * @return static
+     * @return self
      */
     public function setMethods(array $methods): self
     {
@@ -226,31 +226,31 @@ class RouteMetadata extends AbstractMetadata
     }
 
     /**
-     * Get route invokable.
+     * Get route invocable.
      *
-     * @return callable
+     * @return callable|mixed[]|string
      */
-    public function getInvokable()
+    public function getInvocable()
     {
-        return $this->invokable;
+        return $this->invocable;
     }
 
     /**
-     * Set route invokable.
+     * Set route invocable.
      *
-     * @param callable $invokable
+     * @param mixed $invocable
      *
      * @throws MetadataException
      *
-     * @return static
+     * @return self
      */
-    public function setInvokable($invokable): self
+    public function setInvocable($invocable): self
     {
-        if (!\is_string($invokable) && !\is_array($invokable) && !\is_callable($invokable)) {
-            throw new MetadataException('Route invokable does not seem to be supported by Slim router');
+        if (!\is_string($invocable) && !\is_array($invocable) && !\is_callable($invocable)) {
+            throw new MetadataException('Route invocable does not seem to be supported by Slim router');
         }
 
-        $this->invokable = $invokable;
+        $this->invocable = $invocable;
 
         return $this;
     }
@@ -270,7 +270,7 @@ class RouteMetadata extends AbstractMetadata
      *
      * @param int $priority
      *
-     * @return static
+     * @return self
      */
     public function setPriority(int $priority): self
     {

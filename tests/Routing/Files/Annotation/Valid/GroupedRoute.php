@@ -33,7 +33,7 @@ class GroupedRoute
      *     middleware={"twoMiddleware"},
      * )
      */
-    public function actionTwo()
+    public function actionTwo(): void
     {
     }
 
@@ -43,7 +43,7 @@ class GroupedRoute
      *     placeholders={"id":"\d+"},
      * )
      */
-    public function actionThree()
+    public function actionThree(): void
     {
     }
 }

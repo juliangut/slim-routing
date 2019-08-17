@@ -15,15 +15,14 @@ namespace Jgut\Slim\Routing\Response\Handler;
 
 use Jgut\Slim\Routing\Response\ResponseType;
 use Jgut\Slim\Routing\Response\ViewResponse;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Slim\Http\Body;
-use Slim\Http\Response;
 use Slim\Views\Twig;
 
 /**
  * Twig view renderer response handler.
  */
-class TwigViewResponseHandler implements ResponseTypeHandler
+class TwigViewResponseHandler extends AbstractResponseHandler
 {
     /**
      * Twig renderer.
@@ -35,10 +34,13 @@ class TwigViewResponseHandler implements ResponseTypeHandler
     /**
      * TwigViewResponseHandler constructor.
      *
-     * @param Twig $viewRenderer
+     * @param ResponseFactoryInterface $responseFactory
+     * @param Twig                     $viewRenderer
      */
-    public function __construct(Twig $viewRenderer)
+    public function __construct(ResponseFactoryInterface $responseFactory, Twig $viewRenderer)
     {
+        parent::__construct($responseFactory);
+
         $this->viewRenderer = $viewRenderer;
     }
 
@@ -57,14 +59,9 @@ class TwigViewResponseHandler implements ResponseTypeHandler
 
         $responseContent = $this->viewRenderer->fetch($responseType->getTemplate(), $responseType->getParameters());
 
-        $response = $responseType->getResponse();
-        if (!$response instanceof ResponseInterface) {
-            $response = new Response();
-        }
+        $response = $this->getResponse($responseType);
+        $response->getBody()->write($responseContent);
 
-        $body = new Body(\fopen('php://temp', 'rb+'));
-        $body->write($responseContent);
-
-        return $response->withBody($body);
+        return $response;
     }
 }

@@ -37,7 +37,7 @@ class GroupMetadata extends AbstractMetadata
      *
      * @return GroupMetadata|null
      */
-    public function getParent()
+    public function getParent(): ?self
     {
         return $this->parent;
     }
@@ -45,9 +45,9 @@ class GroupMetadata extends AbstractMetadata
     /**
      * Set parent group.
      *
-     * @param static $parent
+     * @param self $parent
      *
-     * @return static
+     * @return self
      */
     public function setParent(self $parent): self
     {
@@ -61,7 +61,7 @@ class GroupMetadata extends AbstractMetadata
      *
      * @return string|null
      */
-    public function getPrefix()
+    public function getPrefix(): ?string
     {
         return $this->prefix;
     }
@@ -71,7 +71,7 @@ class GroupMetadata extends AbstractMetadata
      *
      * @param string $prefix
      *
-     * @return static
+     * @return self
      */
     public function setPrefix(string $prefix): self
     {
