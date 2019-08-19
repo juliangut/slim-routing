@@ -38,7 +38,7 @@ before_install:
   - composer self-update --stable --no-progress
 
 install:
-  - travis_retry composer update $COMPOSER_FLAGS --no-interaction --no-scripts --no-progress
+  - travis_retry composer update $COMPOSER_FLAGS --no-interaction --no-progress
   - if [[ $TEST_VERSION ]]; then travis_retry composer require php-coveralls/php-coveralls $COMPOSER_FLAGS --no-interaction --no-scripts --no-progress ; fi
 
 script:
