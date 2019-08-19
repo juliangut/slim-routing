@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Route;
 
+use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use Jgut\Slim\Routing\Route\Route;
 use Jgut\Slim\Routing\Tests\Stubs\AbstractTransformerStub;
@@ -65,9 +66,11 @@ class RouteTest extends TestCase
             $metadata
         );
 
+        static::assertEquals($metadata, $route->getMetadata());
+
         $response = $route->run($this->request);
 
-        $this->assertEquals(400, $response->getStatusCode());
+        static::assertEquals(400, $response->getStatusCode());
     }
 
     public function testWrongParameterTransformer(): void
@@ -113,7 +116,7 @@ class RouteTest extends TestCase
     public function testParametersTransform(): void
     {
         $callable = function ($request, $response, array $args) {
-            $this->assertEquals(10, $args['id']);
+            static::assertEquals(10, $args['id']);
 
             return $response;
         };
@@ -131,6 +134,14 @@ class RouteTest extends TestCase
             ->will($this->returnValue(new AbstractTransformerStub(10)));
         /* @var ContainerInterface $container */
 
+        $group = $this->getMockBuilder(GroupMetadata::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $group->expects(static::once())
+            ->method('getParameters')
+            ->will($this->returnValue([]));
+        /* @var GroupMetadata $group */
+
         $metadata = $this->getMockBuilder(RouteMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -140,6 +151,9 @@ class RouteTest extends TestCase
         $metadata->expects(static::once())
             ->method('getParameters')
             ->will($this->returnValue(['id' => 'int']));
+        $metadata->expects(static::once())
+            ->method('getGroupChain')
+            ->will($this->returnValue([$group]));
         /* @var RouteMetadata $metadata */
 
         $route = new Route(
@@ -175,6 +189,6 @@ class RouteTest extends TestCase
             $callableResolver
         );
 
-        $this->assertInstanceOf(ResponseInterface::class, $route->run($this->request));
+        static::assertInstanceOf(ResponseInterface::class, $route->run($this->request));
     }
 }

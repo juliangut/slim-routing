@@ -43,10 +43,10 @@ class RouteCollectorTest extends TestCase
 
         $route = $routeCollector->map(['GET'], '/', '');
 
-        $this->assertInstanceOf(Route::class, $route);
-        $this->assertEquals(['GET'], $route->getMethods());
-        $this->assertEquals('/', $route->getPattern());
-        $this->assertEquals('', $route->getCallable());
+        static::assertInstanceOf(Route::class, $route);
+        static::assertEquals(['GET'], $route->getMethods());
+        static::assertEquals('/', $route->getPattern());
+        static::assertEquals('', $route->getCallable());
     }
 
     public function testRoutes(): void
@@ -95,6 +95,6 @@ class RouteCollectorTest extends TestCase
 
         $router = new RouteCollector($configuration, $responseFactory, $callableResolver);
 
-        $this->assertCount(2, $router->getRoutes());
+        static::assertCount(2, $router->getRoutes());
     }
 }

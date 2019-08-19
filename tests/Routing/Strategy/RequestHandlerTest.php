@@ -40,7 +40,7 @@ class RequestHandlerTest extends TestCase
         $strategy = new RequestHandler([], $responseFactory, $container, true);
 
         $callback = function (ServerRequestInterface $request) use ($responseFactory) {
-            $this->assertEquals('value', $request->getAttribute('param'));
+            static::assertEquals('value', $request->getAttribute('param'));
 
             $response = $responseFactory->createResponse();
             $response->getBody()->write('Return content');
@@ -50,6 +50,6 @@ class RequestHandlerTest extends TestCase
 
         $return = $strategy($callback, $request, $response, ['param' => 'value']);
 
-        $this->assertEquals('Return content', (string) $return->getBody());
+        static::assertEquals('Return content', (string) $return->getBody());
     }
 }

@@ -44,7 +44,7 @@ class RequestResponseArgsTest extends TestCase
             ResponseInterface $response,
             $param
         ) use ($responseFactory) {
-            $this->assertEquals('value', $param);
+            static::assertEquals('value', $param);
 
             $response = $responseFactory->createResponse();
             $response->getBody()->write('Return content');
@@ -54,6 +54,6 @@ class RequestResponseArgsTest extends TestCase
 
         $return = $strategy($callback, $request, $response, ['param' => 'value']);
 
-        $this->assertEquals('Return content', (string) $return->getBody());
+        static::assertEquals('Return content', (string) $return->getBody());
     }
 }

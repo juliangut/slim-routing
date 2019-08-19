@@ -49,15 +49,15 @@ class ResponseTypeStrategyTraitTest extends TestCase
             $request,
             $response
         ) {
-            $this->assertSame($request, $receivedRequest);
-            $this->assertSame($response, $receivedResponse);
+            static::assertSame($request, $receivedRequest);
+            static::assertSame($response, $receivedResponse);
 
             return 'Return content';
         };
 
         $return = $strategy($callback, $request, $response, []);
 
-        $this->assertEquals('Return content', (string) $return->getBody());
+        static::assertEquals('Return content', (string) $return->getBody());
     }
 
     public function testResponseDispatch(): void
@@ -84,7 +84,7 @@ class ResponseTypeStrategyTraitTest extends TestCase
 
         $return = $strategy($callback, $request, $response, []);
 
-        $this->assertEquals('Return content', (string) $return->getBody());
+        static::assertEquals('Return content', (string) $return->getBody());
     }
 
     public function testNoHandler(): void
@@ -187,6 +187,6 @@ class ResponseTypeStrategyTraitTest extends TestCase
 
         $return = $strategy($callback, $request, $response, []);
 
-        $this->assertEquals('Return content', (string) $return->getBody());
+        static::assertEquals('Return content', (string) $return->getBody());
     }
 }

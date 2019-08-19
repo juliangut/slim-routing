@@ -40,7 +40,7 @@ class RequestResponseTest extends TestCase
         $strategy = new RequestResponse([], $responseFactory, $container);
 
         $callback = function (ServerRequestInterface $request) use ($responseFactory) {
-            $this->assertEquals('value', $request->getAttribute('param'));
+            static::assertEquals('value', $request->getAttribute('param'));
 
             $response = $responseFactory->createResponse();
             $response->getBody()->write('Return content');
@@ -50,6 +50,6 @@ class RequestResponseTest extends TestCase
 
         $return = $strategy($callback, $request, $response, ['param' => 'value']);
 
-        $this->assertEquals('Return content', (string) $return->getBody());
+        static::assertEquals('Return content', (string) $return->getBody());
     }
 }
