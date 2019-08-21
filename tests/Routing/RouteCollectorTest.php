@@ -69,14 +69,14 @@ class RouteCollectorTest extends TestCase
                 ->setMethods(['GET'])
                 ->setPattern('one/{id}')
                 ->setPlaceholders(['id' => 'numeric'])
-                ->setInvocable(['one', 'action'])
+                ->setInvokable(['one', 'action'])
                 ->setXmlHttpRequest(true),
             (new RouteMetadata())
                 ->setMethods(['POST'])
                 ->setPattern('two')
                 ->setName('two')
                 ->setMiddleware(['twoMiddleware'])
-                ->setInvocable(['two', 'action']),
+                ->setInvokable(['two', 'action']),
         ];
 
         $resolver = $this->getMockBuilder(RouteResolver::class)

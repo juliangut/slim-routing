@@ -207,7 +207,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
         $route->setMiddleware($annotation->getMiddleware());
         $route->setMethods($annotation->getMethods());
         $route->setXmlHttpRequest($annotation->isXmlHttpRequest());
-        $route->setInvocable($class->name . ':' . $method->name);
+        $route->setInvokable($class->name . ':' . $method->name);
         $route->setPriority($annotation->getPriority());
 
         if ($annotation->getPattern() !== null) {

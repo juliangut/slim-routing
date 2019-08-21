@@ -132,7 +132,7 @@ class AnnotationDriverTest extends TestCase
         static::assertEquals(['GET'], $route->getMethods());
         static::assertEquals(
             'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\DependentRoute:actionFour',
-            $route->getInvocable()
+            $route->getInvokable()
         );
         static::assertEquals(0, $route->getPriority());
         static::assertEquals('four', $route->getPattern());
@@ -145,7 +145,7 @@ class AnnotationDriverTest extends TestCase
         static::assertEquals(['GET'], $route->getMethods());
         static::assertEquals(
             'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\GroupedRoute:actionTwo',
-            $route->getInvocable()
+            $route->getInvokable()
         );
         static::assertEquals(0, $route->getPriority());
         static::assertEquals('two/{id}', $route->getPattern());
@@ -158,7 +158,7 @@ class AnnotationDriverTest extends TestCase
         static::assertEquals(['GET'], $route->getMethods());
         static::assertEquals(
             'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\GroupedRoute:actionThree',
-            $route->getInvocable()
+            $route->getInvokable()
         );
         static::assertEquals(0, $route->getPriority());
         static::assertEquals('three/{id}', $route->getPattern());
@@ -171,7 +171,7 @@ class AnnotationDriverTest extends TestCase
         static::assertEquals(['GET', 'POST'], $route->getMethods());
         static::assertEquals(
             'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\SingleRoute:actionOne',
-            $route->getInvocable()
+            $route->getInvokable()
         );
         static::assertEquals(-10, $route->getPriority());
         static::assertEquals('one/{id}', $route->getPattern());

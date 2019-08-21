@@ -105,7 +105,7 @@ trait MappingTrait
         $route->setPriority($this->getPriority($mapping));
         $route->setPlaceholders($this->getPlaceholders($mapping));
         $route->setMiddleware($this->getMiddleware($mapping));
-        $route->setInvocable($this->getInvocable($mapping));
+        $route->setInvokable($this->getInvokable($mapping));
 
         $pattern = $this->getPattern($mapping);
         if ($pattern !== null) {
@@ -329,7 +329,7 @@ trait MappingTrait
     }
 
     /**
-     * Get mapping invocable.
+     * Get mapping invokable.
      *
      * @param mixed[] $mapping
      *
@@ -337,18 +337,18 @@ trait MappingTrait
      *
      * @return string|array|callable
      */
-    protected function getInvocable(array $mapping)
+    protected function getInvokable(array $mapping)
     {
-        if (!\array_key_exists('invocable', $mapping)) {
-            throw new DriverException('Route invocable definition missing');
+        if (!\array_key_exists('invokable', $mapping)) {
+            throw new DriverException('Route invokable definition missing');
         }
 
-        $invocable = $mapping['invocable'];
+        $invokable = $mapping['invokable'];
 
-        if (!\is_string($invocable) && !\is_array($invocable) && !\is_callable($invocable)) {
-            throw new DriverException('Route invocable does not seam to be supported by Slim router');
+        if (!\is_string($invokable) && !\is_array($invokable) && !\is_callable($invokable)) {
+            throw new DriverException('Route invokable does not seam to be supported by Slim router');
         }
 
-        return $invocable;
+        return $invokable;
     }
 }

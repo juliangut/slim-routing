@@ -151,7 +151,7 @@ class RouteCollector extends SlimRouteCollector
         $route = $this->createMetadataRoute(
             \array_map('strtoupper', $metadata->getMethods()),
             $resolver->getPattern($metadata),
-            $metadata->getInvocable(),
+            $metadata->getInvokable(),
             $metadata
         );
 

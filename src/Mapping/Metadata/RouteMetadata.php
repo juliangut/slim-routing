@@ -63,11 +63,11 @@ class RouteMetadata extends AbstractMetadata
     protected $xmlHttpRequest = false;
 
     /**
-     * Route invocable.
+     * Route invokable.
      *
      * @var callable|mixed[]|string
      */
-    protected $invocable;
+    protected $invokable;
 
     /**
      * Route load priority.
@@ -226,31 +226,31 @@ class RouteMetadata extends AbstractMetadata
     }
 
     /**
-     * Get route invocable.
+     * Get route invokable.
      *
      * @return callable|mixed[]|string
      */
-    public function getInvocable()
+    public function getInvokable()
     {
-        return $this->invocable;
+        return $this->invokable;
     }
 
     /**
-     * Set route invocable.
+     * Set route invokable.
      *
-     * @param mixed $invocable
+     * @param mixed $invokable
      *
      * @throws MetadataException
      *
      * @return self
      */
-    public function setInvocable($invocable): self
+    public function setInvokable($invokable): self
     {
-        if (!\is_string($invocable) && !\is_array($invocable) && !\is_callable($invocable)) {
-            throw new MetadataException('Route invocable does not seem to be supported by Slim router');
+        if (!\is_string($invokable) && !\is_array($invokable) && !\is_callable($invokable)) {
+            throw new MetadataException('Route invokable does not seem to be supported by Slim router');
         }
 
-        $this->invocable = $invocable;
+        $this->invokable = $invokable;
 
         return $this;
     }

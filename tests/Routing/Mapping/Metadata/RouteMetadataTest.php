@@ -42,7 +42,7 @@ class RouteMetadataTest extends TestCase
         static::assertEquals([], $this->route->getGroupChain());
         static::assertEquals([], $this->route->getMethods());
         static::assertNull($this->route->getTransformer());
-        static::assertNull($this->route->getInvocable());
+        static::assertNull($this->route->getInvokable());
         static::assertEquals(0, $this->route->getPriority());
         static::assertFalse($this->route->isXmlHttpRequest());
     }
@@ -82,21 +82,21 @@ class RouteMetadataTest extends TestCase
         static::assertEquals($methods, $this->route->getMethods());
     }
 
-    public function testInvalidInvocable(): void
+    public function testInvalidInvokable(): void
     {
         $this->expectException(\Jgut\Mapping\Exception\MetadataException::class);
-        $this->expectExceptionMessage('Route invocable does not seem to be supported by Slim router');
+        $this->expectExceptionMessage('Route invokable does not seem to be supported by Slim router');
 
-        $this->route->setInvocable(10);
+        $this->route->setInvokable(10);
     }
 
-    public function testInvocable(): void
+    public function testInvokable(): void
     {
         $callable = ['containerKey', 'method'];
 
-        $this->route->setInvocable($callable);
+        $this->route->setInvokable($callable);
 
-        static::assertEquals($callable, $this->route->getInvocable());
+        static::assertEquals($callable, $this->route->getInvokable());
     }
 
     public function testPriority(): void
