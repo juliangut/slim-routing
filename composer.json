@@ -26,7 +26,7 @@
     "php": "^7.1",
     "ext-json": "*",
     "juliangut/mapping": "~0.4",
-    "slim/slim": "^4.1"
+    "slim/slim": "^4.2"
   },
   "require-dev": {
     "brainmaestro/composer-git-hooks": "^2.1",
@@ -52,7 +52,8 @@
   "suggest": {
     "doctrine/annotations": "In order to load routing from annotations",
     "symfony/yaml": "In order to load routing from YAML files",
-    "spatie/array-to-xml": "In order to return XML responses"
+    "spatie/array-to-xml": "In order to return XML responses",
+    "slim/twig-view": "In order to return Twig rendered responses"
   },
   "autoload": {
     "psr-4": {

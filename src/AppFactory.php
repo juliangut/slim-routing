@@ -19,6 +19,7 @@ use Slim\App;
 use Slim\CallableResolver;
 use Slim\Factory\AppFactory as SlimAppFactory;
 use Slim\Interfaces\CallableResolverInterface;
+use Slim\Interfaces\MiddlewareDispatcherInterface;
 use Slim\Interfaces\RouteCollectorInterface;
 use Slim\Interfaces\RouteResolverInterface;
 
@@ -42,7 +43,8 @@ class AppFactory extends SlimAppFactory
         ?ContainerInterface $container = null,
         ?CallableResolverInterface $callableResolver = null,
         ?RouteCollectorInterface $routeCollector = null,
-        ?RouteResolverInterface $routeResolver = null
+        ?RouteResolverInterface $routeResolver = null,
+        ?MiddlewareDispatcherInterface $middlewareDispatcher = null
     ): App {
         static::$responseFactory = $responseFactory ?? static::$responseFactory;
 
@@ -55,7 +57,8 @@ class AppFactory extends SlimAppFactory
             $container,
             $callableResolver,
             $routeCollector ?? static::getRouteCollector($responseFactory, $callableResolver, $container),
-            $routeResolver ?? static::$routeResolver
+            $routeResolver ?? static::$routeResolver,
+            $middlewareDispatcher ?? static::$middlewareDispatcher
         );
 
         return $app;
