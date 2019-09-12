@@ -503,7 +503,7 @@ Resulting middleware added to a route will be the result of combining group midd
 
 ## Migration from 1.x
 
-* Minimum Slim version is now 4.1
+* Minimum Slim version is now 4.2
 * ResponseType handling is NOT automatically available due to how Slim 4 handles routing, it has been moved into custom RequestHandlerInvocationStrategyInterface implementations and thus must be registered on RouteCollector
 * Response handlers list configuration have been moved to each RequestHandlerInvocationStrategyInterface implementation
 
