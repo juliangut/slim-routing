@@ -88,7 +88,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
 
                 $parent = $groupDataBag->parent;
                 if ($parent !== null) {
-                    if (!\array_key_exists($parent, $groups)) {
+                    if (!isset($groups[$parent])) {
                         throw new DriverException(\sprintf('Parent group %s does not exist', $parent));
                     }
 

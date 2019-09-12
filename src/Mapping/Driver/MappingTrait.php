@@ -49,7 +49,7 @@ trait MappingTrait
         $routes = [];
 
         foreach ($mappingData as $mapping) {
-            $routes[] = \array_key_exists('routes', $mapping)
+            $routes[] = isset($mapping['routes'])
                 ? $this->getRoutesMetadata($mapping['routes'], $this->getGroupMetadata($mapping, $group))
                 : [$this->getRouteMetadata($mapping, $group)];
         }
@@ -139,7 +139,7 @@ trait MappingTrait
      */
     protected function getPrefix(array $mapping): ?string
     {
-        return \array_key_exists('prefix', $mapping) && \trim($mapping['prefix']) !== ''
+        return isset($mapping['prefix']) && \trim($mapping['prefix']) !== ''
             ? \trim($mapping['prefix'])
             : null;
     }
@@ -153,7 +153,7 @@ trait MappingTrait
      */
     protected function getName(array $mapping): ?string
     {
-        return \array_key_exists('name', $mapping) && \trim($mapping['name']) !== ''
+        return isset($mapping['name']) && \trim($mapping['name']) !== ''
             ? \trim($mapping['name'])
             : null;
     }
@@ -169,7 +169,7 @@ trait MappingTrait
      */
     protected function getMethods(array $mapping): array
     {
-        if (!\array_key_exists('methods', $mapping)) {
+        if (!isset($mapping['methods'])) {
             return ['GET'];
         }
 
@@ -244,7 +244,7 @@ trait MappingTrait
      */
     protected function getPattern(array $mapping): ?string
     {
-        return \array_key_exists('pattern', $mapping) && \trim($mapping['pattern'], ' /') !== ''
+        return isset($mapping['pattern']) && \trim($mapping['pattern'], ' /') !== ''
             ? \trim($mapping['pattern'], ' /')
             : null;
     }
@@ -260,7 +260,7 @@ trait MappingTrait
      */
     protected function getParameters(array $mapping): array
     {
-        if (!\array_key_exists('parameters', $mapping)) {
+        if (!isset($mapping['parameters'])) {
             return [];
         }
 
@@ -284,7 +284,7 @@ trait MappingTrait
      */
     protected function getPlaceholders(array $mapping): array
     {
-        if (!\array_key_exists('placeholders', $mapping)) {
+        if (!isset($mapping['placeholders'])) {
             return [];
         }
 
@@ -308,7 +308,7 @@ trait MappingTrait
      */
     protected function getMiddleware(array $mapping): array
     {
-        if (!\array_key_exists('middleware', $mapping)) {
+        if (!isset($mapping['middleware'])) {
             return [];
         }
 
@@ -339,7 +339,7 @@ trait MappingTrait
      */
     protected function getInvokable(array $mapping)
     {
-        if (!\array_key_exists('invokable', $mapping)) {
+        if (!isset($mapping['invokable'])) {
             throw new DriverException('Route invokable definition missing');
         }
 

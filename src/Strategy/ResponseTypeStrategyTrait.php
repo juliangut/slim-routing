@@ -75,7 +75,7 @@ trait ResponseTypeStrategyTrait
     {
         $type = \get_class($responseType);
 
-        if (!\array_key_exists($type, $this->responseHandlers)) {
+        if (!isset($this->responseHandlers[$type])) {
             throw new \RuntimeException(\sprintf('No handler registered for response type "%s"', $type));
         }
 

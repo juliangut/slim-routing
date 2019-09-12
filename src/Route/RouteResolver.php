@@ -121,7 +121,7 @@ class RouteResolver
             }
 
             foreach ($parameters as $param) {
-                if (\array_key_exists($param, $placeholders)) {
+                if (isset($placeholders[$param])) {
                     $pattern = \str_replace(
                         '{' . $param . '}',
                         \sprintf('{%s:%s}', $param, $placeholders[$param]),
@@ -159,7 +159,7 @@ class RouteResolver
 
         return \array_map(
             function (string $pattern) use ($aliases) {
-                if (\array_key_exists($pattern, $aliases)) {
+                if (isset($aliases[$pattern])) {
                     return $aliases[$pattern];
                 }
 
