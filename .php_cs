@@ -93,9 +93,7 @@ return Config::create()
         'no_whitespace_before_comma_in_array' => true,
         'no_whitespace_in_blank_line' => true,
         'normalize_index_brace' => true,
-        'ordered_imports' => [
-            'imports_order' => ['const', 'class', 'function'],
-        ],
+        'ordered_imports' => true,
         'php_unit_construct' => true,
         'php_unit_dedicate_assert' => true,
         'phpdoc_add_missing_param_annotation' => true,

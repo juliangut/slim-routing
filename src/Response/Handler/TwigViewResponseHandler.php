@@ -62,6 +62,6 @@ class TwigViewResponseHandler extends AbstractResponseHandler
         $response = $this->getResponse($responseType);
         $response->getBody()->write($responseContent);
 
-        return $response;
+        return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
 }

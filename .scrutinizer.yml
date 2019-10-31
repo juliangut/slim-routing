@@ -1,12 +1,23 @@
 # language: php
 
+build:
+  dependencies:
+    before:
+      - 'composer self-update'
+      - 'composer update --prefer-stable --prefer-source --no-interaction --no-progress --no-suggest'
+  cache:
+    directories:
+      - vendor/
+  nodes:
+    analysis:
+      project_setup:
+        override: true
+      tests:
+        override: [php-scrutinizer-run]
+
 filter:
   paths: [src/*]
   excluded_paths: [tests/*, vendor/*]
-
-before_commands:
-  - 'composer self-update'
-  - 'composer update --prefer-stable --prefer-source --no-interaction --no-scripts --no-progress --no-suggest'
 
 coding_style:
   php:

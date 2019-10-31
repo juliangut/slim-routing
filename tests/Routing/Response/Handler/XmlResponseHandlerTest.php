@@ -63,6 +63,7 @@ class XmlResponseHandlerTest extends TestCase
             ->handle(new PayloadResponse(['data' => ['param' => 'value']], $this->request));
 
         static::assertInstanceOf(ResponseInterface::class, $response);
+        static::assertEquals('application/xml; charset=utf-8', $response->getHeaderLine('Content-Type'));
         static::assertEquals(
             '<?xml version="1.0"?><root><data><param>value</param></data></root>',
             (string) $response->getBody()
@@ -77,6 +78,7 @@ class XmlResponseHandlerTest extends TestCase
             ->handle(new PayloadResponse(['data' => ['param' => 'value']], $this->request));
 
         static::assertInstanceOf(ResponseInterface::class, $response);
+        static::assertEquals('application/xml; charset=utf-8', $response->getHeaderLine('Content-Type'));
 
         $responseContent = <<<'XML'
 <?xml version="1.0"?>

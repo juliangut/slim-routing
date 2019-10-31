@@ -66,6 +66,6 @@ class JsonResponseHandler extends AbstractResponseHandler
         $response = $this->getResponse($responseType);
         $response->getBody()->write((string) $responseContent);
 
-        return $response;
+        return $response->withHeader('Content-Type', 'application/json; charset=utf-8');
     }
 }

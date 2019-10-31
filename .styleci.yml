@@ -11,6 +11,7 @@ enabled:
   - blank_line_after_opening_tag
   - cast_spaces
   - combine_consecutive_unsets
+  - compact_nullable_typehint
   - concat_with_spaces
   - declare_equal_normalize
   - declare_strict_types

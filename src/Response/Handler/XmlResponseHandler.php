@@ -62,7 +62,7 @@ class XmlResponseHandler extends AbstractResponseHandler
         $response = $this->getResponse($responseType);
         $response->getBody()->write($responseContent);
 
-        return $response;
+        return $response->withHeader('Content-Type', 'application/xml; charset=utf-8');
     }
 
     /**

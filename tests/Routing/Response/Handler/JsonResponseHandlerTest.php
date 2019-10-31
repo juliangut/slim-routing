@@ -63,6 +63,7 @@ class JsonResponseHandlerTest extends TestCase
             ->handle(new PayloadResponse(['data' => ['param' => 'value']], $this->request));
 
         static::assertInstanceOf(ResponseInterface::class, $response);
+        static::assertEquals('application/json; charset=utf-8', $response->getHeaderLine('Content-Type'));
         static::assertEquals('{"data":{"param":"value"}}', (string) $response->getBody());
     }
 
@@ -74,6 +75,7 @@ class JsonResponseHandlerTest extends TestCase
             ->handle(new PayloadResponse(['data' => ['param' => 'value']], $this->request));
 
         static::assertInstanceOf(ResponseInterface::class, $response);
+        static::assertEquals('application/json; charset=utf-8', $response->getHeaderLine('Content-Type'));
 
         $responseContent = <<<'JSON'
 {

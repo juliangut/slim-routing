@@ -75,6 +75,7 @@ class TwigViewResponseHandlerTest extends TestCase
             ->handle(new ViewResponse('template.twig', [], $this->request));
 
         static::assertInstanceOf(ResponseInterface::class, $response);
+        static::assertEquals('text/html; charset=utf-8', $response->getHeaderLine('Content-Type'));
         static::assertEquals('Template rendered!', (string) $response->getBody());
     }
 }
