@@ -55,6 +55,19 @@ class JsonResponseHandlerTest extends TestCase
         (new JsonResponseHandler($responseFactory))->handle(new ResponseStub($this->request));
     }
 
+    public function testNonEncodableResponseType(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Response type payload is not json encodable');
+
+        $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
+            ->getMock();
+        /* @var ResponseFactoryInterface $responseFactory */
+
+        (new JsonResponseHandler($responseFactory))
+            ->handle(new PayloadResponse(['data' => \curl_init()], $this->request));
+    }
+
     public function testHandleCollapsed(): void
     {
         $responseFactory = new ResponseFactory();

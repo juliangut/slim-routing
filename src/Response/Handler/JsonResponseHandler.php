@@ -61,11 +61,37 @@ class JsonResponseHandler extends AbstractResponseHandler
             );
         }
 
-        $responseContent = \json_encode($responseType->getPayload(), $this->jsonFlags);
+        $payload = $responseType->getPayload();
+
+        if (!$this->isJsonEncodable($payload)) {
+            throw new \InvalidArgumentException('Response type payload is not json encodable');
+        }
 
         $response = $this->getResponse($responseType);
-        $response->getBody()->write((string) $responseContent);
+        $response->getBody()->write((string) \json_encode($payload, $this->jsonFlags));
 
         return $response->withHeader('Content-Type', 'application/json; charset=utf-8');
+    }
+
+    /**
+     * @param mixed $payload
+     *
+     * @return bool
+     */
+    protected function isJsonEncodable($payload): bool
+    {
+        if (\is_resource($payload)) {
+            return false;
+        }
+
+        if (\is_array($payload)) {
+            foreach ($payload as $data) {
+                if (!$this->isJsonEncodable($data)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

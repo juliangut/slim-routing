@@ -24,18 +24,18 @@ class PayloadResponse extends AbstractResponse
     /**
      * Payload.
      *
-     * @var array
+     * @var mixed
      */
     protected $payload;
 
     /**
      * PayloadResponseType constructor.
      *
-     * @param array                  $payload
+     * @param mixed                  $payload
      * @param ServerRequestInterface $request
      * @param ResponseInterface|null $response
      */
-    public function __construct(array $payload, ServerRequestInterface $request, ResponseInterface $response = null)
+    public function __construct($payload, ServerRequestInterface $request, ResponseInterface $response = null)
     {
         parent::__construct($request, $response);
 
@@ -45,9 +45,9 @@ class PayloadResponse extends AbstractResponse
     /**
      * Get payload.
      *
-     * @return mixed[]
+     * @return mixed
      */
-    public function getPayload(): array
+    public function getPayload()
     {
         return $this->payload;
     }
