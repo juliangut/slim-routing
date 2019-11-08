@@ -92,6 +92,18 @@ class RouteCollector extends SlimRouteCollector
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function lookupRoute(string $identifier): RouteInterface
+    {
+        if ($this->routesRegistered === false) {
+            $this->registerRoutes();
+        }
+
+        return parent::lookupRoute($identifier);
+    }
+
+    /**
      * Register routes.
      *
      * @throws \InvalidArgumentException

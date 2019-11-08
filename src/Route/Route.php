@@ -26,8 +26,6 @@ use Slim\Routing\Route as SlimRoute;
 
 /**
  * Metadata aware route.
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Route extends SlimRoute
 {

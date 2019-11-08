@@ -25,8 +25,6 @@ use Slim\Interfaces\RouteResolverInterface;
 
 /**
  * Custom routing aware AppFactory.
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AppFactory extends SlimAppFactory
 {

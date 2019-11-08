@@ -21,6 +21,7 @@ use Jgut\Slim\Routing\RouteCollector;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Slim\Interfaces\CallableResolverInterface;
+use Slim\Interfaces\RouteInterface;
 
 /**
  * Route loader collector tests.
@@ -96,5 +97,56 @@ class RouteCollectorTest extends TestCase
         $router = new RouteCollector($configuration, $responseFactory, $callableResolver);
 
         static::assertCount(2, $router->getRoutes());
+    }
+
+    public function testRouteLookup(): void
+    {
+        $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
+            ->getMock();
+        /* @var ResponseFactoryInterface $responseFactory */
+        $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
+            ->getMock();
+        /** @var CallableResolverInterface $callableResolver */
+        $configuration = $this->getMockBuilder(Configuration::class)
+            ->setMethods(['getSources', 'getRouteResolver'])
+            ->getMock();
+        $configuration->expects(static::once())
+            ->method('getSources')
+            ->will($this->returnValue([__DIR__ . '/Files/Annotation/Valid']));
+
+        $routesMetadata = [
+            (new RouteMetadata())
+                ->setMethods(['GET'])
+                ->setPattern('one/{id}')
+                ->setPlaceholders(['id' => 'numeric'])
+                ->setInvokable(['one', 'action'])
+                ->setXmlHttpRequest(true),
+            (new RouteMetadata())
+                ->setMethods(['POST'])
+                ->setPattern('two')
+                ->setName('two')
+                ->setMiddleware(['twoMiddleware'])
+                ->setInvokable(['two', 'action']),
+        ];
+
+        $resolver = $this->getMockBuilder(RouteResolver::class)
+            ->setConstructorArgs([$configuration])
+            ->setMethods(['sort'])
+            ->getMock();
+        $resolver->expects(static::once())
+            ->method('sort')
+            ->will($this->returnValue($routesMetadata));
+        /* @var RouteResolver $resolver */
+
+        $configuration->expects(static::any())
+            ->method('getRouteResolver')
+            ->will($this->returnValue($resolver));
+        /* @var Configuration $configuration */
+
+        $router = new RouteCollector($configuration, $responseFactory, $callableResolver);
+
+        $resolvedRoute = $router->lookupRoute('route1');
+        static::assertInstanceOf(RouteInterface::class, $resolvedRoute);
+        static::assertEquals('two', $resolvedRoute->getName());
     }
 }
