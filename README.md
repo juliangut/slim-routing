@@ -70,8 +70,8 @@ use Jgut\Slim\Routing\AppFactory;
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Response\PayloadResponse;
 use Jgut\Slim\Routing\Response\Handler\JsonResponseHandler;
-use Jgut\Slim\Routing\RouteCollector;
 use Jgut\Slim\Routing\Strategy\RequestHandler;
+use Psr\Http\Message\ServerRequestInterface;
 
 $configuration = new Configuration([
     'sources' => ['/path/to/routing/files'],
@@ -83,20 +83,21 @@ $app = AppFactory::create();
 
 // Register custom invocation strategy to handle ResponseType objects
 $invocationStrategy = new RequestHandler(
-    $responseHandlers = [
+    [
         PayloadResponse::class => JsonResponseHandler::class,
     ],
     $app->getResponseFactory(),
     $app->getContainer()
 );
-$app->getRouteCollector()->setDefaultInvocationStrategy($invocationStrategy);
+$routeCollector = $app->getRouteCollector();
+$routeCollector->setDefaultInvocationStrategy($invocationStrategy);
 
-// Not mandatory but recommended if more routes are added
-$routeCollector()->registerRoutes();
+// Not mandatory but recommended if more routes are added, see below
+$routeCollector->registerRoutes();
 
 // Set other routes
 $app->get('/', function(ServerRequestInterface $request) {
-    return (new PayloadResponse())->setPayload(['param' => 'value']);
+    return new PayloadResponse(['param' => 'value'], $request);
 });
 
 $app->run();
@@ -120,13 +121,17 @@ $app->run();
 
 ## Response handling
 
-Ever thought why you should encode output or call template renderer in all your routes?
+Ever thought why you should encode output or call template renderer in every single one route?
 
-```
+```php
 $app->get('/hello/{name}', function ($request, $response, $args) {
-    return $this->view->render($response, 'profile.html', [
-        'name' => $args['name']
-    ]);
+    return $this->view->render(
+        $response,
+        'profile.html',
+        [
+            'name' => $args['name']
+        ]
+    );
 })->setName('profile');
 ```
 
@@ -146,9 +151,11 @@ For the new response handling to work you need to register a new invocation stra
 
 Response types are Value Objects with the needed data to later produce a ResponseInterface object. This leaves the presentation logic out of routes allowing for cleaner routes and easy presentation logic reuse
 
-```
+```php
+use Jgut\Slim\Routing\Response\ViewResponse;
+
 $app->get('/hello/{name}', function ($request, $response, $args) {
-    return ViewResponse('profile.html', ['name' => $args['name']], $request, $response);
+    return new ViewResponse('profile.html', ['name' => $args['name']], $request, $response);
 })->setName('profile');
 ```
 
@@ -165,13 +172,22 @@ Mapped on invocation strategy, a response handler will be responsible of returni
 
 Typically they will agglutinate presentation logic: how to represent the data contained in the response type, such as transform it into JSON, XML, etc, or render it with a template engine such as Twig or Plates
 
+Register response type handlers on RequestHandler creation or
+
+```php
+use Jgut\Slim\Routing\Response\PayloadResponse;
+use Jgut\Slim\Routing\Response\Handler\XmlResponseHandler;
+
+$requestHandler->setResponseHandler(PayloadResponse::class, XmlResponseHandler::class);
+```
+
 Provided response types handlers:
 
 * `JsonResponseHandler` receives a PayloadResponse and returns a JSON response
 * `XmlResponseHandler` receives a PayloadResponse and returns a XML response (requires [spatie/array-to-xml](https://github.com/spatie/array-to-xml))
 * `TwigViewResponseHandler` receives a generic ViewResponse and returns a template rendered thanks to [slim/twig-view](https://github.com/slimphp/Twig-View)
 
-You can create your own response handlers to compose specifically formatted JSON (JSON-API, ...) or use another template engines (Plates, ...)
+You can create your own response type handlers to compose specifically formatted response (JSON:API, ...) or use another template engines (Plates, ...)
 
 ### Parameter transformation
 
@@ -182,10 +198,12 @@ To achieve this you need to provide a `\Jgut\Slim\Routing\Transformer\ParameterT
 For example you would want to transform parameters into Doctrine entities
 
 ```php
+use Jgut\Slim\Routing\Transformer\AbstractTransformer;
+
 class CustomTransformer extends AbstractTransformer
 {
     protected $entityManager;
-    
+
     public function __construct(EntityManager $entityManager) {
         $this->entityManager = $entityManager;
     }

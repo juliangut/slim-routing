@@ -40,6 +40,31 @@ trait ResponseTypeStrategyTrait
     protected $container;
 
     /**
+     * Set response type handlers.
+     *
+     * @param array<string, string|ResponseTypeHandler> $responseHandlers
+     */
+    public function setResponseHandlers(array $responseHandlers): void
+    {
+        $this->responseHandlers = [];
+
+        foreach ($responseHandlers as $type => $responseHandler) {
+            $this->setResponseHandler($type, $responseHandler);
+        }
+    }
+
+    /**
+     * Set response type handler.
+     *
+     * @param string                     $type
+     * @param string|ResponseTypeHandler $responseHandler
+     */
+    public function setResponseHandler(string $type, $responseHandler): void
+    {
+        $this->responseHandlers[$type] = $responseHandler;
+    }
+
+    /**
      * Handle route response.
      *
      * @param ResponseInterface|ResponseType|string $dispatchedResponse

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Stubs;
 
+use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandler;
 use Jgut\Slim\Routing\Strategy\ResponseTypeStrategyTrait;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -30,16 +31,17 @@ class ResponseTypeStrategyStub implements RequestHandlerInvocationStrategyInterf
     /**
      * ResponseTypeStrategyStub constructor.
      *
-     * @param array                    $responseHandlers
-     * @param ResponseFactoryInterface $responseFactory
-     * @param ContainerInterface       $container
+     * @param array<string, string|ResponseTypeHandler> $responseHandlers
+     * @param ResponseFactoryInterface                  $responseFactory
+     * @param ContainerInterface                        $container
      */
     public function __construct(
         array $responseHandlers,
         ResponseFactoryInterface $responseFactory,
         ContainerInterface $container
     ) {
-        $this->responseHandlers = $responseHandlers;
+        $this->setResponseHandlers($responseHandlers);
+
         $this->responseFactory = $responseFactory;
         $this->container = $container;
     }

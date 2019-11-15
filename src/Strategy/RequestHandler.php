@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Strategy;
 
+use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandler;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -34,10 +35,10 @@ class RequestHandler implements RequestHandlerInvocationStrategyInterface
     /**
      * RequestHandler constructor.
      *
-     * @param mixed[]                  $responseHandlers
-     * @param ResponseFactoryInterface $responseFactory
-     * @param ContainerInterface|null  $container
-     * @param bool                     $appendRouteArguments
+     * @param array<string, string|ResponseTypeHandler> $responseHandlers
+     * @param ResponseFactoryInterface                  $responseFactory
+     * @param ContainerInterface|null                   $container
+     * @param bool                                      $appendRouteArguments
      */
     public function __construct(
         array $responseHandlers,
@@ -45,7 +46,8 @@ class RequestHandler implements RequestHandlerInvocationStrategyInterface
         ?ContainerInterface $container = null,
         bool $appendRouteArguments = false
     ) {
-        $this->responseHandlers = $responseHandlers;
+        $this->setResponseHandlers($responseHandlers);
+
         $this->responseFactory = $responseFactory;
         $this->container = $container;
         $this->appendRouteArguments = $appendRouteArguments;
@@ -70,8 +72,8 @@ class RequestHandler implements RequestHandlerInvocationStrategyInterface
         array $routeArguments
     ): ResponseInterface {
         if ($this->appendRouteArguments) {
-            foreach ($routeArguments as $k => $v) {
-                $request = $request->withAttribute($k, $v);
+            foreach ($routeArguments as $argument => $value) {
+                $request = $request->withAttribute($argument, $value);
             }
         }
 
