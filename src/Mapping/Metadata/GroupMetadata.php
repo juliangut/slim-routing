@@ -21,7 +21,7 @@ class GroupMetadata extends AbstractMetadata
     /**
      * Parent group metadata.
      *
-     * @var static
+     * @var self
      */
     protected $parent;
 

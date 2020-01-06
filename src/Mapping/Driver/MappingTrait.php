@@ -335,7 +335,7 @@ trait MappingTrait
      *
      * @throws DriverException
      *
-     * @return string|array|callable
+     * @return string|mixed[]|callable
      */
     protected function getInvokable(array $mapping)
     {

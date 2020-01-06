@@ -44,7 +44,7 @@ class Route extends AbstractAnnotation
     /**
      * Route methods.
      *
-     * @var array
+     * @var string[]
      */
     protected $methods = ['GET'];
 
@@ -133,7 +133,7 @@ class Route extends AbstractAnnotation
     /**
      * Set route methods.
      *
-     * @param mixed $methods
+     * @param string[]|mixed $methods
      *
      * @throws AnnotationException
      *
@@ -147,7 +147,6 @@ class Route extends AbstractAnnotation
             $methods = [$methods];
         }
 
-        /** @var array $methods */
         foreach (\array_filter($methods) as $method) {
             if (!\is_string($method)) {
                 throw new AnnotationException(

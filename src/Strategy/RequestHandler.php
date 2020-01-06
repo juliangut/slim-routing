@@ -59,7 +59,7 @@ class RequestHandler implements RequestHandlerInvocationStrategyInterface
      * @param callable               $callable
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
-     * @param array                  $routeArguments
+     * @param mixed[]                $routeArguments
      *
      * @return ResponseInterface
      *

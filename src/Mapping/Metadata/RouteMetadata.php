@@ -51,7 +51,7 @@ class RouteMetadata extends AbstractMetadata
     /**
      * Route methods.
      *
-     * @var array
+     * @var string[]
      */
     protected $methods = [];
 

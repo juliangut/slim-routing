@@ -82,7 +82,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
 
         /** @var GroupMetadata[] $groups */
         $groups = \array_map(
-            function (\stdClass $groupDataBag) use ($groups) {
+            function (\stdClass $groupDataBag) use ($groups): GroupMetadata {
                 /** @var GroupMetadata $group */
                 $group = $groupDataBag->group;
 

@@ -15,7 +15,7 @@ env:
 php:
   - 7.2
   - 7.3
-  - 7.4snapshot
+  - 7.4
   - nightly
 
 matrix:
@@ -29,7 +29,6 @@ matrix:
         - TEST_VERSION=true
         - COMPOSER_FLAGS="--prefer-stable --prefer-dist"
   allow_failures:
-    - php: 7.4snapshot
     - php: nightly
 
 before_install:

@@ -28,14 +28,14 @@ trait PathTrait
     /**
      * Pattern path placeholders regex.
      *
-     * @var array
+     * @var string[]
      */
     protected $placeholders = [];
 
     /**
      * Pattern parameters.
      *
-     * @var array
+     * @var mixed[]
      */
     protected $parameters = [];
 

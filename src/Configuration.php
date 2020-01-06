@@ -35,7 +35,7 @@ class Configuration
     /**
      * Placeholder aliases.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $placeholderAliases = [
         'any' => '[^}]+',
@@ -102,7 +102,7 @@ class Configuration
             if (isset($configurations[$config])) {
                 $callback = [
                     $this,
-                    $config === 'placeholderAliases' ? 'addPlaceholderAliases' : 'set' . \ucfirst((string) $config),
+                    $config === 'placeholderAliases' ? 'addPlaceholderAliases' : 'set' . \ucfirst($config),
                 ];
 
                 if (\is_callable($callback)) {
@@ -167,7 +167,7 @@ class Configuration
     /**
      * Get placeholder aliases.
      *
-     * @return string[]
+     * @return array<string, string>
      */
     public function getPlaceholderAliases(): array
     {
@@ -177,7 +177,7 @@ class Configuration
     /**
      * Add placeholder aliases.
      *
-     * @param string[] $aliases
+     * @param array<string, string> $aliases
      *
      * @throws \InvalidArgumentException
      *

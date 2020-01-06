@@ -39,7 +39,7 @@ class Route extends SlimRoute
     /**
      * Route constructor.
      *
-     * @param array                            $methods
+     * @param string[]                         $methods
      * @param string                           $pattern
      * @param callable                         $callable
      * @param ResponseFactoryInterface         $responseFactory
@@ -170,7 +170,7 @@ class Route extends SlimRoute
     protected function getRouteParameters(RouteMetadata $route): array
     {
         $parameters = \array_filter(\array_map(
-            function (GroupMetadata $group) {
+            function (GroupMetadata $group): array {
                 return $group->getParameters();
             },
             $route->getGroupChain()

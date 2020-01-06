@@ -2,5 +2,11 @@ parameters:
   level: max
   paths:
     - src
+  checkGenericClassInNonGenericObjectType: false
   ignoreErrors:
-    - '/^Parameter #2 \$callback of function array_filter expects callable\(mixed, mixed\): bool, .strlen. given\.$/'
+    - message: '/^Parameter #2 \$callback of function array_filter expects callable\(mixed, mixed\): bool, .strlen. given\.$/'
+      paths:
+        - src/Mapping/Annotation/Route.php
+        - src/Mapping/Driver/MappingTrait.php
+    - message: '/^Call to an undefined method ReflectionType::getName\(\)\.$/'
+      path: src/Mapping/Driver/AnnotationDriver.php

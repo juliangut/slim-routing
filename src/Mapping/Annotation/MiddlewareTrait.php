@@ -40,7 +40,7 @@ trait MiddlewareTrait
     /**
      * Set middleware list.
      *
-     * @param mixed $middlewareList
+     * @param string[]|mixed $middlewareList
      *
      * @throws AnnotationException
      *
@@ -54,7 +54,6 @@ trait MiddlewareTrait
             $middlewareList = [$middlewareList];
         }
 
-        /** @var array $middlewareList */
         foreach ($middlewareList as $middleware) {
             if (!\is_string($middleware)) {
                 throw new AnnotationException(

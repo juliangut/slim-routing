@@ -31,7 +31,7 @@ class ViewResponse extends AbstractResponse
     /**
      * Template parameters.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $parameters;
 
@@ -39,7 +39,7 @@ class ViewResponse extends AbstractResponse
      * ViewResponseType constructor.
      *
      * @param string                 $template
-     * @param array                  $parameters
+     * @param array<string, mixed>   $parameters
      * @param ServerRequestInterface $request
      * @param ResponseInterface|null $response
      */
@@ -68,7 +68,7 @@ class ViewResponse extends AbstractResponse
     /**
      * Get template parameters.
      *
-     * @return mixed[]
+     * @return array<string, mixed>
      */
     public function getParameters(): array
     {

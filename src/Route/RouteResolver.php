@@ -53,7 +53,7 @@ class RouteResolver
         }
 
         $nameSegments = \array_filter(\array_map(
-            function (GroupMetadata $group) {
+            function (GroupMetadata $group): ?string {
                 return $group->getPrefix();
             },
             $route->getGroupChain()
@@ -74,7 +74,7 @@ class RouteResolver
     public function getMiddleware(RouteMetadata $route): array
     {
         $middleware = \array_filter(\array_map(
-            function (GroupMetadata $group) {
+            function (GroupMetadata $group): array {
                 return $group->getMiddleware();
             },
             \array_reverse($route->getGroupChain())
@@ -99,7 +99,7 @@ class RouteResolver
         $groupChain = $route->getGroupChain();
 
         $patterns = \array_map(
-            function (GroupMetadata $group) {
+            function (GroupMetadata $group): ?string {
                 return $group->getPattern();
             },
             $groupChain
@@ -148,7 +148,7 @@ class RouteResolver
         $aliases = $this->configuration->getPlaceholderAliases();
 
         $placeholders = \array_filter(\array_map(
-            function (GroupMetadata $group) {
+            function (GroupMetadata $group): array {
                 return $group->getPlaceholders();
             },
             $route->getGroupChain()
@@ -158,7 +158,7 @@ class RouteResolver
         $placeholders = \array_filter(\array_merge(...$placeholders));
 
         return \array_map(
-            function (string $pattern) use ($aliases) {
+            function (string $pattern) use ($aliases): string {
                 if (isset($aliases[$pattern])) {
                     return $aliases[$pattern];
                 }
@@ -198,7 +198,7 @@ class RouteResolver
     protected function checkDuplicatedRouteNames(array $routes): void
     {
         $names = \array_filter(\array_map(
-            function (RouteMetadata $route) {
+            function (RouteMetadata $route): ?string {
                 return $this->getName($route);
             },
             $routes
@@ -222,7 +222,7 @@ class RouteResolver
         $paths = \array_map(
             function (RouteMetadata $route) {
                 return \array_map(
-                    function (string $method) use ($route) {
+                    function (string $method) use ($route): string {
                         return \sprintf(
                             '%s %s',
                             $method,
@@ -254,7 +254,7 @@ class RouteResolver
     {
         $this->stableUsort(
             $routesMetadata,
-            function (RouteMetadata $routeA, RouteMetadata $routeB) {
+            function (RouteMetadata $routeA, RouteMetadata $routeB): int {
                 return $routeA->getPriority() <=> $routeB->getPriority();
             }
         );
