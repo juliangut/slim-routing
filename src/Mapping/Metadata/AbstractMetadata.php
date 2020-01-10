@@ -154,7 +154,12 @@ abstract class AbstractMetadata implements MetadataInterface
      */
     public function setMiddleware(array $middleware): self
     {
-        $this->middleware = $middleware;
+        $this->middleware = \array_map(
+            function (string $middleware): string {
+                return \ltrim($middleware, '\\');
+            },
+            $middleware
+        );
 
         return $this;
     }

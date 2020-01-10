@@ -87,10 +87,10 @@ class AbstractMetadataTest extends TestCase
 
     public function testMiddleware(): void
     {
-        $middleware = ['middlewareOne', 'middlewareTwo'];
+        $middleware = ['\middlewareOne', 'middlewareTwo'];
 
         $this->metadata->setMiddleware($middleware);
 
-        static::assertEquals($middleware, $this->metadata->getMiddleware());
+        static::assertEquals(['middlewareOne', 'middlewareTwo'], $this->metadata->getMiddleware());
     }
 }
