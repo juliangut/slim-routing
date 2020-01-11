@@ -172,7 +172,7 @@ class RouteMetadata extends AbstractMetadata
      */
     public function setTransformer(string $transformer): self
     {
-        $this->transformer = $transformer;
+        $this->transformer = \ltrim($transformer, '\\');
 
         return $this;
     }
