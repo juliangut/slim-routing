@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests;
 
+use Jgut\Mapping\Driver\DriverFactoryInterface;
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use Jgut\Slim\Routing\Route\Route;
@@ -20,6 +21,7 @@ use Jgut\Slim\Routing\Route\RouteResolver;
 use Jgut\Slim\Routing\RouteCollector;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\SimpleCache\CacheInterface;
 use Slim\Interfaces\CallableResolverInterface;
 use Slim\Interfaces\RouteInterface;
 
@@ -64,6 +66,14 @@ class RouteCollectorTest extends TestCase
         $configuration->expects(static::once())
             ->method('getSources')
             ->will($this->returnValue([__DIR__ . '/Files/Annotation/Valid']));
+        $cache = $this->getMockBuilder(CacheInterface::class)
+            ->getMock();
+        $cache->expects($this->once())
+            ->method('has')
+            ->will($this->returnValue(false));
+        $cache->expects($this->once())
+            ->method('set');
+        /* @var CacheInterface $cache */
 
         $routesMetadata = [
             (new RouteMetadata())
@@ -94,9 +104,60 @@ class RouteCollectorTest extends TestCase
             ->will($this->returnValue($resolver));
         /* @var Configuration $configuration */
 
-        $router = new RouteCollector($configuration, $responseFactory, $callableResolver);
+        $routeCollector = new RouteCollector($configuration, $responseFactory, $callableResolver);
+        $routeCollector->setCache($cache);
 
-        static::assertCount(2, $router->getRoutes());
+        static::assertCount(2, $routeCollector->getRoutes());
+    }
+
+    public function testCachedRoutes(): void
+    {
+        $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
+            ->getMock();
+        /* @var ResponseFactoryInterface $responseFactory */
+        $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
+            ->getMock();
+        /** @var CallableResolverInterface $callableResolver */
+        $configuration = $this->getMockBuilder(Configuration::class)
+            ->getMock();
+        $configuration->expects(static::once())
+            ->method('getSources')
+            ->will($this->returnValue([
+                [
+                    'type' => DriverFactoryInterface::DRIVER_ANNOTATION,
+                    'path' => [__DIR__ . '/Files/Annotation/Valid'],
+                ],
+            ]));
+
+        $routesMetadata = [
+            (new RouteMetadata())
+                ->setMethods(['GET'])
+                ->setPattern('one/{id}')
+                ->setPlaceholders(['id' => 'numeric'])
+                ->setInvokable(['one', 'action'])
+                ->setXmlHttpRequest(true),
+            (new RouteMetadata())
+                ->setMethods(['POST'])
+                ->setPattern('two')
+                ->setName('two')
+                ->setMiddleware(['twoMiddleware'])
+                ->setInvokable(['two', 'action']),
+        ];
+
+        $cache = $this->getMockBuilder(CacheInterface::class)
+            ->getMock();
+        $cache->expects($this->once())
+            ->method('has')
+            ->will($this->returnValue(true));
+        $cache->expects($this->once())
+            ->method('get')
+            ->will($this->returnValue($routesMetadata));
+        /* @var CacheInterface $cache */
+
+        $routeCollector = new RouteCollector($configuration, $responseFactory, $callableResolver);
+        $routeCollector->setCache($cache);
+
+        static::assertCount(2, $routeCollector->getRoutes());
     }
 
     public function testRouteLookup(): void

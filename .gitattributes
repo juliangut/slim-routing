@@ -9,6 +9,7 @@
 .scrutinizer.yml    export-ignore
 .styleci.yml        export-ignore
 infection.json.dist export-ignore
-README.md           export-ignore
+tests/              export-ignore
 CONTRIBUTING.md     export-ignore
+phstan.neon         export-ignore
 phpunit.xml.dist    export-ignore

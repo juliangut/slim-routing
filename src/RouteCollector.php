@@ -13,11 +13,13 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing;
 
+use Jgut\Mapping\Driver\DriverFactoryInterface;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use Jgut\Slim\Routing\Route\Route;
 use Jgut\Slim\Routing\Route\RouteResolver;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\SimpleCache\CacheInterface;
 use Slim\Interfaces\CallableResolverInterface;
 use Slim\Interfaces\InvocationStrategyInterface;
 use Slim\Interfaces\RouteInterface;
@@ -37,6 +39,13 @@ class RouteCollector extends SlimRouteCollector
      * @var Configuration
      */
     protected $configuration;
+
+    /**
+     * Metadata cache.
+     *
+     * @var CacheInterface|null
+     */
+    protected $cache;
 
     /**
      * Mapping routes have been loaded.
@@ -77,6 +86,16 @@ class RouteCollector extends SlimRouteCollector
         );
 
         $this->configuration = $configuration;
+    }
+
+    /**
+     * Set cache.
+     *
+     * @param CacheInterface $cache
+     */
+    public function setCache(CacheInterface $cache): void
+    {
+        $this->cache = $cache;
     }
 
     /**
@@ -141,13 +160,26 @@ class RouteCollector extends SlimRouteCollector
      */
     protected function getRoutesMetadata(): array
     {
+        $mappingSources = $this->configuration->getSources();
+        $cacheKey = $this->getCacheKey($mappingSources);
+
+        if ($this->cache !== null && $this->cache->has($cacheKey)) {
+            return $this->cache->get($cacheKey);
+        }
+
         /** @var \Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata[] $routes */
-        $routes = $this->configuration->getMetadataResolver()->getMetadata($this->configuration->getSources());
+        $routes = $this->configuration->getMetadataResolver()->getMetadata($mappingSources);
 
         $routeResolver = $this->configuration->getRouteResolver();
         $routeResolver->checkDuplicatedRoutes($routes);
 
-        return $routeResolver->sort($routes);
+        $routes = $routeResolver->sort($routes);
+
+        if ($this->cache !== null) {
+            $this->cache->set($cacheKey, $routes);
+        }
+
+        return $routes;
     }
 
     /**
@@ -161,7 +193,7 @@ class RouteCollector extends SlimRouteCollector
     protected function mapMetadataRoute(RouteMetadata $metadata, RouteResolver $resolver): Route
     {
         $route = $this->createMetadataRoute(
-            \array_map('strtoupper', $metadata->getMethods()),
+            $metadata->getMethods(),
             $resolver->getPattern($metadata),
             $metadata->getInvokable(),
             $metadata
@@ -176,13 +208,13 @@ class RouteCollector extends SlimRouteCollector
     /**
      * @param mixed[] $methods
      * @param string  $pattern
-     * @param mixed   $callable
+     * @param mixed   $handler
      *
      * @return RouteInterface
      */
-    final protected function createRoute(array $methods, string $pattern, $callable): RouteInterface
+    final protected function createRoute(array $methods, string $pattern, $handler): RouteInterface
     {
-        return $this->createMetadataRoute($methods, $pattern, $callable);
+        return $this->createMetadataRoute($methods, $pattern, $handler);
     }
 
     /**
@@ -213,5 +245,38 @@ class RouteCollector extends SlimRouteCollector
             $this->routeGroups,
             $this->routeCounter
         );
+    }
+
+    /**
+     * Get cache key.
+     *
+     * @param mixed[] $mappingSources
+     *
+     * @return string
+     */
+    protected function getCacheKey(array $mappingSources): string
+    {
+        $key = \implode(
+            '.',
+            \array_map(
+                function ($mappingSource): string {
+                    if (!\is_array($mappingSource)) {
+                        $mappingSource = [
+                            'type' => DriverFactoryInterface::DRIVER_ANNOTATION,
+                            'path' => $mappingSource,
+                        ];
+                    }
+
+                    $path = \is_array($mappingSource['path'])
+                        ? \implode('', $mappingSource['path'])
+                        : $mappingSource['path'];
+
+                    return $mappingSource['type'] . '.' . $path;
+                },
+                $mappingSources
+            )
+        );
+
+        return \sha1($key);
     }
 }

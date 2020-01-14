@@ -21,9 +21,9 @@ If you're familiar with how Doctrine defines entities mappings you'll feel at ho
 * On class annotations (in controller classes)
 * In routing definition files, currently supported in PHP, JSON, XML and YAML
 
-> Route gathering and compilation can be quite a heavy process depending on how many classes/files and routes are defined, specially in the case of annotations. For this reason it's strongly advised to always use Slim's [route collector caching mechanism](https://www.slimframework.com/docs/v4/objects/routing.html#route-expressions-caching) on production applications and invalidate cache on deployment
+> Route gathering and compilation can be quite a heavy process depending on how many classes/files and routes are defined, specially in the case of annotations. For this reason it's strongly advised to always use this library route collector cache and Slim's [route collector caching](https://www.slimframework.com/docs/v4/objects/routing.html#route-expressions-caching) on production applications and invalidate cache on deployment
 
-Route callbacks can now return `\Jgut\Slim\Routing\Response\ResponseType` objects that will be later transformed into the mandatory `Psr\Message\ResponseInterface` in a way that lets you decouple view from controller 
+Route callbacks can now thanks to slim-routing return `\Jgut\Slim\Routing\Response\ResponseType` objects that will be ultimately transformed into the mandatory `Psr\Message\ResponseInterface` in a way that lets you fully decouple view from the route
 
 ## Installation
 
@@ -81,6 +81,9 @@ AppFactory::setRouteCollectorConfiguration($configuration);
 // Instantiate the app
 $app = AppFactory::create();
 
+/** @var \Psr\SimpleCache\CacheInterface $cache */
+$cache = new CacheImplementation();
+
 // Register custom invocation strategy to handle ResponseType objects
 $invocationStrategy = new RequestHandler(
     [
@@ -91,6 +94,7 @@ $invocationStrategy = new RequestHandler(
 );
 $routeCollector = $app->getRouteCollector();
 $routeCollector->setDefaultInvocationStrategy($invocationStrategy);
+$routeCollector->setCache($cache);
 
 // Not mandatory but recommended if more routes are added, see below
 $routeCollector->registerRoutes();
@@ -121,7 +125,7 @@ $app->run();
 
 ## Response handling
 
-Ever thought why you should encode output or call template renderer in every single one route?
+Ever wondered why you should encode output or call template renderer in every single route?
 
 ```php
 $app->get('/hello/{name}', function ($request, $response, $args) {
@@ -170,15 +174,15 @@ Provided response types:
 
 Mapped on invocation strategy, a response handler will be responsible of returning a `Psr\Message\ResponseInterface` from the received `\Jgut\Slim\Routing\Response\ResponseType`
 
-Typically they will agglutinate presentation logic: how to represent the data contained in the response type, such as transform it into JSON, XML, etc, or render it with a template engine such as Twig or Plates
+Typically they will agglutinate presentation logic: how to represent the data contained in the response type, such as transform it into JSON, XML, etc, or render it with a template engine such as Twig
 
-Register response type handlers on RequestHandler creation or
+Register response type handlers on invocation strategy creation or
 
 ```php
 use Jgut\Slim\Routing\Response\PayloadResponse;
 use Jgut\Slim\Routing\Response\Handler\XmlResponseHandler;
 
-$requestHandler->setResponseHandler(PayloadResponse::class, XmlResponseHandler::class);
+$invocationStrategy->setResponseHandler(PayloadResponse::class, XmlResponseHandler::class);
 ```
 
 Provided response types handlers:

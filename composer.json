@@ -25,6 +25,7 @@
   "require": {
     "php": "^7.1",
     "juliangut/mapping": "^1.0.1",
+    "psr/simple-cache": "^1.0",
     "slim/slim": "^4.2"
   },
   "require-dev": {
