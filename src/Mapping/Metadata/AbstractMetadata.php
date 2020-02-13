@@ -76,7 +76,7 @@ abstract class AbstractMetadata implements MetadataInterface
 
         $pattern = \trim($pattern, ' /');
 
-        if ((bool) \preg_match('/\{([a-zA-Z_][a-zA-Z0-9_-]*):([^}]+)?\}/', $pattern, $matches) !== false) {
+        if ((bool) \preg_match('/{([a-zA-Z_][a-zA-Z0-9_-]*):([^}]+)?}/', $pattern, $matches) !== false) {
             throw new MetadataException(
                 \sprintf('Placeholder matching "%s" must be defined on placeholders parameter', $matches[2])
             );

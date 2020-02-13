@@ -50,7 +50,7 @@ class AppFactory extends SlimAppFactory
         $container = $container ?? static::$container;
         $callableResolver = $callableResolver ?? static::getCallableResolver($container);
 
-        $app = new App(
+        return new App(
             $responseFactory,
             $container,
             $callableResolver,
@@ -58,8 +58,6 @@ class AppFactory extends SlimAppFactory
             $routeResolver ?? static::$routeResolver,
             $middlewareDispatcher ?? static::$middlewareDispatcher
         );
-
-        return $app;
     }
 
     /**

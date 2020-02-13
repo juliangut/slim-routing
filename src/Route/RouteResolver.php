@@ -110,7 +110,7 @@ class RouteResolver
         $pattern = '/' . (\count($patterns) === 0 ? '' : \implode('/', $patterns));
         $placeholders = $this->getPlaceholders($route);
 
-        if ((bool) \preg_match_all('/\{([a-zA-Z_][a-zA-Z0-9_-]*)\}/', $pattern, $parameter) !== false) {
+        if ((bool) \preg_match_all('/{([a-zA-Z_][a-zA-Z0-9_-]*)}/', $pattern, $parameter) !== false) {
             $parameters = $parameter[1];
 
             $duplicatedParameters = \array_unique(\array_diff_assoc($parameters, \array_unique($parameters)));
@@ -226,7 +226,7 @@ class RouteResolver
                         return \sprintf(
                             '%s %s',
                             $method,
-                            \preg_replace('/\{([a-zA-Z_][a-zA-Z0-9_-]*):/', '{', $this->getPattern($route))
+                            \preg_replace('/{([a-zA-Z_][a-zA-Z0-9_-]*):/', '{', $this->getPattern($route))
                         );
                     },
                     $route->getMethods()

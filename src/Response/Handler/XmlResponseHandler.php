@@ -34,7 +34,8 @@ class XmlResponseHandler extends AbstractResponseHandler
     /**
      * JsonResponseTypeHandler constructor.
      *
-     * @param bool $prettify
+     * @param ResponseFactoryInterface $responseFactory
+     * @param bool                     $prettify
      */
     public function __construct(ResponseFactoryInterface $responseFactory, bool $prettify = false)
     {

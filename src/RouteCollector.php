@@ -156,7 +156,7 @@ class RouteCollector extends SlimRouteCollector
     /**
      * Get routes metadata.
      *
-     * @return \Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata[]
+     * @return RouteMetadata[]
      */
     protected function getRoutesMetadata(): array
     {
@@ -167,7 +167,7 @@ class RouteCollector extends SlimRouteCollector
             return $this->cache->get($cacheKey);
         }
 
-        /** @var \Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata[] $routes */
+        /** @var RouteMetadata[] $routes */
         $routes = $this->configuration->getMetadataResolver()->getMetadata($mappingSources);
 
         $routeResolver = $this->configuration->getRouteResolver();

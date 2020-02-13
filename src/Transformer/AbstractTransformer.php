@@ -50,19 +50,22 @@ abstract class AbstractTransformer implements ParameterTransformer
     {
         switch ($type) {
             case 'int':
-                $parameter = (int) $parameter;
+                $transformedParameter = (int) $parameter;
                 break;
 
             case 'float':
-                $parameter = (float) $parameter;
+                $transformedParameter = (float) $parameter;
                 break;
 
             case 'bool':
-                $parameter = \in_array(\trim($parameter), ['1', 'on', 'yes', 'true'], true);
+                $transformedParameter = \in_array(\trim($parameter), ['1', 'on', 'yes', 'true'], true);
                 break;
+
+            default:
+                $transformedParameter = $parameter;
         }
 
-        return $parameter;
+        return $transformedParameter;
     }
 
     /**
