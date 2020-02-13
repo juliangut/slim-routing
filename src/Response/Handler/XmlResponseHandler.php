@@ -97,7 +97,8 @@ class XmlResponseHandler extends AbstractResponseHandler
     {
         $domDocument = $converter->toDom();
         $domDocument->formatOutput = true;
+        $xmlContent = $domDocument->saveXML();
 
-        return \rtrim($domDocument->saveXML(), "\n");
+        return $xmlContent !== false ? \rtrim($xmlContent, "\n") : '';
     }
 }
