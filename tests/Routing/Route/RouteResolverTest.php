@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Routing resolver tests.
  */
-class ResolverTest extends TestCase
+class RouteResolverTest extends TestCase
 {
     /**
      * @var RouteResolver
@@ -101,11 +101,12 @@ class ResolverTest extends TestCase
      * @dataProvider routePathProvider
      *
      * @param RouteMetadata $route
-     * @param string        $pattern
+     * @param Configuration $configuration
+     * @param string        $result
      */
-    public function testRoutePattern(RouteMetadata $route, string $pattern): void
+    public function testRoutePattern(Configuration $configuration, RouteMetadata $route, string $result): void
     {
-        static::assertEquals($pattern, $this->resolver->getPattern($route));
+        static::assertEquals($result, (new RouteResolver($configuration))->getPattern($route));
     }
 
     /**
@@ -116,31 +117,37 @@ class ResolverTest extends TestCase
     public function routePathProvider(): array
     {
         return [
-            [new RouteMetadata(), '/'],
+            [new Configuration(), new RouteMetadata(), '/'],
+            [new Configuration(['trailingSlash' => true]), new RouteMetadata(), '/'],
             [
+                new Configuration(),
                 (new RouteMetadata())
-                    ->setPattern('entity/{id}'),
+                    ->setPattern('entity/{id}/'),
                 '/entity/{id}',
             ],
             [
+                new Configuration(['trailingSlash' => true]),
                 (new RouteMetadata())
                     ->setPattern('entity/{id}')
                     ->setGroup((new GroupMetadata())->setPattern('parent/{section}')),
-                '/parent/{section}/entity/{id}',
+                '/parent/{section}/entity/{id}/',
             ],
             [
+                new Configuration(),
                 (new RouteMetadata())
                     ->setPattern('/{path}/to/entity/{id}')
                     ->setPlaceholders(['path' => '[a-z]+', 'id' => 'alnum']),
                 '/{path:[a-z]+}/to/entity/{id:[a-zA-Z0-9]+}',
             ],
             [
+                new Configuration(['trailingSlash' => true]),
                 (new RouteMetadata())
                     ->setPattern('entity/{id}')
                     ->setPlaceholders(['id' => 'alnum']),
-                '/entity/{id:[a-zA-Z0-9]+}',
+                '/entity/{id:[a-zA-Z0-9]+}/',
             ],
             [
+                new Configuration(),
                 (new RouteMetadata())
                     ->setPattern('entity/{id}')
                     ->setPlaceholders(['id' => '[a-z]+'])

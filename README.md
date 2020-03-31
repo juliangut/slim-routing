@@ -113,6 +113,7 @@ $app->run();
     * `type` one of \Jgut\Slim\Routing\Mapping\Driver\DriverFactory constants: `DRIVER_ANNOTATION`, `DRIVER_PHP`, `DRIVER_JSON`, `DRIVER_XML` or `DRIVER_YAML` **defaults to DRIVER_ANNOTATION if no driver**
     * `path` a string path or array of paths to where mapping files are located (files or directories) **REQUIRED if no driver**
     * `driver` an already created \Jgut\Slim\Routing\Mapping\Driver\DriverInterface object **REQUIRED if no type AND path**
+* `trailingSlash` boolean, indicates whether to append a trailing slash on route pattern (true) or remove it completely (false), by default. False by default
 * `placeholderAliases` array of additional placeholder aliases. There are some default aliases already available:
   * numeric => `\d+`
   * alpha => `[a-zA-Z]+`
@@ -195,11 +196,11 @@ You can create your own response type handlers to compose specifically formatted
 
 ### Parameter transformation
 
-Route parameters can be transformed before arriving to route callable. The most common use of this feature would be to transform ids from route into actual object/entity used in the callable
+Route parameters can be transformed before arriving to route callable. The most common use of this feature would be to transform IDs into actual object/entity used in the callable
 
 To achieve this you need to provide a `\Jgut\Slim\Routing\Transformer\ParameterTransformer` instance defined in the route itself. There is an abstract class `\Jgut\Slim\Routing\Transformer\AbstractTransformer` to easily implement parameters transformation
 
-For example you would want to transform parameters into Doctrine entities
+For example, you would want to transform parameters into Doctrine entities
 
 ```php
 use Jgut\Slim\Routing\Transformer\AbstractTransformer;

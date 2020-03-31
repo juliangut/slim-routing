@@ -33,6 +33,13 @@ class Configuration
     protected $sources = [];
 
     /**
+     * Routes with trailing slash.
+     *
+     * @var bool
+     */
+    protected $trailingSlash = false;
+
+    /**
      * Placeholder aliases.
      *
      * @var array<string, string>
@@ -160,6 +167,30 @@ class Configuration
         }
 
         $this->sources[] = $source;
+
+        return $this;
+    }
+
+    /**
+     * Should routes have trailing slash.
+     *
+     * @return bool
+     */
+    public function hasTrailingSlash(): bool
+    {
+        return $this->trailingSlash;
+    }
+
+    /**
+     * Set route trailing slash selector.
+     *
+     * @param bool $trailingSlash
+     *
+     * @return $this
+     */
+    public function setTrailingSlash(bool $trailingSlash): self
+    {
+        $this->trailingSlash = $trailingSlash;
 
         return $this;
     }

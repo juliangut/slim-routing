@@ -51,6 +51,7 @@ class ConfigurationTest extends TestCase
         $configuration = new Configuration();
 
         static::assertEmpty($configuration->getSources());
+        static::assertFalse($configuration->hasTrailingSlash());
         static::assertEquals($defaultAliasList, $configuration->getPlaceholderAliases());
         static::assertInstanceOf(MetadataResolver::class, $configuration->getMetadataResolver());
         static::assertInstanceOf(RouteResolver::class, $configuration->getRouteResolver());
@@ -85,6 +86,13 @@ class ConfigurationTest extends TestCase
         $configuration = new Configuration(['sources' => $paths]);
 
         static::assertEquals($paths, $configuration->getSources());
+    }
+
+    public function testTrailingSlash(): void
+    {
+        $configuration = new Configuration(['trailingSlash' => true]);
+
+        static::assertTrue($configuration->hasTrailingSlash());
     }
 
     public function testBadPlaceholderAlias(): void

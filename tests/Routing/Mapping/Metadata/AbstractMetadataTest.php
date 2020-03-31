@@ -62,7 +62,7 @@ class AbstractMetadataTest extends TestCase
     {
         $path = 'home/route/path/{id}';
 
-        $this->metadata->setPattern('/' . $path);
+        $this->metadata->setPattern('/' . $path . '/');
 
         static::assertEquals($path, $this->metadata->getPattern());
     }

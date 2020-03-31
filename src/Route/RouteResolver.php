@@ -108,6 +108,9 @@ class RouteResolver
         $patterns = \array_filter($patterns);
 
         $pattern = '/' . (\count($patterns) === 0 ? '' : \implode('/', $patterns));
+        if ($this->configuration->hasTrailingSlash() && $pattern !== '/') {
+            $pattern .= '/';
+        }
         $placeholders = $this->getPlaceholders($route);
 
         if ((bool) \preg_match_all('/{([a-zA-Z_][a-zA-Z0-9_-]*)}/', $pattern, $parameter) !== false) {
