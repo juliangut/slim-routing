@@ -17,11 +17,11 @@ use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandler;
 use Jgut\Slim\Routing\Response\PayloadResponse;
 use Jgut\Slim\Routing\Response\ResponseType;
 use Jgut\Slim\Routing\Tests\Stubs\ResponseTypeStrategyStub;
+use Laminas\Diactoros\ResponseFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\ResponseFactory;
 
 /**
  * Trait ResponseTypeStrategyTrait tests.

@@ -16,11 +16,11 @@ namespace Jgut\Slim\Routing\Tests\Response\Handler;
 use Jgut\Slim\Routing\Response\Handler\JsonResponseHandler;
 use Jgut\Slim\Routing\Response\PayloadResponse;
 use Jgut\Slim\Routing\Tests\Stubs\ResponseStub;
+use Laminas\Diactoros\ResponseFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\ResponseFactory;
 
 /**
  * Generic JSON response handler tests.

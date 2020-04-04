@@ -16,12 +16,12 @@ namespace Jgut\Slim\Routing\Tests\Response\Handler;
 use Jgut\Slim\Routing\Response\Handler\TwigViewResponseHandler;
 use Jgut\Slim\Routing\Response\ViewResponse;
 use Jgut\Slim\Routing\Tests\Stubs\ResponseStub;
+use Laminas\Diactoros\ResponseFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Views\Twig;
-use Zend\Diactoros\ResponseFactory;
 
 /**
  * Twig view renderer response handler tests.

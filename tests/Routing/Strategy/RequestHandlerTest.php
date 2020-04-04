@@ -14,12 +14,12 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Tests\Strategy;
 
 use Jgut\Slim\Routing\Strategy\RequestHandler;
+use Laminas\Diactoros\ResponseFactory;
+use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\ResponseFactory;
-use Zend\Diactoros\ServerRequestFactory;
 
 /**
  * PSR-15 RequestHandler invocation strategy tests.

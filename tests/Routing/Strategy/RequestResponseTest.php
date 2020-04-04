@@ -14,12 +14,12 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Tests\Strategy;
 
 use Jgut\Slim\Routing\Strategy\RequestResponse;
+use Laminas\Diactoros\ResponseFactory;
+use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\ResponseFactory;
-use Zend\Diactoros\ServerRequestFactory;
 
 /**
  * Default route callback strategy with route parameters as an array of arguments tests.
