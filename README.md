@@ -126,7 +126,7 @@ $app->run();
 
 ## Response handling
 
-Ever wondered why you should encode output or call template renderer in every single route?
+Ever wondered why you should encode output or call template renderer in every single route? or even why respond with a ResponseInterface object in the end?
 
 ```php
 $app->get('/hello/{name}', function ($request, $response, $args) {
@@ -140,7 +140,7 @@ $app->get('/hello/{name}', function ($request, $response, $args) {
 })->setName('profile');
 ```
 
-Route callbacks normally respond with a `Psr\Message\ResponseInterface` object, but thanks to slim-routing they can now respond with a more intent expressive ResponseType object that will be handled afterwards
+Route callbacks normally respond with a `Psr\Message\ResponseInterface` object, but thanks to slim-routing they can now respond with a string, null or event better, with a more intent expressive ResponseType object that will be handled afterwards
 
 Of course normal ResponseInterface responses from route callback will be treated as usual
 
