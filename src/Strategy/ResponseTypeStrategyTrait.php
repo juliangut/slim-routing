@@ -67,12 +67,16 @@ trait ResponseTypeStrategyTrait
     /**
      * Handle route response.
      *
-     * @param ResponseInterface|ResponseType|string $dispatchedResponse
+     * @param ResponseInterface|ResponseType|string|null $dispatchedResponse
      *
      * @return ResponseInterface
      */
     protected function handleResponse($dispatchedResponse): ResponseInterface
     {
+        if ($dispatchedResponse === null) {
+            return $this->responseFactory->createResponse();
+        }
+
         if (\is_string($dispatchedResponse)) {
             $response = $this->responseFactory->createResponse();
             $response->getBody()->write($dispatchedResponse);

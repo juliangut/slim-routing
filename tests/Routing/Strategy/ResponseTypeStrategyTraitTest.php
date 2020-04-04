@@ -28,6 +28,36 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class ResponseTypeStrategyTraitTest extends TestCase
 {
+    public function testNullDispatch(): void
+    {
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->getMock();
+        /* @var ContainerInterface $container */
+        $request = $this->getMockBuilder(ServerRequestInterface::class)
+            ->getMock();
+        /* @var ServerRequestInterface $request */
+        $response = $this->getMockBuilder(ResponseInterface::class)
+            ->getMock();
+        /* @var ResponseInterface $response */
+
+        $strategy = new ResponseTypeStrategyStub([], new ResponseFactory(), $container);
+
+        $callback = function (
+            ServerRequestInterface $receivedRequest,
+            ResponseInterface $receivedResponse
+        ) use (
+            $request,
+            $response
+        ): void {
+            static::assertSame($request, $receivedRequest);
+            static::assertSame($response, $receivedResponse);
+        };
+
+        $return = $strategy($callback, $request, $response, []);
+
+        static::assertEquals('', (string) $return->getBody());
+    }
+
     public function testStringDispatch(): void
     {
         $container = $this->getMockBuilder(ContainerInterface::class)
