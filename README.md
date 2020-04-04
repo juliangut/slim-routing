@@ -320,7 +320,9 @@ return [
     // Group
     'prefix' => 'prefix',
     'pattern' => 'group-pattern',
-    'placeholders' => ['group-placeholders'],
+    'placeholders' => [
+        'group-placeholder' => 'type',
+    ],
     'middleware' => ['group-middleware'],
     'routes' => [
       [
@@ -328,19 +330,25 @@ return [
         'name' => 'routeName',
         'xmlHttpRequest' => true,
         'methods' => ['GET', 'POST'],
-        'priority' => 0
+        'priority' => 0,
         'pattern' => 'route-pattern',
-        'placeholders' => ['route-placeholders'],
-        'parameters' => ['route-parameters'],
+        'placeholders' => [
+            'route-placeholder' => 'type',
+        ],
+        'parameters' => [
+            'route-parameters' => 'type',
+        ],
         'transformer' => 'customTransformer',
         'middleware' => ['route-middleware'],
         'invokable' => 'callable',
       ],
       [
         // Subgroup
-        'pattern' => 'group-pattern',
-        'placeholders' => ['group-placeholders'],
-        'middleware' => ['group-middleware'],
+        'pattern' => 'subgroup-pattern',
+        'placeholders' => [
+            'subgroup-placeholder' => 'type',
+        ],
+        'middleware' => ['subgroup-middleware'],
         'routes' => [
           // Routes/groups ...
         ],
@@ -360,7 +368,9 @@ return [
     // Group
     "prefix": "prefix",
     "pattern": "group-pattern",
-    "placeholders": ["group-placeholders"],
+    "placeholders": [{
+      "group-placeholder": "type"
+    }],
     "middleware": ["group-middleware"],
     "routes": [
       {
@@ -370,17 +380,23 @@ return [
         "methods": ["GET", "POST"],
         "priority": 0,
         "pattern": "route-pattern",
-        "placeholders": ["route-placeholders"],
-        "parameters": ["route-parameters"],
+        "placeholders": [{
+          "route-placeholder": "type"
+        }],
+        "parameters": [{
+          "route-parameter": "type"
+        }],
         "transformer": "customTransformer",
         "middleware": ["route-middleware"],
         "invokable": "callable"
       },
       {
         // Subgroup
-        "pattern": "group-pattern",
-        "placeholders": ["group-placeholders"],
-        "middleware": ["group-middleware"],
+        "pattern": "subgroup-pattern",
+        "placeholders": [{
+          "subgroup-placeholder": "type"
+        }],
+        "middleware": ["subgroup-middleware"],
         "routes": [
           // Routes/groups ...
         ]
@@ -399,7 +415,7 @@ return [
 <root>
     <group1 prefix="prefix" pattern="group-pattern">
         <placeholders>
-            <placeholder1>group-placeholder</group-placeholder1>
+            <group-placeholder1>type</group-placeholder1>
         </placeholders>
         <middleware>
             <middleware1>group-middleware</middleware1>
@@ -412,10 +428,10 @@ return [
                     <method2>POST</method2>
                 </methods>
                 <placeholders>
-                    <placeholder1>route-placeholder</placeholder1>
+                    <route-placeholder1>type</route-placeholder1>
                 </placeholders>
                 <parameters>
-                    <parameter1>route-parameter</parameter1>
+                    <route-parameter1>type</route-parameter1>
                 </parameters>
                 <transformer>CustomTransformer</transformer>
                 <middleware>
@@ -423,12 +439,12 @@ return [
                 </middleware>
                 <invokable>callable</invokable>
             </route1>
-            <subgroup1 prefix="prefix" pattern="group-pattern">
+            <subgroup1 prefix="prefix" pattern="subgroup-pattern">
                 <placeholders>
-                    <placeholder1>group-placeholder</group-placeholder1>
+                    <subgroup-placeholder1>type</subgroup-placeholder1>
                 </placeholders>
                 <middleware>
-                    <middleware1>group-middleware</middleware1>
+                    <middleware1>subgroup-middleware</middleware1>
                 </middleware>
                 <routes>
                     <!-- Routes/groups... -->
@@ -447,7 +463,8 @@ return [
 # Group
 - prefix: prefix
   pattern: group-pattern
-  placeholders: [group-placeholders]
+  placeholders: 
+    - group-placeholder: type
   middleware: [group-middleware]
   routes:
     # Route
@@ -456,15 +473,18 @@ return [
       methods: [GET, POST]
       priority: 0
       pattern: route-pattern
-      placeholders: [route-placeholders]
-      parameters: [route-parameters]
+      placeholders:
+        - route-placeholder: type
+      parameters: 
+        - route-parameter: type
       transformer: CustomTransformer
       middleware: [route-middleware]
       invokable: callable
     # Subgroup
-    - pattern: group-pattern
-      placeholders: [group-placeholders]
-      middleware: [group-middleware]
+    - pattern: subgroup-pattern
+      placeholders: 
+        - subgroup-placeholder: type
+      middleware: [subgroup-middleware]
       routes:
         # Routes/groups ...
     # Routes/groups ...
