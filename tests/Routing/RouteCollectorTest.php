@@ -186,6 +186,7 @@ class RouteCollectorTest extends TestCase
                 ->setMethods(['POST'])
                 ->setPattern('two')
                 ->setName('two')
+                ->setArguments(['scope' => 'public'])
                 ->setMiddleware(['twoMiddleware'])
                 ->setInvokable(['two', 'action']),
         ];
@@ -206,8 +207,14 @@ class RouteCollectorTest extends TestCase
 
         $router = new RouteCollector($configuration, $responseFactory, $callableResolver);
 
+        $resolvedRoute = $router->lookupRoute('route0');
+        static::assertInstanceOf(RouteInterface::class, $resolvedRoute);
+        static::assertNull($resolvedRoute->getName());
+        static::assertEquals([], $resolvedRoute->getArguments());
+
         $resolvedRoute = $router->lookupRoute('route1');
         static::assertInstanceOf(RouteInterface::class, $resolvedRoute);
         static::assertEquals('two', $resolvedRoute->getName());
+        static::assertEquals(['scope' => 'public'], $resolvedRoute->getArguments());
     }
 }

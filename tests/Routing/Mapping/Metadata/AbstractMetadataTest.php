@@ -39,6 +39,7 @@ class AbstractMetadataTest extends TestCase
         static::assertNull($this->metadata->getPattern());
         static::assertEquals([], $this->metadata->getPlaceholders());
         static::assertEquals([], $this->metadata->getParameters());
+        static::assertEquals([], $this->metadata->getArguments());
         static::assertEquals([], $this->metadata->getMiddleware());
     }
 
@@ -83,6 +84,15 @@ class AbstractMetadataTest extends TestCase
         $this->metadata->setParameters($parameters);
 
         static::assertEquals($parameters, $this->metadata->getParameters());
+    }
+
+    public function testArguments(): void
+    {
+        $arguments = ['scope' => 'public'];
+
+        $this->metadata->setArguments($arguments);
+
+        static::assertEquals($arguments, $this->metadata->getArguments());
     }
 
     public function testMiddleware(): void

@@ -138,6 +138,26 @@ class MappingTraitTest extends TestCase
         $driver->getMetadata();
     }
 
+    public function testInvalidArguments(): void
+    {
+        $this->expectException(\Jgut\Mapping\Exception\DriverException::class);
+        $this->expectExceptionMessage('Arguments keys must be all strings');
+
+        $driver = $this->getMockForTrait(MappingTrait::class);
+        $driver->expects(static::once())
+            ->method('getMappingData')
+            ->will($this->returnValue([
+                [
+                    'invokable' => 'callable',
+                    'transformer' => 'fake_transformer',
+                    'arguments' => ['invalid'],
+                ],
+            ]));
+        /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
+
+        $driver->getMetadata();
+    }
+
     public function testRoutes(): void
     {
         $driver = $this->getMockForTrait(MappingTrait::class);
@@ -166,15 +186,14 @@ class MappingTraitTest extends TestCase
                     ],
                 ],
                 [
-                    'pattern' => '/grouped/{section}',
-                    'placeholders' => [
-                        'section' => '[A-Za-z]+',
-                    ],
                     'middleware' => ['groupedMiddleware'],
                     'routes' => [
                         [
                             'methods' => ['GET'],
                             'pattern' => '/two/{id}',
+                            'arguments' => [
+                                'scope' => 'protected',
+                            ],
                             'middleware' => ['twoMiddleware'],
                             'invokable' => 'TwoRoute' . ':' . 'actionTwo',
                         ],
@@ -217,6 +236,7 @@ class MappingTraitTest extends TestCase
         static::assertEquals('FourRoute' . ':' . 'actionFour', $route->getInvokable());
         static::assertEquals('four', $route->getPattern());
         static::assertEquals([], $route->getPlaceholders());
+        static::assertEquals([], $route->getArguments());
         static::assertEquals(['fourMiddleware'], $route->getMiddleware());
 
         $route = $routes[1];
@@ -227,6 +247,7 @@ class MappingTraitTest extends TestCase
         static::assertEquals('TwoRoute' . ':' . 'actionTwo', $route->getInvokable());
         static::assertEquals('two/{id}', $route->getPattern());
         static::assertEquals([], $route->getPlaceholders());
+        static::assertEquals(['scope' => 'protected'], $route->getArguments());
         static::assertEquals(['twoMiddleware'], $route->getMiddleware());
 
         $route = $routes[2];
@@ -237,6 +258,7 @@ class MappingTraitTest extends TestCase
         static::assertEquals(0, $route->getPriority());
         static::assertEquals('three/{id}', $route->getPattern());
         static::assertEquals(['id' => '\d+'], $route->getPlaceholders());
+        static::assertEquals([], $route->getArguments());
         static::assertEquals([], $route->getMiddleware());
 
         $route = $routes[3];
@@ -247,6 +269,7 @@ class MappingTraitTest extends TestCase
         static::assertEquals('OneRoute' . ':' . 'actionOne', $route->getInvokable());
         static::assertEquals('one/{id}', $route->getPattern());
         static::assertEquals(['id' => 'numeric'], $route->getPlaceholders());
+        static::assertEquals([], $route->getArguments());
         static::assertEquals(['oneMiddleware'], $route->getMiddleware());
         static::assertEquals('fake_transformer', $route->getTransformer());
         static::assertEquals(['id' => 'int'], $route->getParameters());

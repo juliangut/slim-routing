@@ -125,6 +125,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
         }
 
         $group->setParameters($annotation->getParameters());
+        $group->setArguments($annotation->getArguments());
 
         return $group;
     }
@@ -226,6 +227,8 @@ class AnnotationDriver extends AbstractAnnotationDriver
             $route->setTransformer($annotation->getTransformer())
                 ->setParameters($this->getRouteParameters($method, $annotation));
         }
+
+        $route->setArguments($annotation->getArguments());
 
         return $route;
     }

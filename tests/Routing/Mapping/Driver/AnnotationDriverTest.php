@@ -137,6 +137,7 @@ class AnnotationDriverTest extends TestCase
         static::assertEquals(0, $route->getPriority());
         static::assertEquals('four', $route->getPattern());
         static::assertEquals([], $route->getPlaceholders());
+        static::assertEquals([], $route->getArguments());
         static::assertEquals(['fourMiddleware'], $route->getMiddleware());
 
         $route = $routes[1];
@@ -150,6 +151,7 @@ class AnnotationDriverTest extends TestCase
         static::assertEquals(0, $route->getPriority());
         static::assertEquals('two/{id}', $route->getPattern());
         static::assertEquals([], $route->getPlaceholders());
+        static::assertEquals(['scope' => 'protected'], $route->getArguments());
         static::assertEquals(['twoMiddleware'], $route->getMiddleware());
 
         $route = $routes[2];
@@ -163,6 +165,7 @@ class AnnotationDriverTest extends TestCase
         static::assertEquals(0, $route->getPriority());
         static::assertEquals('three/{id}', $route->getPattern());
         static::assertEquals(['id' => '\d+'], $route->getPlaceholders());
+        static::assertEquals([], $route->getArguments());
         static::assertEquals([], $route->getMiddleware());
 
         $route = $routes[3];
@@ -176,6 +179,7 @@ class AnnotationDriverTest extends TestCase
         static::assertEquals(-10, $route->getPriority());
         static::assertEquals('one/{id}', $route->getPattern());
         static::assertEquals(['id' => 'numeric'], $route->getPlaceholders());
+        static::assertEquals([], $route->getArguments());
         static::assertEquals(['oneMiddleware'], $route->getMiddleware());
         static::assertEquals('fake_transformer', $route->getTransformer());
         static::assertEquals(['id' => 'int'], $route->getParameters());

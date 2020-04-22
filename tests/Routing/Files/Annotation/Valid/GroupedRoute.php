@@ -30,6 +30,7 @@ class GroupedRoute
     /**
      * @JSR\Route(
      *     pattern="/two/{id}",
+     *     arguments={"scope": "protected"},
      *     middleware={"twoMiddleware"},
      * )
      */

@@ -175,7 +175,7 @@ Provided response types:
 
 Mapped on invocation strategy, a response handler will be responsible of returning a `Psr\Message\ResponseInterface` from the received `\Jgut\Slim\Routing\Response\ResponseType`
 
-Typically they will agglutinate presentation logic: how to represent the data contained in the response type, such as transform it into JSON, XML, etc, or render it with a template engine such as Twig
+Typically, they will agglutinate presentation logic: how to represent the data contained in the response type, such as transform it into JSON, XML, etc, or render it with a template engine such as Twig
 
 Register response type handlers on invocation strategy creation or
 
@@ -255,6 +255,8 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
  *     parent="parentGroupClassName",
  *     pattern="section/{name}",
  *     placeholders={"name": "[a-z]+"},
+ *     parameters={"action": "\My\Entity"},
+ *     arguments={"scope": "public"}
  *     middleware={"groupMiddlewareName"}
  * )
  */
@@ -266,7 +268,9 @@ class Section
 * `prefix`, optional, prefix to be prepended to route names
 * `parent`, optional, references a parent group name
 * `pattern`, optional, path pattern, prepended to route patterns
-* `placeholders`, optional, array of regex/alias for path placeholders, 
+* `placeholders`, optional, array of regex/alias for path placeholders,
+* `parameters`, optional, array of definitions of parameters, to be used in route transformer 
+* `arguments`, optional, array of arguments to attach to final route 
 * `middleware`, optional, array of middleware to be added to all group routes
 
 ##### Route (Method level)
@@ -290,6 +294,7 @@ class Section
      *     placeholders={"action": "[a-z0-9]+"},
      *     transformer="CustomTransformer",
      *     parameters={"action": "\My\Entity"},
+     *     arguments={"scope": "admin.read"}
      *     middleware={"routeMiddlewareName"},
      *     priority=-10
      * )
@@ -307,6 +312,7 @@ class Section
 * `placeholders`, optional, array of regex/alias for path placeholders
 * `parameters`, optional, array of definitions of parameters, to be used in transformer
 * `transformer`, optional, reference to a ParameterTransformer instance that will be extracted from the container
+* `arguments`, optional, array of arguments to attach to the route
 * `middleware`, optional, array of middleware to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
 
@@ -322,6 +328,9 @@ return [
     'pattern' => 'group-pattern',
     'placeholders' => [
         'group-placeholder' => 'type',
+    ],
+    'arguments' => [
+        'group-argument' => 'value',
     ],
     'middleware' => ['group-middleware'],
     'routes' => [
@@ -339,6 +348,9 @@ return [
             'route-parameters' => 'type',
         ],
         'transformer' => 'customTransformer',
+        'arguments' => [
+            'route-argument' => 'value',
+        ],
         'middleware' => ['route-middleware'],
         'invokable' => 'callable',
       ],
@@ -347,6 +359,9 @@ return [
         'pattern' => 'subgroup-pattern',
         'placeholders' => [
             'subgroup-placeholder' => 'type',
+        ],
+        'arguments' => [
+            'subgroup-argument' => 'value',
         ],
         'middleware' => ['subgroup-middleware'],
         'routes' => [
@@ -371,6 +386,9 @@ return [
     "placeholders": [{
       "group-placeholder": "type"
     }],
+    "arguments": [{
+      "group-argument": "value"
+    }],
     "middleware": ["group-middleware"],
     "routes": [
       {
@@ -387,6 +405,9 @@ return [
           "route-parameter": "type"
         }],
         "transformer": "customTransformer",
+        "arguments": [{
+          "route-argument": "value"
+        }],
         "middleware": ["route-middleware"],
         "invokable": "callable"
       },
@@ -395,6 +416,9 @@ return [
         "pattern": "subgroup-pattern",
         "placeholders": [{
           "subgroup-placeholder": "type"
+        }],
+        "arguments": [{
+          "subgroup-argument": "value"
         }],
         "middleware": ["subgroup-middleware"],
         "routes": [
@@ -417,6 +441,9 @@ return [
         <placeholders>
             <group-placeholder1>type</group-placeholder1>
         </placeholders>
+        <arguments>
+            <group-argument1>value</group-argument1>
+        </arguments>
         <middleware>
             <middleware1>group-middleware</middleware1>
         </middleware>
@@ -434,6 +461,9 @@ return [
                     <route-parameter1>type</route-parameter1>
                 </parameters>
                 <transformer>CustomTransformer</transformer>
+                <arguments>
+                    <route-argument1>value</route-argument1>
+                </arguments>
                 <middleware>
                     <middleware1>route-middleware</middleware1>
                 </middleware>
@@ -443,6 +473,9 @@ return [
                 <placeholders>
                     <subgroup-placeholder1>type</subgroup-placeholder1>
                 </placeholders>
+                <argument>
+                    <subgroup-argument1>value</subgroup-argument1>
+                </argument>
                 <middleware>
                     <middleware1>subgroup-middleware</middleware1>
                 </middleware>
@@ -465,6 +498,8 @@ return [
   pattern: group-pattern
   placeholders: 
     - group-placeholder: type
+  arguments: 
+    - group-argument: value
   middleware: [group-middleware]
   routes:
     # Route
@@ -475,15 +510,19 @@ return [
       pattern: route-pattern
       placeholders:
         - route-placeholder: type
-      parameters: 
+      parameters:
         - route-parameter: type
       transformer: CustomTransformer
+      arguments:
+        - route-argument: value
       middleware: [route-middleware]
       invokable: callable
     # Subgroup
     - pattern: subgroup-pattern
       placeholders: 
         - subgroup-placeholder: type
+      arguments: 
+        - subgroup-argument: value
       middleware: [subgroup-middleware]
       routes:
         # Routes/groups ...
@@ -498,7 +537,9 @@ Defines a group in which routes may reside
 * `routes`, array of routes and/or subgroups (this key identifies a group)
 * `prefix`, optional, prefix to be prepended to route names
 * `pattern`, optional, path pattern, prepended to route patterns
-* `placeholders`, optional, array of regex/alias for path placeholders, 
+* `placeholders`, optional, array of regex/alias for path placeholders,
+* `parameters`, optional, array of definitions of parameters, to be used in route transformer 
+* `arguments`, optional, array of arguments to attach to final route 
 * `middleware`, optional, array of middleware to be added to all group routes
 
 ##### Route
@@ -513,6 +554,7 @@ Defines a route added to Slim
 * `placeholders`, optional, array of regex for path placeholders
 * `parameters`, optional, array of definitions of parameters, to be used in transformer
 * `transformer`, optional, reference to a ParameterTransformer instance that will be extracted from the container
+* `arguments`, optional, array of arguments to attach to the route
 * `middleware`, optional, array of middleware to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
 
@@ -535,6 +577,10 @@ Resulting route pattern is composed of the concatenation of group patterns if an
 Resulting placeholders list is composed of all group placeholders if any and route placeholders
 
 It is important to pay attention not to duplicate placeholder names in the resulting pattern as this can't be handled by FastRoute. Check group tree patterns for placeholder names
+
+#### Arguments
+
+Resulting route arguments is composed of all group arguments if any and route arguments
 
 #### Middleware
 

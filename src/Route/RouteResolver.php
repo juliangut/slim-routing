@@ -96,13 +96,11 @@ class RouteResolver
      */
     public function getPattern(RouteMetadata $route): string
     {
-        $groupChain = $route->getGroupChain();
-
         $patterns = \array_map(
             function (GroupMetadata $group): ?string {
                 return $group->getPattern();
             },
-            $groupChain
+            $route->getGroupChain()
         );
         $patterns[] = $route->getPattern();
         $patterns = \array_filter($patterns);
@@ -156,7 +154,7 @@ class RouteResolver
             },
             $route->getGroupChain()
         ));
-        \array_unshift($placeholders, $route->getPlaceholders());
+        $placeholders[] = $route->getPlaceholders();
 
         $placeholders = \array_filter(\array_merge(...$placeholders));
 
@@ -176,6 +174,28 @@ class RouteResolver
             },
             $placeholders
         );
+    }
+
+    /**
+     * Get route attributes.
+     *
+     * @param RouteMetadata $route
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return string[]
+     */
+    public function getArguments(RouteMetadata $route): array
+    {
+        $arguments = \array_map(
+            function (GroupMetadata $group): array {
+                return $group->getArguments();
+            },
+            $route->getGroupChain()
+        );
+        $arguments[] = $route->getArguments();
+
+        return \array_filter(\array_merge(...$arguments));
     }
 
     /**

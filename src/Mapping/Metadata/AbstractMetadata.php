@@ -43,6 +43,13 @@ abstract class AbstractMetadata implements MetadataInterface
     protected $parameters = [];
 
     /**
+     * Arguments.
+     *
+     * @var mixed[]
+     */
+    protected $arguments = [];
+
+    /**
      * Middleware list.
      *
      * @var callable[]|string[]
@@ -131,6 +138,30 @@ abstract class AbstractMetadata implements MetadataInterface
     public function setParameters(array $parameters): self
     {
         $this->parameters = $parameters;
+
+        return $this;
+    }
+
+    /**
+     * Get arguments.
+     *
+     * @return mixed[]
+     */
+    public function getArguments(): array
+    {
+        return $this->arguments;
+    }
+
+    /**
+     * Set arguments.
+     *
+     * @param mixed[] $attributes
+     *
+     * @return self
+     */
+    public function setArguments(array $attributes): self
+    {
+        $this->arguments = $attributes;
 
         return $this;
     }

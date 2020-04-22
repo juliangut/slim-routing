@@ -142,6 +142,10 @@ class RouteCollector extends SlimRouteCollector
             if ($name !== null) {
                 $route->setName($name);
             }
+            $arguments = $resolver->getArguments($routeMetadata);
+            if (\count($arguments) !== 0) {
+                $route->setArguments($arguments);
+            }
 
             foreach ($resolver->getMiddleware($routeMetadata) as $middleware) {
                 $route->add($middleware);

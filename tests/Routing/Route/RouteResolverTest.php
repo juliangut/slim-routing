@@ -158,6 +158,18 @@ class RouteResolverTest extends TestCase
                     ),
                 '/parent/{section:[^}]+}/entity/{id:[a-z]+}',
             ],
+            [
+                new Configuration(),
+                (new RouteMetadata())
+                    ->setPattern('entity/{id}')
+                    ->setPlaceholders(['id' => '[a-z]+', 'section' => '[0-9]+'])
+                    ->setGroup(
+                        (new GroupMetadata())
+                            ->setPattern('parent/{section}')
+                            ->setPlaceholders(['section' => 'any'])
+                    ),
+                '/parent/{section:[0-9]+}/entity/{id:[a-z]+}',
+            ],
         ];
     }
 
@@ -181,6 +193,49 @@ class RouteResolverTest extends TestCase
         $route = (new RouteMetadata())->setPlaceholders(['id', '~245']);
 
         $this->resolver->getPattern($route);
+    }
+
+    /**
+     * @dataProvider routeArgumentsProvider
+     *
+     * @param Configuration $configuration
+     * @param RouteMetadata $route
+     * @param mixed[]       $result
+     */
+    public function testRouteArguments(Configuration $configuration, RouteMetadata $route, array $result): void
+    {
+        static::assertEquals($result, (new RouteResolver($configuration))->getArguments($route));
+    }
+
+    /**
+     * Route arguments provider.
+     *
+     * @return array
+     */
+    public function routeArgumentsProvider(): array
+    {
+        return [
+            [new Configuration(), new RouteMetadata(), []],
+            [
+                new Configuration(),
+                (new RouteMetadata())->setArguments(['routeArgument' => 'value']),
+                ['routeArgument' => 'value'],
+            ],
+            [
+                new Configuration(),
+                (new RouteMetadata())
+                    ->setArguments(['routeArgument' => 'route'])
+                    ->setGroup((new GroupMetadata())->setArguments(['groupArgument' => 'group'])),
+                ['groupArgument' => 'group', 'routeArgument' => 'route'],
+            ],
+            [
+                new Configuration(),
+                (new RouteMetadata())
+                    ->setArguments(['routeArgument' => 'route', 'groupArgument' => 'replaced'])
+                    ->setGroup((new GroupMetadata())->setArguments(['groupArgument' => 'group'])),
+                ['groupArgument' => 'replaced', 'routeArgument' => 'route'],
+            ],
+        ];
     }
 
     public function testRouteSorting(): void

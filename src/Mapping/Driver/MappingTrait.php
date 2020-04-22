@@ -70,6 +70,7 @@ trait MappingTrait
         $group = new GroupMetadata();
         $group->setPlaceholders($this->getPlaceholders($mapping));
         $group->setParameters($this->getParameters($mapping));
+        $group->setArguments($this->getArguments($mapping));
         $group->setMiddleware($this->getMiddleware($mapping));
 
         $pattern = $this->getPattern($mapping);
@@ -126,6 +127,8 @@ trait MappingTrait
             $route->setTransformer($transformer)
                 ->setParameters($this->getParameters($mapping));
         }
+
+        $route->setArguments($this->getArguments($mapping));
 
         return $route;
     }
@@ -271,6 +274,30 @@ trait MappingTrait
         }
 
         return $parameters;
+    }
+
+    /**
+     * Get mapping attributes.
+     *
+     * @param mixed[] $mapping
+     *
+     * @throws DriverException
+     *
+     * @return string[]
+     */
+    protected function getArguments(array $mapping): array
+    {
+        if (!isset($mapping['arguments'])) {
+            return [];
+        }
+
+        $arguments = $mapping['arguments'];
+
+        if ($arguments !== [] && \array_keys($arguments) === \range(0, \count($arguments) - 1)) {
+            throw new DriverException('Arguments keys must be all strings');
+        }
+
+        return $arguments;
     }
 
     /**
