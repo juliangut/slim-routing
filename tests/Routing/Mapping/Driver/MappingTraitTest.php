@@ -33,7 +33,6 @@ class MappingTraitTest extends TestCase
             ->will($this->returnValue([
                 ['methods' => ''],
             ]));
-        /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
 
         $driver->getMetadata();
     }
@@ -49,7 +48,6 @@ class MappingTraitTest extends TestCase
             ->will($this->returnValue([
                 ['methods' => 10],
             ]));
-        /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
 
         $driver->getMetadata();
     }
@@ -65,7 +63,6 @@ class MappingTraitTest extends TestCase
             ->will($this->returnValue([
                 ['placeholders' => ['invalid']],
             ]));
-        /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
 
         $driver->getMetadata();
     }
@@ -81,7 +78,6 @@ class MappingTraitTest extends TestCase
             ->will($this->returnValue([
                 ['middleware' => 10],
             ]));
-        /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
 
         $driver->getMetadata();
     }
@@ -97,7 +93,7 @@ class MappingTraitTest extends TestCase
             ->will($this->returnValue([
                 [],
             ]));
-        /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
+        // @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver
 
         $driver->getMetadata();
     }
@@ -113,7 +109,6 @@ class MappingTraitTest extends TestCase
             ->will($this->returnValue([
                 ['invokable' => 10],
             ]));
-        /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
 
         $driver->getMetadata();
     }
@@ -133,7 +128,6 @@ class MappingTraitTest extends TestCase
                     'parameters' => ['invalid'],
                 ],
             ]));
-        /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
 
         $driver->getMetadata();
     }
@@ -153,7 +147,7 @@ class MappingTraitTest extends TestCase
                     'arguments' => ['invalid'],
                 ],
             ]));
-        /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
+        // @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver
 
         $driver->getMetadata();
     }
@@ -223,7 +217,6 @@ class MappingTraitTest extends TestCase
                     'invokable' => 'OneRoute' . ':' . 'actionOne',
                 ],
             ]));
-        /* @var \Jgut\Mapping\Driver\AbstractMappingDriver $driver */
 
         /** @var RouteMetadata[] $routes */
         $routes = $driver->getMetadata();

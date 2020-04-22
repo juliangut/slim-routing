@@ -50,7 +50,6 @@ class JsonResponseHandlerTest extends TestCase
 
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->getMock();
-        /* @var ResponseFactoryInterface $responseFactory */
 
         (new JsonResponseHandler($responseFactory))->handle(new ResponseStub($this->request));
     }
@@ -62,7 +61,6 @@ class JsonResponseHandlerTest extends TestCase
 
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->getMock();
-        /* @var ResponseFactoryInterface $responseFactory */
 
         (new JsonResponseHandler($responseFactory))
             ->handle(new PayloadResponse(['data' => \curl_init()], $this->request));

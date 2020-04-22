@@ -43,7 +43,7 @@ class RouteResolverTest extends TestCase
      * @param RouteMetadata $route
      * @param string        $name
      */
-    public function testRouteName(RouteMetadata $route, string $name = null): void
+    public function testRouteName(RouteMetadata $route, ?string $name = null): void
     {
         static::assertEquals($name, $this->resolver->getName($route));
     }

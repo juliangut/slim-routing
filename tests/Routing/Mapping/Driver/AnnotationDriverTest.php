@@ -122,7 +122,6 @@ class AnnotationDriverTest extends TestCase
 
         $driver = new AnnotationDriver($paths, $this->reader);
 
-        /* @var RouteMetadata[] $routes */
         $routes = $driver->getMetadata();
 
         $route = $routes[0];

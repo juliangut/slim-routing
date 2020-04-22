@@ -15,7 +15,6 @@ namespace Jgut\Slim\Routing\Tests\Strategy;
 
 use Jgut\Slim\Routing\Response\Handler\ResponseTypeHandler;
 use Jgut\Slim\Routing\Response\PayloadResponse;
-use Jgut\Slim\Routing\Response\ResponseType;
 use Jgut\Slim\Routing\Tests\Stubs\ResponseTypeStrategyStub;
 use Laminas\Diactoros\ResponseFactory;
 use PHPUnit\Framework\TestCase;
@@ -32,13 +31,10 @@ class ResponseTypeStrategyTraitTest extends TestCase
     {
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
-        /* @var ContainerInterface $container */
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
-        /* @var ServerRequestInterface $request */
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
-        /* @var ResponseInterface $response */
 
         $strategy = new ResponseTypeStrategyStub([], new ResponseFactory(), $container);
 
@@ -62,13 +58,10 @@ class ResponseTypeStrategyTraitTest extends TestCase
     {
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
-        /* @var ContainerInterface $container */
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
-        /* @var ServerRequestInterface $request */
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
-        /* @var ResponseInterface $response */
 
         $strategy = new ResponseTypeStrategyStub([], new ResponseFactory(), $container);
 
@@ -94,13 +87,10 @@ class ResponseTypeStrategyTraitTest extends TestCase
     {
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
-        /* @var ContainerInterface $container */
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
-        /* @var ServerRequestInterface $request */
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
-        /* @var ResponseInterface $response */
         $responseFactory = new ResponseFactory();
 
         $strategy = new ResponseTypeStrategyStub([], $responseFactory, $container);
@@ -125,16 +115,12 @@ class ResponseTypeStrategyTraitTest extends TestCase
         $responseType = $this->getMockBuilder(PayloadResponse::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /* @var ResponseType $responseType */
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
-        /* @var ContainerInterface $container */
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
-        /* @var ServerRequestInterface $request */
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
-        /* @var ResponseInterface $response */
 
         $strategy = new ResponseTypeStrategyStub([], new ResponseFactory(), $container);
 
@@ -155,19 +141,15 @@ class ResponseTypeStrategyTraitTest extends TestCase
         $responseType = $this->getMockBuilder(PayloadResponse::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /* @var ResponseType $responseType */
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
         $container->expects(static::once())
             ->method('get')
             ->will($this->returnValue(new \stdClass()));
-        /* @var ContainerInterface $container */
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
-        /* @var ServerRequestInterface $request */
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
-        /* @var ResponseInterface $response */
 
         $responseHandlers = [\get_class($responseType) => 'class'];
         $strategy = new ResponseTypeStrategyStub($responseHandlers, new ResponseFactory(), $container);
@@ -185,7 +167,6 @@ class ResponseTypeStrategyTraitTest extends TestCase
         $responseType = $this->getMockBuilder(PayloadResponse::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /* @var ResponseType $responseType */
         $responseHandler = $this->getMockBuilder(ResponseTypeHandler::class)
             ->getMock();
         $resultResponse = $responseFactory->createResponse();
@@ -193,20 +174,16 @@ class ResponseTypeStrategyTraitTest extends TestCase
         $responseHandler->expects(static::once())
             ->method('handle')
             ->will($this->returnValue($resultResponse));
-        /* @var ResponseType $responseType */
 
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
         $container->expects(static::once())
             ->method('get')
             ->will($this->returnValue($responseHandler));
-        /* @var ContainerInterface $container */
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
-        /* @var ServerRequestInterface $request */
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
-        /* @var ResponseInterface $response */
 
         $responseHandlers = [\get_class($responseType) => 'class'];
         $strategy = new ResponseTypeStrategyStub($responseHandlers, $responseFactory, $container);

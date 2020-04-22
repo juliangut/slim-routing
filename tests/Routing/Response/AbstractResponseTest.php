@@ -27,10 +27,8 @@ class AbstractResponseTest extends TestCase
     {
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
-        /* @var ServerRequestInterface $request */
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
-        /* @var ResponseInterface $response */
 
         $responseType = new ResponseStub($request, $response);
 

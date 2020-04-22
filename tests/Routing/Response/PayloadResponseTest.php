@@ -26,7 +26,6 @@ class PayloadResponseTest extends TestCase
     {
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
-        /* @var ServerRequestInterface $request */
 
         $responseType = new PayloadResponse(['parameter' => 'value'], $request);
 

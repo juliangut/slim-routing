@@ -26,7 +26,6 @@ class ViewResponseTest extends TestCase
     {
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
-        /* @var ServerRequestInterface $request */
 
         $responseType = new ViewResponse('template_name', ['parameter' => 'value'], $request);
 

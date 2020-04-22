@@ -35,7 +35,7 @@ class PayloadResponse extends AbstractResponse
      * @param ServerRequestInterface $request
      * @param ResponseInterface|null $response
      */
-    public function __construct($payload, ServerRequestInterface $request, ResponseInterface $response = null)
+    public function __construct($payload, ServerRequestInterface $request, ?ResponseInterface $response = null)
     {
         parent::__construct($request, $response);
 

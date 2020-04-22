@@ -44,7 +44,6 @@ class GroupMetadataTest extends TestCase
     {
         $group = $this->getMockBuilder(GroupMetadata::class)
             ->getMock();
-        /* @var GroupMetadata $group */
 
         $this->group->setParent($group);
 

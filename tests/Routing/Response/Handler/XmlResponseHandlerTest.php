@@ -50,7 +50,6 @@ class XmlResponseHandlerTest extends TestCase
 
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->getMock();
-        /* @var ResponseFactoryInterface $responseFactory */
 
         (new XmlResponseHandler($responseFactory))->handle(new ResponseStub($this->request));
     }

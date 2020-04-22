@@ -47,7 +47,7 @@ class ViewResponse extends AbstractResponse
         string $template,
         array $parameters,
         ServerRequestInterface $request,
-        ResponseInterface $response = null
+        ?ResponseInterface $response = null
     ) {
         parent::__construct($request, $response);
 

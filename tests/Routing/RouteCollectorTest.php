@@ -34,13 +34,10 @@ class RouteCollectorTest extends TestCase
     {
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->getMock();
-        /* @var ResponseFactoryInterface $responseFactory */
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
-        /** @var CallableResolverInterface $callableResolver */
         $configuration = $this->getMockBuilder(Configuration::class)
             ->getMock();
-        /* @var Configuration $configuration */
 
         $routeCollector = new RouteCollector($configuration, $responseFactory, $callableResolver);
 
@@ -56,10 +53,8 @@ class RouteCollectorTest extends TestCase
     {
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->getMock();
-        /* @var ResponseFactoryInterface $responseFactory */
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
-        /** @var CallableResolverInterface $callableResolver */
         $configuration = $this->getMockBuilder(Configuration::class)
             ->setMethods(['getSources', 'getRouteResolver'])
             ->getMock();
@@ -73,7 +68,6 @@ class RouteCollectorTest extends TestCase
             ->will($this->returnValue(false));
         $cache->expects($this->once())
             ->method('set');
-        /* @var CacheInterface $cache */
 
         $routesMetadata = [
             (new RouteMetadata())
@@ -97,12 +91,10 @@ class RouteCollectorTest extends TestCase
         $resolver->expects(static::once())
             ->method('sort')
             ->will($this->returnValue($routesMetadata));
-        /* @var RouteResolver $resolver */
 
         $configuration->expects(static::any())
             ->method('getRouteResolver')
             ->will($this->returnValue($resolver));
-        /* @var Configuration $configuration */
 
         $routeCollector = new RouteCollector($configuration, $responseFactory, $callableResolver);
         $routeCollector->setCache($cache);
@@ -114,7 +106,6 @@ class RouteCollectorTest extends TestCase
     {
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->getMock();
-        /* @var ResponseFactoryInterface $responseFactory */
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
         /** @var CallableResolverInterface $callableResolver */
@@ -152,7 +143,6 @@ class RouteCollectorTest extends TestCase
         $cache->expects($this->once())
             ->method('get')
             ->will($this->returnValue($routesMetadata));
-        /* @var CacheInterface $cache */
 
         $routeCollector = new RouteCollector($configuration, $responseFactory, $callableResolver);
         $routeCollector->setCache($cache);
@@ -164,7 +154,6 @@ class RouteCollectorTest extends TestCase
     {
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->getMock();
-        /* @var ResponseFactoryInterface $responseFactory */
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
         /** @var CallableResolverInterface $callableResolver */
@@ -198,12 +187,10 @@ class RouteCollectorTest extends TestCase
         $resolver->expects(static::once())
             ->method('sort')
             ->will($this->returnValue($routesMetadata));
-        /* @var RouteResolver $resolver */
 
         $configuration->expects(static::any())
             ->method('getRouteResolver')
             ->will($this->returnValue($resolver));
-        /* @var Configuration $configuration */
 
         $router = new RouteCollector($configuration, $responseFactory, $callableResolver);
 

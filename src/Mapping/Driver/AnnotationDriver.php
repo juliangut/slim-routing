@@ -201,7 +201,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
         \ReflectionClass $class,
         \ReflectionMethod $method,
         RouteAnnotation $annotation,
-        GroupMetadata $group = null
+        ?GroupMetadata $group = null
     ): RouteMetadata {
         $route = (new RouteMetadata());
         $route->setPlaceholders($annotation->getPlaceholders());

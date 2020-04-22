@@ -54,7 +54,6 @@ class RouteTest extends TestCase
         $metadata->expects(static::once())
             ->method('isXmlHttpRequest')
             ->will($this->returnValue(true));
-        /* @var RouteMetadata $metadata */
 
         $route = new Route(
             ['GET'],
@@ -82,14 +81,12 @@ class RouteTest extends TestCase
 
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
-        /** @var CallableResolverInterface $callableResolver */
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $container->expects(static::any())
             ->method('get')
             ->will($this->returnValue(new \stdClass()));
-        /* @var ContainerInterface $container */
 
         $metadata = $this->getMockBuilder(RouteMetadata::class)
             ->disableOriginalConstructor()
@@ -97,7 +94,6 @@ class RouteTest extends TestCase
         $metadata->expects(static::once())
             ->method('getTransformer')
             ->will($this->returnValue('transformer'));
-        /* @var RouteMetadata $metadata */
 
         $route = new Route(
             ['GET'],
@@ -125,14 +121,12 @@ class RouteTest extends TestCase
         $callableResolver->expects(static::any())
             ->method('resolve')
             ->will($this->returnValue($callable));
-        /** @var CallableResolverInterface $callableResolver */
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $container->expects(static::any())
             ->method('get')
             ->will($this->returnValue(new AbstractTransformerStub(10)));
-        /* @var ContainerInterface $container */
 
         $group = $this->getMockBuilder(GroupMetadata::class)
             ->disableOriginalConstructor()
@@ -140,7 +134,6 @@ class RouteTest extends TestCase
         $group->expects(static::once())
             ->method('getParameters')
             ->will($this->returnValue([]));
-        /* @var GroupMetadata $group */
 
         $metadata = $this->getMockBuilder(RouteMetadata::class)
             ->disableOriginalConstructor()
@@ -154,7 +147,6 @@ class RouteTest extends TestCase
         $metadata->expects(static::once())
             ->method('getGroupChain')
             ->will($this->returnValue([$group]));
-        /* @var RouteMetadata $metadata */
 
         $route = new Route(
             ['GET'],

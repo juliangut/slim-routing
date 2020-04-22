@@ -31,11 +31,9 @@ class RequestResponseTest extends TestCase
         $responseFactory = new ResponseFactory();
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
-        /* @var ContainerInterface $container */
         $request = (new ServerRequestFactory())->createServerRequest('GET', '/');
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
-        /* @var ResponseInterface $response */
 
         $strategy = new RequestResponse([], $responseFactory, $container);
 

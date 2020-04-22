@@ -235,7 +235,7 @@ class RouteCollector extends SlimRouteCollector
         array $methods,
         string $pattern,
         $callable,
-        RouteMetadata $metadata = null
+        ?RouteMetadata $metadata = null
     ): RouteInterface {
         return new Route(
             $methods,

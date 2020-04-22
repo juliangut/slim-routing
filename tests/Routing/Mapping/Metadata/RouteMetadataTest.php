@@ -58,7 +58,6 @@ class RouteMetadataTest extends TestCase
     {
         $group = $this->getMockBuilder(GroupMetadata::class)
             ->getMock();
-        /* @var GroupMetadata $group */
 
         $this->route->setGroup($group);
 

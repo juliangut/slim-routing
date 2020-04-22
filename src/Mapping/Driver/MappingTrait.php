@@ -44,7 +44,7 @@ trait MappingTrait
      *
      * @return RouteMetadata[]
      */
-    protected function getRoutesMetadata(array $mappingData, GroupMetadata $group = null): array
+    protected function getRoutesMetadata(array $mappingData, ?GroupMetadata $group = null): array
     {
         $routes = [];
 
@@ -65,7 +65,7 @@ trait MappingTrait
      *
      * @return GroupMetadata
      */
-    protected function getGroupMetadata(array $mapping, GroupMetadata $parentGroup = null): GroupMetadata
+    protected function getGroupMetadata(array $mapping, ?GroupMetadata $parentGroup = null): GroupMetadata
     {
         $group = new GroupMetadata();
         $group->setPlaceholders($this->getPlaceholders($mapping));
@@ -98,7 +98,7 @@ trait MappingTrait
      *
      * @return RouteMetadata
      */
-    protected function getRouteMetadata(array $mapping, GroupMetadata $group = null): RouteMetadata
+    protected function getRouteMetadata(array $mapping, ?GroupMetadata $group = null): RouteMetadata
     {
         $route = new RouteMetadata();
         $route->setMethods($this->getMethods($mapping));

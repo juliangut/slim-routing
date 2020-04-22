@@ -51,11 +51,9 @@ class TwigViewResponseHandlerTest extends TestCase
 
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->getMock();
-        /* @var ResponseFactoryInterface $responseFactory */
         $twig = $this->getMockBuilder(Twig::class)
             ->disableOriginalConstructor()
             ->getMock();
-        /* @var Twig $twig */
 
         (new TwigViewResponseHandler($responseFactory, $twig))->handle(new ResponseStub($this->request));
     }
@@ -69,7 +67,6 @@ class TwigViewResponseHandlerTest extends TestCase
         $twig->expects(static::once())
             ->method('fetch')
             ->will($this->returnValue('Template rendered!'));
-        /* @var Twig $twig */
 
         $response = (new TwigViewResponseHandler($responseFactory, $twig))
             ->handle(new ViewResponse('template.twig', [], $this->request));
