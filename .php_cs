@@ -80,9 +80,7 @@ return Config::create()
         'multiline_comment_opening_closing' => true,
         'native_constant_invocation' => true,
         'native_function_casing' => true,
-        'native_function_invocation' => [
-            'exclude' => ['error_log'],
-        ],
+        'native_function_invocation' => true,
         'native_function_type_declaration_casing' => true,
         'new_with_braces' => true,
         'no_alias_functions' => true,
