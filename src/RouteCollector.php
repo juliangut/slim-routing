@@ -48,6 +48,13 @@ class RouteCollector extends SlimRouteCollector
     protected $cache;
 
     /**
+     * Metadata cache prefix.
+     *
+     * @var string
+     */
+    protected $cachePrefix = '';
+
+    /**
      * Mapping routes have been loaded.
      *
      * @var bool
@@ -89,13 +96,23 @@ class RouteCollector extends SlimRouteCollector
     }
 
     /**
-     * Set cache.
+     * Set metadata cache.
      *
      * @param CacheInterface $cache
      */
     public function setCache(CacheInterface $cache): void
     {
         $this->cache = $cache;
+    }
+
+    /**
+     * Set metadata cache prefix.
+     *
+     * @param string $cachePrefix
+     */
+    public function setCachePrefix(string $cachePrefix): void
+    {
+        $this->cachePrefix = $cachePrefix;
     }
 
     /**
@@ -281,6 +298,6 @@ class RouteCollector extends SlimRouteCollector
             )
         );
 
-        return \sha1($key);
+        return $this->cachePrefix . \sha1($key);
     }
 }

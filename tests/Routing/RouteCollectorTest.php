@@ -142,10 +142,12 @@ class RouteCollectorTest extends TestCase
             ->will($this->returnValue(true));
         $cache->expects($this->once())
             ->method('get')
+            ->with(static::matchesRegularExpression('/^prefix_.+$/'))
             ->will($this->returnValue($routesMetadata));
 
         $routeCollector = new RouteCollector($configuration, $responseFactory, $callableResolver);
         $routeCollector->setCache($cache);
+        $routeCollector->setCachePrefix('prefix_');
 
         static::assertCount(2, $routeCollector->getRoutes());
     }
