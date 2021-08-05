@@ -32,17 +32,15 @@ class AnnotationDriverTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->reader = new AnnotationReader();
     }
 
-    /**
-     * @expectedException \Jgut\Mapping\Exception\DriverException
-     * @expectedExceptionMessageRegExp /Routes can not be defined in constructor or destructor in class .+$/
-     */
     public function testConstructorDefinedRoute()
     {
+        $this->expectExceptionMessageMatches('/Routes can not be defined in constructor or destructor in class .+$/');
+        $this->expectException(\Jgut\Mapping\Exception\DriverException::class);
         $paths = [
             \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/ConstructorDefined/ConstructorDefinedRoute.php',
         ];
@@ -52,12 +50,11 @@ class AnnotationDriverTest extends TestCase
         $driver->getMetadata();
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessageRegExp /Routes can not be defined in private or protected methods in class .+$/
-     */
     public function testPrivateDefinedRoute()
     {
+        $regExp = '/Routes can not be defined in private or protected methods in class .+$/';
+        $this->expectExceptionMessageMatches($regExp);
+        $this->expectException(\RuntimeException::class);
         $paths = [
             \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/PrivateDefined/PrivateDefinedRoute.php',
         ];
@@ -67,12 +64,10 @@ class AnnotationDriverTest extends TestCase
         $driver->getMetadata();
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessageRegExp /Class .+ does not define any route$/
-     */
     public function testNoRoutesRoute()
     {
+        $this->expectExceptionMessageMatches('/Class .+ does not define any route$/');
+        $this->expectException(\RuntimeException::class);
         $paths = [
             \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/NoRoutes/NoRoutesRoute.php',
         ];
@@ -82,12 +77,10 @@ class AnnotationDriverTest extends TestCase
         $driver->getMetadata();
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Parent group unknown does not exist
-     */
     public function testUnknownGroupRoute()
     {
+        $this->expectExceptionMessage('Parent group unknown does not exist');
+        $this->expectException(\RuntimeException::class);
         $paths = [
             \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/UnknownGroup/UnknownGroupRoute.php',
         ];
@@ -97,12 +90,10 @@ class AnnotationDriverTest extends TestCase
         $driver->getMetadata();
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Circular group reference detected
-     */
     public function testCircularReferenceRoute()
     {
+        $this->expectExceptionMessage('Circular group reference detected');
+        $this->expectException(\RuntimeException::class);
         $paths = [
             \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/CircularReference/CircularReferenceRoute.php',
         ];

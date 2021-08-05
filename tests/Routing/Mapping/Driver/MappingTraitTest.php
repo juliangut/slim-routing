@@ -22,12 +22,10 @@ use PHPUnit\Framework\TestCase;
  */
 class MappingTraitTest extends TestCase
 {
-    /**
-     * @expectedException \Jgut\Mapping\Exception\DriverException
-     * @expectedExceptionMessage Route methods can not be empty
-     */
     public function testEmptyMethods()
     {
+        $this->expectExceptionMessage('Route methods can not be empty');
+        $this->expectException(\Jgut\Mapping\Exception\DriverException::class);
         $driver = $this->getMockForTrait(MappingTrait::class);
         $driver->expects($this->once())
             ->method('getMappingData')
@@ -39,12 +37,10 @@ class MappingTraitTest extends TestCase
         $driver->getMetadata();
     }
 
-    /**
-     * @expectedException \Jgut\Mapping\Exception\DriverException
-     * @expectedExceptionMessage Route methods must be a string or string array. "integer" given
-     */
     public function testInvalidMethods()
     {
+        $this->expectExceptionMessage('Route methods must be a string or string array. "integer" given');
+        $this->expectException(\Jgut\Mapping\Exception\DriverException::class);
         $driver = $this->getMockForTrait(MappingTrait::class);
         $driver->expects($this->once())
             ->method('getMappingData')
@@ -56,12 +52,10 @@ class MappingTraitTest extends TestCase
         $driver->getMetadata();
     }
 
-    /**
-     * @expectedException \Jgut\Mapping\Exception\DriverException
-     * @expectedExceptionMessage Placeholder keys must be all strings
-     */
     public function testInvalidPlaceholders()
     {
+        $this->expectExceptionMessage('Placeholder keys must be all strings');
+        $this->expectException(\Jgut\Mapping\Exception\DriverException::class);
         $driver = $this->getMockForTrait(MappingTrait::class);
         $driver->expects($this->once())
             ->method('getMappingData')
@@ -73,12 +67,10 @@ class MappingTraitTest extends TestCase
         $driver->getMetadata();
     }
 
-    /**
-     * @expectedException \Jgut\Mapping\Exception\DriverException
-     * @expectedExceptionMessage Middleware must be a string or string array. "integer" given
-     */
     public function testInvalidMiddleware()
     {
+        $this->expectExceptionMessage('Middleware must be a string or string array. "integer" given');
+        $this->expectException(\Jgut\Mapping\Exception\DriverException::class);
         $driver = $this->getMockForTrait(MappingTrait::class);
         $driver->expects($this->once())
             ->method('getMappingData')
@@ -90,12 +82,10 @@ class MappingTraitTest extends TestCase
         $driver->getMetadata();
     }
 
-    /**
-     * @expectedException \Jgut\Mapping\Exception\DriverException
-     * @expectedExceptionMessage Route invokable definition missing
-     */
     public function testMissingInvokable()
     {
+        $this->expectExceptionMessage('Route invokable definition missing');
+        $this->expectException(\Jgut\Mapping\Exception\DriverException::class);
         $driver = $this->getMockForTrait(MappingTrait::class);
         $driver->expects($this->once())
             ->method('getMappingData')
@@ -107,12 +97,10 @@ class MappingTraitTest extends TestCase
         $driver->getMetadata();
     }
 
-    /**
-     * @expectedException \Jgut\Mapping\Exception\DriverException
-     * @expectedExceptionMessage Route invokable does not seam to be supported by Slim router
-     */
     public function testInvalidInvokable()
     {
+        $this->expectExceptionMessage('Route invokable does not seam to be supported by Slim router');
+        $this->expectException(\Jgut\Mapping\Exception\DriverException::class);
         $driver = $this->getMockForTrait(MappingTrait::class);
         $driver->expects($this->once())
             ->method('getMappingData')
@@ -124,12 +112,10 @@ class MappingTraitTest extends TestCase
         $driver->getMetadata();
     }
 
-    /**
-     * @expectedException \Jgut\Mapping\Exception\DriverException
-     * @expectedExceptionMessage Parameters keys must be all strings
-     */
     public function testInvalidParameters()
     {
+        $this->expectExceptionMessage('Parameters keys must be all strings');
+        $this->expectException(\Jgut\Mapping\Exception\DriverException::class);
         $driver = $this->getMockForTrait(MappingTrait::class);
         $driver->expects($this->once())
             ->method('getMappingData')

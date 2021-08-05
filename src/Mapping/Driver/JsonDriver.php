@@ -22,5 +22,6 @@ use Jgut\Mapping\Driver\Traits\JsonMappingTrait;
 class JsonDriver extends AbstractMappingDriver
 {
     use JsonMappingTrait;
+
     use MappingTrait;
 }

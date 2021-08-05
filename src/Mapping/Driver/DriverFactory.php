@@ -25,6 +25,14 @@ class DriverFactory extends AbstractDriverFactory
     /**
      * {@inheritdoc}
      */
+    protected function getAttributeDriver(array $paths): DriverInterface
+    {
+        return new AttributeDriver($paths, new AnnotationReader());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function getAnnotationDriver(array $paths): DriverInterface
     {
         return new AnnotationDriver($paths, new AnnotationReader());

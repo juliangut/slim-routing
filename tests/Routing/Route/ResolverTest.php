@@ -32,7 +32,7 @@ class ResolverTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->resolver = new Resolver(new Configuration());
     }
@@ -154,12 +154,10 @@ class ResolverTest extends TestCase
         ];
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage There are duplicated route parameters: id
-     */
     public function testDuplicatedParameter()
     {
+        $this->expectExceptionMessage('There are duplicated route parameters: id');
+        $this->expectException(\RuntimeException::class);
         $route = (new RouteMetadata())
             ->setPattern('entity/{id}')
             ->setGroup((new GroupMetadata())->setPattern('parent/{id}'));
@@ -167,12 +165,10 @@ class ResolverTest extends TestCase
         $this->resolver->getPattern($route);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Placeholder "~245" is not a known alias or a valid regex pattern
-     */
     public function testInvalidPlaceholder()
     {
+        $this->expectExceptionMessage('Placeholder "~245" is not a known alias or a valid regex pattern');
+        $this->expectException(\InvalidArgumentException::class);
         $route = (new RouteMetadata())->setPlaceholders(['id', '~245']);
 
         $this->resolver->getPattern($route);
@@ -193,12 +189,10 @@ class ResolverTest extends TestCase
         self::assertEquals(10, $sortedRoutes[2]->getPriority());
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage There are duplicated route names: route, name
-     */
     public function testDuplicatedRouteName()
     {
+        $this->expectExceptionMessage('There are duplicated route names: route, name');
+        $this->expectException(\RuntimeException::class);
         $routes = [
             (new RouteMetadata())->setName('route'),
             (new RouteMetadata())->setName('route'),
@@ -209,12 +203,10 @@ class ResolverTest extends TestCase
         $this->resolver->checkDuplicatedRoutes($routes);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage There are duplicated routes: GET /route/{[a-zA-Z0-9]+}
-     */
     public function testDuplicatedRoutePath()
     {
+        $this->expectExceptionMessage('There are duplicated routes: GET /route/{[a-zA-Z0-9]+}');
+        $this->expectException(\RuntimeException::class);
         $nonDuplicatedRoutes = [
             (new RouteMetadata())
                 ->setMethods(['GET'])

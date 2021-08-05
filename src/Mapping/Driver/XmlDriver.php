@@ -22,5 +22,6 @@ use Jgut\Mapping\Driver\Traits\XmlMappingTrait;
 class XmlDriver extends AbstractMappingDriver
 {
     use XmlMappingTrait;
+
     use MappingTrait;
 }

@@ -34,18 +34,16 @@ class TwigViewResponseHandlerTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Response type should be an instance of Jgut\Slim\Routing\Response\ViewResponse
-     */
     public function testInvalidResponseType()
     {
+        $this->expectExceptionMessage("Response type should be an instance of Jgut\Slim\Routing\Response\ViewResponse");
+        $this->expectException(\InvalidArgumentException::class);
         $twig = $this->getMockBuilder(Twig::class)
             ->disableOriginalConstructor()
             ->getMock();
