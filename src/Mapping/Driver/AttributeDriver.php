@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Mapping\Driver;
 
-use Jgut\Mapping\Driver\AbstractAnnotationDriver;
 use Jgut\Mapping\Driver\AbstractClassDriver;
 use Jgut\Mapping\Exception\DriverException;
 use Jgut\Slim\Routing\Mapping\Annotation\Group as GroupAnnotation;
