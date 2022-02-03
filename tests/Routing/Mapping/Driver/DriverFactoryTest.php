@@ -31,17 +31,15 @@ class DriverFactoryTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->factory = new DriverFactory();
     }
 
-    /**
-     * @expectedException \Jgut\Mapping\Exception\DriverException
-     * @expectedExceptionMessageRegExp /^Metadata mapping driver should be of the type .+, string given/
-     */
     public function testInvalidDriver()
     {
+        $this->expectExceptionMessageMatches('/^Metadata mapping driver should be of the type .+, "string" given/');
+        $this->expectException(\Jgut\Mapping\Exception\DriverException::class);
         $this->factory->getDriver(['driver' => 'invalid']);
     }
 

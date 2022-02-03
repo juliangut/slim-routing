@@ -23,26 +23,26 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": "^7.0",
-    "juliangut/mapping": "~0.4",
+    "php": "^7.0 || ^8.0",
+    "juliangut/mapping": "^1.1",
     "slim/slim": "^3.8"
   },
   "require-dev": {
     "brainmaestro/composer-git-hooks": "^2.1",
     "doctrine/annotations": "^1.4",
     "friendsofphp/php-cs-fixer": "^2.0",
-    "infection/infection": "^0.7.0",
+    "infection/infection": "^0.24.0",
     "mikey179/vfsstream": "^1.6",
     "phpmd/phpmd": "^2.0",
     "phpmetrics/phpmetrics": "^2.0",
-    "phpstan/phpstan": "^0.9",
-    "phpstan/phpstan-strict-rules": "^0.9",
-    "phpunit/phpunit": "^6.0",
-    "povils/phpmnd": "^1.1",
-    "sebastian/phpcpd": "^2.0",
+    "phpstan/phpstan": "^0.12",
+    "phpstan/phpstan-strict-rules": "^0.12",
+    "phpunit/phpunit": "^9.5",
+    "povils/phpmnd": "^2.4",
+    "sebastian/phpcpd": "^6.0",
     "slim/twig-view": "^2.3",
     "spatie/array-to-xml": "^2.2",
-    "squizlabs/php_codesniffer": "^2.0"
+    "squizlabs/php_codesniffer": "^3.6"
   },
   "suggest": {
     "doctrine/annotations": "In order to load routing from annotations",
@@ -63,7 +63,10 @@
   ],
   "config": {
     "preferred-install": "dist",
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "infection/extension-installer": true
+    }
   },
   "scripts": {
     "cghooks": "cghooks",
@@ -77,7 +80,7 @@
     "phpmnd": "phpmnd ./ --exclude=tests",
     "phpmetrics-report": "phpmetrics --report-html=build/metrics --report-violations=build/logs/violations.xml --offline .",
     "phpstan": "phpstan analyse --level max -c phpstan.neon src",
-    "phpunit": "phpunit",
+    "phpunit": ["@putenv XDEBUG_MODE=coverage","phpunit"],
     "phpunit-coverage": "phpunit --coverage-html build/coverage",
     "phpunit-clover": "phpunit --coverage-clover build/logs/clover.xml",
     "infection": "infection",
@@ -87,8 +90,7 @@
       "@phpcs-lint",
       "@phpcpd",
       "@phpmd",
-      "@phpmnd",
-      "@phpstan"
+      "@phpmnd"
     ],
     "reports": [
       "@phpmetrics-report",

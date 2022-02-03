@@ -29,7 +29,7 @@ class RouteTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->annotation = new Route([]);
     }
@@ -43,21 +43,17 @@ class RouteTest extends TestCase
         self::assertFalse($this->annotation->isXmlHttpRequest());
     }
 
-    /**
-     * @expectedException \Jgut\Mapping\Exception\AnnotationException
-     * @expectedExceptionMessage Route name must not contain spaces
-     */
     public function testWrongName()
     {
+        $this->expectExceptionMessage('Route name must not contain spaces');
+        $this->expectException(\Jgut\Mapping\Exception\AnnotationException::class);
         $this->annotation->setName('a name');
     }
 
-    /**
-     * @expectedException \Jgut\Mapping\Exception\AnnotationException
-     * @expectedExceptionMessage Route name can not be empty
-     */
     public function testEmptyName()
     {
+        $this->expectExceptionMessage('Route name can not be empty');
+        $this->expectException(\Jgut\Mapping\Exception\AnnotationException::class);
         $this->annotation->setName('');
     }
 
@@ -75,30 +71,24 @@ class RouteTest extends TestCase
         self::assertEquals('transformer', $this->annotation->getTransformer());
     }
 
-    /**
-     * @expectedException \Jgut\Mapping\Exception\AnnotationException
-     * @expectedExceptionMessage Route annotation methods must be strings. "integer" given
-     */
     public function testInvalidMethodsType()
     {
+        $this->expectExceptionMessage('Route annotation methods must be strings. "integer" given');
+        $this->expectException(\Jgut\Mapping\Exception\AnnotationException::class);
         $this->annotation->setMethods([10]);
     }
 
-    /**
-     * @expectedException \Jgut\Mapping\Exception\AnnotationException
-     * @expectedExceptionMessage Route annotation methods can not be empty
-     */
     public function testEmptyMethods()
     {
+        $this->expectExceptionMessage('Route annotation methods can not be empty');
+        $this->expectException(\Jgut\Mapping\Exception\AnnotationException::class);
         $this->annotation->setMethods('');
     }
 
-    /**
-     * @expectedException \Jgut\Mapping\Exception\AnnotationException
-     * @expectedExceptionMessage Route "ANY" method cannot be defined with other methods
-     */
     public function testWrongMethodCount()
     {
+        $this->expectExceptionMessage('Route "ANY" method cannot be defined with other methods');
+        $this->expectException(\Jgut\Mapping\Exception\AnnotationException::class);
         $this->annotation->setMethods(['GET', 'ANY']);
     }
 

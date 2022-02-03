@@ -42,17 +42,15 @@ class RouteTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->request = Request::createFromEnvironment(Environment::mock());
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessageRegExp /No handler registered for response type ".+"/
-     */
     public function testNoHandler()
     {
+        $this->expectExceptionMessageMatches('/No handler registered for response type ".+"/');
+        $this->expectException(\RuntimeException::class);
         $responseType = $this->getMockBuilder(ResponseType::class)
             ->getMock();
         /* @var ResponseType $responseType */
@@ -77,12 +75,10 @@ class RouteTest extends TestCase
         $route->run($this->request, new Response());
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessageRegExp /Response handler should implement .+, "stdClass" given/
-     */
     public function testInvalidHandler()
     {
+        $this->expectExceptionMessageMatches('/Response handler should implement .+, "stdClass" given/');
+        $this->expectException(\RuntimeException::class);
         $responseType = $this->getMockBuilder(ResponseType::class)
             ->getMock();
         /* @var ResponseType $responseType */

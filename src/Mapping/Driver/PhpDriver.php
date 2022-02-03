@@ -22,5 +22,6 @@ use Jgut\Mapping\Driver\Traits\PhpMappingTrait;
 class PhpDriver extends AbstractMappingDriver
 {
     use PhpMappingTrait;
+
     use MappingTrait;
 }

@@ -33,18 +33,17 @@ class JsonResponseHandlerTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Response type should be an instance of Jgut\Slim\Routing\Response\PayloadResponse
-     */
     public function testInvalidResponseType()
     {
+        $regExp = "Response type should be an instance of Jgut\Slim\Routing\Response\PayloadResponse";
+        $this->expectExceptionMessage($regExp);
+        $this->expectException(\InvalidArgumentException::class);
         (new JsonResponseHandler())->handle(new ResponseStub($this->request));
     }
 

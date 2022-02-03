@@ -25,6 +25,7 @@ use Jgut\Mapping\Exception\AnnotationException;
 class Group extends AbstractAnnotation
 {
     use PathTrait;
+
     use MiddlewareTrait;
 
     /**

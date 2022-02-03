@@ -27,12 +27,10 @@ use PHPUnit\Framework\TestCase;
  */
 class ConfigurationTest extends TestCase
 {
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Configurations must be an iterable
-     */
     public function testInvalidConfigurations()
     {
+        $this->expectExceptionMessage('Configurations must be an iterable');
+        $this->expectException(\InvalidArgumentException::class);
         new Configuration('');
     }
 
@@ -59,21 +57,18 @@ class ConfigurationTest extends TestCase
         self::assertInstanceOf(SnakeCase::class, $configuration->getNamingStrategy());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The following configuration parameters are not recognized: unknown
-     */
     public function testUnknownParameter()
     {
+        $this->expectExceptionMessage('The following configuration parameters are not recognized: unknown');
+        $this->expectException(\InvalidArgumentException::class);
         new Configuration(['unknown' => 'unknown']);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessageRegExp /Mapping source must be a string, array or .+\DriverInterface, integer given/
-     */
     public function testBadSource()
     {
+        $regExp = "/Mapping source must be a string, array or .+\DriverInterface, integer given/";
+        $this->expectExceptionMessageMatches($regExp);
+        $this->expectException(\InvalidArgumentException::class);
         new Configuration(['sources' => [10]]);
     }
 
@@ -89,12 +84,10 @@ class ConfigurationTest extends TestCase
         self::assertEquals($paths, $configuration->getSources());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Placeholder pattern "notRegex~" is not a valid regex
-     */
     public function testBadPlaceholderAlias()
     {
+        $this->expectExceptionMessage('Placeholder pattern "notRegex~" is not a valid regex');
+        $this->expectException(\InvalidArgumentException::class);
         new Configuration(['placeholderAliases' => ['tlf' => 'notRegex~']]);
     }
 

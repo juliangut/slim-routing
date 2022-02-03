@@ -25,7 +25,7 @@ $finder = Finder::create()
     ->exclude(['vendor', 'build'])
     ->in(__DIR__);
 
-return Config::create()
+return (new PhpCsFixer\Config())
     ->setUsingCache(true)
     ->setRiskyAllowed(true)
     ->setRules([
@@ -70,7 +70,7 @@ return Config::create()
         'no_leading_namespace_whitespace' => true,
         'no_mixed_echo_print' => true,
         'no_multiline_whitespace_around_double_arrow' => true,
-        'no_multiline_whitespace_before_semicolons' => true,
+        'multiline_whitespace_before_semicolons' => false,
         'no_php4_constructor' => true,
         'no_short_bool_cast' => true,
         'no_short_echo_tag' => true,

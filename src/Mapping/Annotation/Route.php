@@ -25,6 +25,7 @@ use Jgut\Mapping\Exception\AnnotationException;
 class Route extends AbstractAnnotation
 {
     use PathTrait;
+
     use MiddlewareTrait;
 
     /**

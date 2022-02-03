@@ -22,5 +22,6 @@ use Jgut\Mapping\Driver\Traits\YamlMappingTrait;
 class YamlDriver extends AbstractMappingDriver
 {
     use YamlMappingTrait;
+
     use MappingTrait;
 }
