@@ -69,7 +69,7 @@ class ConfigurationTest extends TestCase
     public function testBadSource(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             '/Mapping source must be a string, array or .+\DriverInterface, integer given/'
         );
 

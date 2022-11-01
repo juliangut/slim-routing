@@ -77,15 +77,15 @@ abstract class AbstractMetadata implements MetadataInterface
      */
     public function setPattern(string $pattern): self
     {
-        if (\trim($pattern) === '') {
-            throw new MetadataException(\sprintf('Pattern can not be empty'));
+        if (trim($pattern) === '') {
+            throw new MetadataException(sprintf('Pattern can not be empty'));
         }
 
-        $pattern = \trim($pattern, ' /');
+        $pattern = trim($pattern, ' /');
 
-        if ((bool) \preg_match('/{([a-zA-Z_][a-zA-Z0-9_-]*):([^}]+)?}/', $pattern, $matches) !== false) {
+        if ((bool) preg_match('/{([a-zA-Z_][a-zA-Z0-9_-]*):([^}]+)?}/', $pattern, $matches) !== false) {
             throw new MetadataException(
-                \sprintf('Placeholder matching "%s" must be defined on placeholders parameter', $matches[2])
+                sprintf('Placeholder matching "%s" must be defined on placeholders parameter', $matches[2])
             );
         }
 
@@ -185,9 +185,9 @@ abstract class AbstractMetadata implements MetadataInterface
      */
     public function setMiddleware(array $middleware): self
     {
-        $this->middleware = \array_map(
+        $this->middleware = array_map(
             function (string $middleware): string {
-                return \ltrim($middleware, '\\');
+                return ltrim($middleware, '\\');
             },
             $middleware
         );

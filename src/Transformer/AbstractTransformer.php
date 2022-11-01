@@ -23,7 +23,7 @@ abstract class AbstractTransformer implements ParameterTransformer
      */
     public function transform(array $parameters, array $definitions): array
     {
-        \array_walk(
+        array_walk(
             $parameters,
             function (&$parameter, string $name) use ($definitions): void {
                 if (isset($definitions[$name])) {
@@ -58,7 +58,7 @@ abstract class AbstractTransformer implements ParameterTransformer
                 break;
 
             case 'bool':
-                $transformedParameter = \in_array(\trim($parameter), ['1', 'on', 'yes', 'true'], true);
+                $transformedParameter = \in_array(trim($parameter), ['1', 'on', 'yes', 'true'], true);
                 break;
 
             default:

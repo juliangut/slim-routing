@@ -105,7 +105,7 @@ trait ResponseTypeStrategyTrait
         $type = \get_class($responseType);
 
         if (!isset($this->responseHandlers[$type])) {
-            throw new \RuntimeException(\sprintf('No handler registered for response type "%s"', $type));
+            throw new \RuntimeException(sprintf('No handler registered for response type "%s"', $type));
         }
 
         $handler = $this->responseHandlers[$type];
@@ -114,7 +114,7 @@ trait ResponseTypeStrategyTrait
         }
 
         if (!$handler instanceof ResponseTypeHandler) {
-            throw new \RuntimeException(\sprintf(
+            throw new \RuntimeException(sprintf(
                 'Response handler should implement %s, "%s" given',
                 ResponseTypeHandler::class,
                 \is_object($handler) ? \get_class($handler) : \gettype($handler)

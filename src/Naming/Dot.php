@@ -23,6 +23,6 @@ class Dot implements Strategy
      */
     public function combine(array $nameParts): string
     {
-        return \implode('.', $nameParts);
+        return implode('.', $nameParts);
     }
 }

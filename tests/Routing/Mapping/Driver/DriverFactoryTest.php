@@ -39,8 +39,8 @@ class DriverFactoryTest extends TestCase
     public function testInvalidDriver(): void
     {
         $this->expectException(\Jgut\Mapping\Exception\DriverException::class);
-        $this->expectExceptionMessageRegExp(
-            '/^Metadata mapping driver should be of the type .+, string given/'
+        $this->expectExceptionMessageMatches(
+            '/^Metadata mapping driver should be of the type .+, "string" given/'
         );
 
         $this->factory->getDriver(['driver' => 'invalid']);

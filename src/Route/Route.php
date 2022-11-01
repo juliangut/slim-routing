@@ -100,7 +100,7 @@ class Route extends SlimRoute
 
         if ($this->metadata !== null
             && $this->metadata->isXmlHttpRequest()
-            && \strtolower($request->getHeaderLine('X-Requested-With')) !== 'xmlhttprequest'
+            && strtolower($request->getHeaderLine('X-Requested-With')) !== 'xmlhttprequest'
         ) {
             return $this->responseFactory->createResponse(400);
         }
@@ -147,7 +147,7 @@ class Route extends SlimRoute
             }
 
             if (!$transformer instanceof ParameterTransformer) {
-                throw new \RuntimeException(\sprintf(
+                throw new \RuntimeException(sprintf(
                     'Parameter transformer should implement %s, "%s" given',
                     ParameterTransformer::class,
                     \is_object($transformer) ? \get_class($transformer) : \gettype($transformer)
@@ -169,14 +169,14 @@ class Route extends SlimRoute
      */
     protected function getRouteParameters(RouteMetadata $route): array
     {
-        $parameters = \array_filter(\array_map(
+        $parameters = array_filter(array_map(
             function (GroupMetadata $group): array {
                 return $group->getParameters();
             },
             $route->getGroupChain()
         ));
-        \array_unshift($parameters, $route->getParameters());
+        array_unshift($parameters, $route->getParameters());
 
-        return \array_filter(\array_merge(...$parameters));
+        return array_filter(array_merge(...$parameters));
     }
 }

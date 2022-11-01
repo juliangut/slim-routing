@@ -40,7 +40,7 @@ class AnnotationDriverTest extends TestCase
     public function testConstructorDefinedRoute(): void
     {
         $this->expectException(\Jgut\Mapping\Exception\DriverException::class);
-        $this->expectExceptionMessageRegExp('/Routes can not be defined in constructor or destructor in class .+$/');
+        $this->expectExceptionMessageMatches('/Routes can not be defined in constructor or destructor in class .+$/');
 
         $paths = [
             \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/ConstructorDefined/ConstructorDefinedRoute.php',
@@ -54,7 +54,7 @@ class AnnotationDriverTest extends TestCase
     public function testPrivateDefinedRoute(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             '/Routes can not be defined in private or protected methods in class .+$/'
         );
 
@@ -70,7 +70,7 @@ class AnnotationDriverTest extends TestCase
     public function testNoRoutesRoute(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/Class .+ does not define any route$/');
+        $this->expectExceptionMessageMatches('/Class .+ does not define any route$/');
 
         $paths = [
             \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/NoRoutes/NoRoutesRoute.php',

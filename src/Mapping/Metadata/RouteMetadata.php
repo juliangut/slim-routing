@@ -142,7 +142,7 @@ class RouteMetadata extends AbstractMetadata
                     throw new MetadataException('Circular group reference detected');
                 }
 
-                \array_unshift($groupChain, $parent);
+                array_unshift($groupChain, $parent);
 
                 $parent = $parent->getParent();
             }
@@ -172,7 +172,7 @@ class RouteMetadata extends AbstractMetadata
      */
     public function setTransformer(string $transformer): self
     {
-        $this->transformer = \ltrim($transformer, '\\');
+        $this->transformer = ltrim($transformer, '\\');
 
         return $this;
     }

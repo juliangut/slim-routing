@@ -75,7 +75,7 @@ class RouteTest extends TestCase
     public function testWrongParameterTransformer(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             '/^Parameter transformer should implement .+\\\ParameterTransformer, ".+" given$/'
         );
 

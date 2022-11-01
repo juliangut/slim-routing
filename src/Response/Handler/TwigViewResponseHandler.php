@@ -53,7 +53,7 @@ class TwigViewResponseHandler extends AbstractResponseHandler
     {
         if (!$responseType instanceof ViewResponse) {
             throw new \InvalidArgumentException(
-                \sprintf('Response type should be an instance of %s', ViewResponse::class)
+                sprintf('Response type should be an instance of %s', ViewResponse::class)
             );
         }
 

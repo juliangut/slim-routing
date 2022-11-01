@@ -52,7 +52,7 @@ class RouteResolver
             return null;
         }
 
-        $nameSegments = \array_filter(\array_map(
+        $nameSegments = array_filter(array_map(
             function (GroupMetadata $group): ?string {
                 return $group->getPrefix();
             },
@@ -73,15 +73,15 @@ class RouteResolver
      */
     public function getMiddleware(RouteMetadata $route): array
     {
-        $middleware = \array_filter(\array_map(
+        $middleware = array_filter(array_map(
             function (GroupMetadata $group): array {
                 return $group->getMiddleware();
             },
-            \array_reverse($route->getGroupChain())
+            array_reverse($route->getGroupChain())
         ));
-        \array_unshift($middleware, $route->getMiddleware());
+        array_unshift($middleware, $route->getMiddleware());
 
-        return \array_filter(\array_merge(...$middleware));
+        return array_filter(array_merge(...$middleware));
     }
 
     /**
@@ -96,36 +96,36 @@ class RouteResolver
      */
     public function getPattern(RouteMetadata $route): string
     {
-        $patterns = \array_map(
+        $patterns = array_map(
             function (GroupMetadata $group): ?string {
                 return $group->getPattern();
             },
             $route->getGroupChain()
         );
         $patterns[] = $route->getPattern();
-        $patterns = \array_filter($patterns);
+        $patterns = array_filter($patterns);
 
-        $pattern = '/' . (\count($patterns) === 0 ? '' : \implode('/', $patterns));
+        $pattern = '/' . (\count($patterns) === 0 ? '' : implode('/', $patterns));
         if ($this->configuration->hasTrailingSlash() && $pattern !== '/') {
             $pattern .= '/';
         }
         $placeholders = $this->getPlaceholders($route);
 
-        if ((bool) \preg_match_all('/{([a-zA-Z_][a-zA-Z0-9_-]*)}/', $pattern, $parameter) !== false) {
+        if ((bool) preg_match_all('/{([a-zA-Z_][a-zA-Z0-9_-]*)}/', $pattern, $parameter) !== false) {
             $parameters = $parameter[1];
 
-            $duplicatedParameters = \array_unique(\array_diff_assoc($parameters, \array_unique($parameters)));
+            $duplicatedParameters = array_unique(array_diff_assoc($parameters, array_unique($parameters)));
             if (\count($duplicatedParameters) > 0) {
                 throw new \RuntimeException(
-                    'There are duplicated route parameters: ' . \implode(', ', $duplicatedParameters)
+                    'There are duplicated route parameters: ' . implode(', ', $duplicatedParameters)
                 );
             }
 
             foreach ($parameters as $param) {
                 if (isset($placeholders[$param])) {
-                    $pattern = \str_replace(
+                    $pattern = str_replace(
                         '{' . $param . '}',
-                        \sprintf('{%s:%s}', $param, $placeholders[$param]),
+                        sprintf('{%s:%s}', $param, $placeholders[$param]),
                         $pattern
                     );
                 }
@@ -148,7 +148,7 @@ class RouteResolver
     {
         $aliases = $this->configuration->getPlaceholderAliases();
 
-        $placeholders = \array_filter(\array_map(
+        $placeholders = array_filter(array_map(
             function (GroupMetadata $group): array {
                 return $group->getPlaceholders();
             },
@@ -156,20 +156,20 @@ class RouteResolver
         ));
         $placeholders[] = $route->getPlaceholders();
 
-        $placeholders = \array_filter(\array_merge(...$placeholders));
+        $placeholders = array_filter(array_merge(...$placeholders));
 
-        return \array_map(
+        return array_map(
             function (string $pattern) use ($aliases): string {
                 if (isset($aliases[$pattern])) {
                     return $aliases[$pattern];
                 }
 
-                if (@\preg_match('~^' . $pattern . '$~', '') !== false) {
+                if (@preg_match('~^' . $pattern . '$~', '') !== false) {
                     return $pattern;
                 }
 
                 throw new \InvalidArgumentException(
-                    \sprintf('Placeholder "%s" is not a known alias or a valid regex pattern', $pattern)
+                    sprintf('Placeholder "%s" is not a known alias or a valid regex pattern', $pattern)
                 );
             },
             $placeholders
@@ -187,7 +187,7 @@ class RouteResolver
      */
     public function getArguments(RouteMetadata $route): array
     {
-        $arguments = \array_map(
+        $arguments = array_map(
             function (GroupMetadata $group): array {
                 return $group->getArguments();
             },
@@ -195,7 +195,7 @@ class RouteResolver
         );
         $arguments[] = $route->getArguments();
 
-        return \array_filter(\array_merge(...$arguments));
+        return array_filter(array_merge(...$arguments));
     }
 
     /**
@@ -220,16 +220,16 @@ class RouteResolver
      */
     protected function checkDuplicatedRouteNames(array $routes): void
     {
-        $names = \array_filter(\array_map(
+        $names = array_filter(array_map(
             function (RouteMetadata $route): ?string {
                 return $this->getName($route);
             },
             $routes
         ));
 
-        $duplicatedNames = \array_unique(\array_diff_assoc($names, \array_unique($names)));
+        $duplicatedNames = array_unique(array_diff_assoc($names, array_unique($names)));
         if (\count($duplicatedNames) > 0) {
-            throw new \RuntimeException('There are duplicated route names: ' . \implode(', ', $duplicatedNames));
+            throw new \RuntimeException('There are duplicated route names: ' . implode(', ', $duplicatedNames));
         }
     }
 
@@ -242,14 +242,14 @@ class RouteResolver
      */
     protected function checkDuplicatedRoutePaths(array $routes): void
     {
-        $paths = \array_map(
-            function (RouteMetadata $route) {
-                return \array_map(
+        $paths = array_map(
+            function (RouteMetadata $route): array {
+                return array_map(
                     function (string $method) use ($route): string {
-                        return \sprintf(
+                        return sprintf(
                             '%s %s',
                             $method,
-                            \preg_replace('/{([a-zA-Z_][a-zA-Z0-9_-]*):/', '{', $this->getPattern($route))
+                            preg_replace('/{([a-zA-Z_][a-zA-Z0-9_-]*):/', '{', $this->getPattern($route))
                         );
                     },
                     $route->getMethods()
@@ -258,11 +258,11 @@ class RouteResolver
             $routes
         );
 
-        $paths = \count($paths) > 0 ? \array_merge(...$paths) : [];
+        $paths = \count($paths) > 0 ? array_merge(...$paths) : [];
 
-        $duplicatedPaths = \array_unique(\array_diff_assoc($paths, \array_unique($paths)));
+        $duplicatedPaths = array_unique(array_diff_assoc($paths, array_unique($paths)));
         if (\count($duplicatedPaths) > 0) {
-            throw new \RuntimeException('There are duplicated routes: ' . \implode(', ', $duplicatedPaths));
+            throw new \RuntimeException('There are duplicated routes: ' . implode(', ', $duplicatedPaths));
         }
     }
 
@@ -296,14 +296,14 @@ class RouteResolver
      */
     private function stableUsort(array &$array, callable $sortFunction): bool
     {
-        \array_walk(
+        array_walk(
             $array,
             function (&$item, $key): void {
                 $item = [$key, $item];
             }
         );
 
-        $result = \usort(
+        $result = usort(
             $array,
             function (array $itemA, array $itemB) use ($sortFunction) {
                 $result = $sortFunction($itemA[1], $itemB[1]);
@@ -312,7 +312,7 @@ class RouteResolver
             }
         );
 
-        \array_walk(
+        array_walk(
             $array,
             function (&$item): void {
                 $item = $item[1];

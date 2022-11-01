@@ -31,24 +31,23 @@
   "require-dev": {
     "brainmaestro/composer-git-hooks": "^2.8",
     "doctrine/annotations": "^1.4",
-    "friendsofphp/php-cs-fixer": "^2.16",
-    "infection/infection": "^0.13|^0.15",
+    "friendsofphp/php-cs-fixer": "3.x",
+    "infection/infection": "^0.26",
     "laminas/laminas-diactoros": "^2.0",
     "mikey179/vfsstream": "^1.6",
     "overtrue/phplint": "^1.2",
     "phpmd/phpmd": "^2.8",
-    "phpstan/extension-installer": "^1.0.3",
-    "phpstan/phpstan": "^0.12",
-    "phpstan/phpstan-deprecation-rules": "^0.12",
-    "phpstan/phpstan-strict-rules": "^0.12",
-    "phpunit/phpunit": "^7.5|^8.0",
+    "phpstan/extension-installer": "^1.0",
+    "phpstan/phpstan": "^1.8",
+    "phpstan/phpstan-deprecation-rules": "^1.0",
+    "phpstan/phpstan-strict-rules": "^1.0",
+    "phpunit/phpunit": "^9.5",
     "povils/phpmnd": "^2.0",
     "roave/security-advisories": "dev-master",
-    "sebastian/phpcpd": "^4.0",
+    "sebastian/phpcpd": "^6.0",
     "slim/twig-view": "^2.3",
     "spatie/array-to-xml": "^2.2",
-    "squizlabs/php_codesniffer": "^3.5",
-    "thecodingmachine/phpstan-strict-rules": "^0.12"
+    "squizlabs/php_codesniffer": "^3.5"
   },
   "suggest": {
     "doctrine/annotations": "In order to load routing from annotations",
@@ -70,7 +69,11 @@
   ],
   "config": {
     "preferred-install": "dist",
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "infection/extension-installer": true,
+      "phpstan/extension-installer": true
+    }
   },
   "scripts": {
     "cghooks": "cghooks",
@@ -78,12 +81,12 @@
     "post-update-cmd": "cghooks update",
     "lint-php": "phplint --configuration=.phplint.yml",
     "lint-phpcs": "phpcs --standard=PSR2 src tests",
-    "lint-phpcs-fixer": "php-cs-fixer fix --config=.php_cs --dry-run --verbose",
-    "fix-phpcs": "php-cs-fixer fix --config=.php_cs --verbose",
+    "lint-phpcs-fixer": "php-cs-fixer fix --config=.php-cs-fixer.php --dry-run --verbose",
+    "fix-phpcs": "php-cs-fixer fix --config=.php-cs-fixer.php --verbose",
     "qa-phpcpd": "phpcpd src",
     "qa-phpmd": "phpmd src text unusedcode,naming,design,controversial,codesize",
     "qa-phpmnd": "phpmnd ./ --exclude=tests",
-    "qa-phpstan": "phpstan analyse --configuration=phpstan.neon --memory-limit=2G --no-progress",
+    "qa-phpstan": "#phpstan analyse --configuration=phpstan.neon --memory-limit=2G --no-progress",
     "test-phpunit": "phpunit",
     "test-infection": "infection",
     "report-phpunit-coverage": "phpunit --coverage-html build/coverage",

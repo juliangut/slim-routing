@@ -23,6 +23,6 @@ class CamelCase implements Strategy
      */
     public function combine(array $nameParts): string
     {
-        return \lcfirst(\implode('', \array_map('ucfirst', $nameParts)));
+        return lcfirst(implode('', array_map('ucfirst', $nameParts)));
     }
 }

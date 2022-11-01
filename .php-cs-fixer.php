@@ -25,7 +25,7 @@ $finder = Finder::create()
     ->exclude(['vendor', 'build'])
     ->in(__DIR__);
 
-return Config::create()
+return (new PhpCsFixer\Config())
     ->setUsingCache(true)
     ->setRiskyAllowed(true)
     ->setRules([
@@ -56,7 +56,6 @@ return Config::create()
         'escape_implicit_backslashes' => true,
         'function_to_constant' => true,
         'function_typehint_space' => true,
-        'hash_to_slash_comment' => true,
         'header_comment' => [
             'header' => $header,
             'location' => 'after_open',
@@ -94,11 +93,11 @@ return Config::create()
         'no_leading_namespace_whitespace' => true,
         'no_mixed_echo_print' => true,
         'no_multiline_whitespace_around_double_arrow' => true,
-        'no_multiline_whitespace_before_semicolons' => true,
+        'multiline_whitespace_before_semicolons' => false,
         'no_null_property_initialization' => true,
         'no_php4_constructor' => true,
         'no_short_bool_cast' => true,
-        'no_short_echo_tag' => true,
+        'echo_tag_syntax' => ['format' => 'long'],
         'no_singleline_whitespace_before_semicolons' => true,
         'no_spaces_around_offset' => true,
         'no_superfluous_elseif' => true,
@@ -122,7 +121,7 @@ return Config::create()
             'order' => ['use_trait']
         ],
         'ordered_imports' => [
-            'importsOrder' => ['class', 'const', 'function'],
+            'imports_order' => ['class', 'const', 'function'],
         ],
         'php_unit_construct' => true,
         'php_unit_dedicate_assert' => true,
@@ -130,7 +129,6 @@ return Config::create()
         'phpdoc_align' => true,
         'phpdoc_annotation_without_dot' => true,
         'phpdoc_indent' => true,
-        'phpdoc_inline_tag' => true,
         'phpdoc_no_access' => true,
         'phpdoc_no_alias_tag' => true,
         'phpdoc_no_empty_return' => true,
@@ -147,7 +145,7 @@ return Config::create()
         'phpdoc_types' => true,
         'phpdoc_var_without_name' => true,
         'pow_to_exponentiation' => true,
-        'psr4' => true,
+        'psr_autoloading' => true,
         'random_api_migration' => true,
         'return_type_declaration' => true,
         'self_accessor' => true,
@@ -156,14 +154,18 @@ return Config::create()
         'single_trait_insert_per_statement' => true,
         'short_scalar_cast' => true,
         'single_blank_line_before_namespace' => true,
-        'single_line_comment_style' => true,
+        'single_line_comment_style' => [
+            'comment_types' => ['hash'],
+        ],
         'single_quote' => true,
         'space_after_semicolon' => true,
         'standardize_increment' => true,
         'standardize_not_equals' => true,
         'ternary_operator_spaces' => true,
         'ternary_to_null_coalescing' => true,
-        'trailing_comma_in_multiline_array' => true,
+        'trailing_comma_in_multiline' => [
+            'elements' => ['arrays']
+        ],
         'trim_array_spaces' => true,
         'unary_operator_spaces' => true,
         'visibility_required' => [

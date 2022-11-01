@@ -169,7 +169,7 @@ class RouteCollector extends SlimRouteCollector
             }
         }
 
-        $this->routes = \array_merge($this->routes, $routes);
+        $this->routes = array_merge($this->routes, $routes);
 
         $this->routesRegistered = true;
     }
@@ -277,9 +277,9 @@ class RouteCollector extends SlimRouteCollector
      */
     protected function getCacheKey(array $mappingSources): string
     {
-        $key = \implode(
+        $key = implode(
             '.',
-            \array_map(
+            array_map(
                 function ($mappingSource): string {
                     if (!\is_array($mappingSource)) {
                         $mappingSource = [
@@ -289,7 +289,7 @@ class RouteCollector extends SlimRouteCollector
                     }
 
                     $path = \is_array($mappingSource['path'])
-                        ? \implode('', $mappingSource['path'])
+                        ? implode('', $mappingSource['path'])
                         : $mappingSource['path'];
 
                     return $mappingSource['type'] . '.' . $path;
@@ -298,6 +298,6 @@ class RouteCollector extends SlimRouteCollector
             )
         );
 
-        return $this->cachePrefix . \sha1($key);
+        return $this->cachePrefix . sha1($key);
     }
 }

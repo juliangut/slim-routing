@@ -57,7 +57,7 @@ class JsonResponseHandler extends AbstractResponseHandler
     {
         if (!$responseType instanceof PayloadResponse) {
             throw new \InvalidArgumentException(
-                \sprintf('Response type should be an instance of %s', PayloadResponse::class)
+                sprintf('Response type should be an instance of %s', PayloadResponse::class)
             );
         }
 
@@ -68,7 +68,7 @@ class JsonResponseHandler extends AbstractResponseHandler
         }
 
         $response = $this->getResponse($responseType);
-        $response->getBody()->write((string) \json_encode($payload, $this->jsonFlags));
+        $response->getBody()->write((string) json_encode($payload, $this->jsonFlags));
 
         return $response->withHeader('Content-Type', 'application/json; charset=utf-8');
     }

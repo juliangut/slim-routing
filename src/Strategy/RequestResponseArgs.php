@@ -61,6 +61,6 @@ class RequestResponseArgs implements RequestHandlerInvocationStrategyInterface
         ResponseInterface $response,
         array $routeArguments
     ): ResponseInterface {
-        return $this->handleResponse($callable($request, $response, ...\array_values($routeArguments)));
+        return $this->handleResponse($callable($request, $response, ...array_values($routeArguments)));
     }
 }

@@ -53,7 +53,7 @@ class XmlResponseHandler extends AbstractResponseHandler
     {
         if (!$responseType instanceof PayloadResponse) {
             throw new \InvalidArgumentException(
-                \sprintf('Response type should be an instance of %s', PayloadResponse::class)
+                sprintf('Response type should be an instance of %s', PayloadResponse::class)
             );
         }
 
@@ -75,15 +75,15 @@ class XmlResponseHandler extends AbstractResponseHandler
      */
     protected function asSingleLine(ArrayToXml $converter): string
     {
-        $xmlLines = \explode("\n", $converter->toXml());
-        \array_walk(
+        $xmlLines = explode("\n", $converter->toXml());
+        array_walk(
             $xmlLines,
             function (string $xmlLine): string {
-                return \ltrim($xmlLine);
+                return ltrim($xmlLine);
             }
         );
 
-        return \implode('', $xmlLines);
+        return implode('', $xmlLines);
     }
 
     /**
@@ -99,6 +99,6 @@ class XmlResponseHandler extends AbstractResponseHandler
         $domDocument->formatOutput = true;
         $xmlContent = $domDocument->saveXML();
 
-        return $xmlContent !== false ? \rtrim($xmlContent, "\n") : '';
+        return $xmlContent !== false ? rtrim($xmlContent, "\n") : '';
     }
 }

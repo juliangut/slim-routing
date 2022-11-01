@@ -110,7 +110,7 @@ class ResponseTypeStrategyTraitTest extends TestCase
     public function testNoHandler(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/^No handler registered for response type ".+"$/');
+        $this->expectExceptionMessageMatches('/^No handler registered for response type ".+"$/');
 
         $responseType = $this->getMockBuilder(PayloadResponse::class)
             ->disableOriginalConstructor()
@@ -134,7 +134,7 @@ class ResponseTypeStrategyTraitTest extends TestCase
     public function testWrongHandler(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             '/^Response handler should implement .+\\\ResponseTypeHandler, "stdClass" given$/'
         );
 

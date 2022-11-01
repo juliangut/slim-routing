@@ -63,7 +63,7 @@ class JsonResponseHandlerTest extends TestCase
             ->getMock();
 
         (new JsonResponseHandler($responseFactory))
-            ->handle(new PayloadResponse(['data' => \curl_init()], $this->request));
+            ->handle(new PayloadResponse(['data' => stream_context_create()], $this->request));
     }
 
     public function testHandleCollapsed(): void
