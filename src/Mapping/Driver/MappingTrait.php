@@ -54,7 +54,7 @@ trait MappingTrait
                 : [$this->getRouteMetadata($mapping, $group)];
         }
 
-        return \count($routes) > 0 ? \array_merge(...$routes) : [];
+        return \count($routes) > 0 ? array_merge(...$routes) : [];
     }
 
     /**
@@ -142,8 +142,8 @@ trait MappingTrait
      */
     protected function getPrefix(array $mapping): ?string
     {
-        return isset($mapping['prefix']) && \trim($mapping['prefix']) !== ''
-            ? \trim($mapping['prefix'])
+        return isset($mapping['prefix']) && trim($mapping['prefix']) !== ''
+            ? trim($mapping['prefix'])
             : null;
     }
 
@@ -156,8 +156,8 @@ trait MappingTrait
      */
     protected function getName(array $mapping): ?string
     {
-        return isset($mapping['name']) && \trim($mapping['name']) !== ''
-            ? \trim($mapping['name'])
+        return isset($mapping['name']) && trim($mapping['name']) !== ''
+            ? trim($mapping['name'])
             : null;
     }
 
@@ -183,17 +183,19 @@ trait MappingTrait
             $mappingMethods = [$mappingMethods];
         }
 
-        foreach (\array_filter($mappingMethods) as $method) {
+        foreach (array_filter($mappingMethods) as $method) {
             if (!\is_string($method)) {
                 throw new DriverException(
-                    \sprintf('Route methods must be a string or string array. "%s" given', \gettype($method))
+                    sprintf('Route methods must be a string or string array. "%s" given', \gettype($method))
                 );
             }
 
-            $methods[] = \strtoupper(\trim($method));
+            $methods[] = strtoupper(trim($method));
         }
 
-        $methods = \array_unique(\array_filter($methods, 'strlen'));
+        $methods = array_unique(array_filter($methods, function ($method): bool {
+            return \strlen($method) > 0;
+        }));
 
         if (\count($methods) === 0) {
             throw new DriverException('Route methods can not be empty');
@@ -247,8 +249,8 @@ trait MappingTrait
      */
     protected function getPattern(array $mapping): ?string
     {
-        return isset($mapping['pattern']) && \trim($mapping['pattern'], ' /') !== ''
-            ? \trim($mapping['pattern'], ' /')
+        return isset($mapping['pattern']) && trim($mapping['pattern'], ' /') !== ''
+            ? trim($mapping['pattern'], ' /')
             : null;
     }
 
@@ -269,7 +271,7 @@ trait MappingTrait
 
         $parameters = $mapping['parameters'];
 
-        if ($parameters !== [] && \array_keys($parameters) === \range(0, \count($parameters) - 1)) {
+        if ($parameters !== [] && array_keys($parameters) === range(0, \count($parameters) - 1)) {
             throw new DriverException('Parameters keys must be all strings');
         }
 
@@ -293,7 +295,7 @@ trait MappingTrait
 
         $arguments = $mapping['arguments'];
 
-        if ($arguments !== [] && \array_keys($arguments) === \range(0, \count($arguments) - 1)) {
+        if ($arguments !== [] && array_keys($arguments) === range(0, \count($arguments) - 1)) {
             throw new DriverException('Arguments keys must be all strings');
         }
 
@@ -317,7 +319,7 @@ trait MappingTrait
 
         $placeholders = $mapping['placeholders'];
 
-        if ($placeholders !== [] && \array_keys($placeholders) === \range(0, \count($placeholders) - 1)) {
+        if ($placeholders !== [] && array_keys($placeholders) === range(0, \count($placeholders) - 1)) {
             throw new DriverException('Placeholder keys must be all strings');
         }
 
@@ -347,7 +349,7 @@ trait MappingTrait
         foreach ($middlewareList as $middleware) {
             if (!\is_string($middleware)) {
                 throw new DriverException(
-                    \sprintf('Middleware must be a string or string array. "%s" given', \gettype($middleware))
+                    sprintf('Middleware must be a string or string array. "%s" given', \gettype($middleware))
                 );
             }
         }
