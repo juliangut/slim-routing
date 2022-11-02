@@ -13,8 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Mapping\Driver;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Jgut\Slim\Routing\Mapping\Driver\AnnotationDriver;
+use Jgut\Slim\Routing\Mapping\Driver\AttributeDriver;
 use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use PHPUnit\Framework\TestCase;
@@ -22,23 +21,16 @@ use PHPUnit\Framework\TestCase;
 /**
  * Annotation mapping driver factory tests.
  */
-class AnnotationDriverTest extends TestCase
+class AttributeDriverTest extends TestCase
 {
-    /**
-     * @var AnnotationReader
-     */
-    protected $reader;
-
     /**
      * {@inheritdoc}
      */
     protected function setUp(): void
     {
-        if (\PHP_VERSION_ID >= 80000) {
-            $this->markTestSkipped('On PHP > 8.0 only AttributeDriverTest is performed.');
+        if (\PHP_VERSION_ID < 80000) {
+            $this->markTestSkipped('On PHP < 8.0 only AnnotationDriverTest is performed.');
         }
-
-        $this->reader = new AnnotationReader();
     }
 
     public function testConstructorDefinedRoute(): void
@@ -47,10 +39,10 @@ class AnnotationDriverTest extends TestCase
         $this->expectExceptionMessageMatches('/Routes can not be defined in constructor or destructor in class .+$/');
 
         $paths = [
-            \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/ConstructorDefined/ConstructorDefinedRoute.php',
+            \dirname(__DIR__, 2) . '/Files/Attribute/Invalid/ConstructorDefined/ConstructorDefinedRoute.php',
         ];
 
-        $driver = new AnnotationDriver($paths, $this->reader);
+        $driver = new AttributeDriver($paths);
 
         $driver->getMetadata();
     }
@@ -63,10 +55,10 @@ class AnnotationDriverTest extends TestCase
         );
 
         $paths = [
-            \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/PrivateDefined/PrivateDefinedRoute.php',
+            \dirname(__DIR__, 2) . '/Files/Attribute/Invalid/PrivateDefined/PrivateDefinedRoute.php',
         ];
 
-        $driver = new AnnotationDriver($paths, $this->reader);
+        $driver = new AttributeDriver($paths);
 
         $driver->getMetadata();
     }
@@ -77,10 +69,10 @@ class AnnotationDriverTest extends TestCase
         $this->expectExceptionMessageMatches('/Class .+ does not define any route$/');
 
         $paths = [
-            \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/NoRoutes/NoRoutesRoute.php',
+            \dirname(__DIR__, 2) . '/Files/Attribute/Invalid/NoRoutes/NoRoutesRoute.php',
         ];
 
-        $driver = new AnnotationDriver($paths, $this->reader);
+        $driver = new AttributeDriver($paths);
 
         $driver->getMetadata();
     }
@@ -91,10 +83,10 @@ class AnnotationDriverTest extends TestCase
         $this->expectExceptionMessage('Parent group unknown does not exist');
 
         $paths = [
-            \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/UnknownGroup/UnknownGroupRoute.php',
+            \dirname(__DIR__, 2) . '/Files/Attribute/Invalid/UnknownGroup/UnknownGroupRoute.php',
         ];
 
-        $driver = new AnnotationDriver($paths, $this->reader);
+        $driver = new AttributeDriver($paths);
 
         $driver->getMetadata();
     }
@@ -105,10 +97,10 @@ class AnnotationDriverTest extends TestCase
         $this->expectExceptionMessage('Circular group reference detected');
 
         $paths = [
-            \dirname(__DIR__, 2) . '/Files/Annotation/Invalid/CircularReference/CircularReferenceRoute.php',
+            \dirname(__DIR__, 2) . '/Files/Attribute/Invalid/CircularReference/CircularReferenceRoute.php',
         ];
 
-        $driver = new AnnotationDriver($paths, $this->reader);
+        $driver = new AttributeDriver($paths);
 
         $route = $driver->getMetadata()[0];
 
@@ -118,13 +110,13 @@ class AnnotationDriverTest extends TestCase
     public function testRoutes(): void
     {
         $paths = [
-            \dirname(__DIR__, 2) . '/Files/Annotation/Valid/AbstractRoute.php',
-            \dirname(__DIR__, 2) . '/Files/Annotation/Valid/DependentRoute.php',
-            \dirname(__DIR__, 2) . '/Files/Annotation/Valid/GroupedRoute.php',
-            \dirname(__DIR__, 2) . '/Files/Annotation/Valid/SingleRoute.php',
+            \dirname(__DIR__, 2) . '/Files/Attribute/Valid/AbstractRoute.php',
+            \dirname(__DIR__, 2) . '/Files/Attribute/Valid/DependentRoute.php',
+            \dirname(__DIR__, 2) . '/Files/Attribute/Valid/GroupedRoute.php',
+            \dirname(__DIR__, 2) . '/Files/Attribute/Valid/SingleRoute.php',
         ];
 
-        $driver = new AnnotationDriver($paths, $this->reader);
+        $driver = new AttributeDriver($paths);
 
         $routes = $driver->getMetadata();
 
@@ -134,7 +126,7 @@ class AnnotationDriverTest extends TestCase
         static::assertEquals('four', $route->getName());
         static::assertEquals(['GET'], $route->getMethods());
         static::assertEquals(
-            'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\DependentRoute:actionFour',
+            'Jgut\Slim\Routing\Tests\Files\Attribute\Valid\DependentRoute:actionFour',
             $route->getInvokable()
         );
         static::assertEquals(0, $route->getPriority());
@@ -148,7 +140,7 @@ class AnnotationDriverTest extends TestCase
         static::assertNull($route->getName());
         static::assertEquals(['GET'], $route->getMethods());
         static::assertEquals(
-            'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\GroupedRoute:actionTwo',
+            'Jgut\Slim\Routing\Tests\Files\Attribute\Valid\GroupedRoute:actionTwo',
             $route->getInvokable()
         );
         static::assertEquals(0, $route->getPriority());
@@ -162,7 +154,7 @@ class AnnotationDriverTest extends TestCase
         static::assertNull($route->getName());
         static::assertEquals(['GET'], $route->getMethods());
         static::assertEquals(
-            'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\GroupedRoute:actionThree',
+            'Jgut\Slim\Routing\Tests\Files\Attribute\Valid\GroupedRoute:actionThree',
             $route->getInvokable()
         );
         static::assertEquals(0, $route->getPriority());
@@ -176,7 +168,7 @@ class AnnotationDriverTest extends TestCase
         static::assertEquals('one', $route->getName());
         static::assertEquals(['GET', 'POST'], $route->getMethods());
         static::assertEquals(
-            'Jgut\Slim\Routing\Tests\Files\Annotation\Valid\SingleRoute:actionOne',
+            'Jgut\Slim\Routing\Tests\Files\Attribute\Valid\SingleRoute:actionOne',
             $route->getInvokable()
         );
         static::assertEquals(-10, $route->getPriority());

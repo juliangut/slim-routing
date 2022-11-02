@@ -31,7 +31,7 @@ class RouteTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->annotation = new Route([]);
+        $this->annotation = new Route();
     }
 
     public function testDefaults(): void

@@ -31,7 +31,7 @@ class GroupTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->annotation = new Group([]);
+        $this->annotation = new Group();
     }
 
     public function testDefaults(): void
@@ -51,7 +51,7 @@ class GroupTest extends TestCase
         $this->expectException(\Jgut\Mapping\Exception\AnnotationException::class);
         $this->expectExceptionMessage('Group prefixes must not contain spaces');
 
-        new Group(['prefix' => 'a prefix']);
+        new Group(prefix: 'a prefix');
     }
 
     public function testPrefix(): void
