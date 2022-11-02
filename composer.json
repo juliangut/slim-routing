@@ -23,7 +23,7 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": "^7.1 || ^8.0",
+    "php": "^8.0",
     "juliangut/mapping": "^1.0.1",
     "psr/simple-cache": "^1.0",
     "slim/slim": "^4.2"
@@ -84,7 +84,7 @@
     "lint-phpcs-fixer": "php-cs-fixer fix --config=.php-cs-fixer.php --dry-run --verbose",
     "fix-phpcs": "php-cs-fixer fix --config=.php-cs-fixer.php --verbose",
     "qa-phpcpd": "phpcpd src",
-    "qa-phpmd": "phpmd src text unusedcode,naming,design,controversial,codesize",
+    "qa-phpmd": "phpmd src text .phpmd.xml",
     "qa-phpmnd": "phpmnd ./ --exclude=tests",
     "qa-phpstan": "#phpstan analyse --configuration=phpstan.neon --memory-limit=2G --no-progress",
     "test-phpunit": "phpunit",
