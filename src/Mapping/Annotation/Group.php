@@ -13,34 +13,55 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Mapping\Annotation;
 
-use Jgut\Mapping\Annotation\AbstractAnnotation;
 use Jgut\Mapping\Exception\AnnotationException;
 
 /**
  * Router annotation.
  *
  * @Annotation
+ *
  * @Target("CLASS")
  */
-class Group extends AbstractAnnotation
+#[\Attribute(\Attribute::TARGET_CLASS)]
+class Group
 {
     use PathTrait;
     use ArgumentTrait;
     use MiddlewareTrait;
 
+    public function __construct(
+        ?string $parent = null,
+        ?string $prefix = null,
+        ?string $pattern = null,
+        array $placeholders = [],
+        array $parameters = [],
+        array $middleware = [],
+        array $arguments = []
+    ) {
+        $params = array_filter(array_keys(get_defined_vars()), fn ($param) => property_exists($this, $param));
+        // shut up phpmd
+        \func_get_args();
+
+        foreach ($params as $param) {
+            if ($this->$param !== $$param) {
+                $this->{'set' . ucfirst($param)}($$param);
+            }
+        }
+    }
+
     /**
      * Parent group.
      *
-     * @var string
+     * @var string|null
      */
-    protected $parent;
+    protected ?string $parent = null;
 
     /**
      * Group name prefix.
      *
-     * @var string
+     * @var string|null
      */
-    protected $prefix;
+    protected ?string $prefix = null;
 
     /**
      * Get parent group.
@@ -61,7 +82,7 @@ class Group extends AbstractAnnotation
      */
     public function setParent(string $parent): self
     {
-        $this->parent = \trim($parent, '\\');
+        $this->parent = trim($parent, '\\');
 
         return $this;
     }
@@ -81,17 +102,15 @@ class Group extends AbstractAnnotation
      *
      * @param string $prefix
      *
-     * @throws AnnotationException
-     *
      * @return self
      */
     public function setPrefix(string $prefix): self
     {
-        if (\strpos(\trim($prefix), ' ') !== false) {
-            throw new AnnotationException(\sprintf('Group prefixes must not contain spaces'));
+        if (str_contains(trim($prefix), ' ')) {
+            throw new AnnotationException('Group prefixes must not contain spaces');
         }
 
-        $this->prefix = \trim($prefix);
+        $this->prefix = trim($prefix);
 
         return $this;
     }

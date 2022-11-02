@@ -23,7 +23,7 @@ trait ArgumentTrait
      *
      * @var mixed[]
      */
-    protected $arguments = [];
+    protected array $arguments = [];
 
     /**
      * Get arguments.

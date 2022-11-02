@@ -13,14 +13,14 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Mapping\Annotation;
 
-use Jgut\Mapping\Annotation\AbstractAnnotation;
-
 /**
  * Router annotation.
  *
  * @Annotation
+ *
  * @Target("CLASS")
  */
-class Router extends AbstractAnnotation
+#[\Attribute(\Attribute::TARGET_CLASS)]
+class Router
 {
 }

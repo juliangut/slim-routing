@@ -21,23 +21,23 @@ trait PathTrait
     /**
      * Pattern path.
      *
-     * @var string
+     * @var string|null
      */
-    protected $pattern;
+    protected ?string $pattern = null;
 
     /**
      * Pattern path placeholders regex.
      *
      * @var string[]
      */
-    protected $placeholders = [];
+    protected array $placeholders = [];
 
     /**
      * Pattern parameters.
      *
      * @var mixed[]
      */
-    protected $parameters = [];
+    protected array $parameters = [];
 
     /**
      * Get pattern path.
@@ -52,11 +52,11 @@ trait PathTrait
     /**
      * Set pattern path.
      *
-     * @param string $pattern
+     * @param string|null $pattern
      *
      * @return self
      */
-    public function setPattern(string $pattern): self
+    public function setPattern(?string $pattern): self
     {
         $this->pattern = $pattern;
 

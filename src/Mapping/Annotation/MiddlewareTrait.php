@@ -25,7 +25,7 @@ trait MiddlewareTrait
      *
      * @var string[]
      */
-    protected $middleware = [];
+    protected array $middleware = [];
 
     /**
      * Get middleware list.
@@ -57,7 +57,7 @@ trait MiddlewareTrait
         foreach ($middlewareList as $middleware) {
             if (!\is_string($middleware)) {
                 throw new AnnotationException(
-                    \sprintf('Route annotation middleware must be strings. "%s" given', \gettype($middleware))
+                    sprintf('Route annotation middleware must be strings. "%s" given', \gettype($middleware))
                 );
             }
 

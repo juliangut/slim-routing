@@ -14,8 +14,10 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Mapping\Driver;
 
 use Jgut\Mapping\Driver\AbstractAnnotationDriver;
+use Jgut\Slim\Routing\Mapping\Annotation\Group as GroupAnnotation;
+use Jgut\Slim\Routing\Mapping\Annotation\Route as RouteAnnotation;
+use Jgut\Slim\Routing\Mapping\Annotation\Router as RouterAnnotation;
 use ReflectionClass;
-use Reflector;
 
 /**
  * Annotation driver.
@@ -24,13 +26,14 @@ class AnnotationDriver extends AbstractAnnotationDriver
 {
     use ClassDriverTrait;
 
-    protected function getAnnotation(Reflector $what, string $attribute)
-    {
+    protected function getAnnotation(
+        \ReflectionMethod|\ReflectionClass $what,
+        string $attribute
+    ): GroupAnnotation|RouterAnnotation|RouteAnnotation|null {
         if ($what instanceof ReflectionClass) {
             return $this->annotationReader->getClassAnnotation($what, $attribute);
         }
-        if ($what instanceof \ReflectionMethod) {
-            return $this->annotationReader->getMethodAnnotation($what, $attribute);
-        }
+
+        return $this->annotationReader->getMethodAnnotation($what, $attribute);
     }
 }

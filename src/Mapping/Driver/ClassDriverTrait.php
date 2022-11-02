@@ -19,11 +19,19 @@ use Jgut\Slim\Routing\Mapping\Annotation\Route as RouteAnnotation;
 use Jgut\Slim\Routing\Mapping\Annotation\Router as RouterAnnotation;
 use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
-use Reflector;
 
 trait ClassDriverTrait
 {
-    abstract protected function getAnnotation(Reflector $what, string $attribute);
+    /**
+     * @param \ReflectionClass|\ReflectionMethod $what
+     * @param string                             $attribute
+     *
+     * @return GroupAnnotation|RouterAnnotation|RouteAnnotation|null
+     */
+    abstract protected function getAnnotation(
+        \ReflectionClass|\ReflectionMethod $what,
+        string $attribute
+    ): GroupAnnotation|RouterAnnotation|RouteAnnotation|null;
 
     /**
      * {@inheritdoc}
@@ -70,27 +78,26 @@ trait ClassDriverTrait
             $group = $this->getAnnotation($class, GroupAnnotation::class);
 
             if ($group !== null) {
-                $groupDataBag = new \stdClass();
-                $groupDataBag->parent = $group->getParent();
-                $groupDataBag->group = $this->getGroupMetadata($group);
-
-                $groups[$class->getName()] = $groupDataBag;
+                $groups[$class->getName()] = [
+                    'parent' => $group->getParent(),
+                    'group' => $this->getGroupMetadata($group),
+                ];
             }
         }
 
         /** @var GroupMetadata[] $groups */
         $groups = array_map(
-            function (\stdClass $groupDataBag) use ($groups): GroupMetadata {
+            function (array $groupDataBag) use ($groups): GroupMetadata {
                 /** @var GroupMetadata $group */
-                $group = $groupDataBag->group;
+                $group = $groupDataBag['group'];
+                $parent = $groupDataBag['parent'];
 
-                $parent = $groupDataBag->parent;
                 if ($parent !== null) {
                     if (!isset($groups[$parent])) {
                         throw new DriverException(sprintf('Parent group %s does not exist', $parent));
                     }
 
-                    $group->setParent($groups[$parent]->group);
+                    $group->setParent($groups[$parent]['group']);
                 }
 
                 return $group;

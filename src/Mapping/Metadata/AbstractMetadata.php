@@ -78,7 +78,7 @@ abstract class AbstractMetadata implements MetadataInterface
     public function setPattern(string $pattern): self
     {
         if (trim($pattern) === '') {
-            throw new MetadataException(sprintf('Pattern can not be empty'));
+            throw new MetadataException('Pattern can not be empty');
         }
 
         $pattern = trim($pattern, ' /');

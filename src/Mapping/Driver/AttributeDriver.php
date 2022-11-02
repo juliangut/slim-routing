@@ -14,7 +14,9 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Mapping\Driver;
 
 use Jgut\Mapping\Driver\AbstractClassDriver;
-use Reflector;
+use Jgut\Slim\Routing\Mapping\Annotation\Group as GroupAnnotation;
+use Jgut\Slim\Routing\Mapping\Annotation\Route as RouteAnnotation;
+use Jgut\Slim\Routing\Mapping\Annotation\Router as RouterAnnotation;
 
 /**
  * Attribute driver.
@@ -35,12 +37,20 @@ class AttributeDriver extends AbstractClassDriver
         parent::__construct($paths);
     }
 
-    protected function getAnnotation(Reflector $what, string $attribute)
-    {
-        $attribute = $what->getAttributes($attribute, \ReflectionAttribute::IS_INSTANCEOF);
-        if (!empty($attribute)) {
-            return $attribute[0]->newInstance();
+    protected function getAnnotation(
+        \ReflectionMethod|\ReflectionClass $what,
+        string $attribute
+    ): GroupAnnotation|RouterAnnotation|RouteAnnotation|null {
+        try {
+            $classes = $what->getAttributes($attribute, \ReflectionAttribute::IS_INSTANCEOF);
+            if (!empty($classes)) {
+                return $classes[0]->newInstance();
+            }
+        } catch (\ReflectionException $e) {
+            echo $e->getMessage();
+            return null;
         }
+
         return null;
     }
 }
