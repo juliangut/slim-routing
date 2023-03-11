@@ -216,7 +216,7 @@ class RouteCollector extends SlimRouteCollector
                 static function ($mappingSource): string {
                     if (!\is_array($mappingSource)) {
                         $mappingSource = [
-                            'type' => DriverFactoryInterface::DRIVER_ANNOTATION,
+                            'type' => DriverFactoryInterface::DRIVER_ATTRIBUTE,
                             'path' => $mappingSource,
                         ];
                     }

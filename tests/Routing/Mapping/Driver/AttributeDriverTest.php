@@ -22,6 +22,13 @@ use RuntimeException;
  */
 class AttributeDriverTest extends AbstractDriverTest
 {
+    protected function setUp(): void
+    {
+        if (\PHP_VERSION_ID < 80_000) {
+            static::markTestSkipped('Named arguments supported from PHP 8.0');
+        }
+    }
+
     public function testConstructorDefinedRoute(): void
     {
         $this->expectException(DriverException::class);

@@ -51,6 +51,15 @@ class RouteCollectorTest extends TestCase
 
     public function testRoutes(): void
     {
+        $sources = \PHP_VERSION_ID < 80_000
+            ? [
+                [
+                    'type' => DriverFactoryInterface::DRIVER_ANNOTATION,
+                    'path' => [__DIR__ . '/Mapping/Files/Classes/Valid/Annotation'],
+                ]
+            ]
+            : [__DIR__ . '/Mapping/Files/Classes/Valid/Attribute'];
+
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->getMock();
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
@@ -60,7 +69,7 @@ class RouteCollectorTest extends TestCase
             ->getMock();
         $configuration->expects(static::once())
             ->method('getSources')
-            ->willReturn([__DIR__ . '/Mapping/Files/Classes/Valid/Attribute']);
+            ->willReturn($sources);
         $cache = $this->getMockBuilder(CacheInterface::class)
             ->getMock();
         $cache->expects(static::once())
@@ -101,6 +110,15 @@ class RouteCollectorTest extends TestCase
 
     public function testCachedRoutes(): void
     {
+        $sources = \PHP_VERSION_ID < 80_000
+            ? [
+                [
+                    'type' => DriverFactoryInterface::DRIVER_ANNOTATION,
+                    'path' => [__DIR__ . '/Mapping/Files/Classes/Valid/Annotation'],
+                ],
+            ]
+            : [__DIR__ . '/Mapping/Files/Classes/Valid/Attribute'];
+
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->getMock();
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
@@ -110,12 +128,7 @@ class RouteCollectorTest extends TestCase
             ->getMock();
         $configuration->expects(static::once())
             ->method('getSources')
-            ->willReturn([
-                [
-                    'type' => DriverFactoryInterface::DRIVER_ANNOTATION,
-                    'path' => [__DIR__ . '/Mapping/Files/Classes/Valid/Attribute'],
-                ],
-            ]);
+            ->willReturn($sources);
 
         $routesMetadata = [
             (new RouteMetadata(['one', 'action'], null))
@@ -148,6 +161,15 @@ class RouteCollectorTest extends TestCase
 
     public function testRouteLookup(): void
     {
+        $sources = \PHP_VERSION_ID < 80_000
+            ? [
+                [
+                    'type' => DriverFactoryInterface::DRIVER_ANNOTATION,
+                    'path' => [__DIR__ . '/Mapping/Files/Classes/Valid/Annotation'],
+                ],
+            ]
+            : [__DIR__ . '/Mapping/Files/Classes/Valid/Attribute'];
+
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->getMock();
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
@@ -158,7 +180,7 @@ class RouteCollectorTest extends TestCase
             ->getMock();
         $configuration->expects(static::once())
             ->method('getSources')
-            ->willReturn([__DIR__ . '/Mapping/Files/Classes/Valid/Attribute']);
+            ->willReturn($sources);
 
         $routesMetadata = [
             (new RouteMetadata(['one', 'action'], null))
