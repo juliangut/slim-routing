@@ -56,7 +56,7 @@ class RouteCollectorTest extends TestCase
                 [
                     'type' => DriverFactoryInterface::DRIVER_ANNOTATION,
                     'path' => [__DIR__ . '/Mapping/Files/Classes/Valid/Annotation'],
-                ]
+                ],
             ]
             : [__DIR__ . '/Mapping/Files/Classes/Valid/Attribute'];
 
