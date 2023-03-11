@@ -15,9 +15,6 @@ namespace Jgut\Slim\Routing\Tests\Stubs;
 
 use Jgut\Slim\Routing\Response\AbstractResponse;
 
-/**
- * Response stub.
- */
 class ResponseStub extends AbstractResponse
 {
 }

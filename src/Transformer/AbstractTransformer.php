@@ -13,37 +13,26 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Transformer;
 
-/**
- * Abstract parameter transformer.
- */
 abstract class AbstractTransformer implements ParameterTransformer
 {
-    /**
-     * {@inheritdoc}
-     */
     public function transform(array $parameters, array $definitions): array
     {
-        \array_walk(
+        array_walk(
             $parameters,
             function (&$parameter, string $name) use ($definitions): void {
-                if (isset($definitions[$name])) {
+                if (\array_key_exists($name, $definitions)) {
                     $type = $definitions[$name];
                     $parameter = \in_array($type, ['string', 'int', 'float', 'bool'], true)
                         ? $this->transformToPrimitive($parameter, $type)
-                        : $this->transformParameter($parameter, $definitions[$name]);
+                        : $this->transformParameter($parameter, $type);
                 }
-            }
+            },
         );
 
         return $parameters;
     }
 
     /**
-     * Transform parameter to primitive.
-     *
-     * @param string $parameter
-     * @param string $type
-     *
      * @return bool|float|int|string
      */
     protected function transformToPrimitive(string $parameter, string $type)
@@ -58,7 +47,7 @@ abstract class AbstractTransformer implements ParameterTransformer
                 break;
 
             case 'bool':
-                $transformedParameter = \in_array(\trim($parameter), ['1', 'on', 'yes', 'true'], true);
+                $transformedParameter = \in_array(trim($parameter), ['1', 'on', 'yes', 'true'], true);
                 break;
 
             default:
@@ -71,10 +60,7 @@ abstract class AbstractTransformer implements ParameterTransformer
     /**
      * Transform parameter.
      *
-     * @param string $parameter
-     * @param string $type
-     *
-     * @return mixed
+     * @phpstan-return mixed
      */
     abstract protected function transformParameter(string $parameter, string $type);
 }

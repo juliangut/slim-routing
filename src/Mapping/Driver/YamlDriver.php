@@ -13,14 +13,9 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Mapping\Driver;
 
-use Jgut\Mapping\Driver\AbstractMappingDriver;
-use Jgut\Mapping\Driver\Traits\YamlMappingTrait;
+use Jgut\Mapping\Driver\AbstractMappingYamlDriver;
 
-/**
- * YAML mapping driver.
- */
-class YamlDriver extends AbstractMappingDriver
+class YamlDriver extends AbstractMappingYamlDriver
 {
-    use YamlMappingTrait;
-    use MappingTrait;
+    use FileMappingTrait;
 }

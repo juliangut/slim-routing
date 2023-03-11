@@ -19,12 +19,10 @@ namespace Jgut\Slim\Routing\Transformer;
 interface ParameterTransformer
 {
     /**
-     * Transform parameters.
+     * @param array<string, string> $parameters
+     * @param array<string, string> $definitions
      *
-     * @param mixed[] $parameters
-     * @param mixed[] $definitions
-     *
-     * @return mixed[]
+     * @return array<string, mixed>
      */
     public function transform(array $parameters, array $definitions): array;
 }

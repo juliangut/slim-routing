@@ -13,29 +13,16 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Response\Handler;
 
+use InvalidArgumentException;
 use Jgut\Slim\Routing\Response\PayloadResponse;
 use Jgut\Slim\Routing\Response\ResponseType;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * Generic JSON response handler.
- */
 class JsonResponseHandler extends AbstractResponseHandler
 {
-    /**
-     * Json encode flags.
-     *
-     * @var int
-     */
-    protected $jsonFlags;
+    protected int $jsonFlags;
 
-    /**
-     * JsonResponseHandler constructor.
-     *
-     * @param ResponseFactoryInterface $responseFactory
-     * @param bool                     $prettify
-     */
     public function __construct(ResponseFactoryInterface $responseFactory, bool $prettify = false)
     {
         parent::__construct($responseFactory);
@@ -48,35 +35,28 @@ class JsonResponseHandler extends AbstractResponseHandler
         $this->jsonFlags = $jsonFlags;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \InvalidArgumentException
-     */
     public function handle(ResponseType $responseType): ResponseInterface
     {
         if (!$responseType instanceof PayloadResponse) {
-            throw new \InvalidArgumentException(
-                \sprintf('Response type should be an instance of %s', PayloadResponse::class)
+            throw new InvalidArgumentException(
+                sprintf('Response type should be an instance of %s.', PayloadResponse::class),
             );
         }
 
         $payload = $responseType->getPayload();
-
         if (!$this->isJsonEncodable($payload)) {
-            throw new \InvalidArgumentException('Response type payload is not json encodable');
+            throw new InvalidArgumentException('Response type payload is not json encodable.');
         }
 
         $response = $this->getResponse($responseType);
-        $response->getBody()->write((string) \json_encode($payload, $this->jsonFlags));
+        $response->getBody()
+            ->write((string) json_encode($payload, $this->jsonFlags));
 
         return $response->withHeader('Content-Type', 'application/json; charset=utf-8');
     }
 
     /**
-     * @param mixed $payload
-     *
-     * @return bool
+     * @phpstan-param mixed $payload
      */
     protected function isJsonEncodable($payload): bool
     {

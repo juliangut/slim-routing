@@ -13,29 +13,14 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Mapping\Metadata;
 
-/**
- * Group metadata.
- */
 class GroupMetadata extends AbstractMetadata
 {
-    /**
-     * Parent group metadata.
-     *
-     * @var self
-     */
-    protected $parent;
+    protected ?self $parent = null;
 
-    /**
-     * Route prefix.
-     *
-     * @var string
-     */
-    protected $prefix;
+    protected ?string $prefix = null;
 
     /**
      * Get parent group.
-     *
-     * @return GroupMetadata|null
      */
     public function getParent(): ?self
     {
@@ -43,11 +28,7 @@ class GroupMetadata extends AbstractMetadata
     }
 
     /**
-     * Set parent group.
-     *
-     * @param self $parent
-     *
-     * @return self
+     * @return static
      */
     public function setParent(self $parent): self
     {
@@ -56,22 +37,13 @@ class GroupMetadata extends AbstractMetadata
         return $this;
     }
 
-    /**
-     * Get route prefix.
-     *
-     * @return string|null
-     */
     public function getPrefix(): ?string
     {
         return $this->prefix;
     }
 
     /**
-     * Set route prefix.
-     *
-     * @param string $prefix
-     *
-     * @return self
+     * @return static
      */
     public function setPrefix(string $prefix): self
     {

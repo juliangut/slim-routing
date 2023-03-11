@@ -27,18 +27,10 @@ class RequestHandler implements RequestHandlerInvocationStrategyInterface
 {
     use ResponseTypeStrategyTrait;
 
-    /**
-     * @var bool
-     */
-    protected $appendRouteArguments;
+    protected bool $appendRouteArguments;
 
     /**
-     * RequestHandler constructor.
-     *
      * @param array<string, string|ResponseTypeHandler> $responseHandlers
-     * @param ResponseFactoryInterface                  $responseFactory
-     * @param ContainerInterface|null                   $container
-     * @param bool                                      $appendRouteArguments
      */
     public function __construct(
         array $responseHandlers,
@@ -56,12 +48,8 @@ class RequestHandler implements RequestHandlerInvocationStrategyInterface
     /**
      * Invoke a route callable that implements RequestHandlerInterface.
      *
-     * @param callable               $callable
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
-     * @param mixed[]                $routeArguments
-     *
-     * @return ResponseInterface
+     * @param array<string, mixed>                    $routeArguments
+     * @param callable(ServerRequestInterface): mixed $callable
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */

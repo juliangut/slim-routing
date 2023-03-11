@@ -15,14 +15,8 @@ namespace Jgut\Slim\Routing\Tests\Stubs;
 
 use Jgut\Slim\Routing\Route\Route;
 
-/**
- * Response type aware route stub.
- */
 class RouteStub extends Route
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function resolveCallable($callable)
     {
         return $callable;

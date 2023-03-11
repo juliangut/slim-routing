@@ -22,7 +22,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * PSR-15 RequestHandler invocation strategy tests.
+ * @internal
  */
 class RequestHandlerTest extends TestCase
 {
@@ -37,11 +37,12 @@ class RequestHandlerTest extends TestCase
 
         $strategy = new RequestHandler([], $responseFactory, $container, true);
 
-        $callback = function (ServerRequestInterface $request) use ($responseFactory) {
+        $callback = static function (ServerRequestInterface $request) use ($responseFactory) {
             static::assertEquals('value', $request->getAttribute('param'));
 
             $response = $responseFactory->createResponse();
-            $response->getBody()->write('Return content');
+            $response->getBody()
+                ->write('Return content');
 
             return $response;
         };

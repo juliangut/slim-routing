@@ -20,35 +20,20 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 use Slim\Interfaces\CallableResolverInterface;
 use Slim\Interfaces\InvocationStrategyInterface;
 use Slim\Routing\Route as SlimRoute;
+use Slim\Routing\RouteGroup;
 
-/**
- * Metadata aware route.
- */
 class Route extends SlimRoute
 {
-    /**
-     * Route metadata.
-     *
-     * @var RouteMetadata|null
-     */
-    protected $metadata;
+    protected ?RouteMetadata $metadata;
 
     /**
-     * Route constructor.
-     *
-     * @param string[]                         $methods
-     * @param string                           $pattern
-     * @param callable                         $callable
-     * @param ResponseFactoryInterface         $responseFactory
-     * @param CallableResolverInterface        $callableResolver
-     * @param RouteMetadata|null               $metadata
-     * @param ContainerInterface|null          $container
-     * @param InvocationStrategyInterface|null $invocationStrategy
-     * @param \Slim\Routing\RouteGroup[]       $groups
-     * @param int                              $identifier
+     * @param array<string>                          $methods
+     * @param array<RouteGroup>                      $groups
+     * @param string|array<string>|callable(): mixed $callable
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -73,25 +58,17 @@ class Route extends SlimRoute
             $container,
             $invocationStrategy,
             $groups,
-            $identifier
+            $identifier,
         );
 
         $this->metadata = $metadata;
     }
 
-    /**
-     * Get route metadata.
-     *
-     * @return RouteMetadata|null
-     */
     public function getMetadata(): ?RouteMetadata
     {
         return $this->metadata;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function run(ServerRequestInterface $request): ResponseInterface
     {
         if (!$this->groupMiddlewareAppended) {
@@ -100,7 +77,7 @@ class Route extends SlimRoute
 
         if ($this->metadata !== null
             && $this->metadata->isXmlHttpRequest()
-            && \strtolower($request->getHeaderLine('X-Requested-With')) !== 'xmlhttprequest'
+            && mb_strtolower($request->getHeaderLine('X-Requested-With')) !== 'xmlhttprequest'
         ) {
             return $this->responseFactory->createResponse(400);
         }
@@ -108,9 +85,6 @@ class Route extends SlimRoute
         return $this->middlewareDispatcher->handle($request);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $arguments = $this->arguments;
@@ -126,13 +100,11 @@ class Route extends SlimRoute
     }
 
     /**
-     * Transform route arguments.
+     * @param array<string, string> $arguments
      *
-     * @param mixed[] $arguments
+     * @throws RuntimeException
      *
-     * @throws \RuntimeException
-     *
-     * @return mixed[]
+     * @return array<string, mixed>
      */
     protected function transformArguments(array $arguments): array
     {
@@ -147,10 +119,10 @@ class Route extends SlimRoute
             }
 
             if (!$transformer instanceof ParameterTransformer) {
-                throw new \RuntimeException(\sprintf(
-                    'Parameter transformer should implement %s, "%s" given',
+                throw new RuntimeException(sprintf(
+                    'Parameter transformer should implement %s, "%s" given.',
                     ParameterTransformer::class,
-                    \is_object($transformer) ? \get_class($transformer) : \gettype($transformer)
+                    \is_object($transformer) ? \get_class($transformer) : \gettype($transformer),
                 ));
             }
 
@@ -161,22 +133,16 @@ class Route extends SlimRoute
     }
 
     /**
-     * Get route parameters.
-     *
-     * @param RouteMetadata $route
-     *
-     * @return mixed[]
+     * @return array<string, string>
      */
     protected function getRouteParameters(RouteMetadata $route): array
     {
-        $parameters = \array_filter(\array_map(
-            function (GroupMetadata $group): array {
-                return $group->getParameters();
-            },
-            $route->getGroupChain()
+        $parameters = array_filter(array_map(
+            static fn(GroupMetadata $group): array => $group->getParameters(),
+            $route->getGroupChain(),
         ));
-        \array_unshift($parameters, $route->getParameters());
+        array_unshift($parameters, $route->getParameters());
 
-        return \array_filter(\array_merge(...$parameters));
+        return array_filter(array_merge(...$parameters));
     }
 }

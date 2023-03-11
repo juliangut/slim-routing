@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Generic payload response tests.
+ * @internal
  */
 class PayloadResponseTest extends TestCase
 {

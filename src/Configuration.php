@@ -13,38 +13,31 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing;
 
+use InvalidArgumentException;
 use Jgut\Mapping\Driver\DriverInterface;
 use Jgut\Mapping\Metadata\MetadataResolver;
 use Jgut\Slim\Routing\Mapping\Driver\DriverFactory;
 use Jgut\Slim\Routing\Naming\SnakeCase;
 use Jgut\Slim\Routing\Naming\Strategy;
 use Jgut\Slim\Routing\Route\RouteResolver;
+use Traversable;
 
 /**
- * Routing configuration.
+ * @phpstan-type Source string|array{driver?: string|DriverInterface, type?: string, path?: string|array<string>}
  */
 class Configuration
 {
     /**
-     * Routing sources.
-     *
-     * @var mixed[]
+     * @var array<Source>
      */
-    protected $sources = [];
+    protected array $sources = [];
+
+    protected bool $trailingSlash = false;
 
     /**
-     * Routes with trailing slash.
-     *
-     * @var bool
-     */
-    protected $trailingSlash = false;
-
-    /**
-     * Placeholder aliases.
-     *
      * @var array<string, string>
      */
-    protected $placeholderAliases = [
+    protected array $placeholderAliases = [
         'any' => '[^}]+',
         'numeric' => '[0-9]+',
         'number' => '[0-9]+',
@@ -56,73 +49,51 @@ class Configuration
         'mongoid' => '[0-9a-f]{24}',
     ];
 
-    /**
-     * Metadata resolver.
-     *
-     * @var MetadataResolver
-     */
-    protected $metadataResolver;
+    protected ?MetadataResolver $metadataResolver = null;
+
+    protected ?RouteResolver $routeResolver = null;
+
+    protected ?Strategy $namingStrategy = null;
 
     /**
-     * Route resolver.
+     * @param iterable<string, mixed> $configurations
      *
-     * @var RouteResolver
+     * @throws InvalidArgumentException
      */
-    protected $routeResolver;
-
-    /**
-     * Naming strategy.
-     *
-     * @var Strategy
-     */
-    protected $namingStrategy;
-
-    /**
-     * Configuration constructor.
-     *
-     * @param mixed $configurations
-     *
-     * @throws \InvalidArgumentException
-     */
-    public function __construct($configurations = [])
+    public function __construct(iterable $configurations = [])
     {
-        if (!\is_array($configurations) && !$configurations instanceof \Traversable) {
-            throw new \InvalidArgumentException('Configurations must be an iterable');
-        }
-        if ($configurations instanceof \Traversable) {
-            $configurations = \iterator_to_array($configurations);
+        if ($configurations instanceof Traversable) {
+            $configurations = iterator_to_array($configurations);
         }
 
-        $configs = \array_keys(\get_object_vars($this));
+        $configs = array_keys(get_object_vars($this));
 
-        $unknownParameters = \array_diff(\array_keys($configurations), $configs);
+        $unknownParameters = array_diff(array_keys($configurations), $configs);
         if (\count($unknownParameters) > 0) {
-            throw new \InvalidArgumentException(
-                \sprintf(
-                    'The following configuration parameters are not recognized: %s',
-                    \implode(', ', $unknownParameters)
-                )
+            throw new InvalidArgumentException(
+                sprintf(
+                    'The following configuration parameters are not recognized: %s.',
+                    implode(', ', $unknownParameters),
+                ),
             );
         }
 
         foreach ($configs as $config) {
-            if (isset($configurations[$config])) {
+            if (\array_key_exists($config, $configurations)) {
                 $callback = [
                     $this,
-                    $config === 'placeholderAliases' ? 'addPlaceholderAliases' : 'set' . \ucfirst($config),
+                    $config === 'placeholderAliases' ? 'addPlaceholderAliases' : 'set' . ucfirst($config),
                 ];
 
                 if (\is_callable($callback)) {
-                    \call_user_func($callback, $configurations[$config]);
+                    $callback($configurations[$config]);
                 }
             }
         }
     }
 
     /**
-     * Get routing paths.
-     *
-     * @return mixed[]
+     * @return array<string|array{driver?: string|DriverInterface, type?: string, path?: string|array<string>}>
      */
     public function getSources(): array
     {
@@ -130,11 +101,7 @@ class Configuration
     }
 
     /**
-     * Set routing paths.
-     *
-     * @param mixed[] $sources
-     *
-     * @return self
+     * @param array<Source> $sources
      */
     public function setSources(array $sources): self
     {
@@ -148,46 +115,31 @@ class Configuration
     }
 
     /**
-     * Add mapping source.
+     * @param Source|mixed $source
      *
-     * @param mixed $source
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return self
+     * @throws InvalidArgumentException
      */
     public function addSource($source): self
     {
         if (!\is_string($source) && !\is_array($source) && !$source instanceof DriverInterface) {
-            throw new \InvalidArgumentException(\sprintf(
-                'Mapping source must be a string, array or %s, %s given',
+            throw new InvalidArgumentException(sprintf(
+                'Mapping source must be a string, array or %s, %s given.',
                 DriverInterface::class,
-                \is_object($source) ? \get_class($source) : \gettype($source)
+                \is_object($source) ? \get_class($source) : \gettype($source),
             ));
         }
 
+        /** @var string|array{driver?: string|DriverInterface, type?: string, path?: string|array<string>} $source */
         $this->sources[] = $source;
 
         return $this;
     }
 
-    /**
-     * Should routes have trailing slash.
-     *
-     * @return bool
-     */
     public function hasTrailingSlash(): bool
     {
         return $this->trailingSlash;
     }
 
-    /**
-     * Set route trailing slash selector.
-     *
-     * @param bool $trailingSlash
-     *
-     * @return $this
-     */
     public function setTrailingSlash(bool $trailingSlash): self
     {
         $this->trailingSlash = $trailingSlash;
@@ -196,8 +148,6 @@ class Configuration
     }
 
     /**
-     * Get placeholder aliases.
-     *
      * @return array<string, string>
      */
     public function getPlaceholderAliases(): array
@@ -206,13 +156,9 @@ class Configuration
     }
 
     /**
-     * Add placeholder aliases.
-     *
      * @param array<string, string> $aliases
      *
-     * @throws \InvalidArgumentException
-     *
-     * @return self
+     * @throws InvalidArgumentException
      */
     public function addPlaceholderAliases(array $aliases): self
     {
@@ -224,20 +170,13 @@ class Configuration
     }
 
     /**
-     * Add placeholder alias.
-     *
-     * @param string $alias
-     * @param string $pattern
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return self
+     * @throws InvalidArgumentException
      */
     public function addPlaceholderAlias(string $alias, string $pattern): self
     {
-        if (@\preg_match('~^' . $pattern . '$~', '') === false) {
-            throw new \InvalidArgumentException(
-                \sprintf('Placeholder pattern "%s" is not a valid regex', $pattern)
+        if (@preg_match('~^' . $pattern . '$~', '') === false) {
+            throw new InvalidArgumentException(
+                sprintf('Placeholder pattern "%s" is not a valid regex.', $pattern),
             );
         }
 
@@ -246,11 +185,6 @@ class Configuration
         return $this;
     }
 
-    /**
-     * Get metadata resolver.
-     *
-     * @return MetadataResolver
-     */
     public function getMetadataResolver(): MetadataResolver
     {
         if ($this->metadataResolver === null) {
@@ -260,13 +194,6 @@ class Configuration
         return $this->metadataResolver;
     }
 
-    /**
-     * Set metadata resolver.
-     *
-     * @param MetadataResolver $metadataResolver
-     *
-     * @return self
-     */
     public function setMetadataResolver(MetadataResolver $metadataResolver): self
     {
         $this->metadataResolver = $metadataResolver;
@@ -274,11 +201,6 @@ class Configuration
         return $this;
     }
 
-    /**
-     * Get route resolver.
-     *
-     * @return RouteResolver
-     */
     public function getRouteResolver(): RouteResolver
     {
         if ($this->routeResolver === null) {
@@ -288,13 +210,6 @@ class Configuration
         return $this->routeResolver;
     }
 
-    /**
-     * Set route resolver.
-     *
-     * @param RouteResolver $routeResolver
-     *
-     * @return self
-     */
     public function setRouteResolver(RouteResolver $routeResolver): self
     {
         $this->routeResolver = $routeResolver;
@@ -302,11 +217,6 @@ class Configuration
         return $this;
     }
 
-    /**
-     * Get naming strategy.
-     *
-     * @return Strategy
-     */
     public function getNamingStrategy(): Strategy
     {
         if ($this->namingStrategy === null) {
@@ -316,13 +226,6 @@ class Configuration
         return $this->namingStrategy;
     }
 
-    /**
-     * Set naming strategy.
-     *
-     * @param Strategy $namingStrategy
-     *
-     * @return self
-     */
     public function setNamingStrategy(Strategy $namingStrategy): self
     {
         $this->namingStrategy = $namingStrategy;

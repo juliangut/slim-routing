@@ -17,18 +17,12 @@ use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Group metadata tests.
+ * @internal
  */
 class GroupMetadataTest extends TestCase
 {
-    /**
-     * @var GroupMetadata
-     */
-    protected $group;
+    protected GroupMetadata $group;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->group = new GroupMetadata();

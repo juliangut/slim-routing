@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <route1 name="one" priority="-10" pattern="/one/{id}">
+        <methods>
+            <method1>GET</method1>
+            <method2>POST</method2>
+        </methods>
+        <placeholders>
+            <id>numeric</id>
+        </placeholders>
+        <transformer>fake_transformer</transformer>
+        <parameters>
+            <first>value</first>
+            <id>int</id>
+        </parameters>
+        <middleware>
+            <middleware1>oneMiddleware</middleware1>
+        </middleware>
+        <xmlHttpRequest>true</xmlHttpRequest>
+        <invokable>Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Valid\Attribute\SingleRoute:actionOne</invokable>
+    </route1>
+</root>

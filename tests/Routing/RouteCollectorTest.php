@@ -26,7 +26,7 @@ use Slim\Interfaces\CallableResolverInterface;
 use Slim\Interfaces\RouteInterface;
 
 /**
- * Route loader collector tests.
+ * @internal
  */
 class RouteCollectorTest extends TestCase
 {
@@ -60,28 +60,25 @@ class RouteCollectorTest extends TestCase
             ->getMock();
         $configuration->expects(static::once())
             ->method('getSources')
-            ->will($this->returnValue([__DIR__ . '/Files/Annotation/Valid']));
+            ->willReturn([__DIR__ . '/Mapping/Files/Classes/Valid/Attribute']);
         $cache = $this->getMockBuilder(CacheInterface::class)
             ->getMock();
-        $cache->expects($this->once())
+        $cache->expects(static::once())
             ->method('has')
-            ->will($this->returnValue(false));
-        $cache->expects($this->once())
+            ->willReturn(false);
+        $cache->expects(static::once())
             ->method('set');
 
         $routesMetadata = [
-            (new RouteMetadata())
+            (new RouteMetadata(['one', 'action'], null))
                 ->setMethods(['GET'])
                 ->setPattern('one/{id}')
                 ->setPlaceholders(['id' => 'numeric'])
-                ->setInvokable(['one', 'action'])
                 ->setXmlHttpRequest(true),
-            (new RouteMetadata())
+            (new RouteMetadata(['two', 'action'], 'two'))
                 ->setMethods(['POST'])
                 ->setPattern('two')
-                ->setName('two')
-                ->setMiddleware(['twoMiddleware'])
-                ->setInvokable(['two', 'action']),
+                ->setMiddleware(['twoMiddleware']),
         ];
 
         $resolver = $this->getMockBuilder(RouteResolver::class)
@@ -90,11 +87,11 @@ class RouteCollectorTest extends TestCase
             ->getMock();
         $resolver->expects(static::once())
             ->method('sort')
-            ->will($this->returnValue($routesMetadata));
+            ->willReturn($routesMetadata);
 
-        $configuration->expects(static::any())
+        $configuration
             ->method('getRouteResolver')
-            ->will($this->returnValue($resolver));
+            ->willReturn($resolver);
 
         $routeCollector = new RouteCollector($configuration, $responseFactory, $callableResolver);
         $routeCollector->setCache($cache);
@@ -113,37 +110,34 @@ class RouteCollectorTest extends TestCase
             ->getMock();
         $configuration->expects(static::once())
             ->method('getSources')
-            ->will($this->returnValue([
+            ->willReturn([
                 [
                     'type' => DriverFactoryInterface::DRIVER_ANNOTATION,
-                    'path' => [__DIR__ . '/Files/Annotation/Valid'],
+                    'path' => [__DIR__ . '/Mapping/Files/Classes/Valid/Attribute'],
                 ],
-            ]));
+            ]);
 
         $routesMetadata = [
-            (new RouteMetadata())
+            (new RouteMetadata(['one', 'action'], null))
                 ->setMethods(['GET'])
                 ->setPattern('one/{id}')
                 ->setPlaceholders(['id' => 'numeric'])
-                ->setInvokable(['one', 'action'])
                 ->setXmlHttpRequest(true),
-            (new RouteMetadata())
+            (new RouteMetadata(['two', 'action'], 'two'))
                 ->setMethods(['POST'])
                 ->setPattern('two')
-                ->setName('two')
-                ->setMiddleware(['twoMiddleware'])
-                ->setInvokable(['two', 'action']),
+                ->setMiddleware(['twoMiddleware']),
         ];
 
         $cache = $this->getMockBuilder(CacheInterface::class)
             ->getMock();
-        $cache->expects($this->once())
+        $cache->expects(static::once())
             ->method('has')
-            ->will($this->returnValue(true));
-        $cache->expects($this->once())
+            ->willReturn(true);
+        $cache->expects(static::once())
             ->method('get')
             ->with(static::matchesRegularExpression('/^prefix_.+$/'))
-            ->will($this->returnValue($routesMetadata));
+            ->willReturn($routesMetadata);
 
         $routeCollector = new RouteCollector($configuration, $responseFactory, $callableResolver);
         $routeCollector->setCache($cache);
@@ -164,22 +158,19 @@ class RouteCollectorTest extends TestCase
             ->getMock();
         $configuration->expects(static::once())
             ->method('getSources')
-            ->will($this->returnValue([__DIR__ . '/Files/Annotation/Valid']));
+            ->willReturn([__DIR__ . '/Mapping/Files/Classes/Valid/Attribute']);
 
         $routesMetadata = [
-            (new RouteMetadata())
+            (new RouteMetadata(['one', 'action'], null))
                 ->setMethods(['GET'])
                 ->setPattern('one/{id}')
                 ->setPlaceholders(['id' => 'numeric'])
-                ->setInvokable(['one', 'action'])
                 ->setXmlHttpRequest(true),
-            (new RouteMetadata())
+            (new RouteMetadata(['two', 'action'], 'two'))
                 ->setMethods(['POST'])
                 ->setPattern('two')
-                ->setName('two')
                 ->setArguments(['scope' => 'public'])
-                ->setMiddleware(['twoMiddleware'])
-                ->setInvokable(['two', 'action']),
+                ->setMiddleware(['twoMiddleware']),
         ];
 
         $resolver = $this->getMockBuilder(RouteResolver::class)
@@ -188,11 +179,11 @@ class RouteCollectorTest extends TestCase
             ->getMock();
         $resolver->expects(static::once())
             ->method('sort')
-            ->will($this->returnValue($routesMetadata));
+            ->willReturn($routesMetadata);
 
-        $configuration->expects(static::any())
+        $configuration
             ->method('getRouteResolver')
-            ->will($this->returnValue($resolver));
+            ->willReturn($resolver);
 
         $router = new RouteCollector($configuration, $responseFactory, $callableResolver);
 

@@ -22,7 +22,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Route callback strategy with route parameters as individual arguments tests.
+ * @internal
  */
 class RequestResponseArgsTest extends TestCase
 {
@@ -37,7 +37,7 @@ class RequestResponseArgsTest extends TestCase
 
         $strategy = new RequestResponseArgs([], $responseFactory, $container);
 
-        $callback = function (
+        $callback = static function (
             ServerRequestInterface $request,
             ResponseInterface $response,
             $param
@@ -45,7 +45,8 @@ class RequestResponseArgsTest extends TestCase
             static::assertEquals('value', $param);
 
             $response = $responseFactory->createResponse();
-            $response->getBody()->write('Return content');
+            $response->getBody()
+                ->write('Return content');
 
             return $response;
         };

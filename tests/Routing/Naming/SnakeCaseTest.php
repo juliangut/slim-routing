@@ -17,18 +17,12 @@ use Jgut\Slim\Routing\Naming\SnakeCase;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Snake case route naming strategy tests.
+ * @internal
  */
 class SnakeCaseTest extends TestCase
 {
-    /**
-     * @var SnakeCase
-     */
-    protected $naming;
+    protected SnakeCase $naming;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->naming = new SnakeCase();

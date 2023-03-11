@@ -21,19 +21,12 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Interfaces\RequestHandlerInvocationStrategyInterface;
 
-/**
- * Middleware annotation stub.
- */
 class ResponseTypeStrategyStub implements RequestHandlerInvocationStrategyInterface
 {
     use ResponseTypeStrategyTrait;
 
     /**
-     * ResponseTypeStrategyStub constructor.
-     *
      * @param array<string, string|ResponseTypeHandler> $responseHandlers
-     * @param ResponseFactoryInterface                  $responseFactory
-     * @param ContainerInterface                        $container
      */
     public function __construct(
         array $responseHandlers,
@@ -46,9 +39,6 @@ class ResponseTypeStrategyStub implements RequestHandlerInvocationStrategyInterf
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __invoke(
         callable $callable,
         ServerRequestInterface $request,

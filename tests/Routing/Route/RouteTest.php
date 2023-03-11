@@ -23,21 +23,17 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 use Slim\Interfaces\CallableResolverInterface;
+use stdClass;
 
 /**
- * Response type aware route tests.
+ * @internal
  */
 class RouteTest extends TestCase
 {
-    /**
-     * @var ServerRequestInterface
-     */
-    protected $request;
+    protected ServerRequestInterface $request;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->request = (new ServerRequestFactory())->createServerRequest('GET', '/');
@@ -47,22 +43,21 @@ class RouteTest extends TestCase
     {
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
-        /** @var CallableResolverInterface $callableResolver */
         $metadata = $this->getMockBuilder(RouteMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
         $metadata->expects(static::once())
             ->method('isXmlHttpRequest')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $route = new Route(
             ['GET'],
             '/',
-            function (): void {
+            static function (): void {
             },
             new ResponseFactory(),
             $callableResolver,
-            $metadata
+            $metadata,
         );
 
         static::assertEquals($metadata, $route->getMetadata());
@@ -74,9 +69,9 @@ class RouteTest extends TestCase
 
     public function testWrongParameterTransformer(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp(
-            '/^Parameter transformer should implement .+\\\ParameterTransformer, ".+" given$/'
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessageMatches(
+            '/^Parameter transformer should implement .+\\\ParameterTransformer, ".+" given\.$/',
         );
 
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
@@ -84,69 +79,72 @@ class RouteTest extends TestCase
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $container->expects(static::any())
+        $container
             ->method('get')
-            ->will($this->returnValue(new \stdClass()));
+            ->willReturn(new stdClass());
 
         $metadata = $this->getMockBuilder(RouteMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
         $metadata->expects(static::once())
             ->method('getTransformer')
-            ->will($this->returnValue('transformer'));
+            ->willReturn('transformer');
 
         $route = new Route(
             ['GET'],
             '/',
-            function (): void {
+            static function (): void {
             },
             new ResponseFactory(),
             $callableResolver,
             $metadata,
-            $container
+            $container,
         );
 
         $route->run($this->request);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function testParametersTransform(): void
     {
-        $callable = function ($request, $response, array $args) {
+        $callable = static function ($request, $response, array $args) {
             static::assertEquals(10, $args['id']);
 
             return $response;
         };
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
-        $callableResolver->expects(static::any())
+        $callableResolver
             ->method('resolve')
-            ->will($this->returnValue($callable));
+            ->willReturn($callable);
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $container->expects(static::any())
+        $container
             ->method('get')
-            ->will($this->returnValue(new AbstractTransformerStub(10)));
+            ->willReturn(new AbstractTransformerStub(10));
 
         $group = $this->getMockBuilder(GroupMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
         $group->expects(static::once())
             ->method('getParameters')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $metadata = $this->getMockBuilder(RouteMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
         $metadata->expects(static::once())
             ->method('getTransformer')
-            ->will($this->returnValue('transformer'));
+            ->willReturn('transformer');
         $metadata->expects(static::once())
             ->method('getParameters')
-            ->will($this->returnValue(['id' => 'int']));
+            ->willReturn(['id' => 'int']);
         $metadata->expects(static::once())
             ->method('getGroupChain')
-            ->will($this->returnValue([$group]));
+            ->willReturn([$group]);
 
         $route = new Route(
             ['GET'],
@@ -155,30 +153,31 @@ class RouteTest extends TestCase
             new ResponseFactory(),
             $callableResolver,
             $metadata,
-            $container
+            $container,
         );
         $route->setArgument('id', '10');
 
         $route->run($this->request);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function testHandleResponse(): void
     {
-        $callable = function ($request, $response) {
-            return $response;
-        };
+        $callable = static fn($request, $response) => $response;
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
-        $callableResolver->expects(static::any())
+        $callableResolver
             ->method('resolve')
-            ->will($this->returnValue($callable));
+            ->willReturn($callable);
         /** @var CallableResolverInterface $callableResolver */
         $route = new Route(
             ['GET'],
             '/',
             $callable,
             new ResponseFactory(),
-            $callableResolver
+            $callableResolver,
         );
 
         static::assertInstanceOf(ResponseInterface::class, $route->run($this->request));

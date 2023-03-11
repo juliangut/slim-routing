@@ -19,7 +19,7 @@ use Jgut\Slim\Routing\RouteCollector;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Custom routing aware AppFactory tests.
+ * @internal
  */
 class AppFactoryTest extends TestCase
 {

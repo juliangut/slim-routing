@@ -13,51 +13,27 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Mapping\Annotation;
 
+use Jgut\Mapping\Exception\AnnotationException;
 use Jgut\Slim\Routing\Mapping\Annotation\Group;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Group annotation tests.
+ * @internal
  */
 class GroupTest extends TestCase
 {
-    /**
-     * @var Group
-     */
-    protected $annotation;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp(): void
-    {
-        $this->annotation = new Group([]);
-    }
-
     public function testDefaults(): void
     {
-        static::assertEquals('', $this->annotation->getParent());
-    }
+        $annotation = new Group([]);
 
-    public function testParent(): void
-    {
-        $this->annotation->setParent('groupName');
-
-        static::assertEquals('groupName', $this->annotation->getParent());
+        static::assertNull($annotation->getParent());
     }
 
     public function testWrongPrefix(): void
     {
-        $this->expectException(\Jgut\Mapping\Exception\AnnotationException::class);
+        $this->expectException(AnnotationException::class);
         $this->expectExceptionMessage('Group prefixes must not contain spaces');
 
         new Group(['prefix' => 'a prefix']);
-    }
-
-    public function testPrefix(): void
-    {
-        $this->annotation->setPrefix('prefix');
-
-        static::assertEquals('prefix', $this->annotation->getPrefix());
     }
 }

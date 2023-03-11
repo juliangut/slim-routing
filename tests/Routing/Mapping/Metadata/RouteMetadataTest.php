@@ -18,40 +18,27 @@ use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Route metadata tests.
+ * @internal
  */
 class RouteMetadataTest extends TestCase
 {
-    /**
-     * @var RouteMetadata
-     */
-    protected $route;
+    protected RouteMetadata $route;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        $this->route = new RouteMetadata();
+        $this->route = new RouteMetadata('callable', null);
     }
 
     public function testDefaults(): void
     {
+        static::assertEquals('callable', $this->route->getInvokable());
         static::assertNull($this->route->getName());
         static::assertNull($this->route->getGroup());
         static::assertEquals([], $this->route->getGroupChain());
         static::assertEquals([], $this->route->getMethods());
         static::assertNull($this->route->getTransformer());
-        static::assertNull($this->route->getInvokable());
         static::assertEquals(0, $this->route->getPriority());
         static::assertFalse($this->route->isXmlHttpRequest());
-    }
-
-    public function testName(): void
-    {
-        $this->route->setName('route');
-
-        static::assertEquals('route', $this->route->getName());
     }
 
     public function testGroup(): void
@@ -79,23 +66,6 @@ class RouteMetadataTest extends TestCase
         $this->route->setMethods($methods);
 
         static::assertEquals($methods, $this->route->getMethods());
-    }
-
-    public function testInvalidInvokable(): void
-    {
-        $this->expectException(\Jgut\Mapping\Exception\MetadataException::class);
-        $this->expectExceptionMessage('Route invokable does not seem to be supported by Slim router');
-
-        $this->route->setInvokable(10);
-    }
-
-    public function testInvokable(): void
-    {
-        $callable = ['containerKey', 'method'];
-
-        $this->route->setInvokable($callable);
-
-        static::assertEquals($callable, $this->route->getInvokable());
     }
 
     public function testPriority(): void

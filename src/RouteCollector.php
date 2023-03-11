@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing;
 
+use InvalidArgumentException;
 use Jgut\Mapping\Driver\DriverFactoryInterface;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use Jgut\Slim\Routing\Route\Route;
@@ -20,6 +21,7 @@ use Jgut\Slim\Routing\Route\RouteResolver;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\SimpleCache\CacheInterface;
+use RuntimeException;
 use Slim\Interfaces\CallableResolverInterface;
 use Slim\Interfaces\InvocationStrategyInterface;
 use Slim\Interfaces\RouteInterface;
@@ -27,59 +29,24 @@ use Slim\Interfaces\RouteParserInterface;
 use Slim\Routing\RouteCollector as SlimRouteCollector;
 
 /**
- * Route loader collector.
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RouteCollector extends SlimRouteCollector
 {
-    /**
-     * Routing configuration.
-     *
-     * @var Configuration
-     */
-    protected $configuration;
+    protected Configuration $configuration;
 
-    /**
-     * Metadata cache.
-     *
-     * @var CacheInterface|null
-     */
-    protected $cache;
+    protected ?CacheInterface $cache = null;
 
-    /**
-     * Metadata cache prefix.
-     *
-     * @var string
-     */
-    protected $cachePrefix = '';
+    protected string $cachePrefix = '';
 
-    /**
-     * Mapping routes have been loaded.
-     *
-     * @var bool
-     */
-    private $routesRegistered = false;
+    private bool $routesRegistered = false;
 
-    /**
-     * RouteCollector constructor.
-     *
-     * @param Configuration                    $configuration
-     * @param ResponseFactoryInterface         $responseFactory
-     * @param CallableResolverInterface        $callableResolver
-     * @param ContainerInterface|null          $container
-     * @param InvocationStrategyInterface|null $defaultInvocationStrategy
-     * @param RouteParserInterface|null        $routeParser
-     * @param string|null                      $cacheFile
-     *
-     * @SuppressWarnings(PHPMD.LongVariable)
-     */
     public function __construct(
         Configuration $configuration,
         ResponseFactoryInterface $responseFactory,
         CallableResolverInterface $callableResolver,
         ?ContainerInterface $container = null,
-        ?InvocationStrategyInterface $defaultInvocationStrategy = null,
+        ?InvocationStrategyInterface $invocationStrategy = null,
         ?RouteParserInterface $routeParser = null,
         ?string $cacheFile = null
     ) {
@@ -87,37 +54,24 @@ class RouteCollector extends SlimRouteCollector
             $responseFactory,
             $callableResolver,
             $container,
-            $defaultInvocationStrategy,
+            $invocationStrategy,
             $routeParser,
-            $cacheFile
+            $cacheFile,
         );
 
         $this->configuration = $configuration;
     }
 
-    /**
-     * Set metadata cache.
-     *
-     * @param CacheInterface $cache
-     */
     public function setCache(CacheInterface $cache): void
     {
         $this->cache = $cache;
     }
 
-    /**
-     * Set metadata cache prefix.
-     *
-     * @param string $cachePrefix
-     */
     public function setCachePrefix(string $cachePrefix): void
     {
         $this->cachePrefix = $cachePrefix;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRoutes(): array
     {
         if ($this->routesRegistered === false) {
@@ -127,9 +81,6 @@ class RouteCollector extends SlimRouteCollector
         return $this->routes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function lookupRoute(string $identifier): RouteInterface
     {
         if ($this->routesRegistered === false) {
@@ -140,10 +91,8 @@ class RouteCollector extends SlimRouteCollector
     }
 
     /**
-     * Register routes.
-     *
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
      */
     final public function registerRoutes(): void
     {
@@ -169,15 +118,13 @@ class RouteCollector extends SlimRouteCollector
             }
         }
 
-        $this->routes = \array_merge($this->routes, $routes);
+        $this->routes = array_merge($this->routes, $routes);
 
         $this->routesRegistered = true;
     }
 
     /**
-     * Get routes metadata.
-     *
-     * @return RouteMetadata[]
+     * @return array<RouteMetadata>
      */
     protected function getRoutesMetadata(): array
     {
@@ -185,11 +132,16 @@ class RouteCollector extends SlimRouteCollector
         $cacheKey = $this->getCacheKey($mappingSources);
 
         if ($this->cache !== null && $this->cache->has($cacheKey)) {
-            return $this->cache->get($cacheKey);
+            $cachedRoutes = $this->cache->get($cacheKey);
+            if (\is_array($cachedRoutes)) {
+                /** @var array<RouteMetadata> $cachedRoutes */
+                return $cachedRoutes;
+            }
         }
 
-        /** @var RouteMetadata[] $routes */
-        $routes = $this->configuration->getMetadataResolver()->getMetadata($mappingSources);
+        /** @var array<RouteMetadata> $routes */
+        $routes = $this->configuration->getMetadataResolver()
+            ->getMetadata($mappingSources);
 
         $routeResolver = $this->configuration->getRouteResolver();
         $routeResolver->checkDuplicatedRoutes($routes);
@@ -203,48 +155,33 @@ class RouteCollector extends SlimRouteCollector
         return $routes;
     }
 
-    /**
-     * Map new metadata route.
-     *
-     * @param RouteMetadata $metadata
-     * @param RouteResolver $resolver
-     *
-     * @return Route
-     */
     protected function mapMetadataRoute(RouteMetadata $metadata, RouteResolver $resolver): Route
     {
         $route = $this->createMetadataRoute(
             $metadata->getMethods(),
             $resolver->getPattern($metadata),
             $metadata->getInvokable(),
-            $metadata
+            $metadata,
         );
 
         $this->routes[$route->getIdentifier()] = $route;
-        $this->routeCounter++;
+        ++$this->routeCounter;
 
         return $route;
     }
 
     /**
-     * @param mixed[] $methods
-     * @param string  $pattern
-     * @param mixed   $handler
-     *
-     * @return RouteInterface
+     * @param array<string>                          $methods
+     * @param string|array<string>|callable(): mixed $callable
      */
-    final protected function createRoute(array $methods, string $pattern, $handler): RouteInterface
+    final protected function createRoute(array $methods, string $pattern, $callable): RouteInterface
     {
-        return $this->createMetadataRoute($methods, $pattern, $handler);
+        return $this->createMetadataRoute($methods, $pattern, $callable);
     }
 
     /**
-     * Create new metadata aware route.
-     *
-     * @param string[]           $methods
-     * @param string             $pattern
-     * @param mixed              $callable
-     * @param RouteMetadata|null $metadata
+     * @param array<string>                          $methods
+     * @param string|array<string>|callable(): mixed $callable
      *
      * @return Route
      */
@@ -264,23 +201,19 @@ class RouteCollector extends SlimRouteCollector
             $this->container,
             $this->defaultInvocationStrategy,
             $this->routeGroups,
-            $this->routeCounter
+            $this->routeCounter,
         );
     }
 
     /**
-     * Get cache key.
-     *
-     * @param mixed[] $mappingSources
-     *
-     * @return string
+     * @param array<mixed> $mappingSources
      */
     protected function getCacheKey(array $mappingSources): string
     {
-        $key = \implode(
+        $key = implode(
             '.',
-            \array_map(
-                function ($mappingSource): string {
+            array_map(
+                static function ($mappingSource): string {
                     if (!\is_array($mappingSource)) {
                         $mappingSource = [
                             'type' => DriverFactoryInterface::DRIVER_ANNOTATION,
@@ -289,15 +222,15 @@ class RouteCollector extends SlimRouteCollector
                     }
 
                     $path = \is_array($mappingSource['path'])
-                        ? \implode('', $mappingSource['path'])
+                        ? implode('', $mappingSource['path'])
                         : $mappingSource['path'];
 
                     return $mappingSource['type'] . '.' . $path;
                 },
-                $mappingSources
-            )
+                $mappingSources,
+            ),
         );
 
-        return $this->cachePrefix . \sha1($key);
+        return $this->cachePrefix . sha1($key);
     }
 }

@@ -21,9 +21,7 @@ interface Strategy
     /**
      * Combine name parts.
      *
-     * @param string[] $nameParts
-     *
-     * @return string
+     * @param array<string> $nameParts
      */
     public function combine(array $nameParts): string;
 }

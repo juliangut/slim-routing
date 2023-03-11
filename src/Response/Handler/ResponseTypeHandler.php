@@ -23,10 +23,6 @@ interface ResponseTypeHandler
 {
     /**
      * Handle response.
-     *
-     * @param ResponseType $responseType
-     *
-     * @return ResponseInterface
      */
     public function handle(ResponseType $responseType): ResponseInterface;
 }

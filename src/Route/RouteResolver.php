@@ -13,120 +13,88 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Route;
 
+use InvalidArgumentException;
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use RuntimeException;
 
-/**
- * Route resolver.
- */
 class RouteResolver
 {
-    /**
-     * Routing configuration.
-     *
-     * @var Configuration
-     */
-    protected $configuration;
+    protected Configuration $configuration;
 
-    /**
-     * Route resolver constructor.
-     *
-     * @param Configuration $configuration
-     */
     public function __construct(Configuration $configuration)
     {
         $this->configuration = $configuration;
     }
 
-    /**
-     * Get route name.
-     *
-     * @param RouteMetadata $route
-     *
-     * @return string|null
-     */
     public function getName(RouteMetadata $route): ?string
     {
         if ($route->getName() === null) {
             return null;
         }
 
-        $nameSegments = \array_filter(\array_map(
-            function (GroupMetadata $group): ?string {
-                return $group->getPrefix();
-            },
-            $route->getGroupChain()
+        $nameSegments = array_filter(array_map(
+            static fn(GroupMetadata $group): ?string => $group->getPrefix(),
+            $route->getGroupChain(),
         ));
 
         $nameSegments[] = $route->getName();
 
-        return $this->configuration->getNamingStrategy()->combine($nameSegments);
+        return $this->configuration->getNamingStrategy()
+            ->combine($nameSegments);
     }
 
     /**
-     * Get route middleware.
-     *
-     * @param RouteMetadata $route
-     *
-     * @return callable[]|string[]
+     * @return array<string|callable(): ResponseInterface|MiddlewareInterface>
      */
     public function getMiddleware(RouteMetadata $route): array
     {
-        $middleware = \array_filter(\array_map(
-            function (GroupMetadata $group): array {
-                return $group->getMiddleware();
-            },
-            \array_reverse($route->getGroupChain())
+        $middleware = array_filter(array_map(
+            static fn(GroupMetadata $group): array => $group->getMiddleware(),
+            array_reverse($route->getGroupChain()),
         ));
-        \array_unshift($middleware, $route->getMiddleware());
+        array_unshift($middleware, $route->getMiddleware());
 
-        return \array_filter(\array_merge(...$middleware));
+        return array_filter(array_merge(...$middleware));
     }
 
     /**
-     * Get route pattern.
-     *
-     * @param RouteMetadata $route
-     *
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
-     *
-     * @return string
+     * @throws RuntimeException
      */
     public function getPattern(RouteMetadata $route): string
     {
-        $patterns = \array_map(
-            function (GroupMetadata $group): ?string {
-                return $group->getPattern();
-            },
-            $route->getGroupChain()
+        $patterns = array_map(
+            static fn(GroupMetadata $group): ?string => $group->getPattern(),
+            $route->getGroupChain(),
         );
         $patterns[] = $route->getPattern();
-        $patterns = \array_filter($patterns);
+        $patterns = array_filter($patterns);
 
-        $pattern = '/' . (\count($patterns) === 0 ? '' : \implode('/', $patterns));
+        $pattern = '/' . (\count($patterns) === 0 ? '' : implode('/', $patterns));
         if ($this->configuration->hasTrailingSlash() && $pattern !== '/') {
             $pattern .= '/';
         }
         $placeholders = $this->getPlaceholders($route);
 
-        if ((bool) \preg_match_all('/{([a-zA-Z_][a-zA-Z0-9_-]*)}/', $pattern, $parameter) !== false) {
+        if ((bool) preg_match_all('/{([a-zA-Z_][a-zA-Z0-9_-]*)}/', $pattern, $parameter) !== false) {
             $parameters = $parameter[1];
 
-            $duplicatedParameters = \array_unique(\array_diff_assoc($parameters, \array_unique($parameters)));
+            $duplicatedParameters = array_unique(array_diff_assoc($parameters, array_unique($parameters)));
             if (\count($duplicatedParameters) > 0) {
-                throw new \RuntimeException(
-                    'There are duplicated route parameters: ' . \implode(', ', $duplicatedParameters)
+                throw new RuntimeException(
+                    'There are duplicated route parameters: ' . implode(', ', $duplicatedParameters),
                 );
             }
 
             foreach ($parameters as $param) {
-                if (isset($placeholders[$param])) {
-                    $pattern = \str_replace(
+                if (\array_key_exists($param, $placeholders)) {
+                    $pattern = str_replace(
                         '{' . $param . '}',
-                        \sprintf('{%s:%s}', $param, $placeholders[$param]),
-                        $pattern
+                        sprintf('{%s:%s}', $param, $placeholders[$param]),
+                        $pattern,
                     );
                 }
             }
@@ -136,74 +104,60 @@ class RouteResolver
     }
 
     /**
-     * Get route placeholders.
+     * @throws InvalidArgumentException
      *
-     * @param RouteMetadata $route
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return string[]
+     * @return array<string>
      */
     protected function getPlaceholders(RouteMetadata $route): array
     {
         $aliases = $this->configuration->getPlaceholderAliases();
 
-        $placeholders = \array_filter(\array_map(
-            function (GroupMetadata $group): array {
-                return $group->getPlaceholders();
-            },
-            $route->getGroupChain()
+        $placeholders = array_filter(array_map(
+            static fn(GroupMetadata $group): array => $group->getPlaceholders(),
+            $route->getGroupChain(),
         ));
         $placeholders[] = $route->getPlaceholders();
 
-        $placeholders = \array_filter(\array_merge(...$placeholders));
+        $placeholders = array_filter(array_merge(...$placeholders));
 
-        return \array_map(
-            function (string $pattern) use ($aliases): string {
-                if (isset($aliases[$pattern])) {
+        return array_map(
+            static function (string $pattern) use ($aliases): string {
+                if (\array_key_exists($pattern, $aliases)) {
                     return $aliases[$pattern];
                 }
 
-                if (@\preg_match('~^' . $pattern . '$~', '') !== false) {
+                if (@preg_match('~^' . $pattern . '$~', '') !== false) {
                     return $pattern;
                 }
 
-                throw new \InvalidArgumentException(
-                    \sprintf('Placeholder "%s" is not a known alias or a valid regex pattern', $pattern)
+                throw new InvalidArgumentException(
+                    sprintf('Placeholder "%s" is not a known alias or a valid regex pattern.', $pattern),
                 );
             },
-            $placeholders
+            $placeholders,
         );
     }
 
     /**
-     * Get route attributes.
+     * @throws InvalidArgumentException
      *
-     * @param RouteMetadata $route
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @return string[]
+     * @return array<string, mixed>
      */
     public function getArguments(RouteMetadata $route): array
     {
-        $arguments = \array_map(
-            function (GroupMetadata $group): array {
-                return $group->getArguments();
-            },
-            $route->getGroupChain()
+        $arguments = array_map(
+            static fn(GroupMetadata $group): array => $group->getArguments(),
+            $route->getGroupChain(),
         );
         $arguments[] = $route->getArguments();
 
-        return \array_filter(\array_merge(...$arguments));
+        return array_filter(array_merge(...$arguments));
     }
 
     /**
-     * Check route duplication.
+     * @param array<RouteMetadata> $routes
      *
-     * @param RouteMetadata[] $routes
-     *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function checkDuplicatedRoutes(array $routes): void
     {
@@ -212,113 +166,99 @@ class RouteResolver
     }
 
     /**
-     * Check duplicated route names.
+     * @param array<RouteMetadata> $routes
      *
-     * @param RouteMetadata[] $routes
-     *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function checkDuplicatedRouteNames(array $routes): void
     {
-        $names = \array_filter(\array_map(
-            function (RouteMetadata $route): ?string {
-                return $this->getName($route);
-            },
-            $routes
+        $names = array_filter(array_map(
+            fn(RouteMetadata $route): ?string => $this->getName($route),
+            $routes,
         ));
 
-        $duplicatedNames = \array_unique(\array_diff_assoc($names, \array_unique($names)));
+        $duplicatedNames = array_unique(array_diff_assoc($names, array_unique($names)));
         if (\count($duplicatedNames) > 0) {
-            throw new \RuntimeException('There are duplicated route names: ' . \implode(', ', $duplicatedNames));
+            throw new RuntimeException('There are duplicated route names: ' . implode(', ', $duplicatedNames));
         }
     }
 
     /**
-     * Check duplicated route paths.
+     * @param array<RouteMetadata> $routes
      *
-     * @param RouteMetadata[] $routes
-     *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function checkDuplicatedRoutePaths(array $routes): void
     {
-        $paths = \array_map(
+        $paths = array_map(
             function (RouteMetadata $route) {
-                return \array_map(
+                return array_map(
                     function (string $method) use ($route): string {
-                        return \sprintf(
+                        return sprintf(
                             '%s %s',
                             $method,
-                            \preg_replace('/{([a-zA-Z_][a-zA-Z0-9_-]*):/', '{', $this->getPattern($route))
+                            preg_replace('/{([a-zA-Z_][a-zA-Z0-9_-]*):/', '{', $this->getPattern($route)),
                         );
                     },
-                    $route->getMethods()
+                    $route->getMethods(),
                 );
             },
-            $routes
+            $routes,
         );
 
-        $paths = \count($paths) > 0 ? \array_merge(...$paths) : [];
+        $paths = \count($paths) > 0 ? array_merge(...$paths) : [];
 
-        $duplicatedPaths = \array_unique(\array_diff_assoc($paths, \array_unique($paths)));
+        $duplicatedPaths = array_unique(array_diff_assoc($paths, array_unique($paths)));
         if (\count($duplicatedPaths) > 0) {
-            throw new \RuntimeException('There are duplicated routes: ' . \implode(', ', $duplicatedPaths));
+            throw new RuntimeException('There are duplicated routes: ' . implode(', ', $duplicatedPaths));
         }
     }
 
     /**
-     * Sort routes.
+     * @param array<RouteMetadata> $routesMetadata
      *
-     * @param RouteMetadata[] $routesMetadata
-     *
-     * @return RouteMetadata[]
+     * @return array<RouteMetadata>
      */
     public function sort(array $routesMetadata): array
     {
-        $this->stableUsort(
+        return $this->stableUsort(
             $routesMetadata,
-            function (RouteMetadata $routeA, RouteMetadata $routeB): int {
-                return $routeA->getPriority() <=> $routeB->getPriority();
-            }
+            static fn(RouteMetadata $routeA, RouteMetadata $routeB): int
+                => $routeA->getPriority() <=> $routeB->getPriority(),
         );
-
-        return $routesMetadata;
     }
 
     /**
-     * Stable usort.
-     * Keeps original order when sorting function returns 0.
+     * Stable usort. Keeps original order when sorting function returns 0.
      *
-     * @param RouteMetadata[] $array
-     * @param callable        $sortFunction
+     * @param array<RouteMetadata>                        $array
+     * @param callable(RouteMetadata, RouteMetadata): int $sortFunction
      *
-     * @return bool
+     * @return array<RouteMetadata>
      */
-    private function stableUsort(array &$array, callable $sortFunction): bool
+    private function stableUsort(array $array, callable $sortFunction): array
     {
-        \array_walk(
-            $array,
-            function (&$item, $key): void {
-                $item = [$key, $item];
-            }
-        );
+        $sortArray = [];
 
-        $result = \usort(
-            $array,
-            function (array $itemA, array $itemB) use ($sortFunction) {
+        $key = 0;
+        foreach (array_values($array) as $route) {
+            $sortArray[] = [$key, $route];
+
+            ++$key;
+        }
+
+        usort(
+            $sortArray,
+            static function (array $itemA, array $itemB) use ($sortFunction): int {
                 $result = $sortFunction($itemA[1], $itemB[1]);
 
                 return $result === 0 ? $itemA[0] - $itemB[0] : $result;
-            }
+            },
         );
 
-        \array_walk(
-            $array,
-            function (&$item): void {
-                $item = $item[1];
-            }
+        return array_map(
+            static fn(array $item): RouteMetadata => $item[1],
+            $sortArray,
         );
-
-        return $result;
     }
 }

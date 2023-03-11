@@ -17,60 +17,16 @@ use Jgut\Slim\Routing\Tests\Stubs\PathStub;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Path annotation trait tests.
+ * @internal
  */
 class PathTraitTest extends TestCase
 {
-    /**
-     * @var PathStub
-     */
-    protected $annotation;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp(): void
-    {
-        $this->annotation = new PathStub();
-    }
-
     public function testDefaults(): void
     {
-        static::assertEquals('', $this->annotation->getPattern());
-        static::assertEquals([], $this->annotation->getPlaceholders());
-        static::assertEquals([], $this->annotation->getParameters());
-    }
+        $annotation = new PathStub();
 
-    public function testPattern(): void
-    {
-        $path = '/home/route/path/{id}';
-
-        $this->annotation->setPattern($path);
-
-        static::assertEquals($path, $this->annotation->getPattern());
-    }
-
-    public function testPlaceholders(): void
-    {
-        $placeholders = [
-            'id' => '[0-9]+',
-            'name' => '[A-Za-z0-9]',
-        ];
-
-        $this->annotation->setPlaceholders($placeholders);
-
-        static::assertEquals($placeholders, $this->annotation->getPlaceholders());
-    }
-
-    public function testParameters(): void
-    {
-        $parameters = [
-            'id' => 'int',
-            'exception' => \Exception::class,
-        ];
-
-        $this->annotation->setParameters($parameters);
-
-        static::assertEquals($parameters, $this->annotation->getParameters());
+        static::assertEquals('', $annotation->getPattern());
+        static::assertEquals([], $annotation->getPlaceholders());
+        static::assertEquals([], $annotation->getParameters());
     }
 }

@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests;
 
+use ArrayIterator;
+use InvalidArgumentException;
 use Jgut\Mapping\Metadata\MetadataResolver;
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Mapping\Driver\DriverFactory;
@@ -22,18 +24,10 @@ use Jgut\Slim\Routing\Route\RouteResolver;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Configuration tests.
+ * @internal
  */
 class ConfigurationTest extends TestCase
 {
-    public function testInvalidConfigurations(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Configurations must be an iterable');
-
-        new Configuration('');
-    }
-
     public function testDefaults(): void
     {
         $defaultAliasList = [
@@ -60,17 +54,17 @@ class ConfigurationTest extends TestCase
 
     public function testUnknownParameter(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The following configuration parameters are not recognized: unknown');
 
-        new Configuration(new \ArrayIterator(['unknown' => 'unknown']));
+        new Configuration(new ArrayIterator(['unknown' => 'unknown']));
     }
 
     public function testBadSource(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessageRegExp(
-            '/Mapping source must be a string, array or .+\DriverInterface, integer given/'
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches(
+            '/Mapping source must be a string, array or .+\DriverInterface, integer given\./',
         );
 
         new Configuration(['sources' => [10]]);
@@ -97,10 +91,10 @@ class ConfigurationTest extends TestCase
 
     public function testBadPlaceholderAlias(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Placeholder pattern "notRegex~" is not a valid regex');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Placeholder pattern "notValidRegexSyntax~" is not a valid regex');
 
-        new Configuration(['placeholderAliases' => ['tlf' => 'notRegex~']]);
+        new Configuration(['placeholderAliases' => ['tlf' => 'notValidRegexSyntax~']]);
     }
 
     public function testPlaceholderAliases(): void

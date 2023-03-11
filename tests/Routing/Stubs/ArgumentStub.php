@@ -15,9 +15,6 @@ namespace Jgut\Slim\Routing\Tests\Stubs;
 
 use Jgut\Slim\Routing\Mapping\Annotation\ArgumentTrait;
 
-/**
- * Argument annotation stub.
- */
 class ArgumentStub
 {
     use ArgumentTrait;

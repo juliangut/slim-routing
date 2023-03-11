@@ -15,77 +15,54 @@ namespace Jgut\Slim\Routing\Mapping\Metadata;
 
 use Jgut\Mapping\Exception\MetadataException;
 use Jgut\Mapping\Metadata\MetadataInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\MiddlewareInterface;
 
-/**
- * Abstract metadata.
- */
 abstract class AbstractMetadata implements MetadataInterface
 {
-    /**
-     * Path pattern.
-     *
-     * @var string
-     */
-    protected $pattern;
+    protected ?string $pattern = null;
 
     /**
-     * Placeholders regex.
-     *
-     * @var string[]
+     * @var array<string, string>
      */
-    protected $placeholders = [];
+    protected array $placeholders = [];
 
     /**
-     * Pattern parameters.
-     *
-     * @var mixed[]
+     * @var array<string, string>
      */
-    protected $parameters = [];
+    protected array $parameters = [];
 
     /**
-     * Arguments.
-     *
-     * @var mixed[]
+     * @var array<string, mixed>
      */
-    protected $arguments = [];
+    protected array $arguments = [];
 
     /**
-     * Middleware list.
-     *
-     * @var callable[]|string[]
+     * @var array<string|callable(): ResponseInterface|MiddlewareInterface>
      */
-    protected $middleware = [];
+    protected array $middleware = [];
 
-    /**
-     * Get path pattern.
-     *
-     * @return string|null
-     */
     public function getPattern(): ?string
     {
         return $this->pattern;
     }
 
     /**
-     * Set path pattern.
-     *
-     * @param string $pattern
-     *
      * @throws MetadataException
      *
-     * @return self
+     * @return static
      */
     public function setPattern(string $pattern): self
     {
-        if (\trim($pattern) === '') {
-            throw new MetadataException(\sprintf('Pattern can not be empty'));
+        if (trim($pattern) === '') {
+            throw new MetadataException('Pattern can not be empty.');
         }
 
-        $pattern = \trim($pattern, ' /');
+        $pattern = trim($pattern, ' /');
 
-        if ((bool) \preg_match('/{([a-zA-Z_][a-zA-Z0-9_-]*):([^}]+)?}/', $pattern, $matches) !== false) {
+        if ((bool) preg_match('/{([a-zA-Z_][a-zA-Z0-9_-]*):([^}]+)?}/', $pattern, $matches) !== false) {
             throw new MetadataException(
-                \sprintf('Placeholder matching "%s" must be defined on placeholders parameter', $matches[2])
+                sprintf('Placeholder matching "%s" must be defined on placeholders parameter.', $matches[2]),
             );
         }
 
@@ -95,9 +72,7 @@ abstract class AbstractMetadata implements MetadataInterface
     }
 
     /**
-     * Get parameters restrictions.
-     *
-     * @return string[]
+     * @return array<string, string>
      */
     public function getPlaceholders(): array
     {
@@ -105,11 +80,9 @@ abstract class AbstractMetadata implements MetadataInterface
     }
 
     /**
-     * Set parameters restrictions.
+     * @param array<string, string> $placeholders
      *
-     * @param string[] $placeholders
-     *
-     * @return self
+     * @return static
      */
     public function setPlaceholders(array $placeholders): self
     {
@@ -119,9 +92,7 @@ abstract class AbstractMetadata implements MetadataInterface
     }
 
     /**
-     * Get pattern parameters.
-     *
-     * @return mixed[]
+     * @return array<string, string>
      */
     public function getParameters(): array
     {
@@ -129,11 +100,9 @@ abstract class AbstractMetadata implements MetadataInterface
     }
 
     /**
-     * Set pattern parameters.
+     * @param array<string, string> $parameters
      *
-     * @param mixed[] $parameters
-     *
-     * @return self
+     * @return static
      */
     public function setParameters(array $parameters): self
     {
@@ -143,9 +112,7 @@ abstract class AbstractMetadata implements MetadataInterface
     }
 
     /**
-     * Get arguments.
-     *
-     * @return mixed[]
+     * @return array<string, mixed>
      */
     public function getArguments(): array
     {
@@ -153,11 +120,9 @@ abstract class AbstractMetadata implements MetadataInterface
     }
 
     /**
-     * Set arguments.
+     * @param array<string, mixed> $attributes
      *
-     * @param mixed[] $attributes
-     *
-     * @return self
+     * @return static
      */
     public function setArguments(array $attributes): self
     {
@@ -167,9 +132,7 @@ abstract class AbstractMetadata implements MetadataInterface
     }
 
     /**
-     * Get middleware.
-     *
-     * @return callable[]|string[]
+     * @return array<string|callable(): ResponseInterface|MiddlewareInterface>
      */
     public function getMiddleware(): array
     {
@@ -177,19 +140,15 @@ abstract class AbstractMetadata implements MetadataInterface
     }
 
     /**
-     * Set middleware.
+     * @param array<string|callable(): ResponseInterface|MiddlewareInterface> $middleware
      *
-     * @param callable[]|string[] $middleware
-     *
-     * @return self
+     * @return static
      */
     public function setMiddleware(array $middleware): self
     {
-        $this->middleware = \array_map(
-            function (string $middleware): string {
-                return \ltrim($middleware, '\\');
-            },
-            $middleware
+        $this->middleware = array_map(
+            static fn(string $middleware): string => ltrim($middleware, '\\'),
+            $middleware,
         );
 
         return $this;

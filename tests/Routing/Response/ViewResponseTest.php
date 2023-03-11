@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Generic view renderer response tests.
+ * @internal
  */
 class ViewResponseTest extends TestCase
 {

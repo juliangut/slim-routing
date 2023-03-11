@@ -28,11 +28,7 @@ class RequestResponseArgs implements RequestHandlerInvocationStrategyInterface
     use ResponseTypeStrategyTrait;
 
     /**
-     * RequestResponseArgs constructor.
-     *
      * @param array<string, string|ResponseTypeHandler> $responseHandlers
-     * @param ResponseFactoryInterface                  $responseFactory
-     * @param ContainerInterface|null                   $container
      */
     public function __construct(
         array $responseHandlers,
@@ -48,12 +44,8 @@ class RequestResponseArgs implements RequestHandlerInvocationStrategyInterface
     /**
      * Invoke a route callable that implements RequestHandlerInterface.
      *
-     * @param callable               $callable
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
-     * @param mixed[]                $routeArguments
-     *
-     * @return ResponseInterface
+     * @param array<string, mixed>                                       $routeArguments
+     * @param callable(ServerRequestInterface, ResponseInterface): mixed $callable
      */
     public function __invoke(
         callable $callable,
@@ -61,6 +53,6 @@ class RequestResponseArgs implements RequestHandlerInvocationStrategyInterface
         ResponseInterface $response,
         array $routeArguments
     ): ResponseInterface {
-        return $this->handleResponse($callable($request, $response, ...\array_values($routeArguments)));
+        return $this->handleResponse($callable($request, $response, ...array_values($routeArguments)));
     }
 }

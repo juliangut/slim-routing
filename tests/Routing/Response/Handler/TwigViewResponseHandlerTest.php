@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Response\Handler;
 
+use InvalidArgumentException;
 use Jgut\Slim\Routing\Response\Handler\TwigViewResponseHandler;
 use Jgut\Slim\Routing\Response\ViewResponse;
 use Jgut\Slim\Routing\Tests\Stubs\ResponseStub;
@@ -24,18 +25,12 @@ use Psr\Http\Message\ServerRequestInterface;
 use Slim\Views\Twig;
 
 /**
- * Twig view renderer response handler tests.
+ * @internal
  */
 class TwigViewResponseHandlerTest extends TestCase
 {
-    /**
-     * @var ServerRequestInterface
-     */
-    protected $request;
+    protected ServerRequestInterface $request;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->request = $this->getMockBuilder(ServerRequestInterface::class)
@@ -44,9 +39,9 @@ class TwigViewResponseHandlerTest extends TestCase
 
     public function testInvalidResponseType(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'Response type should be an instance of Jgut\Slim\Routing\Response\ViewResponse'
+            'Response type should be an instance of Jgut\Slim\Routing\Response\ViewResponse',
         );
 
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
@@ -66,7 +61,7 @@ class TwigViewResponseHandlerTest extends TestCase
             ->getMock();
         $twig->expects(static::once())
             ->method('fetch')
-            ->will($this->returnValue('Template rendered!'));
+            ->willReturn('Template rendered!');
 
         $response = (new TwigViewResponseHandler($responseFactory, $twig))
             ->handle(new ViewResponse('template.twig', [], $this->request));

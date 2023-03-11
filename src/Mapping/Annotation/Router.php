@@ -16,9 +16,8 @@ namespace Jgut\Slim\Routing\Mapping\Annotation;
 use Jgut\Mapping\Annotation\AbstractAnnotation;
 
 /**
- * Router annotation.
- *
  * @Annotation
+ *
  * @Target("CLASS")
  */
 class Router extends AbstractAnnotation

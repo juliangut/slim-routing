@@ -1,0 +1,19 @@
+[
+    {
+        "name": "one",
+        "priority": -10,
+        "methods": ["GET", "POST"],
+        "pattern": "/one/{id}",
+        "placeholders": {
+            "id": "numeric"
+        },
+        "transformer": "fake_transformer",
+        "parameters": {
+            "first": "value",
+            "id": "int"
+        },
+        "xmlHttpRequest": true,
+        "middleware": ["oneMiddleware"],
+        "invokable": "Jgut\\Slim\\Routing\\Tests\\Mapping\\Files\\Classes\\Valid\\Attribute\\SingleRoute:actionOne"
+    }
+]

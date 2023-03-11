@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <group1 prefix="abstract" pattern="/abstract">
+        <middleware>
+            <middleware1>abstractMiddleware</middleware1>
+        </middleware>
+        <routes>
+            <subgroup1 prefix="grouped" pattern="/dependent">
+                <middleware>
+                    <middleware1>dependentMiddleware</middleware1>
+                </middleware>
+                <routes>
+                    <route1 name="four" pattern="/four">
+                        <methods>
+                            <method1>GET</method1>
+                        </methods>
+                        <middleware>
+                            <middleware1>fourMiddleware</middleware1>
+                        </middleware>
+                        <invokable>Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Valid\Attribute\DependentRoute:actionFour</invokable>
+                    </route1>
+                </routes>
+            </subgroup1>
+        </routes>
+    </group1>
+</root>

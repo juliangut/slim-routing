@@ -17,9 +17,8 @@ use Jgut\Mapping\Annotation\AbstractAnnotation;
 use Jgut\Mapping\Exception\AnnotationException;
 
 /**
- * Route annotation.
- *
  * @Annotation
+ *
  * @Target({"METHOD"})
  */
 class Route extends AbstractAnnotation
@@ -28,92 +27,47 @@ class Route extends AbstractAnnotation
     use ArgumentTrait;
     use MiddlewareTrait;
 
-    /**
-     * Route name.
-     *
-     * @var string
-     */
-    protected $name;
+    protected ?string $name = null;
+
+    protected ?string $transformer = null;
 
     /**
-     * Parameters transformer.
-     *
-     * @var string
+     * @var array<string>
      */
-    protected $transformer;
+    protected array $methods = ['GET'];
 
-    /**
-     * Route methods.
-     *
-     * @var string[]
-     */
-    protected $methods = ['GET'];
+    protected bool $xmlHttpRequest = false;
 
-    /**
-     * XmlHttpRequest constraint.
-     *
-     * @var bool
-     */
-    protected $xmlHttpRequest = false;
+    protected int $priority = 0;
 
-    /**
-     * Route load priority.
-     *
-     * @var int
-     */
-    protected $priority = 0;
-
-    /**
-     * Get route name.
-     *
-     * @return string|null
-     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
     /**
-     * Set route name.
-     *
-     * @param string $name
-     *
      * @throws AnnotationException
-     *
-     * @return self
      */
     public function setName(string $name): self
     {
-        if (\strpos(\trim($name), ' ') !== false) {
-            throw new AnnotationException(\sprintf('Route name must not contain spaces'));
+        if (mb_strpos(trim($name), ' ') !== false) {
+            throw new AnnotationException('Route name must not contain spaces.');
         }
 
-        if (\trim($name) === '') {
-            throw new AnnotationException(\sprintf('Route name can not be empty'));
+        if (trim($name) === '') {
+            throw new AnnotationException('Route name can not be empty.');
         }
 
-        $this->name = \trim($name);
+        $this->name = trim($name);
 
         return $this;
     }
 
-    /**
-     * Get parameters transformer.
-     *
-     * @return string|null
-     */
     public function getTransformer(): ?string
     {
         return $this->transformer;
     }
 
-    /**
-     * Set parameters transformer.
-     *
-     * @param string $transformer
-     *
-     * @return self
-     */
     public function setTransformer(string $transformer): self
     {
         $this->transformer = $transformer;
@@ -124,7 +78,7 @@ class Route extends AbstractAnnotation
     /**
      * Get route methods.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getMethods(): array
     {
@@ -132,13 +86,9 @@ class Route extends AbstractAnnotation
     }
 
     /**
-     * Set route methods.
-     *
-     * @param string[]|mixed $methods
+     * @param array<string>|mixed $methods
      *
      * @throws AnnotationException
-     *
-     * @return self
      */
     public function setMethods($methods): self
     {
@@ -148,46 +98,34 @@ class Route extends AbstractAnnotation
             $methods = [$methods];
         }
 
-        foreach (\array_filter($methods) as $method) {
+        foreach (array_filter($methods) as $method) {
             if (!\is_string($method)) {
                 throw new AnnotationException(
-                    \sprintf('Route annotation methods must be strings. "%s" given', \gettype($method))
+                    sprintf('Route annotation methods must be strings. "%s" given.', \gettype($method)),
                 );
             }
 
-            $this->methods[] = \strtoupper(\trim($method));
+            $this->methods[] = mb_strtoupper(trim($method));
         }
 
-        $this->methods = \array_unique(\array_filter($this->methods, 'strlen'));
+        $this->methods = array_unique(array_filter($this->methods, 'strlen'));
 
         if (\count($this->methods) === 0) {
-            throw new AnnotationException('Route annotation methods can not be empty');
+            throw new AnnotationException('Route annotation methods can not be empty.');
         }
 
         if (\in_array('ANY', $this->methods, true) && \count($this->methods) > 1) {
-            throw new AnnotationException('Route "ANY" method cannot be defined with other methods');
+            throw new AnnotationException('Route "ANY" method cannot be defined with other methods.');
         }
 
         return $this;
     }
 
-    /**
-     * Is XmlHttpRequest.
-     *
-     * @return bool
-     */
     public function isXmlHttpRequest(): bool
     {
         return $this->xmlHttpRequest;
     }
 
-    /**
-     * Set XmlHttpRequest constraint.
-     *
-     * @param bool $xmlHttpRequest
-     *
-     * @return self
-     */
     public function setXmlHttpRequest(bool $xmlHttpRequest): self
     {
         $this->xmlHttpRequest = $xmlHttpRequest;
@@ -195,23 +133,11 @@ class Route extends AbstractAnnotation
         return $this;
     }
 
-    /**
-     * Get route load priority.
-     *
-     * @return int
-     */
     public function getPriority(): int
     {
         return $this->priority;
     }
 
-    /**
-     * Set route load priority.
-     *
-     * @param int $priority
-     *
-     * @return self
-     */
     public function setPriority(int $priority): self
     {
         $this->priority = $priority;

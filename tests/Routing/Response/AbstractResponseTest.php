@@ -19,7 +19,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Abstract response tests.
+ * @internal
  */
 class AbstractResponseTest extends TestCase
 {

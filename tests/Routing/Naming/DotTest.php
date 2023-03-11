@@ -17,18 +17,12 @@ use Jgut\Slim\Routing\Naming\Dot;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Snake case route naming strategy tests.
+ * @internal
  */
 class DotTest extends TestCase
 {
-    /**
-     * @var Dot
-     */
-    protected $naming;
+    protected Dot $naming;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->naming = new Dot();

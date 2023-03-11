@@ -16,26 +16,17 @@ namespace Jgut\Slim\Routing\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * Generic payload response.
- */
 class PayloadResponse extends AbstractResponse
 {
     /**
-     * Payload.
-     *
-     * @var mixed
+     * @var array<mixed>
      */
-    protected $payload;
+    protected array $payload;
 
     /**
-     * PayloadResponseType constructor.
-     *
-     * @param mixed                  $payload
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface|null $response
+     * @param array<mixed> $payload
      */
-    public function __construct($payload, ServerRequestInterface $request, ?ResponseInterface $response = null)
+    public function __construct(array $payload, ServerRequestInterface $request, ?ResponseInterface $response = null)
     {
         parent::__construct($request, $response);
 
@@ -43,11 +34,9 @@ class PayloadResponse extends AbstractResponse
     }
 
     /**
-     * Get payload.
-     *
-     * @return mixed
+     * @return array<mixed>
      */
-    public function getPayload()
+    public function getPayload(): array
     {
         return $this->payload;
     }

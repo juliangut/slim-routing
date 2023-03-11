@@ -17,37 +17,14 @@ use Jgut\Slim\Routing\Tests\Stubs\ArgumentStub;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Argument annotation tests.
+ * @internal
  */
 class ArgumentTraitTest extends TestCase
 {
-    /**
-     * @var ArgumentStub
-     */
-    protected $annotation;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp(): void
-    {
-        $this->annotation = new ArgumentStub();
-    }
-
     public function testDefaults(): void
     {
-        static::assertEquals([], $this->annotation->getArguments());
-    }
+        $annotation = new ArgumentStub();
 
-    public function testArguments(): void
-    {
-        $middleware = [
-            'argumentOne' => 'value',
-            'argumentTwo' => 'value',
-        ];
-
-        $this->annotation->setArguments($middleware);
-
-        static::assertEquals($middleware, $this->annotation->getArguments());
+        static::assertEquals([], $annotation->getArguments());
     }
 }

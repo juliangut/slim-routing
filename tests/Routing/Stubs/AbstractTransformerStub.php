@@ -15,29 +15,15 @@ namespace Jgut\Slim\Routing\Tests\Stubs;
 
 use Jgut\Slim\Routing\Transformer\AbstractTransformer;
 
-/**
- * Abstract metadata stub.
- */
 class AbstractTransformerStub extends AbstractTransformer
 {
-    /**
-     * @var mixed
-     */
     protected $transformed;
 
-    /**
-     * AbstractTransformerStub constructor.
-     *
-     * @param mixed $transformed
-     */
     public function __construct($transformed)
     {
         $this->transformed = $transformed;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function transformParameter(string $parameter, string $type)
     {
         return $this->transformed;

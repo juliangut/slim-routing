@@ -17,18 +17,12 @@ use Jgut\Slim\Routing\Naming\CamelCase;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Camel case route naming strategy tests.
+ * @internal
  */
 class CamelCaseTest extends TestCase
 {
-    /**
-     * @var CamelCase
-     */
-    protected $naming;
+    protected CamelCase $naming;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->naming = new CamelCase();

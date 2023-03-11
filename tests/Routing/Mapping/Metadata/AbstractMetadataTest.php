@@ -13,22 +13,17 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Mapping\Metadata;
 
+use Jgut\Mapping\Exception\MetadataException;
 use Jgut\Slim\Routing\Tests\Stubs\AbstractMetadataStub;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Abstract metadata tests.
+ * @internal
  */
 class AbstractMetadataTest extends TestCase
 {
-    /**
-     * @var \Jgut\Slim\Routing\Mapping\Metadata\AbstractMetadata
-     */
-    protected $metadata;
+    protected AbstractMetadataStub $metadata;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->metadata = new AbstractMetadataStub();
@@ -45,7 +40,7 @@ class AbstractMetadataTest extends TestCase
 
     public function testEmptyPattern(): void
     {
-        $this->expectException(\Jgut\Mapping\Exception\MetadataException::class);
+        $this->expectException(MetadataException::class);
         $this->expectExceptionMessage('Pattern can not be empty');
 
         $this->metadata->setPattern('');
@@ -53,7 +48,7 @@ class AbstractMetadataTest extends TestCase
 
     public function testInvalidPattern(): void
     {
-        $this->expectException(\Jgut\Mapping\Exception\MetadataException::class);
+        $this->expectException(MetadataException::class);
         $this->expectExceptionMessage('Placeholder matching "[0-9]+" must be defined on placeholders parameter');
 
         $this->metadata->setPattern('{path}/to/{id:[0-9]+}');

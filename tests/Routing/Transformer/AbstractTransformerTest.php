@@ -13,11 +13,13 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Mapping\Metadata;
 
+use Exception;
 use Jgut\Slim\Routing\Tests\Stubs\AbstractTransformerStub;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
 /**
- * Abstract parameter transformer tests.
+ * @internal
  */
 class AbstractTransformerTest extends TestCase
 {
@@ -37,7 +39,7 @@ class AbstractTransformerTest extends TestCase
             'four' => 'bool',
         ];
 
-        $exception = new \Exception();
+        $exception = new Exception();
 
         $transformer = new AbstractTransformerStub($exception);
 
@@ -56,10 +58,10 @@ class AbstractTransformerTest extends TestCase
         ];
 
         $definitions = [
-            'one' => \Exception::class,
+            'one' => Throwable::class,
         ];
 
-        $exception = new \Exception();
+        $exception = new Exception();
 
         $transformer = new AbstractTransformerStub($exception);
 

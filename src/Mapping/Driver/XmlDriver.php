@@ -13,14 +13,9 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Mapping\Driver;
 
-use Jgut\Mapping\Driver\AbstractMappingDriver;
-use Jgut\Mapping\Driver\Traits\XmlMappingTrait;
+use Jgut\Mapping\Driver\AbstractMappingXmlDriver;
 
-/**
- * XML mapping driver.
- */
-class XmlDriver extends AbstractMappingDriver
+class XmlDriver extends AbstractMappingXmlDriver
 {
-    use XmlMappingTrait;
-    use MappingTrait;
+    use FileMappingTrait;
 }

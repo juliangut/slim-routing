@@ -18,44 +18,23 @@ namespace Jgut\Slim\Routing\Mapping\Annotation;
  */
 trait PathTrait
 {
-    /**
-     * Pattern path.
-     *
-     * @var string
-     */
-    protected $pattern;
+    protected ?string $pattern = null;
 
     /**
-     * Pattern path placeholders regex.
-     *
-     * @var string[]
+     * @var array<string>
      */
-    protected $placeholders = [];
+    protected array $placeholders = [];
 
     /**
-     * Pattern parameters.
-     *
-     * @var mixed[]
+     * @var array<string, string>
      */
-    protected $parameters = [];
+    protected array $parameters = [];
 
-    /**
-     * Get pattern path.
-     *
-     * @return string|null
-     */
     public function getPattern(): ?string
     {
         return $this->pattern;
     }
 
-    /**
-     * Set pattern path.
-     *
-     * @param string $pattern
-     *
-     * @return self
-     */
     public function setPattern(string $pattern): self
     {
         $this->pattern = $pattern;
@@ -64,9 +43,7 @@ trait PathTrait
     }
 
     /**
-     * Get pattern placeholders regex.
-     *
-     * @return string[]
+     * @return array<string>
      */
     public function getPlaceholders(): array
     {
@@ -74,11 +51,9 @@ trait PathTrait
     }
 
     /**
-     * Set pattern placeholders regex.
+     * @param array<string> $placeholders
      *
-     * @param string[] $placeholders
-     *
-     * @return self
+     * @return static
      */
     public function setPlaceholders(array $placeholders): self
     {
@@ -88,9 +63,7 @@ trait PathTrait
     }
 
     /**
-     * Get parameters.
-     *
-     * @return mixed[]
+     * @return array<string, string>
      */
     public function getParameters(): array
     {
@@ -98,11 +71,9 @@ trait PathTrait
     }
 
     /**
-     * Set parameters.
+     * @param array<string, string> $parameters
      *
-     * @param mixed[] $parameters
-     *
-     * @return self
+     * @return static
      */
     public function setParameters(array $parameters): self
     {

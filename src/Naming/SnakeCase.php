@@ -13,16 +13,13 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Naming;
 
-/**
- * Snake case route naming strategy.
- */
 class SnakeCase implements Strategy
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function combine(array $nameParts): string
     {
-        return \implode('_', $nameParts);
+        return implode('_', $nameParts);
     }
 }

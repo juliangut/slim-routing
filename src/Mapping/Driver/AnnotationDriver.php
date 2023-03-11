@@ -20,16 +20,14 @@ use Jgut\Slim\Routing\Mapping\Annotation\Route as RouteAnnotation;
 use Jgut\Slim\Routing\Mapping\Annotation\Router as RouterAnnotation;
 use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
+use Reflection;
+use ReflectionClass;
+use ReflectionMethod;
 
-/**
- * Annotation driver.
- */
 class AnnotationDriver extends AbstractAnnotationDriver
 {
     /**
-     * {@inheritdoc}
-     *
-     * @return RouteMetadata[]
+     * @return array<RouteMetadata>
      */
     public function getMetadata(): array
     {
@@ -37,7 +35,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
 
         $mappingClasses = $this->getMappingClasses();
 
-        $groups = $this->getGroupsMetadata($mappingClasses);
+        $groups = $this->getGroups($mappingClasses);
 
         foreach ($mappingClasses as $class) {
             if ($class->isAbstract()) {
@@ -51,96 +49,17 @@ class AnnotationDriver extends AbstractAnnotationDriver
             }
         }
 
-        return \count($routes) > 0 ? \array_merge(...$routes) : [];
+        return \count($routes) > 0 ? array_merge(...$routes) : [];
     }
 
     /**
-     * Get groups metadata.
-     *
-     * @param \ReflectionClass[] $mappingClasses
+     * @param array<GroupMetadata> $groups
      *
      * @throws DriverException
      *
-     * @return GroupMetadata[]
+     * @return array<RouteMetadata>
      */
-    protected function getGroupsMetadata(array $mappingClasses): array
-    {
-        $groups = [];
-
-        foreach ($mappingClasses as $class) {
-            /** @var GroupAnnotation|null $group */
-            $group = $this->annotationReader->getClassAnnotation($class, GroupAnnotation::class);
-
-            if ($group !== null) {
-                $groupDataBag = new \stdClass();
-                $groupDataBag->parent = $group->getParent();
-                $groupDataBag->group = $this->getGroupMetadata($group);
-
-                $groups[$class->getName()] = $groupDataBag;
-            }
-        }
-
-        /** @var GroupMetadata[] $groups */
-        $groups = \array_map(
-            function (\stdClass $groupDataBag) use ($groups): GroupMetadata {
-                /** @var GroupMetadata $group */
-                $group = $groupDataBag->group;
-
-                $parent = $groupDataBag->parent;
-                if ($parent !== null) {
-                    if (!isset($groups[$parent])) {
-                        throw new DriverException(\sprintf('Parent group %s does not exist', $parent));
-                    }
-
-                    $group->setParent($groups[$parent]->group);
-                }
-
-                return $group;
-            },
-            $groups
-        );
-
-        return $groups;
-    }
-
-    /**
-     * Get group metadata.
-     *
-     * @param GroupAnnotation $annotation
-     *
-     * @return GroupMetadata
-     */
-    protected function getGroupMetadata(GroupAnnotation $annotation): GroupMetadata
-    {
-        $group = new GroupMetadata();
-        $group->setPlaceholders($annotation->getPlaceholders());
-        $group->setMiddleware($annotation->getMiddleware());
-
-        if ($annotation->getPattern() !== null) {
-            $group->setPattern($annotation->getPattern());
-        }
-
-        if ($annotation->getPrefix() !== null) {
-            $group->setPrefix($annotation->getPrefix());
-        }
-
-        $group->setParameters($annotation->getParameters());
-        $group->setArguments($annotation->getArguments());
-
-        return $group;
-    }
-
-    /**
-     * Get processed routes.
-     *
-     * @param \ReflectionClass $class
-     * @param GroupMetadata[]  $groups
-     *
-     * @throws DriverException
-     *
-     * @return RouteMetadata[]
-     */
-    protected function getRoutesMetadata(\ReflectionClass $class, array $groups): array
+    protected function getRoutesMetadata(ReflectionClass $class, array $groups): array
     {
         $routes = [];
 
@@ -156,95 +75,151 @@ class AnnotationDriver extends AbstractAnnotationDriver
         foreach ($class->getMethods() as $method) {
             /** @var RouteAnnotation|null $route */
             $route = $this->annotationReader->getMethodAnnotation($method, RouteAnnotation::class);
-
             if ($route !== null) {
                 if ($method->isConstructor() || $method->isDestructor()) {
                     throw new DriverException(
-                        \sprintf('Routes can not be defined in constructor or destructor in class %s', $class->name)
+                        sprintf('Routes can not be defined in constructor or destructor in class "%s".', $class->name),
                     );
                 }
 
-                $modifiers = \array_intersect(
+                $modifiers = array_intersect(
                     ['private', 'protected'],
-                    \Reflection::getModifierNames($method->getModifiers())
+                    Reflection::getModifierNames($method->getModifiers()),
                 );
                 if (\count($modifiers) !== 0) {
-                    throw new DriverException(
-                        \sprintf('Routes can not be defined in private or protected methods in class %s', $class->name)
-                    );
+                    throw new DriverException(sprintf(
+                        'Routes can not be defined in private or protected methods in class "%s".',
+                        $class->name,
+                    ));
                 }
 
-                $routes[] = $this->getRouteMetadata($class, $method, $route, $group);
+                $routeMetadata = new RouteMetadata($class->name . ':' . $method->name, $route->getName());
+                if ($group !== null) {
+                    $routeMetadata->setGroup($group);
+                }
+                $this->populateRoute($routeMetadata, $method, $route);
+
+                $routes[] = $routeMetadata;
             }
         }
 
         if (\count($routes) === 0) {
-            throw new DriverException(\sprintf('Class %s does not define any route', $class->name));
+            throw new DriverException(sprintf('Class "%s" does not define any route.', $class->name));
         }
 
         return $routes;
     }
 
     /**
-     * Get processed route.
-     *
-     * @param \ReflectionClass   $class
-     * @param \ReflectionMethod  $method
-     * @param RouteAnnotation    $annotation
-     * @param GroupMetadata|null $group
+     * @param array<ReflectionClass> $mappingClasses
      *
      * @throws DriverException
      *
-     * @return RouteMetadata
+     * @return array<GroupMetadata>
      */
-    protected function getRouteMetadata(
-        \ReflectionClass $class,
-        \ReflectionMethod $method,
-        RouteAnnotation $annotation,
-        ?GroupMetadata $group = null
-    ): RouteMetadata {
-        $route = (new RouteMetadata());
+    protected function getGroups(array $mappingClasses): array
+    {
+        $groups = [];
+
+        foreach ($mappingClasses as $class) {
+            /** @var GroupAnnotation|null $group */
+            $group = $this->annotationReader->getClassAnnotation($class, GroupAnnotation::class);
+            if ($group !== null) {
+                $groupMetadata = new GroupMetadata();
+                $this->populateGroup($groupMetadata, $group);
+
+                $groups[$class->getName()] = [
+                    'group' => $groupMetadata,
+                    'parent' => $group->getParent(),
+                ];
+            }
+        }
+
+        return array_map(
+            /** @var array{group: GroupMetadata, parent: ?string} $groupDataBag */
+            static function (array $groupDataBag) use ($groups): GroupMetadata {
+                $group = $groupDataBag['group'];
+
+                $parent = $groupDataBag['parent'];
+                if ($parent !== null) {
+                    if (!\array_key_exists($parent, $groups)) {
+                        throw new DriverException(sprintf('Parent group "%s" does not exist.', $parent));
+                    }
+
+                    $group->setParent($groups[$parent]['group']);
+                }
+
+                return $group;
+            },
+            $groups,
+        );
+    }
+
+    protected function populateGroup(GroupMetadata $group, GroupAnnotation $annotation): void
+    {
+        $this->populatePrefix($group, $annotation);
+        $this->populatePattern($group, $annotation);
+        $group->setPlaceholders($annotation->getPlaceholders());
+        $group->setParameters($annotation->getParameters());
+        $group->setMiddleware($annotation->getMiddleware());
+        $group->setArguments($annotation->getArguments());
+    }
+
+    /**
+     * @throws DriverException
+     */
+    protected function populateRoute(
+        RouteMetadata $route,
+        ReflectionMethod $method,
+        RouteAnnotation $annotation
+    ): void {
+        $this->populatePattern($route, $annotation);
         $route->setPlaceholders($annotation->getPlaceholders());
-        $route->setMiddleware($annotation->getMiddleware());
+        $route->setParameters($annotation->getParameters());
         $route->setMethods($annotation->getMethods());
         $route->setXmlHttpRequest($annotation->isXmlHttpRequest());
-        $route->setInvokable($class->name . ':' . $method->name);
+        $route->setMiddleware($annotation->getMiddleware());
+        $route->setArguments($annotation->getArguments());
         $route->setPriority($annotation->getPriority());
+        $this->populateTransformer($route, $annotation, $method);
+    }
 
-        if ($annotation->getPattern() !== null) {
-            $route->setPattern($annotation->getPattern());
+    protected function populatePrefix(GroupMetadata $metadata, GroupAnnotation $annotation): void
+    {
+        $prefix = $annotation->getPrefix();
+        if ($prefix !== null) {
+            $metadata->setPrefix($prefix);
         }
+    }
 
-        if ($annotation->getName() !== null) {
-            $route->setName($annotation->getName());
+    /**
+     * @param GroupMetadata|RouteMetadata     $metadata
+     * @param GroupAnnotation|RouteAnnotation $annotation
+     */
+    protected function populatePattern($metadata, $annotation): void
+    {
+        $pattern = $annotation->getPattern();
+        if ($pattern !== null) {
+            $metadata->setPattern($pattern);
         }
+    }
 
-        if ($group !== null) {
-            $route->setGroup($group);
-        }
-
+    protected function populateTransformer(
+        RouteMetadata $route,
+        RouteAnnotation $annotation,
+        ReflectionMethod $method
+    ): void {
         if ($annotation->getTransformer() !== null) {
             $route->setTransformer($annotation->getTransformer())
                 ->setParameters($this->getRouteParameters($method, $annotation));
         }
-
-        $route->setArguments($annotation->getArguments());
-
-        return $route;
     }
 
     /**
-     * Get route parameters.
-     *
-     * @param \ReflectionMethod $method
-     * @param RouteAnnotation   $annotation
-     *
-     * @return mixed[]
+     * @return array<string, string>
      */
-    protected function getRouteParameters(
-        \ReflectionMethod $method,
-        RouteAnnotation $annotation
-    ): array {
+    protected function getRouteParameters(ReflectionMethod $method, RouteAnnotation $annotation): array
+    {
         $parameters = [];
         foreach ($method->getParameters() as $parameter) {
             $type = $parameter->getType();
@@ -254,6 +229,6 @@ class AnnotationDriver extends AbstractAnnotationDriver
             }
         }
 
-        return \array_merge($parameters, $annotation->getParameters());
+        return array_merge($parameters, $annotation->getParameters());
     }
 }

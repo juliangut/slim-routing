@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <group1>
+        <middleware>
+            <middleware1>groupedMiddleware</middleware1>
+        </middleware>
+        <routes>
+            <route1 pattern="/two/{id}">
+                <methods>
+                    <method1>GET</method1>
+                </methods>
+                <arguments>
+                    <scope>protected</scope>
+                </arguments>
+                <middleware>
+                    <middleware1>twoMiddleware</middleware1>
+                </middleware>
+                <invokable>Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Valid\Attribute\GroupedRoute:actionTwo</invokable>
+            </route1>
+            <route2 pattern="/three/{id}">
+                <methods>
+                    <method1>GET</method1>
+                </methods>
+                <priority>10</priority>
+                <xmlHttpRequest>true</xmlHttpRequest>
+                <placeholders>
+                    <id>\d+</id>
+                </placeholders>
+                <invokable>Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Valid\Attribute\GroupedRoute:actionThree</invokable>
+            </route2>
+        </routes>
+    </group1>
+</root>

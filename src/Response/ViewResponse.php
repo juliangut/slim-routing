@@ -16,32 +16,17 @@ namespace Jgut\Slim\Routing\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * Generic view renderer response.
- */
 class ViewResponse extends AbstractResponse
 {
-    /**
-     * Template name.
-     *
-     * @var string
-     */
-    protected $template;
+    protected string $template;
 
     /**
-     * Template parameters.
-     *
      * @var array<string, mixed>
      */
-    protected $parameters;
+    protected array $parameters;
 
     /**
-     * ViewResponseType constructor.
-     *
-     * @param string                 $template
-     * @param array<string, mixed>   $parameters
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface|null $response
+     * @param array<string, mixed> $parameters
      */
     public function __construct(
         string $template,
@@ -55,19 +40,12 @@ class ViewResponse extends AbstractResponse
         $this->parameters = $parameters;
     }
 
-    /**
-     * Get template name.
-     *
-     * @return string
-     */
     public function getTemplate(): string
     {
         return $this->template;
     }
 
     /**
-     * Get template parameters.
-     *
      * @return array<string, mixed>
      */
     public function getParameters(): array

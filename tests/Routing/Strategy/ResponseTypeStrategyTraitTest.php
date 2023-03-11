@@ -21,9 +21,11 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
+use stdClass;
 
 /**
- * Trait ResponseTypeStrategyTrait tests.
+ * @internal
  */
 class ResponseTypeStrategyTraitTest extends TestCase
 {
@@ -38,7 +40,7 @@ class ResponseTypeStrategyTraitTest extends TestCase
 
         $strategy = new ResponseTypeStrategyStub([], new ResponseFactory(), $container);
 
-        $callback = function (
+        $callback = static function (
             ServerRequestInterface $receivedRequest,
             ResponseInterface $receivedResponse
         ) use (
@@ -65,7 +67,7 @@ class ResponseTypeStrategyTraitTest extends TestCase
 
         $strategy = new ResponseTypeStrategyStub([], new ResponseFactory(), $container);
 
-        $callback = function (
+        $callback = static function (
             ServerRequestInterface $receivedRequest,
             ResponseInterface $receivedResponse
         ) use (
@@ -95,9 +97,10 @@ class ResponseTypeStrategyTraitTest extends TestCase
 
         $strategy = new ResponseTypeStrategyStub([], $responseFactory, $container);
 
-        $callback = function () use ($responseFactory) {
+        $callback = static function () use ($responseFactory) {
             $response = $responseFactory->createResponse();
-            $response->getBody()->write('Return content');
+            $response->getBody()
+                ->write('Return content');
 
             return $response;
         };
@@ -107,10 +110,31 @@ class ResponseTypeStrategyTraitTest extends TestCase
         static::assertEquals('Return content', (string) $return->getBody());
     }
 
+    public function testInvalidResponseDispatch(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessageMatches(
+            '/^Handled route response type should be string or ".+". "integer" given\.$/',
+        );
+
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->getMock();
+        $request = $this->getMockBuilder(ServerRequestInterface::class)
+            ->getMock();
+        $response = $this->getMockBuilder(ResponseInterface::class)
+            ->getMock();
+
+        $strategy = new ResponseTypeStrategyStub([], new ResponseFactory(), $container);
+
+        $callback = static fn() => 100;
+
+        $strategy($callback, $request, $response, []);
+    }
+
     public function testNoHandler(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/^No handler registered for response type ".+"$/');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessageMatches('/^No handler registered for response type ".+"\.$/');
 
         $responseType = $this->getMockBuilder(PayloadResponse::class)
             ->disableOriginalConstructor()
@@ -124,18 +148,16 @@ class ResponseTypeStrategyTraitTest extends TestCase
 
         $strategy = new ResponseTypeStrategyStub([], new ResponseFactory(), $container);
 
-        $callback = function () use ($responseType) {
-            return $responseType;
-        };
+        $callback = static fn() => $responseType;
 
         $strategy($callback, $request, $response, []);
     }
 
     public function testWrongHandler(): void
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessageRegExp(
-            '/^Response handler should implement .+\\\ResponseTypeHandler, "stdClass" given$/'
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessageMatches(
+            '/^Response handler should implement .+\\\ResponseTypeHandler, "stdClass" given\.$/',
         );
 
         $responseType = $this->getMockBuilder(PayloadResponse::class)
@@ -145,7 +167,7 @@ class ResponseTypeStrategyTraitTest extends TestCase
             ->getMock();
         $container->expects(static::once())
             ->method('get')
-            ->will($this->returnValue(new \stdClass()));
+            ->willReturn(new stdClass());
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
         $response = $this->getMockBuilder(ResponseInterface::class)
@@ -154,9 +176,7 @@ class ResponseTypeStrategyTraitTest extends TestCase
         $responseHandlers = [\get_class($responseType) => 'class'];
         $strategy = new ResponseTypeStrategyStub($responseHandlers, new ResponseFactory(), $container);
 
-        $callback = function () use ($responseType) {
-            return $responseType;
-        };
+        $callback = static fn() => $responseType;
 
         $strategy($callback, $request, $response, []);
     }
@@ -170,16 +190,17 @@ class ResponseTypeStrategyTraitTest extends TestCase
         $responseHandler = $this->getMockBuilder(ResponseTypeHandler::class)
             ->getMock();
         $resultResponse = $responseFactory->createResponse();
-        $resultResponse->getBody()->write('Return content');
+        $resultResponse->getBody()
+            ->write('Return content');
         $responseHandler->expects(static::once())
             ->method('handle')
-            ->will($this->returnValue($resultResponse));
+            ->willReturn($resultResponse);
 
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
         $container->expects(static::once())
             ->method('get')
-            ->will($this->returnValue($responseHandler));
+            ->willReturn($responseHandler);
         $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
         $response = $this->getMockBuilder(ResponseInterface::class)
@@ -188,9 +209,7 @@ class ResponseTypeStrategyTraitTest extends TestCase
         $responseHandlers = [\get_class($responseType) => 'class'];
         $strategy = new ResponseTypeStrategyStub($responseHandlers, $responseFactory, $container);
 
-        $callback = function () use ($responseType) {
-            return $responseType;
-        };
+        $callback = static fn() => $responseType;
 
         $return = $strategy($callback, $request, $response, []);
 

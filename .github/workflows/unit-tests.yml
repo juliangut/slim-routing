@@ -1,0 +1,64 @@
+name: Unit Test
+
+on:
+  pull_request: null
+  push:
+    branches:
+      - master
+
+env:
+  COMPOSER_ROOT_VERSION: dev-master
+
+jobs:
+  prepare_env:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          coverage: none
+
+      - name: Composer install
+        uses: ramsey/composer-install@v2
+        with:
+          composer-options: "--prefer-dist"
+
+      - name: Install Symplify easy-ci
+        run: composer require --dev symplify/easy-ci:11.1.5 --no-interaction --no-progress --ansi --prefer-stable --prefer-dist
+
+      - id: output_php
+        run: echo "matrix=$(vendor/bin/easy-ci php-versions-json)" >> $GITHUB_OUTPUT
+
+    outputs:
+      php: ${{ steps.output_php.outputs.matrix }}
+
+  unit_tests:
+    needs: prepare_env
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ${{ fromJson(needs.prepare_env.outputs.php) }}
+
+    name: Test on PHP ${{ matrix.php }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Composer install
+        uses: ramsey/composer-install@v2
+        with:
+          composer-options: "--prefer-dist"
+
+      - name: Unit test
+        run: make test-phpunit

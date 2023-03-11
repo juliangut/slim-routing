@@ -1,11 +1,6 @@
-[![PHP version](https://img.shields.io/badge/PHP-%3E%3D7.1-8892BF.svg?style=flat-square)](http://php.net)
+[![PHP version](https://img.shields.io/badge/PHP-%3E%3D7.4-8892BF.svg?style=flat-square)](http://php.net)
 [![Latest Version](https://img.shields.io/packagist/v/juliangut/slim-routing.svg?style=flat-square)](https://packagist.org/packages/juliangut/slim-routing)
 [![License](https://img.shields.io/github/license/juliangut/slim-routing.svg?style=flat-square)](https://github.com/juliangut/slim-routing/blob/master/LICENSE)
-
-[![Build Status](https://img.shields.io/travis/juliangut/slim-routing.svg?style=flat-square)](https://travis-ci.org/juliangut/slim-routing)
-[![Style Check](https://styleci.io/repos/91021757/shield)](https://styleci.io/repos/91021757)
-[![Code Quality](https://img.shields.io/scrutinizer/g/juliangut/slim-routing.svg?style=flat-square)](https://scrutinizer-ci.com/g/juliangut/slim-routing)
-[![Code Coverage](https://img.shields.io/coveralls/juliangut/slim-routing.svg?style=flat-square)](https://coveralls.io/github/juliangut/slim-routing)
 
 [![Total Downloads](https://img.shields.io/packagist/dt/juliangut/slim-routing.svg?style=flat-square)](https://packagist.org/packages/juliangut/slim-routing/stats)
 [![Monthly Downloads](https://img.shields.io/packagist/dm/juliangut/slim-routing.svg?style=flat-square)](https://packagist.org/packages/juliangut/slim-routing/stats)
@@ -16,14 +11,14 @@ A replacement for Slim's router that adds annotation and configuration based rou
 
 Thanks to this library, instead of configuring routes by hand one by one and including them into Slim's routing you can create mapping files that define and structure your routes and let them be included automatically instead
 
-If you're familiar with how Doctrine defines entities mappings you'll feel at home with slim-routing because route mappings are defined the same way
+Additionally, if you're familiar with Symfony's definition of routes through Attributes you'll feel at home with slim-routing because route mappings can be defined the same way as well
 
-* On class annotations (in controller classes)
+* On class Attributes (in controller classes)
 * In routing definition files, currently supported in PHP, JSON, XML and YAML
 
 > Route gathering and compilation can be quite a heavy process depending on how many classes/files and routes are defined, specially in the case of annotations. For this reason it's strongly advised to always use this library route collector cache and Slim's [route collector caching](https://www.slimframework.com/docs/v4/objects/routing.html#route-expressions-caching) on production applications and invalidate cache on deployment
 
-Route callbacks can now thanks to slim-routing return `\Jgut\Slim\Routing\Response\ResponseType` objects that will be ultimately transformed into the mandatory `Psr\Message\ResponseInterface` in a way that lets you fully decouple view from the route
+Thanks to slim-routing route callbacks can now return `\Jgut\Slim\Routing\Response\ResponseType` objects that will be ultimately transformed into the mandatory `Psr\Message\ResponseInterface` in a way that lets you fully decouple view from the route
 
 ## Installation
 
@@ -31,12 +26,6 @@ Route callbacks can now thanks to slim-routing return `\Jgut\Slim\Routing\Respon
 
 ```
 composer require juliangut/slim-routing
-```
-
-doctrine/annotations to parse routing annotations
-
-```
-composer require doctrine/annotations
 ```
 
 symfony/yaml to parse yaml routing files
@@ -110,7 +99,7 @@ $app->run();
 ### Configuration
 
 * `sources` must be an array containing arrays of configurations to create MappingDriver objects:
-    * `type` one of \Jgut\Slim\Routing\Mapping\Driver\DriverFactory constants: `DRIVER_ANNOTATION`, `DRIVER_PHP`, `DRIVER_JSON`, `DRIVER_XML` or `DRIVER_YAML` **defaults to DRIVER_ANNOTATION if no driver**
+    * `type` one of \Jgut\Slim\Routing\Mapping\Driver\DriverFactory constants: `DRIVER_ATTRIBUTE`, `DRIVER_PHP`, `DRIVER_JSON`, `DRIVER_XML`, `DRIVER_YAML` or `DRIVER_ANNOTATION` **if no driver, defaults to DRIVER_ATTRIBUTE in PHP >=8.0 or DRIVER_ANNOTATION PHP < 8.0**
     * `path` a string path or array of paths to where mapping files are located (files or directories) **REQUIRED if no driver**
     * `driver` an already created \Jgut\Slim\Routing\Mapping\Driver\DriverInterface object **REQUIRED if no type AND path**
 * `trailingSlash` boolean, indicates whether to append a trailing slash on route pattern (true) or remove it completely (false), by default. False by default
@@ -118,7 +107,7 @@ $app->run();
   * numeric => `\d+`
   * alpha => `[a-zA-Z]+`
   * alnum => `[a-zA-Z0-9]+`
-  * slug' -> `[a-zA-Z0-9-]+`
+  * slug -> `[a-zA-Z0-9-]+`
   * uuid -> `[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`
   * mongoid -> `[0-9a-f]{24}`
   * any => `[^}]+`
@@ -146,11 +135,12 @@ Of course normal ResponseInterface responses from route callback will be treated
 
 ### ResponseType aware invocation strategies
 
-For the new response handling to work you need to register a new invocation strategy provided by this library, there are three strategies provided out of the box that plainly mimic the defaults provided by Slim itself
+For the new response handling to work you need to register a new invocation strategy provided by this library, there are four strategies provided out of the box that plainly mimic the ones provided by Slim
 
 * `Jgut\Slim\Routing\Strategy\RequestHandler`
 * `Jgut\Slim\Routing\Strategy\RequestResponse`
 * `Jgut\Slim\Routing\Strategy\RequestResponseArgs`
+* `Jgut\Slim\Routing\Strategy\RequestResponseNamedArgs`
 
 ### Response type
 
@@ -166,16 +156,18 @@ $app->get('/hello/{name}', function ($request, $response, $args) {
 
 If a route returns an instance of `\Jgut\Slim\Routing\Response\ResponseType` it will be passed to the corresponding handler according to configuration
 
-Provided response types:
+There are two response types already provided:
 
 * `PayloadResponse` stores simple payload data to be later transformed for example into JSON or XML
-* `ViewResponse` keeps agnostic template parameters so it can be rendered in a handler
+* `ViewResponse` keeps agnostic template parameters, so they can be rendered in a handler
+
+You can easily create your own.
 
 ### Response type handler
 
-Mapped on invocation strategy, a response handler will be responsible of returning a `Psr\Message\ResponseInterface` from the received `\Jgut\Slim\Routing\Response\ResponseType`
+Mapped on invocation strategy, a response handler will be responsible for returning a `Psr\Message\ResponseInterface` from the received `\Jgut\Slim\Routing\Response\ResponseType`
 
-Typically, they will agglutinate presentation logic: how to represent the data contained in the response type, such as transform it into JSON, XML, etc, or render it with a template engine such as Twig
+Typically, they will agglutinate presentation logic: how to represent the data contained in the response type, such as transform it into JSON, XML, etc. or render it with a template engine such as Twig
 
 Register response type handlers on invocation strategy creation or
 
@@ -220,22 +212,22 @@ class CustomTransformer extends AbstractTransformer
 }
 ```
 
-### Routes
+### Route mapping
 
-Routes can be defined in two basic ways: by setting them in definition files of various formats or directly defined in annotations on controller classes
+Routes can be defined in two basic ways: by writing them down in definition files of various formats or directly defined in attributes on controller classes
 
-#### Annotations
+#### Attributes
+
+_Available from PHP8.0. If you're still on PHP 7.x use file mappings or annotations_
 
 ##### Router (Class level)
 
-Just to identify classes defining routes. Its presence is mandatory on each routing class either way the rest of the annotations won't be read
+Just to identify classes defining routes. Its presence is mandatory on each routing class other way the rest of the annotations won't be read
 
 ```php
-use Jgut\Slim\Routing\Mapping\Annotation as JSR;
+use Jgut\Slim\Routing\Mapping\Attribute\Router;
 
-/**
- * @JSR\Router
- */
+#[Router]
 class Home
 {
 }
@@ -246,20 +238,19 @@ class Home
 Defines a group in which routes may reside. It is not mandatory but useful when you want to do route grouping or apply middleware to several routes at the same time
 
 ```php
-use Jgut\Slim\Routing\Mapping\Annotation as JSR;
+use Jgut\Slim\Routing\Mapping\Attribute\Group;
+use Jgut\Slim\Routing\Mapping\Attribute\Router;
 
-/**
- * @JSR\Router
- * @JSR\Group(
- *     prefix="routePrefix",
- *     parent="parentGroupClassName",
- *     pattern="section/{name}",
- *     placeholders={"name": "[a-z]+"},
- *     parameters={"action": "\My\Entity"},
- *     arguments={"scope": "public"}
- *     middleware={"groupMiddlewareName"}
- * )
- */
+#[Router]
+#[Group(
+    prefix: 'routePrefix',
+    parent: 'parentGroupClassName',
+    pattern: 'section/{name}',
+    placeholders: ['name': '[a-z]+'],
+    parameters: ['action' => '\My\Entity'],
+    arguments: ['scope' => 'public']
+    middleware: ['groupMiddlewareName'],
+ )]
 class Section
 {
 }
@@ -278,27 +269,24 @@ class Section
 Defines the final routes added to Slim
 
 ```php
-use Jgut\Slim\Routing\Mapping\Annotation as JSR;
+use Jgut\Slim\Routing\Mapping\Attribute\Route;
+use Jgut\Slim\Routing\Mapping\Attribute\Router;
 
-/**
- * @JSR\Router
- */
+#[Router]
 class Section
 {
-    /**
-     * @JSR\Route(
-     *     name="routeName",
-     *     xmlHttpRequest=true,
-     *     methods={"GET", "POST"},
-     *     pattern="do/{action}",
-     *     placeholders={"action": "[a-z0-9]+"},
-     *     transformer="CustomTransformer",
-     *     parameters={"action": "\My\Entity"},
-     *     arguments={"scope": "admin.read"}
-     *     middleware={"routeMiddlewareName"},
-     *     priority=-10
-     * )
-     */
+    #[Route(
+        name: 'routeName',
+        xmlHttpRequest: true,
+        methods: ['GET', 'POST'],
+        pattern: 'do/{action}',
+        placeholders: ['action': '[a-z0-9]+'],
+        transformer: 'CustomTransformer',
+        parameters: ['action': '\My\Entity'],
+        arguments: ['scope': 'admin.read']
+        middleware: ['routeMiddlewareName'],
+        priority: -10,
+    )]
     public function doSomething()
     {
     }
@@ -308,7 +296,7 @@ class Section
 * `name`, optional, route name so it can be referenced in Slim
 * `pattern`, optional, path pattern (defaults to '/')
 * `xmlHttpRequest`, request should be AJAX, false by default
-* `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed in the list (defaults to GET)
+* `methods`, optional, list of accepted HTTP route methods. ºANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed in the list (defaults to GET)
 * `placeholders`, optional, array of regex/alias for path placeholders
 * `parameters`, optional, array of definitions of parameters, to be used in transformer
 * `transformer`, optional, reference to a ParameterTransformer instance that will be extracted from the container
@@ -538,8 +526,8 @@ Defines a group in which routes may reside
 * `prefix`, optional, prefix to be prepended to route names
 * `pattern`, optional, path pattern, prepended to route patterns
 * `placeholders`, optional, array of regex/alias for path placeholders,
-* `parameters`, optional, array of definitions of parameters, to be used in route transformer 
-* `arguments`, optional, array of arguments to attach to final route 
+* `parameters`, optional, array of definitions of parameters, to be used in route transformer
+* `arguments`, optional, array of arguments to attach to final route
 * `middleware`, optional, array of middleware to be added to all group routes
 
 ##### Route
@@ -552,6 +540,106 @@ Defines a route added to Slim
 * `xmlHttpRequest`, request should be AJAX, false by default
 * `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed (defaults to GET)
 * `placeholders`, optional, array of regex for path placeholders
+* `parameters`, optional, array of definitions of parameters, to be used in transformer
+* `transformer`, optional, reference to a ParameterTransformer instance that will be extracted from the container
+* `arguments`, optional, array of arguments to attach to the route
+* `middleware`, optional, array of middleware to be added to the route
+* `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
+
+#### Annotations
+
+_Annotations are deprecated and will be removed when support for PHP 7.4 is dropped. Use Attribute mapping if possible_
+
+You need to require Doctrine's annotation package
+
+```
+composer require doctrine/annotations
+```
+
+##### Router (Class level)
+
+Just to identify classes defining routes. Its presence is mandatory on each routing class either way the rest of the annotations won't be read
+
+```php
+use Jgut\Slim\Routing\Mapping\Annotation as JSR;
+
+/**
+ * @JSR\Router
+ */
+class Home
+{
+}
+```
+
+##### Group (Class level)
+
+Defines a group in which routes may reside. It is not mandatory but useful when you want to do route grouping or apply middleware to several routes at the same time
+
+```php
+use Jgut\Slim\Routing\Mapping\Annotation as JSR;
+
+/**
+ * @JSR\Router
+ * @JSR\Group(
+ *     prefix="routePrefix",
+ *     parent="parentGroupClassName",
+ *     pattern="section/{name}",
+ *     placeholders={"name": "[a-z]+"},
+ *     parameters={"action": "\My\Entity"},
+ *     arguments={"scope": "public"}
+ *     middleware={"groupMiddlewareName"}
+ * )
+ */
+class Section
+{
+}
+```
+
+* `prefix`, optional, prefix to be prepended to route names
+* `parent`, optional, references a parent group name
+* `pattern`, optional, path pattern, prepended to route patterns
+* `placeholders`, optional, array of regex/alias for path placeholders,
+* `parameters`, optional, array of definitions of parameters, to be used in route transformer
+* `arguments`, optional, array of arguments to attach to final route
+* `middleware`, optional, array of middleware to be added to all group routes
+
+##### Route (Method level)
+
+Defines the final routes added to Slim
+
+```php
+use Jgut\Slim\Routing\Mapping\Annotation as JSR;
+
+/**
+ * @JSR\Router
+ */
+class Section
+{
+    /**
+     * @JSR\Route(
+     *     name="routeName",
+     *     xmlHttpRequest=true,
+     *     methods={"GET", "POST"},
+     *     pattern="do/{action}",
+     *     placeholders={"action": "[a-z0-9]+"},
+     *     transformer="CustomTransformer",
+     *     parameters={"action": "\My\Entity"},
+     *     arguments={"scope": "admin.read"}
+     *     middleware={"routeMiddlewareName"},
+     *     priority=-10
+     * )
+     */
+    public function doSomething()
+    {
+    }
+}
+```
+
+* `name`, optional, route name so it can be referenced in Slim
+* `pattern`, optional, path pattern (defaults to '/')
+* `xmlHttpRequest`, request should be AJAX, false by default
+* `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed in the list (defaults to GET)
+* `placeholders`, optional, array of regex/alias for path placeholders
 * `parameters`, optional, array of definitions of parameters, to be used in transformer
 * `transformer`, optional, reference to a ParameterTransformer instance that will be extracted from the container
 * `arguments`, optional, array of arguments to attach to the route

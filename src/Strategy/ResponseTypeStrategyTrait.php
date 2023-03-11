@@ -18,26 +18,18 @@ use Jgut\Slim\Routing\Response\ResponseType;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 
-/**
- * Trait ResponseTypeStrategyTrait.
- */
 trait ResponseTypeStrategyTrait
 {
     /**
      * @var array<string, string|ResponseTypeHandler>
      */
-    protected $responseHandlers = [];
+    protected array $responseHandlers = [];
 
-    /**
-     * @var ResponseFactoryInterface
-     */
-    protected $responseFactory;
+    protected ResponseFactoryInterface $responseFactory;
 
-    /**
-     * @var ContainerInterface|null
-     */
-    protected $container;
+    protected ?ContainerInterface $container;
 
     /**
      * Set response type handlers.
@@ -56,7 +48,6 @@ trait ResponseTypeStrategyTrait
     /**
      * Set response type handler.
      *
-     * @param string                     $type
      * @param string|ResponseTypeHandler $responseHandler
      */
     public function setResponseHandler(string $type, $responseHandler): void
@@ -67,9 +58,9 @@ trait ResponseTypeStrategyTrait
     /**
      * Handle route response.
      *
-     * @param ResponseInterface|ResponseType|string|null $dispatchedResponse
+     * @param ResponseInterface|ResponseType|string|mixed $dispatchedResponse
      *
-     * @return ResponseInterface
+     * @throws RuntimeException
      */
     protected function handleResponse($dispatchedResponse): ResponseInterface
     {
@@ -79,7 +70,8 @@ trait ResponseTypeStrategyTrait
 
         if (\is_string($dispatchedResponse)) {
             $response = $this->responseFactory->createResponse();
-            $response->getBody()->write($dispatchedResponse);
+            $response->getBody()
+                ->write($dispatchedResponse);
 
             return $response;
         }
@@ -88,24 +80,28 @@ trait ResponseTypeStrategyTrait
             $dispatchedResponse = $this->handleResponseType($dispatchedResponse);
         }
 
+        if (!$dispatchedResponse instanceof ResponseInterface) {
+            throw new RuntimeException(sprintf(
+                'Handled route response type should be string or "%s". "%s" given.',
+                ResponseType::class,
+                \gettype($dispatchedResponse),
+            ));
+        }
+
         return $dispatchedResponse;
     }
 
     /**
      * Handle response type.
      *
-     * @param ResponseType $responseType
-     *
-     * @throws \RuntimeException
-     *
-     * @return ResponseInterface
+     * @throws RuntimeException
      */
     protected function handleResponseType(ResponseType $responseType): ResponseInterface
     {
         $type = \get_class($responseType);
 
-        if (!isset($this->responseHandlers[$type])) {
-            throw new \RuntimeException(\sprintf('No handler registered for response type "%s"', $type));
+        if (!\array_key_exists($type, $this->responseHandlers)) {
+            throw new RuntimeException(sprintf('No handler registered for response type "%s".', $type));
         }
 
         $handler = $this->responseHandlers[$type];
@@ -114,10 +110,10 @@ trait ResponseTypeStrategyTrait
         }
 
         if (!$handler instanceof ResponseTypeHandler) {
-            throw new \RuntimeException(\sprintf(
-                'Response handler should implement %s, "%s" given',
+            throw new RuntimeException(sprintf(
+                'Response handler should implement %s, "%s" given.',
                 ResponseTypeHandler::class,
-                \is_object($handler) ? \get_class($handler) : \gettype($handler)
+                \is_object($handler) ? \get_class($handler) : \gettype($handler),
             ));
         }
 

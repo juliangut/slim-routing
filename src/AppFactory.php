@@ -23,19 +23,10 @@ use Slim\Interfaces\MiddlewareDispatcherInterface;
 use Slim\Interfaces\RouteCollectorInterface;
 use Slim\Interfaces\RouteResolverInterface;
 
-/**
- * Custom routing aware AppFactory.
- */
 class AppFactory extends SlimAppFactory
 {
-    /**
-     * @var Configuration
-     */
-    protected static $configuration;
+    protected static ?Configuration $configuration;
 
-    /**
-     * {@inheritdoc}
-     */
     public static function create(
         ?ResponseFactoryInterface $responseFactory = null,
         ?ContainerInterface $container = null,
@@ -47,8 +38,8 @@ class AppFactory extends SlimAppFactory
         static::$responseFactory = $responseFactory ?? static::$responseFactory;
 
         $responseFactory = self::determineResponseFactory();
-        $container = $container ?? static::$container;
-        $callableResolver = $callableResolver ?? static::getCallableResolver($container);
+        $container ??= static::$container;
+        $callableResolver ??= static::getCallableResolver($container);
 
         return new App(
             $responseFactory,
@@ -56,31 +47,15 @@ class AppFactory extends SlimAppFactory
             $callableResolver,
             $routeCollector ?? static::getRouteCollector($responseFactory, $callableResolver, $container),
             $routeResolver ?? static::$routeResolver,
-            $middlewareDispatcher ?? static::$middlewareDispatcher
+            $middlewareDispatcher ?? static::$middlewareDispatcher,
         );
     }
 
-    /**
-     * Get callable resolver.
-     *
-     * @param ContainerInterface|null $container
-     *
-     * @return CallableResolverInterface
-     */
     protected static function getCallableResolver(?ContainerInterface $container = null): CallableResolverInterface
     {
         return static::$callableResolver ?? new CallableResolver($container);
     }
 
-    /**
-     * Get route collector.
-     *
-     * @param ResponseFactoryInterface  $responseFactory
-     * @param CallableResolverInterface $callableResolver
-     * @param ContainerInterface|null   $container
-     *
-     * @return RouteCollectorInterface
-     */
     protected static function getRouteCollector(
         ResponseFactoryInterface $responseFactory,
         CallableResolverInterface $callableResolver,
@@ -92,11 +67,6 @@ class AppFactory extends SlimAppFactory
             ?? new RouteCollector($configuration, $responseFactory, $callableResolver, $container);
     }
 
-    /**
-     * Set route collector configurations.
-     *
-     * @param Configuration $configuration
-     */
     final public static function setRouteCollectorConfiguration(Configuration $configuration): void
     {
         static::$configuration = $configuration;

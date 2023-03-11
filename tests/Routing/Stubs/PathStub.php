@@ -15,9 +15,6 @@ namespace Jgut\Slim\Routing\Tests\Stubs;
 
 use Jgut\Slim\Routing\Mapping\Annotation\PathTrait;
 
-/**
- * Path annotation stub.
- */
 class PathStub
 {
     use PathTrait;
