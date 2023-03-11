@@ -61,6 +61,11 @@ jobs:
           composer-options: "--prefer-dist"
 
       - name: Run PHP linting
+        if: matrix.php == '7.4'
+        run: ./vendor/bin/phplint --configuration=.phplint.yml --exclude=build --exclude=vendor --exclude=tests/Routing/Mapping/Files/Classes/Invalid/Attribute --exclude=tests/Routing/Mapping/Files/Classes/Valid/Attribute --ansi
+
+      - name: Run PHP linting
+        if: matrix.php != '7.4'
         run: make lint-php
 
       - name: Run check style
