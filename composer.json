@@ -23,30 +23,29 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": "^8.0",
-    "juliangut/mapping": "^1.0.1",
-    "psr/simple-cache": "^1.0",
+    "php": "^8.1",
+    "juliangut/mapping": "^1.2.1",
+    "psr/simple-cache": "^1.0.0",
     "slim/slim": "^4.2"
   },
   "require-dev": {
     "brainmaestro/composer-git-hooks": "^2.8",
-    "doctrine/annotations": "^1.4",
-    "friendsofphp/php-cs-fixer": "3.x",
+    "doctrine/annotations": "^2.0.1",
+    "friendsofphp/php-cs-fixer": "^3.15.1",
     "infection/infection": "^0.26",
     "laminas/laminas-diactoros": "^2.0",
     "mikey179/vfsstream": "^1.6",
-    "overtrue/phplint": "^1.2",
+    "overtrue/phplint": "^9.0.4",
     "phpmd/phpmd": "^2.8",
     "phpstan/extension-installer": "^1.0",
     "phpstan/phpstan": "^1.8",
     "phpstan/phpstan-deprecation-rules": "^1.0",
     "phpstan/phpstan-strict-rules": "^1.0",
-    "phpunit/phpunit": "^9.5",
-    "povils/phpmnd": "^2.0",
+    "phpunit/phpunit": "^9.6.5",
+    "povils/phpmnd": "^v3.0.1",
     "roave/security-advisories": "dev-master",
-    "sebastian/phpcpd": "^6.0",
-    "slim/twig-view": "^2.3",
-    "spatie/array-to-xml": "^2.2",
+    "slim/twig-view": "^3.3.0",
+    "spatie/array-to-xml": "^3.1.5",
     "squizlabs/php_codesniffer": "^3.5"
   },
   "suggest": {
@@ -83,7 +82,6 @@
     "lint-phpcs": "phpcs --standard=PSR2 src tests",
     "lint-phpcs-fixer": "php-cs-fixer fix --config=.php-cs-fixer.php --dry-run --verbose",
     "fix-phpcs": "php-cs-fixer fix --config=.php-cs-fixer.php --verbose",
-    "qa-phpcpd": "phpcpd src",
     "qa-phpmd": "phpmd src text .phpmd.xml",
     "qa-phpmnd": "phpmnd ./ --exclude=tests",
     "qa-phpstan": "#phpstan analyse --configuration=phpstan.neon --memory-limit=2G --no-progress",
@@ -100,7 +98,6 @@
       "@fix-phpcs"
     ],
     "qa": [
-      "@qa-phpcpd",
       "@qa-phpmd",
       "@qa-phpmnd",
       "@qa-phpstan"
