@@ -108,10 +108,7 @@ class AttributeDriverTest extends AbstractDriverTest
     public function testRoutes(): void
     {
         $paths = [
-            __DIR__ . '/../Files/Classes/Valid/Attribute/AbstractRoute.php',
-            __DIR__ . '/../Files/Classes/Valid/Attribute/DependentRoute.php',
-            __DIR__ . '/../Files/Classes/Valid/Attribute/GroupedRoute.php',
-            __DIR__ . '/../Files/Classes/Valid/Attribute/SingleRoute.php',
+            __DIR__ . '/../Files/Classes/Valid/Attribute',
         ];
 
         $driver = new AttributeDriver($paths);

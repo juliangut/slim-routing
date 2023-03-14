@@ -109,10 +109,7 @@ class AnnotationDriverTest extends AbstractDriverTest
     public function testRoutes(): void
     {
         $paths = [
-            __DIR__ . '/../Files/Classes/Valid/Annotation/AbstractRoute.php',
-            __DIR__ . '/../Files/Classes/Valid/Annotation/DependentRoute.php',
-            __DIR__ . '/../Files/Classes/Valid/Annotation/GroupedRoute.php',
-            __DIR__ . '/../Files/Classes/Valid/Annotation/SingleRoute.php',
+            __DIR__ . '/../Files/Classes/Valid/Annotation',
         ];
 
         $driver = new AnnotationDriver($paths, $this->reader);
