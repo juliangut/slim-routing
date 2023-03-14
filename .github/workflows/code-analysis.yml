@@ -65,12 +65,11 @@ jobs:
         run: ./vendor/bin/phplint --configuration=.phplint.yml --exclude=build --exclude=vendor --exclude=tests/Routing/Mapping/Files/Classes/Invalid/Attribute --exclude=tests/Routing/Mapping/Files/Classes/Valid/Attribute --ansi
 
       - name: Run PHP linting
-        if: matrix.php != '7.4'
         run: make lint-php
 
       - name: Run check style
         if: matrix.php == '7.4'
-        run: ./vendor/bin/ecs check --configuration=phpstan-74.neon --verbose --ansi
+        run: ./vendor/bin/ecs check --verbose --ansi
 
       - name: Run check style
         if: matrix.php != '7.4'
@@ -94,4 +93,9 @@ jobs:
         run: make qa-compatibility
 
       - name: Run static analysis
+        if: matrix.php == '7.4'
+        run: ./vendor/bin/phpstan analyse --configuration=phpstan-74.neon --memory-limit=2G --no-progress
+
+      - name: Run static analysis
+        if: matrix.php != '7.4'
         run: make qa-phpstan

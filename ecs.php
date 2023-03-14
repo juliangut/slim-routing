@@ -32,17 +32,29 @@ return static function (ECSConfig $ecsConfig) use ($header): void {
         __DIR__ . '/tests',
     ]);
 
+    $skips = [
+        NoSilencedErrorsSniff::class . '.Discouraged' => [
+            __DIR__ . '/src/Configuration.php',
+            __DIR__ . '/src/Route/RouteResolver.php',
+        ],
+        NoNullableBooleanTypeFixer::class => [
+            __DIR__ . '/src/Mapping/Attribute/Route.php',
+        ],
+    ];
+
+    if (\PHP_VERSION_ID < 80_000) {
+        $skips = array_merge(
+            $skips,
+            [
+                __DIR__ . '/tests/Routing/Mapping/Files/Classes/Invalid/Attribute',
+                __DIR__ . '/tests/Routing/Mapping/Files/Classes/Valid/Attribute',
+            ],
+        );
+    }
+
     (new ConfigSet74())
         ->setHeader($header)
         ->enablePhpUnitRules()
-        ->setAdditionalSkips([
-            NoSilencedErrorsSniff::class . '.Discouraged' => [
-                __DIR__ . '/src/Configuration.php',
-                __DIR__ . '/src/Route/RouteResolver.php',
-            ],
-            NoNullableBooleanTypeFixer::class => [
-                __DIR__ . '/src/Mapping/Attribute/Route.php',
-            ],
-        ])
+        ->setAdditionalSkips($skips)
         ->configure($ecsConfig);
 };
