@@ -69,11 +69,6 @@ jobs:
         run: make lint-php
 
       - name: Run check style
-        if: matrix.php == '7.4'
-        run: ./vendor/bin/ecs check --verbose --ansi
-
-      - name: Run check style
-        if: matrix.php != '7.4'
         run: make lint-ecs
 
       - name: Run copy/paste detection
