@@ -69,12 +69,22 @@ jobs:
         run: make lint-php
 
       - name: Run check style
+        if: matrix.php == '7.4'
+        run: ./vendor/bin/ecs check --configuration=phpstan-74.neon --verbose --ansi
+
+      - name: Run check style
+        if: matrix.php != '7.4'
         run: make lint-ecs
 
       - name: Run copy/paste detection
         run: make qa-phpcpd
 
       - name: Run mess detection
+        if: matrix.php == '7.4'
+        run: ./vendor/bin/phpmd src,tests ansi unusedcode,naming,design,controversial,codesize --exclude */tests/Routing/Mapping/Files/Classes/*/Attribute/*.php
+
+      - name: Run mess detection
+        if: matrix.php != '7.4'
         run: make qa-phpmd
 
       - name: Run magic number detection
