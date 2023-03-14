@@ -19,6 +19,7 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
  * Example dependent route.
  *
  * @JSR\Router()
+ *
  * @JSR\Group(
  *     parent="\Jgut\Slim\Routing\Tests\Files\Annotation\Valid\AbstractRoute",
  *     prefix="grouped",
