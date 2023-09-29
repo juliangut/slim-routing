@@ -84,7 +84,7 @@ class Route extends SlimRoute
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $arguments = $this->arguments;
-        $this->arguments = $this->transformArguments($arguments);
+        $this->arguments = $this->transformParameters($arguments);
 
         try {
             $response = parent::handle($request);
@@ -96,42 +96,64 @@ class Route extends SlimRoute
     }
 
     /**
-     * @param array<string, string> $arguments
+     * @param array<string, string> $parameters
      *
      * @throws RuntimeException
      *
      * @return array<string, mixed>
      */
-    protected function transformArguments(array $arguments): array
+    protected function transformParameters(array $parameters): array
     {
-        if ($this->metadata === null) {
-            return $arguments;
+        $transformer = $this->metadata?->getTransformer();
+        if ($this->metadata === null || $transformer === null) {
+            return $parameters;
         }
 
-        $transformer = $this->metadata->getTransformer();
-        if ($transformer !== null) {
-            if ($this->container !== null) {
-                $transformer = $this->container->get($transformer);
-            }
-
-            if (!$transformer instanceof ParameterTransformer) {
-                throw new RuntimeException(sprintf(
-                    'Parameter transformer should implement %s, "%s" given.',
-                    ParameterTransformer::class,
-                    \is_object($transformer) ? $transformer::class : \gettype($transformer),
-                ));
-            }
-
-            $arguments = $transformer->transform($arguments, $this->getRouteParameters($this->metadata));
+        if ($this->container !== null) {
+            $transformer = $this->container->get($transformer);
+        }
+        if (!$transformer instanceof ParameterTransformer) {
+            throw new RuntimeException(sprintf(
+                'Parameter transformer should implement %s, "%s" given.',
+                ParameterTransformer::class,
+                \is_object($transformer) ? $transformer::class : \gettype($transformer),
+            ));
         }
 
-        return $arguments;
+        $definitions = $this->getRouteParametersDefinitions($this->metadata);
+
+        array_walk(
+            $parameters,
+            function (&$parameterValue, string $parameterName) use ($definitions, $transformer): void {
+                if (\array_key_exists($parameterName, $definitions)) {
+                    $parameterType = $definitions[$parameterName];
+
+                    if (\in_array($parameterType, ['string', 'int', 'float', 'bool'], true)) {
+                        $parameterValue = $this->transformToPrimitive($parameterType, $parameterValue);
+                    } elseif ($transformer->supports($parameterName, $parameterType)) {
+                        $parameterValue = $transformer->transform($parameterName, $parameterType, $parameterValue);
+                    }
+                }
+            },
+        );
+
+        return $parameters;
+    }
+
+    protected function transformToPrimitive(string $type, string $value): float|bool|int|string
+    {
+        return match ($type) {
+            'int' => (int) $value,
+            'float' => (float) $value,
+            'bool' => \in_array(trim($value), ['1', 'on', 'yes', 'true'], true),
+            default => $value,
+        };
     }
 
     /**
      * @return array<string, string>
      */
-    protected function getRouteParameters(RouteMetadata $route): array
+    protected function getRouteParametersDefinitions(RouteMetadata $route): array
     {
         $parameters = array_filter(array_map(
             static fn(GroupMetadata $group): array => $group->getParameters(),

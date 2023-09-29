@@ -13,10 +13,9 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Route;
 
-use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use Jgut\Slim\Routing\Route\Route;
-use Jgut\Slim\Routing\Tests\Stubs\AbstractTransformerStub;
+use Jgut\Slim\Routing\Tests\Stubs\ParameterTransformerStub;
 use Laminas\Diactoros\ResponseFactory;
 use Laminas\Diactoros\ServerRequestFactory;
 use PHPUnit\Framework\TestCase;
@@ -24,6 +23,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
+use Slim\Handlers\Strategies\RequestResponseNamedArgs;
 use Slim\Interfaces\CallableResolverInterface;
 use stdClass;
 
@@ -65,7 +65,7 @@ class RouteTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessageMatches(
-            '/^Parameter transformer should implement .+\\\ParameterTransformer, ".+" given\.$/',
+            '/^Parameter transformer should implement .+\\\ParameterTransformer, "stdClass" given\.$/',
         );
 
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
@@ -93,10 +93,10 @@ class RouteTest extends TestCase
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function testParametersTransform(): void
+    public function testParametersNotTransformed(): void
     {
-        $callable = static function ($request, $response, array $args) {
-            static::assertEquals(10, $args['id']);
+        $callable = static function (ServerRequestInterface $request, ResponseInterface $response, string $identifier) {
+            static::assertEquals('10', $identifier);
 
             return $response;
         };
@@ -110,23 +110,65 @@ class RouteTest extends TestCase
             ->getMock();
         $container
             ->method('get')
-            ->willReturn(new AbstractTransformerStub(10));
+            ->willReturn(new ParameterTransformerStub(10));
 
         $metadata = (new RouteMetadata('', null))
-            ->setTransformer('transformer')
-            ->setParameters(['id' => 'int'])
-            ->setGroup(new GroupMetadata());
+            ->setTransformer('transformer');
 
+        $responseFactory = new ResponseFactory();
         $route = new Route(
             ['GET'],
-            '/',
+            '/{identifier}',
             $callable,
-            new ResponseFactory(),
+            $responseFactory,
             $callableResolver,
             $metadata,
             $container,
+            new RequestResponseNamedArgs(),
         );
-        $route->setArgument('id', '10');
+        $route->setArgument('identifier', '10');
+
+        $route->run($this->request);
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function testParametersTransform(): void
+    {
+        $callable = static function (ServerRequestInterface $request, ResponseInterface $response, int $identifier) {
+            static::assertEquals(10, $identifier);
+
+            return $response;
+        };
+        $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
+            ->getMock();
+        $callableResolver
+            ->method('resolve')
+            ->willReturn($callable);
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $container
+            ->method('get')
+            ->willReturn(new ParameterTransformerStub(10));
+
+        $metadata = (new RouteMetadata('', null))
+            ->setTransformer('transformer')
+            ->setParameters(['identifier' => 'int']);
+
+        $responseFactory = new ResponseFactory();
+        $route = new Route(
+            ['GET'],
+            '/{identifier}',
+            $callable,
+            $responseFactory,
+            $callableResolver,
+            $metadata,
+            $container,
+            new RequestResponseNamedArgs(),
+        );
+        $route->setArgument('identifier', '10');
 
         $route->run($this->request);
     }

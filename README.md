@@ -135,7 +135,7 @@ Route callbacks normally respond with a `Psr\Message\ResponseInterface` object, 
 ```php
 $app->get(
     '/hello/{name}', 
-    static fn ($args): string => 'Hello ' . $args['name'],
+    fn ($args): string => 'Hello ' . $args['name'],
 )->setName('greet');
 ```
 
@@ -162,7 +162,7 @@ use Psr\Http\Message\ResponseInterface;
 
 $app->get(
     '/hello/{name}', 
-    static fn (ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseType 
+    fn (ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseType 
         => new ViewResponse('greet.html', ['name' => $args['name']], $request, $response),
 )->setName('greet');
 ```
@@ -203,28 +203,28 @@ You can create your own response type handlers to compose specifically formatted
 
 Route parameters can be transformed before arriving to route callable. The most common use of this feature would be to transform IDs into actual object/entity used in the callable
 
-To achieve this you need to provide a `\Jgut\Slim\Routing\Transformer\ParameterTransformer` instance defined in the route itself. There is an abstract class `\Jgut\Slim\Routing\Transformer\AbstractTransformer` to easily implement parameters transformation
+To achieve this you need to provide a `\Jgut\Slim\Routing\Transformer\ParameterTransformer` instance defined in the route itself
 
 For example, you would want to transform parameters into Doctrine entities
 
 ```php
-use Jgut\Slim\Routing\Transformer\AbstractTransformer;
+use Jgut\Slim\Routing\Transformer\ParameterTransformer;
 use Slim\Exception\HttpNotFoundException;
 
-final class UserEntityTransformer extends AbstractTransformer
+final class UserEntityTransformer implements ParameterTransformer
 {
     public function __construct(
         private EntityManager $entityManager,
     ) {}
 
-    protected function supportsTransform(string $type) : bool
+    protected function supports(string $parameter, string $type) : bool
     {
         return $type === UserEntity::class;
     }
 
-    protected function transformParameter(string $parameter, string $type): mixed
+    protected function transform(string $parameter, string $type, mixed $value): mixed
     {
-        $user = $this->entityManager->getRepository($type)->find($parameter);
+        $user = $this->entityManager->getRepository($type)->find($value);
         if ($user === null) {
             throw new HttpNotFoundException('User not found');
         }
@@ -265,7 +265,7 @@ use Jgut\Slim\Routing\Mapping\Attribute\Router;
     parent: 'parentGroupClassName',
     pattern: 'section/{name}',
     placeholders: ['name': '[a-z]+'],
-    parameters: ['action' => '\My\Entity'],
+    parameters: ['action' => MyEntity::class],
     arguments: ['scope' => 'public']
     middleware: ['groupMiddlewareName'],
  )]
@@ -300,7 +300,7 @@ class Section
         pattern: 'do/{action}',
         placeholders: ['action': '[a-z0-9]+'],
         transformer: 'CustomTransformer',
-        parameters: ['action': '\My\Entity'],
+        parameters: ['action': MyEntity::class],
         arguments: ['scope': 'admin.read']
         middleware: ['routeMiddlewareName'],
         priority: -10,
@@ -703,7 +703,7 @@ Resulting middleware added to a route will be the result of combining group midd
 * Minimum PHP version is now 8.0
 * Minimum Slim version is now 4.7
 * Annotations have been deprecated and its use is highly discouraged
-* New `supportsTransform` method on transformers
+* ParameterTransformer methods and signatures have changed
 
 ## Contributing
 
