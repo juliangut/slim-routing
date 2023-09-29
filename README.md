@@ -1,4 +1,4 @@
-[![PHP version](https://img.shields.io/badge/PHP-%3E%3D7.4-8892BF.svg?style=flat-square)](http://php.net)
+[![PHP version](https://img.shields.io/badge/PHP-%3E%3D8.0-8892BF.svg?style=flat-square)](http://php.net)
 [![Latest Version](https://img.shields.io/packagist/v/juliangut/slim-routing.svg?style=flat-square)](https://packagist.org/packages/juliangut/slim-routing)
 [![License](https://img.shields.io/github/license/juliangut/slim-routing.svg?style=flat-square)](https://github.com/juliangut/slim-routing/blob/master/LICENSE)
 
@@ -58,6 +58,7 @@ require './vendor/autoload.php';
 use Jgut\Slim\Routing\AppFactory;
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Response\PayloadResponse;
+use Jgut\Slim\Routing\Response\ResponseType;
 use Jgut\Slim\Routing\Response\Handler\JsonResponseHandler;
 use Jgut\Slim\Routing\Strategy\RequestHandler;
 use Psr\Http\Message\ServerRequestInterface;
@@ -70,8 +71,6 @@ AppFactory::setRouteCollectorConfiguration($configuration);
 // Instantiate the app
 $app = AppFactory::create();
 
-/** @var \Psr\SimpleCache\CacheInterface $cache */
-$cache = new CacheImplementation();
 
 // Register custom invocation strategy to handle ResponseType objects
 $invocationStrategy = new RequestHandler(
@@ -83,13 +82,15 @@ $invocationStrategy = new RequestHandler(
 );
 $routeCollector = $app->getRouteCollector();
 $routeCollector->setDefaultInvocationStrategy($invocationStrategy);
+
+$cache = new PSR16Cache();
 $routeCollector->setCache($cache);
 
-// Not mandatory but recommended if more routes are added, see below
+// Recommended if you want to add more routes manually
 $routeCollector->registerRoutes();
 
-// Set other routes
-$app->get('/', function(ServerRequestInterface $request) {
+// Additional routes if needed
+$app->get('/', function(ServerRequestInterface $request): ResponseType {
     return new PayloadResponse(['param' => 'value'], $request);
 });
 
@@ -111,25 +112,32 @@ $app->run();
   * uuid -> `[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`
   * mongoid -> `[0-9a-f]{24}`
   * any => `[^}]+`
-* `namingStrategy`, instance of \Jgut\Slim\Routing\Naming\NamingInterface (\Jgut\Slim\Routing\Naming\SnakeCase by default)
+* `namingStrategy`, instance of \Jgut\Slim\Routing\Naming\Strategy (\Jgut\Slim\Routing\Naming\SnakeCase by default)
 
 ## Response handling
 
 Ever wondered why you should encode output or call template renderer in every single route? or even why respond with a ResponseInterface object in the end?
 
 ```php
-$app->get('/hello/{name}', function ($request, $response, $args) {
+$app->get('/hello/{name}', function (ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface {
     return $this->view->render(
         $response,
-        'profile.html',
+        'greet.html',
         [
             'name' => $args['name']
         ]
     );
-})->setName('profile');
+})->setName('greet');
 ```
 
-Route callbacks normally respond with a `Psr\Message\ResponseInterface` object, but thanks to slim-routing they can now respond with a string, null or event better, with a more intent expressive ResponseType object that will be handled afterwards
+Route callbacks normally respond with a `Psr\Message\ResponseInterface` object, but thanks to slim-routing they can now respond with a string, null or even better with a more intent expressive ResponseType object that will be handled afterward
+
+```php
+$app->get(
+    '/hello/{name}', 
+    static fn ($args): string => 'Hello ' . $args['name'],
+)->setName('greet');
+```
 
 Of course normal ResponseInterface responses from route callback will be treated as usual
 
@@ -147,11 +155,16 @@ For the new response handling to work you need to register a new invocation stra
 Response types are Value Objects with the needed data to later produce a ResponseInterface object. This leaves the presentation logic out of routes allowing for cleaner routes and easy presentation logic reuse
 
 ```php
+use Jgut\Slim\Routing\Response\ResponseType;
 use Jgut\Slim\Routing\Response\ViewResponse;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
-$app->get('/hello/{name}', function ($request, $response, $args) {
-    return new ViewResponse('profile.html', ['name' => $args['name']], $request, $response);
-})->setName('profile');
+$app->get(
+    '/hello/{name}', 
+    static fn (ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseType 
+        => new ViewResponse('greet.html', ['name' => $args['name']], $request, $response),
+)->setName('greet');
 ```
 
 If a route returns an instance of `\Jgut\Slim\Routing\Response\ResponseType` it will be passed to the corresponding handler according to configuration
@@ -173,9 +186,9 @@ Register response type handlers on invocation strategy creation or
 
 ```php
 use Jgut\Slim\Routing\Response\PayloadResponse;
-use Jgut\Slim\Routing\Response\Handler\XmlResponseHandler;
+use Jgut\Slim\Routing\Response\Handler\JsonResponseHandler;
 
-$invocationStrategy->setResponseHandler(PayloadResponse::class, XmlResponseHandler::class);
+$invocationStrategy->setResponseHandler(PayloadResponse::class, JsonResponseHandler::class);
 ```
 
 Provided response types handlers:
@@ -196,18 +209,27 @@ For example, you would want to transform parameters into Doctrine entities
 
 ```php
 use Jgut\Slim\Routing\Transformer\AbstractTransformer;
+use Slim\Exception\HttpNotFoundException;
 
-class CustomTransformer extends AbstractTransformer
+final class UserEntityTransformer extends AbstractTransformer
 {
-    protected $entityManager;
+    public function __construct(
+        private EntityManager $entityManager,
+    ) {}
 
-    public function __construct(EntityManager $entityManager) {
-        $this->entityManager = $entityManager;
+    protected function supportsTransform(string $type) : bool
+    {
+        return $type === UserEntity::class;
     }
 
-    protected function transformParameter(string $parameter, string $type)
+    protected function transformParameter(string $parameter, string $type): mixed
     {
-        return $this->entityManager->getRepository($type)->find($parameter);
+        $user = $this->entityManager->getRepository($type)->find($parameter);
+        if ($user === null) {
+            throw new HttpNotFoundException('User not found');
+        }
+
+        return $user;
     }
 }
 ```
@@ -218,8 +240,6 @@ Routes can be defined in two basic ways: by writing them down in definition file
 
 #### Attributes
 
-_Available from PHP8.0. If you're still on PHP 7.x use file mappings or annotations_
-
 ##### Router (Class level)
 
 Just to identify classes defining routes. Its presence is mandatory on each routing class other way the rest of the annotations won't be read
@@ -228,9 +248,7 @@ Just to identify classes defining routes. Its presence is mandatory on each rout
 use Jgut\Slim\Routing\Mapping\Attribute\Router;
 
 #[Router]
-class Home
-{
-}
+class Home {}
 ```
 
 ##### Group (Class level)
@@ -363,63 +381,6 @@ return [
 ];
 ```
 
-###### JSON
-
-```json
-[
-  {
-    // Group
-    "prefix": "prefix",
-    "pattern": "group-pattern",
-    "placeholders": [{
-      "group-placeholder": "type"
-    }],
-    "arguments": [{
-      "group-argument": "value"
-    }],
-    "middleware": ["group-middleware"],
-    "routes": [
-      {
-        // Route
-        "name": "routeName",
-        "xmlHttpRequest": true,
-        "methods": ["GET", "POST"],
-        "priority": 0,
-        "pattern": "route-pattern",
-        "placeholders": [{
-          "route-placeholder": "type"
-        }],
-        "parameters": [{
-          "route-parameter": "type"
-        }],
-        "transformer": "customTransformer",
-        "arguments": [{
-          "route-argument": "value"
-        }],
-        "middleware": ["route-middleware"],
-        "invokable": "callable"
-      },
-      {
-        // Subgroup
-        "pattern": "subgroup-pattern",
-        "placeholders": [{
-          "subgroup-placeholder": "type"
-        }],
-        "arguments": [{
-          "subgroup-argument": "value"
-        }],
-        "middleware": ["subgroup-middleware"],
-        "routes": [
-          // Routes/groups ...
-        ]
-      }
-      // Routes/groups ...
-    ]
-  }
-  // Routes/groups ...
-]
-```
-
 ###### XML
 
 ```xml
@@ -476,6 +437,65 @@ return [
     </group1>
     <!-- Routes/groups... -->
 </root>
+```
+
+###### JSON
+
+_Mind comments are not valid standard JSON_
+
+```json
+[
+  {
+    // Group
+    "prefix": "prefix",
+    "pattern": "group-pattern",
+    "placeholders": [{
+      "group-placeholder": "type"
+    }],
+    "arguments": [{
+      "group-argument": "value"
+    }],
+    "middleware": ["group-middleware"],
+    "routes": [
+      {
+        // Route
+        "name": "routeName",
+        "xmlHttpRequest": true,
+        "methods": ["GET", "POST"],
+        "priority": 0,
+        "pattern": "route-pattern",
+        "placeholders": [{
+          "route-placeholder": "type"
+        }],
+        "parameters": [{
+          "route-parameter": "type"
+        }],
+        "transformer": "customTransformer",
+        "arguments": [{
+          "route-argument": "value"
+        }],
+        "middleware": ["route-middleware"],
+        "invokable": "callable"
+      },
+      {
+        // Subgroup
+        "pattern": "subgroup-pattern",
+        "placeholders": [{
+          "subgroup-placeholder": "type"
+        }],
+        "arguments": [{
+          "subgroup-argument": "value"
+        }],
+        "middleware": ["subgroup-middleware"],
+        "routes": [
+          // Routes/groups ...
+        ]
+      }
+      // Routes/groups ...
+    ]
+  }
+  // Routes/groups ...
+]
 ```
 
 ###### YAML
@@ -548,7 +568,7 @@ Defines a route added to Slim
 
 #### Annotations
 
-_Annotations are deprecated and will be removed when support for PHP 7.4 is dropped. Use Attribute mapping if possible_
+_Annotations are deprecated and will be removed eventually. Use Attribute mapping when possible_
 
 You need to require Doctrine's annotation package
 
@@ -675,14 +695,15 @@ Resulting route arguments is composed of all group arguments if any and route ar
 Resulting middleware added to a route will be the result of combining group middleware and route middleware and are applied to the route in the following order, so that final middleware execution order will be the same as expected in any Slim app:
 
 * Firstly route middleware will be set to the route **in the order they are defined**
-* Then route group (if any) middleware are to be set into the route **in the same order they are defined**
+* Then route group middleware (if any) are to be set into the route **in the same order they are defined**
 * If group has a parent then parent's middleware are set **in the order they are defined**, and this goes up until no parent group is left
 
-## Migration from 1.x
+## Migration from 2.x
 
-* Minimum Slim version is now 4.2
-* ResponseType handling is NOT automatically available due to how Slim 4 handles routing, it has been moved into custom RequestHandlerInvocationStrategyInterface implementations and thus must be registered on RouteCollector
-* Response handlers list configuration have been moved to each RequestHandlerInvocationStrategyInterface implementation
+* Minimum PHP version is now 8.0
+* Minimum Slim version is now 4.7
+* Annotations have been deprecated and its use is highly discouraged
+* New `supportsTransform` method on transformers
 
 ## Contributing
 

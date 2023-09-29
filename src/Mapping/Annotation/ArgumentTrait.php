@@ -19,12 +19,12 @@ namespace Jgut\Slim\Routing\Mapping\Annotation;
 trait ArgumentTrait
 {
     /**
-     * @var array<mixed>
+     * @var array<string, mixed>
      */
     protected array $arguments = [];
 
     /**
-     * @return array<mixed>
+     * @return array<string, mixed>
      */
     public function getArguments(): array
     {
@@ -32,11 +32,9 @@ trait ArgumentTrait
     }
 
     /**
-     * @param array<mixed> $arguments
-     *
-     * @return static
+     * @param array<string, mixed> $arguments
      */
-    public function setArguments(array $arguments): self
+    public function setArguments(array $arguments): static
     {
         $this->arguments = $arguments;
 

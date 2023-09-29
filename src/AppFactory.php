@@ -33,11 +33,11 @@ class AppFactory extends SlimAppFactory
         ?CallableResolverInterface $callableResolver = null,
         ?RouteCollectorInterface $routeCollector = null,
         ?RouteResolverInterface $routeResolver = null,
-        ?MiddlewareDispatcherInterface $middlewareDispatcher = null
+        ?MiddlewareDispatcherInterface $middlewareDispatcher = null,
     ): App {
         static::$responseFactory = $responseFactory ?? static::$responseFactory;
 
-        $responseFactory = self::determineResponseFactory();
+        $responseFactory = static::determineResponseFactory();
         $container ??= static::$container;
         $callableResolver ??= static::getCallableResolver($container);
 
@@ -59,7 +59,7 @@ class AppFactory extends SlimAppFactory
     protected static function getRouteCollector(
         ResponseFactoryInterface $responseFactory,
         CallableResolverInterface $callableResolver,
-        ?ContainerInterface $container = null
+        ?ContainerInterface $container = null,
     ): RouteCollectorInterface {
         $configuration = static::$configuration ?? new Configuration();
 

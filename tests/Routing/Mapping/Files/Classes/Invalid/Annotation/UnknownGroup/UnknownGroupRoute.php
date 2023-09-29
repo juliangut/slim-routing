@@ -31,7 +31,5 @@ class UnknownGroupRoute
      *     pattern="/unknown"
      * )
      */
-    public function actionUnknown(): void
-    {
-    }
+    public function actionUnknown(): void {}
 }

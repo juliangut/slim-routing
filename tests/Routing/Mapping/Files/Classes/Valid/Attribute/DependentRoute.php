@@ -35,7 +35,5 @@ class DependentRoute
         pattern: '/four',
     )]
     #[Middleware('fourMiddleware')]
-    public function actionFour(): void
-    {
-    }
+    public function actionFour(): void {}
 }

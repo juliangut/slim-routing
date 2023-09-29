@@ -23,21 +23,21 @@ use Jgut\Slim\Routing\Route\RouteResolver;
 use Traversable;
 
 /**
- * @phpstan-type Source string|array{driver?: string|DriverInterface, type?: string, path?: string|array<string>}
+ * @phpstan-type Source array{driver?: object, type?: string, path?: string|list<string>}
  */
-class Configuration
+final class Configuration
 {
     /**
-     * @var array<Source>
+     * @var list<Source>
      */
-    protected array $sources = [];
+    private array $sources = [];
 
-    protected bool $trailingSlash = false;
+    private bool $trailingSlash = false;
 
     /**
      * @var array<string, string>
      */
-    protected array $placeholderAliases = [
+    private array $placeholderAliases = [
         'any' => '[^}]+',
         'numeric' => '[0-9]+',
         'number' => '[0-9]+',
@@ -49,11 +49,11 @@ class Configuration
         'mongoid' => '[0-9a-f]{24}',
     ];
 
-    protected ?MetadataResolver $metadataResolver = null;
+    private ?MetadataResolver $metadataResolver = null;
 
-    protected ?RouteResolver $routeResolver = null;
+    private ?RouteResolver $routeResolver = null;
 
-    protected ?Strategy $namingStrategy = null;
+    private ?Strategy $namingStrategy = null;
 
     /**
      * @param iterable<string, mixed> $configurations
@@ -93,7 +93,7 @@ class Configuration
     }
 
     /**
-     * @return array<string|array{driver?: string|DriverInterface, type?: string, path?: string|array<string>}>
+     * @return list<string|Source>
      */
     public function getSources(): array
     {
@@ -101,7 +101,7 @@ class Configuration
     }
 
     /**
-     * @param array<Source> $sources
+     * @param list<Source> $sources
      */
     public function setSources(array $sources): self
     {
@@ -125,11 +125,11 @@ class Configuration
             throw new InvalidArgumentException(sprintf(
                 'Mapping source must be a string, array or %s, %s given.',
                 DriverInterface::class,
-                \is_object($source) ? \get_class($source) : \gettype($source),
+                \is_object($source) ? $source::class : \gettype($source),
             ));
         }
 
-        /** @var string|array{driver?: string|DriverInterface, type?: string, path?: string|array<string>} $source */
+        /** @var Source $source */
         $this->sources[] = $source;
 
         return $this;

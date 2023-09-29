@@ -15,6 +15,9 @@ namespace Jgut\Slim\Routing\Tests\Stubs;
 
 use Jgut\Slim\Routing\Route\Route;
 
+/**
+ * @internal
+ */
 class RouteStub extends Route
 {
     protected function resolveCallable($callable)

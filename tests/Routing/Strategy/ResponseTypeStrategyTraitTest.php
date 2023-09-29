@@ -42,10 +42,10 @@ class ResponseTypeStrategyTraitTest extends TestCase
 
         $callback = static function (
             ServerRequestInterface $receivedRequest,
-            ResponseInterface $receivedResponse
+            ResponseInterface $receivedResponse,
         ) use (
             $request,
-            $response
+            $response,
         ): void {
             static::assertSame($request, $receivedRequest);
             static::assertSame($response, $receivedResponse);
@@ -69,10 +69,10 @@ class ResponseTypeStrategyTraitTest extends TestCase
 
         $callback = static function (
             ServerRequestInterface $receivedRequest,
-            ResponseInterface $receivedResponse
+            ResponseInterface $receivedResponse,
         ) use (
             $request,
-            $response
+            $response,
         ) {
             static::assertSame($request, $receivedRequest);
             static::assertSame($response, $receivedResponse);
@@ -114,7 +114,7 @@ class ResponseTypeStrategyTraitTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessageMatches(
-            '/^Handled route response type should be string or ".+". "integer" given\.$/',
+            '/^Handled route response type should be string, null or ".+". "integer" given\.$/',
         );
 
         $container = $this->getMockBuilder(ContainerInterface::class)
@@ -173,7 +173,7 @@ class ResponseTypeStrategyTraitTest extends TestCase
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
 
-        $responseHandlers = [\get_class($responseType) => 'class'];
+        $responseHandlers = [$responseType::class => 'class'];
         $strategy = new ResponseTypeStrategyStub($responseHandlers, new ResponseFactory(), $container);
 
         $callback = static fn() => $responseType;
@@ -206,7 +206,7 @@ class ResponseTypeStrategyTraitTest extends TestCase
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
 
-        $responseHandlers = [\get_class($responseType) => 'class'];
+        $responseHandlers = [$responseType::class => 'class'];
         $strategy = new ResponseTypeStrategyStub($responseHandlers, $responseFactory, $container);
 
         $callback = static fn() => $responseType;

@@ -13,11 +13,8 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Naming;
 
-class SnakeCase implements Strategy
+final class SnakeCase implements Strategy
 {
-    /**
-     * {@inheritDoc}
-     */
     public function combine(array $nameParts): string
     {
         return implode('_', $nameParts);

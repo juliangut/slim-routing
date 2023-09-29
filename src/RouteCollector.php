@@ -29,12 +29,15 @@ use Slim\Interfaces\RouteParserInterface;
 use Slim\Routing\RouteCollector as SlimRouteCollector;
 
 /**
+ * @phpstan-import-type Source from Configuration
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RouteCollector extends SlimRouteCollector
 {
-    protected Configuration $configuration;
-
+    /**
+     * @var CacheInterface<mixed>|null
+     */
     protected ?CacheInterface $cache = null;
 
     protected string $cachePrefix = '';
@@ -42,13 +45,13 @@ class RouteCollector extends SlimRouteCollector
     private bool $routesRegistered = false;
 
     public function __construct(
-        Configuration $configuration,
+        protected Configuration $configuration,
         ResponseFactoryInterface $responseFactory,
         CallableResolverInterface $callableResolver,
         ?ContainerInterface $container = null,
         ?InvocationStrategyInterface $invocationStrategy = null,
         ?RouteParserInterface $routeParser = null,
-        ?string $cacheFile = null
+        ?string $cacheFile = null,
     ) {
         parent::__construct(
             $responseFactory,
@@ -58,10 +61,11 @@ class RouteCollector extends SlimRouteCollector
             $routeParser,
             $cacheFile,
         );
-
-        $this->configuration = $configuration;
     }
 
+    /**
+     * @param CacheInterface<mixed> $cache
+     */
     public function setCache(CacheInterface $cache): void
     {
         $this->cache = $cache;
@@ -124,7 +128,7 @@ class RouteCollector extends SlimRouteCollector
     }
 
     /**
-     * @return array<RouteMetadata>
+     * @return list<RouteMetadata>
      */
     protected function getRoutesMetadata(): array
     {
@@ -134,12 +138,12 @@ class RouteCollector extends SlimRouteCollector
         if ($this->cache !== null && $this->cache->has($cacheKey)) {
             $cachedRoutes = $this->cache->get($cacheKey);
             if (\is_array($cachedRoutes)) {
-                /** @var array<RouteMetadata> $cachedRoutes */
+                /** @var list<RouteMetadata> $cachedRoutes */
                 return $cachedRoutes;
             }
         }
 
-        /** @var array<RouteMetadata> $routes */
+        /** @var list<RouteMetadata> $routes */
         $routes = $this->configuration->getMetadataResolver()
             ->getMetadata($mappingSources);
 
@@ -148,9 +152,7 @@ class RouteCollector extends SlimRouteCollector
 
         $routes = $routeResolver->sort($routes);
 
-        if ($this->cache !== null) {
-            $this->cache->set($cacheKey, $routes);
-        }
+        $this->cache?->set($cacheKey, $routes);
 
         return $routes;
     }
@@ -171,17 +173,17 @@ class RouteCollector extends SlimRouteCollector
     }
 
     /**
-     * @param array<string>                          $methods
-     * @param string|array<string>|callable(): mixed $callable
+     * @param array<string>            $methods
+     * @param string|callable(): mixed $callable
      */
     final protected function createRoute(array $methods, string $pattern, $callable): RouteInterface
     {
-        return $this->createMetadataRoute($methods, $pattern, $callable);
+        return $this->createMetadataRoute(array_values($methods), $pattern, $callable);
     }
 
     /**
-     * @param array<string>                          $methods
-     * @param string|array<string>|callable(): mixed $callable
+     * @param list<string>             $methods
+     * @param string|callable(): mixed $callable
      *
      * @return Route
      */
@@ -189,7 +191,7 @@ class RouteCollector extends SlimRouteCollector
         array $methods,
         string $pattern,
         $callable,
-        ?RouteMetadata $metadata = null
+        ?RouteMetadata $metadata = null,
     ): RouteInterface {
         return new Route(
             $methods,
@@ -200,37 +202,40 @@ class RouteCollector extends SlimRouteCollector
             $metadata,
             $this->container,
             $this->defaultInvocationStrategy,
-            $this->routeGroups,
+            array_values($this->routeGroups),
             $this->routeCounter,
         );
     }
 
     /**
-     * @param array<mixed> $mappingSources
+     * @param list<string|Source> $mappingSources
      */
     protected function getCacheKey(array $mappingSources): string
     {
-        $key = implode(
-            '.',
-            array_map(
-                static function ($mappingSource): string {
-                    if (!\is_array($mappingSource)) {
-                        $mappingSource = [
-                            'type' => DriverFactoryInterface::DRIVER_ATTRIBUTE,
-                            'path' => $mappingSource,
-                        ];
-                    }
+        $key = array_reduce(
+            $mappingSources,
+            static function (string $key, $mappingSource): string {
+                if (\is_array($mappingSource) && \array_key_exists('driver', $mappingSource)) {
+                    return sprintf('%s::driver:%s', $key, $mappingSource['driver']::class);
+                }
 
-                    $path = \is_array($mappingSource['path'])
-                        ? implode('', $mappingSource['path'])
-                        : $mappingSource['path'];
+                if (!\is_array($mappingSource)) {
+                    $mappingSource = [
+                        'type' => DriverFactoryInterface::DRIVER_ATTRIBUTE,
+                        'path' => $mappingSource,
+                    ];
+                }
 
-                    return $mappingSource['type'] . '.' . $path;
-                },
-                $mappingSources,
-            ),
+                /** @var array{type: string, path: string|list<string>} $mappingSource */
+                $path = \is_array($mappingSource['path'])
+                    ? implode('', $mappingSource['path'])
+                    : $mappingSource['path'];
+
+                return sprintf('%s::%s:%s', $key, $mappingSource['type'], $path);
+            },
+            'slim-routing',
         );
 
-        return $this->cachePrefix . sha1($key);
+        return $this->cachePrefix . hash('sha256', $key);
     }
 }

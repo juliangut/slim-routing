@@ -26,7 +26,7 @@ use stdClass;
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class FileMappingTraitTest extends AbstractDriverTest
+class FileMappingTraitTest extends AbstractDriverTestCase
 {
     public function testNoMapping(): void
     {

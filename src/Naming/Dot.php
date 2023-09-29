@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Naming;
 
-class Dot implements Strategy
+final class Dot implements Strategy
 {
     public function combine(array $nameParts): string
     {

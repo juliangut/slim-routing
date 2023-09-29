@@ -20,6 +20,4 @@ use Jgut\Mapping\Annotation\AbstractAnnotation;
  *
  * @Target("CLASS")
  */
-class Router extends AbstractAnnotation
-{
-}
+final class Router extends AbstractAnnotation {}

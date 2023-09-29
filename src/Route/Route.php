@@ -23,17 +23,15 @@ use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 use Slim\Interfaces\CallableResolverInterface;
 use Slim\Interfaces\InvocationStrategyInterface;
+use Slim\Interfaces\RouteGroupInterface;
 use Slim\Routing\Route as SlimRoute;
-use Slim\Routing\RouteGroup;
 
 class Route extends SlimRoute
 {
-    protected ?RouteMetadata $metadata;
-
     /**
-     * @param array<string>                          $methods
-     * @param array<RouteGroup>                      $groups
-     * @param string|array<string>|callable(): mixed $callable
+     * @param list<string>              $methods
+     * @param string|callable(): mixed  $callable
+     * @param list<RouteGroupInterface> $groups
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -43,11 +41,11 @@ class Route extends SlimRoute
         $callable,
         ResponseFactoryInterface $responseFactory,
         CallableResolverInterface $callableResolver,
-        ?RouteMetadata $metadata = null,
+        protected ?RouteMetadata $metadata = null,
         ?ContainerInterface $container = null,
         ?InvocationStrategyInterface $invocationStrategy = null,
         array $groups = [],
-        int $identifier = 0
+        int $identifier = 0,
     ) {
         parent::__construct(
             $methods,
@@ -60,8 +58,6 @@ class Route extends SlimRoute
             $groups,
             $identifier,
         );
-
-        $this->metadata = $metadata;
     }
 
     public function getMetadata(): ?RouteMetadata
@@ -114,7 +110,7 @@ class Route extends SlimRoute
 
         $transformer = $this->metadata->getTransformer();
         if ($transformer !== null) {
-            if (isset($this->container)) {
+            if ($this->container !== null) {
                 $transformer = $this->container->get($transformer);
             }
 
@@ -122,7 +118,7 @@ class Route extends SlimRoute
                 throw new RuntimeException(sprintf(
                     'Parameter transformer should implement %s, "%s" given.',
                     ParameterTransformer::class,
-                    \is_object($transformer) ? \get_class($transformer) : \gettype($transformer),
+                    \is_object($transformer) ? $transformer::class : \gettype($transformer),
                 ));
             }
 

@@ -23,7 +23,5 @@ use Jgut\Slim\Routing\Mapping\Attribute\Router;
 class ConstructorDefinedRoute
 {
     #[Route(pattern: '/constructor')]
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 }

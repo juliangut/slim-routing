@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Mapping\Metadata;
 
-class GroupMetadata extends AbstractMetadata
+final class GroupMetadata extends AbstractMetadata
 {
     protected ?self $parent = null;
 
@@ -27,9 +27,6 @@ class GroupMetadata extends AbstractMetadata
         return $this->parent;
     }
 
-    /**
-     * @return static
-     */
     public function setParent(self $parent): self
     {
         $this->parent = $parent;
@@ -42,9 +39,6 @@ class GroupMetadata extends AbstractMetadata
         return $this->prefix;
     }
 
-    /**
-     * @return static
-     */
     public function setPrefix(string $prefix): self
     {
         $this->prefix = $prefix;

@@ -15,6 +15,7 @@ namespace Jgut\Slim\Routing\Tests\Stubs;
 
 use Jgut\Slim\Routing\Mapping\Metadata\AbstractMetadata;
 
-class AbstractMetadataStub extends AbstractMetadata
-{
-}
+/**
+ * @internal
+ */
+class AbstractMetadataStub extends AbstractMetadata {}

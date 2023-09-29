@@ -1,12 +1,9 @@
 includes:
-  - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+  - %rootDir%/../../juliangut/phpstan-config/phpstan-phpunit.neon
 
 parameters:
   level: max
-  checkGenericClassInNonGenericObjectType: false
   checkMissingCallableSignature: true
-  tipsOfTheDay: false
-  errorFormat: compact
   parallel:
     maximumNumberOfProcesses: 7
   paths:
@@ -19,10 +16,12 @@ parameters:
       path: src/Mapping/Metadata/AbstractMetadata.php
     - message: '/^Call to an undefined method ReflectionType::getName\(\)\.$/'
       path: src/Mapping/Driver/AnnotationDriver.php
+    - message: '/^Error suppression via "@" should not be used\.$/'
+      paths:
+        - src/Configuration.php
+        - src/Route/RouteResolver.php
     # Slim's route
     - message: '/^Property Slim\\Routing\\Route::\$arguments \(array<string, string>\) does not accept array<string, mixed>\.$/'
       path: src/Route/Route.php
     - message: '/^Parameter #1 \$arguments of method Slim\\Routing\\Route::setArguments\(\) expects array<string, string>, array<string, mixed> given\.$/'
       path: src/RouteCollector.php
-    - message: '/^Parameter #3 \$callable of method Slim\\Routing\\Route::__construct\(\) expects \(callable\(\): mixed\)\|string, array<string>\|\(callable\(\): mixed\)\|string given\.$/'
-      path: src/Route/Route.php

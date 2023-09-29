@@ -24,10 +24,10 @@ use Reflection;
 use ReflectionClass;
 use ReflectionMethod;
 
-class AnnotationDriver extends AbstractAnnotationDriver
+final class AnnotationDriver extends AbstractAnnotationDriver
 {
     /**
-     * @return array<RouteMetadata>
+     * @return list<RouteMetadata>
      */
     public function getMetadata(): array
     {
@@ -49,15 +49,16 @@ class AnnotationDriver extends AbstractAnnotationDriver
             }
         }
 
-        return \count($routes) > 0 ? array_merge(...$routes) : [];
+        return \count($routes) > 0 ? array_values(array_merge(...$routes)) : [];
     }
 
     /**
-     * @param array<GroupMetadata> $groups
+     * @param ReflectionClass<object>                    $class
+     * @param array<class-string<object>, GroupMetadata> $groups
      *
      * @throws DriverException
      *
-     * @return array<RouteMetadata>
+     * @return list<RouteMetadata>
      */
     protected function getRoutesMetadata(ReflectionClass $class, array $groups): array
     {
@@ -111,11 +112,11 @@ class AnnotationDriver extends AbstractAnnotationDriver
     }
 
     /**
-     * @param array<ReflectionClass> $mappingClasses
+     * @param list<ReflectionClass<object>> $mappingClasses
      *
      * @throws DriverException
      *
-     * @return array<GroupMetadata>
+     * @return array<class-string<object>, GroupMetadata>
      */
     protected function getGroups(array $mappingClasses): array
     {
@@ -171,7 +172,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
     protected function populateRoute(
         RouteMetadata $route,
         ReflectionMethod $method,
-        RouteAnnotation $annotation
+        RouteAnnotation $annotation,
     ): void {
         $this->populatePattern($route, $annotation);
         $route->setPlaceholders($annotation->getPlaceholders());
@@ -207,7 +208,7 @@ class AnnotationDriver extends AbstractAnnotationDriver
     protected function populateTransformer(
         RouteMetadata $route,
         RouteAnnotation $annotation,
-        ReflectionMethod $method
+        ReflectionMethod $method,
     ): void {
         if ($annotation->getTransformer() !== null) {
             $route->setTransformer($annotation->getTransformer())

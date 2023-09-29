@@ -34,9 +34,7 @@ class GroupedRoute
         arguments: ['scope' => 'protected'],
     )]
     #[Middleware('twoMiddleware')]
-    public function actionTwo(): void
-    {
-    }
+    public function actionTwo(): void {}
 
     #[Route(
         pattern: '/three/{id}',
@@ -44,7 +42,5 @@ class GroupedRoute
         priority: 10,
         placeholders: ['id' => '\d+'],
     )]
-    public function actionThree(): void
-    {
-    }
+    public function actionThree(): void {}
 }

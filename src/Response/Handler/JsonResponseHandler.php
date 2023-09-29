@@ -21,18 +21,11 @@ use Psr\Http\Message\ResponseInterface;
 
 class JsonResponseHandler extends AbstractResponseHandler
 {
-    protected int $jsonFlags;
-
-    public function __construct(ResponseFactoryInterface $responseFactory, bool $prettify = false)
-    {
+    public function __construct(
+        ResponseFactoryInterface $responseFactory,
+        protected bool $prettify = false,
+    ) {
         parent::__construct($responseFactory);
-
-        $jsonFlags = \JSON_UNESCAPED_UNICODE | \JSON_UNESCAPED_SLASHES | \JSON_PRESERVE_ZERO_FRACTION;
-        if ($prettify) {
-            $jsonFlags |= \JSON_PRETTY_PRINT;
-        }
-
-        $this->jsonFlags = $jsonFlags;
     }
 
     public function handle(ResponseType $responseType): ResponseInterface
@@ -50,15 +43,22 @@ class JsonResponseHandler extends AbstractResponseHandler
 
         $response = $this->getResponse($responseType);
         $response->getBody()
-            ->write((string) json_encode($payload, $this->jsonFlags));
+            ->write(json_encode($payload, $this->getJsonEncodeFlags() | \JSON_THROW_ON_ERROR));
 
         return $response->withHeader('Content-Type', 'application/json; charset=utf-8');
     }
 
-    /**
-     * @phpstan-param mixed $payload
-     */
-    protected function isJsonEncodable($payload): bool
+    protected function getJsonEncodeFlags(): int
+    {
+        $jsonFlags = \JSON_UNESCAPED_UNICODE | \JSON_UNESCAPED_SLASHES | \JSON_PRESERVE_ZERO_FRACTION;
+        if ($this->prettify) {
+            $jsonFlags |= \JSON_PRETTY_PRINT;
+        }
+
+        return $jsonFlags;
+    }
+
+    protected function isJsonEncodable(mixed $payload): bool
     {
         if (\is_resource($payload)) {
             return false;

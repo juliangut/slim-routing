@@ -23,7 +23,7 @@ use Slim\Interfaces\RequestHandlerInvocationStrategyInterface;
 /**
  * Default route callback strategy with route parameters as an array of arguments.
  */
-class RequestResponse implements RequestHandlerInvocationStrategyInterface
+final class RequestResponse implements RequestHandlerInvocationStrategyInterface
 {
     use ResponseTypeStrategyTrait;
 
@@ -32,26 +32,21 @@ class RequestResponse implements RequestHandlerInvocationStrategyInterface
      */
     public function __construct(
         array $responseHandlers,
-        ResponseFactoryInterface $responseFactory,
-        ?ContainerInterface $container = null
+        protected ResponseFactoryInterface $responseFactory,
+        protected ?ContainerInterface $container = null,
     ) {
         $this->setResponseHandlers($responseHandlers);
-
-        $this->responseFactory = $responseFactory;
-        $this->container = $container;
     }
 
     /**
-     * Invoke a route callable that implements RequestHandlerInterface.
-     *
-     * @param array<string, mixed>                                                             $routeArguments
      * @param callable(ServerRequestInterface, ResponseInterface, array<string, mixed>): mixed $callable
+     * @param array<string, mixed>                                                             $routeArguments
      */
     public function __invoke(
         callable $callable,
         ServerRequestInterface $request,
         ResponseInterface $response,
-        array $routeArguments
+        array $routeArguments,
     ): ResponseInterface {
         foreach ($routeArguments as $argument => $value) {
             $request = $request->withAttribute($argument, $value);

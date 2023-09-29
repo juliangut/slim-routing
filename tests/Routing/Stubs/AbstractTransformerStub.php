@@ -15,16 +15,21 @@ namespace Jgut\Slim\Routing\Tests\Stubs;
 
 use Jgut\Slim\Routing\Transformer\AbstractTransformer;
 
+/**
+ * @internal
+ */
 class AbstractTransformerStub extends AbstractTransformer
 {
-    protected $transformed;
+    public function __construct(
+        protected $transformed,
+    ) {}
 
-    public function __construct($transformed)
+    protected function supportsTransform(string $type): bool
     {
-        $this->transformed = $transformed;
+        return true;
     }
 
-    protected function transformParameter(string $parameter, string $type)
+    protected function transformParameter(string $parameter, string $type): mixed
     {
         return $this->transformed;
     }

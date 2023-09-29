@@ -22,12 +22,12 @@ use Psr\Http\Server\MiddlewareInterface;
 trait MiddlewareTrait
 {
     /**
-     * @var array<class-string<MiddlewareInterface>>
+     * @var list<class-string<MiddlewareInterface>>
      */
     protected array $middleware = [];
 
     /**
-     * @return array<class-string<MiddlewareInterface>>
+     * @return list<class-string<MiddlewareInterface>>
      */
     public function getMiddleware(): array
     {
@@ -35,13 +35,11 @@ trait MiddlewareTrait
     }
 
     /**
-     * @param array<class-string<MiddlewareInterface>>|mixed $middlewareList
+     * @param list<class-string<MiddlewareInterface>>|mixed $middlewareList
      *
      * @throws AnnotationException
-     *
-     * @return static
      */
-    public function setMiddleware($middlewareList): self
+    public function setMiddleware($middlewareList): static
     {
         $this->middleware = [];
 

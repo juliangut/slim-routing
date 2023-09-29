@@ -15,7 +15,7 @@ namespace Jgut\Slim\Routing\Mapping\Driver;
 
 use Jgut\Mapping\Driver\AbstractMappingXmlDriver;
 
-class XmlDriver extends AbstractMappingXmlDriver
+final class XmlDriver extends AbstractMappingXmlDriver
 {
     use FileMappingTrait;
 }

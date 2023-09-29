@@ -18,26 +18,16 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class ViewResponse extends AbstractResponse
 {
-    protected string $template;
-
-    /**
-     * @var array<string, mixed>
-     */
-    protected array $parameters;
-
-    /**
-     * @param array<string, mixed> $parameters
-     */
     public function __construct(
-        string $template,
-        array $parameters,
+        protected string $template,
+        /**
+         * @var array<string, mixed>
+         */
+        protected array $parameters,
         ServerRequestInterface $request,
-        ?ResponseInterface $response = null
+        ?ResponseInterface $response = null,
     ) {
         parent::__construct($request, $response);
-
-        $this->template = $template;
-        $this->parameters = $parameters;
     }
 
     public function getTemplate(): string

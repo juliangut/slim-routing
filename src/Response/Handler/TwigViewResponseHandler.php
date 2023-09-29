@@ -22,13 +22,11 @@ use Slim\Views\Twig;
 
 class TwigViewResponseHandler extends AbstractResponseHandler
 {
-    protected Twig $viewRenderer;
-
-    public function __construct(ResponseFactoryInterface $responseFactory, Twig $viewRenderer)
-    {
+    public function __construct(
+        ResponseFactoryInterface $responseFactory,
+        protected Twig $viewRenderer,
+    ) {
         parent::__construct($responseFactory);
-
-        $this->viewRenderer = $viewRenderer;
     }
 
     public function handle(ResponseType $responseType): ResponseInterface

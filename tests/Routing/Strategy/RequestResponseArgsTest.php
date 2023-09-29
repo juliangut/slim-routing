@@ -40,7 +40,7 @@ class RequestResponseArgsTest extends TestCase
         $callback = static function (
             ServerRequestInterface $request,
             ResponseInterface $response,
-            $param
+            $param,
         ) use ($responseFactory) {
             static::assertEquals('value', $param);
 

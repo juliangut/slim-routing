@@ -15,7 +15,7 @@ namespace Jgut\Slim\Routing\Mapping\Driver;
 
 use Jgut\Mapping\Driver\AbstractMappingJsonDriver;
 
-class JsonDriver extends AbstractMappingJsonDriver
+final class JsonDriver extends AbstractMappingJsonDriver
 {
     use FileMappingTrait;
 }

@@ -23,33 +23,25 @@ use Slim\Interfaces\RequestHandlerInvocationStrategyInterface;
 /**
  * PSR-15 RequestHandler invocation strategy.
  */
-class RequestHandler implements RequestHandlerInvocationStrategyInterface
+final class RequestHandler implements RequestHandlerInvocationStrategyInterface
 {
     use ResponseTypeStrategyTrait;
-
-    protected bool $appendRouteArguments;
 
     /**
      * @param array<string, string|ResponseTypeHandler> $responseHandlers
      */
     public function __construct(
         array $responseHandlers,
-        ResponseFactoryInterface $responseFactory,
-        ?ContainerInterface $container = null,
-        bool $appendRouteArguments = false
+        protected ResponseFactoryInterface $responseFactory,
+        protected ?ContainerInterface $container = null,
+        protected bool $appendRouteArguments = false,
     ) {
         $this->setResponseHandlers($responseHandlers);
-
-        $this->responseFactory = $responseFactory;
-        $this->container = $container;
-        $this->appendRouteArguments = $appendRouteArguments;
     }
 
     /**
-     * Invoke a route callable that implements RequestHandlerInterface.
-     *
-     * @param array<string, mixed>                    $routeArguments
      * @param callable(ServerRequestInterface): mixed $callable
+     * @param array<string, mixed>                    $routeArguments
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -57,7 +49,7 @@ class RequestHandler implements RequestHandlerInvocationStrategyInterface
         callable $callable,
         ServerRequestInterface $request,
         ResponseInterface $response,
-        array $routeArguments
+        array $routeArguments,
     ): ResponseInterface {
         if ($this->appendRouteArguments) {
             foreach ($routeArguments as $argument => $value) {

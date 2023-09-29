@@ -21,7 +21,7 @@ use Jgut\Mapping\Exception\AnnotationException;
  *
  * @Target({"METHOD"})
  */
-class Route extends AbstractAnnotation
+final class Route extends AbstractAnnotation
 {
     use PathTrait;
     use ArgumentTrait;
@@ -32,7 +32,7 @@ class Route extends AbstractAnnotation
     protected ?string $transformer = null;
 
     /**
-     * @var array<string>
+     * @var list<string>
      */
     protected array $methods = ['GET'];
 
@@ -50,7 +50,7 @@ class Route extends AbstractAnnotation
      */
     public function setName(string $name): self
     {
-        if (mb_strpos(trim($name), ' ') !== false) {
+        if (str_contains(trim($name), ' ')) {
             throw new AnnotationException('Route name must not contain spaces.');
         }
 
@@ -78,7 +78,7 @@ class Route extends AbstractAnnotation
     /**
      * Get route methods.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getMethods(): array
     {
@@ -86,7 +86,7 @@ class Route extends AbstractAnnotation
     }
 
     /**
-     * @param array<string>|mixed $methods
+     * @param list<string>|mixed $methods
      *
      * @throws AnnotationException
      */
@@ -108,7 +108,7 @@ class Route extends AbstractAnnotation
             $this->methods[] = mb_strtoupper(trim($method));
         }
 
-        $this->methods = array_unique(array_filter($this->methods, 'strlen'));
+        $this->methods = array_values(array_unique(array_filter($this->methods, 'strlen')));
 
         if (\count($this->methods) === 0) {
             throw new AnnotationException('Route annotation methods can not be empty.');

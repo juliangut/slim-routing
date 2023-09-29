@@ -18,7 +18,7 @@ jobs:
 
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: 8.2
           coverage: none
 
       - name: Composer install
@@ -61,25 +61,12 @@ jobs:
           composer-options: "--prefer-dist"
 
       - name: Run PHP linting
-        if: matrix.php == '7.4'
-        run: ./vendor/bin/phplint --configuration=.phplint.yml --exclude=build --exclude=vendor --exclude=tests/Routing/Mapping/Files/Classes/Invalid/Attribute --exclude=tests/Routing/Mapping/Files/Classes/Valid/Attribute --ansi
-
-      - name: Run PHP linting
-        if: matrix.php != '7.4'
         run: make lint-php
 
       - name: Run check style
         run: make lint-ecs
 
-      - name: Run copy/paste detection
-        run: make qa-phpcpd
-
       - name: Run mess detection
-        if: matrix.php == '7.4'
-        run: ./vendor/bin/phpmd src,tests ansi unusedcode,naming,design,controversial,codesize --exclude */tests/Routing/Mapping/Files/Classes/*/Attribute/*.php
-
-      - name: Run mess detection
-        if: matrix.php != '7.4'
         run: make qa-phpmd
 
       - name: Run magic number detection
@@ -89,9 +76,4 @@ jobs:
         run: make qa-compatibility
 
       - name: Run static analysis
-        if: matrix.php == '7.4'
-        run: ./vendor/bin/phpstan analyse --configuration=phpstan-74.neon --memory-limit=2G --no-progress
-
-      - name: Run static analysis
-        if: matrix.php != '7.4'
         run: make qa-phpstan

@@ -17,7 +17,7 @@ use Attribute;
 use Jgut\Mapping\Exception\AttributeException;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-class Group
+final class Group
 {
     use PathTrait {
         PathTrait::__construct as protected pathConstruct;
@@ -41,7 +41,7 @@ class Group
         ?string $pattern = null,
         ?array $placeholders = [],
         ?array $parameters = [],
-        ?array $arguments = []
+        ?array $arguments = [],
     ) {
         if ($parent !== null) {
             $this->setParent($parent);
@@ -69,7 +69,7 @@ class Group
      */
     protected function setPrefix(string $prefix): void
     {
-        if (mb_strpos(trim($prefix), ' ') !== false) {
+        if (str_contains(trim($prefix), ' ')) {
             throw new AttributeException('Group prefixes must not contain spaces.');
         }
 

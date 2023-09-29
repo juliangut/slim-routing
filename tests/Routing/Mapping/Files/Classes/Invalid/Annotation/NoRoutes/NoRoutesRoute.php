@@ -20,6 +20,4 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
  *
  * @JSR\Router()
  */
-class NoRoutesRoute
-{
-}
+class NoRoutesRoute {}

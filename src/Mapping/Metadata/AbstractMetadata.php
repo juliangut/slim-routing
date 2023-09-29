@@ -38,7 +38,7 @@ abstract class AbstractMetadata implements MetadataInterface
     protected array $arguments = [];
 
     /**
-     * @var array<string|callable(): ResponseInterface|MiddlewareInterface>
+     * @var list<string|callable(): ResponseInterface|MiddlewareInterface>
      */
     protected array $middleware = [];
 
@@ -49,10 +49,8 @@ abstract class AbstractMetadata implements MetadataInterface
 
     /**
      * @throws MetadataException
-     *
-     * @return static
      */
-    public function setPattern(string $pattern): self
+    public function setPattern(string $pattern): static
     {
         if (trim($pattern) === '') {
             throw new MetadataException('Pattern can not be empty.');
@@ -81,10 +79,8 @@ abstract class AbstractMetadata implements MetadataInterface
 
     /**
      * @param array<string, string> $placeholders
-     *
-     * @return static
      */
-    public function setPlaceholders(array $placeholders): self
+    public function setPlaceholders(array $placeholders): static
     {
         $this->placeholders = $placeholders;
 
@@ -101,10 +97,8 @@ abstract class AbstractMetadata implements MetadataInterface
 
     /**
      * @param array<string, string> $parameters
-     *
-     * @return static
      */
-    public function setParameters(array $parameters): self
+    public function setParameters(array $parameters): static
     {
         $this->parameters = $parameters;
 
@@ -121,10 +115,8 @@ abstract class AbstractMetadata implements MetadataInterface
 
     /**
      * @param array<string, mixed> $attributes
-     *
-     * @return static
      */
-    public function setArguments(array $attributes): self
+    public function setArguments(array $attributes): static
     {
         $this->arguments = $attributes;
 
@@ -132,7 +124,7 @@ abstract class AbstractMetadata implements MetadataInterface
     }
 
     /**
-     * @return array<string|callable(): ResponseInterface|MiddlewareInterface>
+     * @return list<string|callable(): ResponseInterface|MiddlewareInterface>
      */
     public function getMiddleware(): array
     {
@@ -140,11 +132,9 @@ abstract class AbstractMetadata implements MetadataInterface
     }
 
     /**
-     * @param array<string|callable(): ResponseInterface|MiddlewareInterface> $middleware
-     *
-     * @return static
+     * @param list<string|callable(): ResponseInterface|MiddlewareInterface> $middleware
      */
-    public function setMiddleware(array $middleware): self
+    public function setMiddleware(array $middleware): static
     {
         $this->middleware = array_map(
             static fn(string $middleware): string => ltrim($middleware, '\\'),

@@ -18,15 +18,10 @@ use Psr\Http\Message\ServerRequestInterface;
 
 abstract class AbstractResponse implements ResponseType
 {
-    private ServerRequestInterface $request;
-
-    private ?ResponseInterface $response;
-
-    public function __construct(ServerRequestInterface $request, ?ResponseInterface $response = null)
-    {
-        $this->request = $request;
-        $this->response = $response;
-    }
+    public function __construct(
+        private ServerRequestInterface $request,
+        private ?ResponseInterface $response = null,
+    ) {}
 
     public function getRequest(): ServerRequestInterface
     {

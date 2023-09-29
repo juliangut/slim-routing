@@ -38,7 +38,5 @@ class SingleRoute
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @SuppressWarnings(PHPMD.ShortVariable)
      */
-    public function actionOne(int $id): void
-    {
-    }
+    public function actionOne(int $id): void {}
 }

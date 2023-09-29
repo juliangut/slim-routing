@@ -16,6 +16,4 @@ namespace Jgut\Slim\Routing\Mapping\Attribute;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-class Router
-{
-}
+final class Router {}

@@ -38,7 +38,5 @@ class SingleRoute
         parameters: ['first' => 'value'],
     )]
     #[Middleware('oneMiddleware')]
-    public function actionOne(int $id): void
-    {
-    }
+    public function actionOne(int $id): void {}
 }

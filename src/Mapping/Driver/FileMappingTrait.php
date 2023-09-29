@@ -20,25 +20,24 @@ use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 trait FileMappingTrait
 {
     /**
-     * @return array<RouteMetadata>
+     * @return list<RouteMetadata>
      */
     public function getMetadata(): array
     {
-        /** @var array<GroupMapping|RouteMapping|mixed> $mappingData */
         $mappingData = $this->getMappingData();
 
         return $this->getRoutesMetadata($mappingData);
     }
 
     /**
-     * @return array<mixed>
+     * @return list<GroupMapping|RouteMapping|mixed>
      */
     abstract protected function getMappingData(): array;
 
     /**
      * @param array<GroupMapping|RouteMapping|mixed> $mappingData
      *
-     * @return array<RouteMetadata>
+     * @return list<RouteMetadata>
      */
     protected function getRoutesMetadata(array $mappingData, ?GroupMetadata $group = null): array
     {
@@ -73,7 +72,7 @@ trait FileMappingTrait
             }
         }
 
-        return \count($routes) > 0 ? array_merge(...$routes) : [];
+        return \count($routes) > 0 ? array_values(array_merge(...$routes)) : [];
     }
 
     /**
@@ -110,7 +109,7 @@ trait FileMappingTrait
      *
      * @throws DriverException
      *
-     * @return string|array<mixed>|callable() :mixed
+     * @return string|callable(): mixed
      */
     protected function getInvokable(array $mapping)
     {
@@ -124,6 +123,7 @@ trait FileMappingTrait
             throw new DriverException('Route invokable does not seem to be supported by Slim router.');
         }
 
+        /** @var string|callable(): mixed $invokable */
         return $invokable;
     }
 
@@ -176,7 +176,7 @@ trait FileMappingTrait
             throw new DriverException('Placeholders must be an array.');
         }
 
-        if ($placeholders !== [] && array_keys($placeholders) === range(0, \count($placeholders) - 1)) {
+        if ($placeholders !== [] && array_is_list($placeholders)) {
             throw new DriverException('Placeholder keys must be all strings.');
         }
 
@@ -216,7 +216,7 @@ trait FileMappingTrait
             $methods[] = mb_strtoupper(trim($method));
         }
 
-        $methods = array_unique(array_filter($methods, 'strlen'));
+        $methods = array_values(array_unique(array_filter($methods, 'strlen')));
 
         if (\count($methods) === 0) {
             throw new DriverException('Route methods can not be empty.');
@@ -302,7 +302,7 @@ trait FileMappingTrait
         }
 
         $arguments = $mapping['arguments'];
-        if ($arguments !== [] && array_keys($arguments) === range(0, \count($arguments) - 1)) {
+        if ($arguments !== [] && array_is_list($arguments)) {
             throw new DriverException('Arguments keys must be all strings.');
         }
 
@@ -322,7 +322,7 @@ trait FileMappingTrait
         }
 
         $parameters = $mapping['parameters'];
-        if ($parameters !== [] && array_keys($parameters) === range(0, \count($parameters) - 1)) {
+        if ($parameters !== [] && array_is_list($parameters)) {
             throw new DriverException('Parameters keys must be all strings.');
         }
 

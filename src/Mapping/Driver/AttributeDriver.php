@@ -28,10 +28,10 @@ use ReflectionMethod;
 use ReflectionNamedType;
 use stdClass;
 
-class AttributeDriver extends AbstractClassDriver
+final class AttributeDriver extends AbstractClassDriver
 {
     /**
-     * @return array<RouteMetadata>
+     * @return list<RouteMetadata>
      */
     public function getMetadata(): array
     {
@@ -52,16 +52,16 @@ class AttributeDriver extends AbstractClassDriver
             }
         }
 
-        return \count($routes) > 0 ? array_merge(...$routes) : [];
+        return \count($routes) > 0 ? array_values(array_merge(...$routes)) : [];
     }
 
     /**
-     * @param ReflectionClass<object> $class
-     * @param array<GroupMetadata>    $groups
+     * @param ReflectionClass<object>                    $class
+     * @param array<class-string<object>, GroupMetadata> $groups
      *
      * @throws DriverException
      *
-     * @return array<RouteMetadata>
+     * @return list<RouteMetadata>
      */
     protected function getRoutesMetadata(ReflectionClass $class, array $groups): array
     {
@@ -117,11 +117,11 @@ class AttributeDriver extends AbstractClassDriver
     }
 
     /**
-     * @param array<ReflectionClass<object>> $mappingClasses
+     * @param list<ReflectionClass<object>> $mappingClasses
      *
      * @throws DriverException
      *
-     * @return array<GroupMetadata>
+     * @return array<class-string<object>, GroupMetadata>
      */
     protected function getGroups(array $mappingClasses): array
     {
@@ -146,7 +146,7 @@ class AttributeDriver extends AbstractClassDriver
         }
 
         return array_map(
-            function (stdClass $groupDataBag) use ($groups): GroupMetadata {
+            static function (stdClass $groupDataBag) use ($groups): GroupMetadata {
                 $group = $groupDataBag->group;
 
                 $parent = $groupDataBag->parent;
@@ -164,10 +164,13 @@ class AttributeDriver extends AbstractClassDriver
         );
     }
 
+    /**
+     * @param ReflectionClass<object> $class
+     */
     protected function populateGroup(
         GroupMetadata $group,
         ReflectionClass $class,
-        GroupAttribute $attribute
+        GroupAttribute $attribute,
     ): void {
         $this->populatePrefix($group, $attribute);
         $this->populatePattern($group, $attribute);
@@ -180,7 +183,7 @@ class AttributeDriver extends AbstractClassDriver
     protected function populateRoute(
         RouteMetadata $route,
         ReflectionMethod $method,
-        RouteAttribute $attribute
+        RouteAttribute $attribute,
     ): void {
         $this->populatePattern($route, $attribute);
         $route->setPlaceholders($attribute->getPlaceholders());
@@ -214,8 +217,8 @@ class AttributeDriver extends AbstractClassDriver
     }
 
     /**
-     * @param GroupMetadata|RouteMetadata      $metadata
-     * @param ReflectionClass|ReflectionMethod $reflection
+     * @param GroupMetadata|RouteMetadata              $metadata
+     * @param ReflectionClass<object>|ReflectionMethod $reflection
      */
     protected function populateMiddleware($metadata, $reflection): void
     {
@@ -238,7 +241,7 @@ class AttributeDriver extends AbstractClassDriver
     protected function populateTransformer(
         RouteMetadata $route,
         RouteAttribute $attribute,
-        ReflectionMethod $method
+        ReflectionMethod $method,
     ): void {
         if ($attribute->getTransformer() !== null) {
             $route->setTransformer($attribute->getTransformer())

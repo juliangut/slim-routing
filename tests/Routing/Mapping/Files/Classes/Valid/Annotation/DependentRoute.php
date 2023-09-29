@@ -36,7 +36,5 @@ class DependentRoute
      *     middleware={"fourMiddleware"}
      * )
      */
-    public function actionFour(): void
-    {
-    }
+    public function actionFour(): void {}
 }

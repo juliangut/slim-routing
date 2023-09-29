@@ -26,6 +26,4 @@ use Jgut\Slim\Routing\Mapping\Attribute\Router;
     pattern: '/abstract',
 )]
 #[Middleware('abstractMiddleware')]
-abstract class AbstractRoute
-{
-}
+abstract class AbstractRoute {}

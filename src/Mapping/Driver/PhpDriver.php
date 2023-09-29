@@ -15,7 +15,7 @@ namespace Jgut\Slim\Routing\Mapping\Driver;
 
 use Jgut\Mapping\Driver\AbstractMappingPhpDriver;
 
-class PhpDriver extends AbstractMappingPhpDriver
+final class PhpDriver extends AbstractMappingPhpDriver
 {
     use FileMappingTrait;
 }

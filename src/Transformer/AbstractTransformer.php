@@ -22,9 +22,12 @@ abstract class AbstractTransformer implements ParameterTransformer
             function (&$parameter, string $name) use ($definitions): void {
                 if (\array_key_exists($name, $definitions)) {
                     $type = $definitions[$name];
-                    $parameter = \in_array($type, ['string', 'int', 'float', 'bool'], true)
-                        ? $this->transformToPrimitive($parameter, $type)
-                        : $this->transformParameter($parameter, $type);
+
+                    if (\in_array($type, ['string', 'int', 'float', 'bool'], true)) {
+                        $parameter = $this->transformToPrimitive($parameter, $type);
+                    } elseif ($this->supportsTransform($type)) {
+                        $parameter = $this->transformParameter($parameter, $type);
+                    }
                 }
             },
         );
@@ -32,35 +35,17 @@ abstract class AbstractTransformer implements ParameterTransformer
         return $parameters;
     }
 
-    /**
-     * @return bool|float|int|string
-     */
-    protected function transformToPrimitive(string $parameter, string $type)
+    protected function transformToPrimitive(string $parameter, string $type): float|bool|int|string
     {
-        switch ($type) {
-            case 'int':
-                $transformedParameter = (int) $parameter;
-                break;
-
-            case 'float':
-                $transformedParameter = (float) $parameter;
-                break;
-
-            case 'bool':
-                $transformedParameter = \in_array(trim($parameter), ['1', 'on', 'yes', 'true'], true);
-                break;
-
-            default:
-                $transformedParameter = $parameter;
-        }
-
-        return $transformedParameter;
+        return match ($type) {
+            'int' => (int) $parameter,
+            'float' => (float) $parameter,
+            'bool' => \in_array(trim($parameter), ['1', 'on', 'yes', 'true'], true),
+            default => $parameter,
+        };
     }
 
-    /**
-     * Transform parameter.
-     *
-     * @phpstan-return mixed
-     */
-    abstract protected function transformParameter(string $parameter, string $type);
+    abstract protected function supportsTransform(string $type): bool;
+
+    abstract protected function transformParameter(string $parameter, string $type): mixed;
 }

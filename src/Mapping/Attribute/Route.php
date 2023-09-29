@@ -17,7 +17,7 @@ use Attribute;
 use Jgut\Mapping\Exception\AttributeException;
 
 #[Attribute(Attribute::TARGET_METHOD)]
-class Route
+final class Route
 {
     use PathTrait {
         PathTrait::__construct as protected pathConstruct;
@@ -28,10 +28,8 @@ class Route
 
     protected ?string $name = null;
 
-    protected ?string $transformer = null;
-
     /**
-     * @var array<string>
+     * @var list<string>
      */
     protected array $methods = ['GET'];
 
@@ -40,7 +38,7 @@ class Route
     protected int $priority;
 
     /**
-     * @param array<string>|null         $methods
+     * @param list<string>|null          $methods
      * @param array<string, string>|null $placeholders
      * @param array<string, string>|null $parameters
      * @param array<string, string>|null $arguments
@@ -51,15 +49,14 @@ class Route
         ?string $name = null,
         ?bool $xmlHttpRequest = false,
         ?int $priority = 0,
-        ?string $transformer = null,
+        protected ?string $transformer = null,
         ?array $placeholders = [],
         ?array $parameters = [],
-        ?array $arguments = []
+        ?array $arguments = [],
     ) {
         if ($name !== null) {
             $this->setName($name);
         }
-        $this->transformer = $transformer;
         if ($methods !== null) {
             $this->setMethods($methods);
         }
@@ -75,7 +72,7 @@ class Route
      */
     protected function setName(string $name): void
     {
-        if (mb_strpos(trim($name), ' ') !== false) {
+        if (str_contains(trim($name), ' ')) {
             throw new AttributeException('Route name must not contain spaces.');
         }
 
@@ -97,7 +94,7 @@ class Route
     }
 
     /**
-     * @param array<mixed> $methods
+     * @param list<mixed> $methods
      *
      * @throws AttributeException
      */
@@ -129,7 +126,7 @@ class Route
     }
 
     /**
-     * @return array<string>
+     * @return list<string>
      */
     public function getMethods(): array
     {

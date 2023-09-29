@@ -15,6 +15,9 @@ namespace Jgut\Slim\Routing\Tests\Stubs;
 
 use Jgut\Slim\Routing\Mapping\Annotation\MiddlewareTrait;
 
+/**
+ * @internal
+ */
 class MiddlewareStub
 {
     use MiddlewareTrait;

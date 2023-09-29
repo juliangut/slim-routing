@@ -20,15 +20,8 @@ use RuntimeException;
 /**
  * @internal
  */
-class AttributeDriverTest extends AbstractDriverTest
+class AttributeDriverTest extends AbstractDriverTestCase
 {
-    protected function setUp(): void
-    {
-        if (\PHP_VERSION_ID < 80_000) {
-            static::markTestSkipped('Named arguments supported from PHP 8.0');
-        }
-    }
-
     public function testConstructorDefinedRoute(): void
     {
         $this->expectException(DriverException::class);

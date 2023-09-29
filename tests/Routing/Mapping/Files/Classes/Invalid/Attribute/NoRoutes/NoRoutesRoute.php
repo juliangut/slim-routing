@@ -19,6 +19,4 @@ use Jgut\Slim\Routing\Mapping\Attribute\Router;
  * Example no routes route.
  */
 #[Router]
-class NoRoutesRoute
-{
-}
+class NoRoutesRoute {}

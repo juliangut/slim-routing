@@ -19,12 +19,9 @@ use Psr\Http\Message\ResponseInterface;
 
 abstract class AbstractResponseHandler implements ResponseTypeHandler
 {
-    protected ResponseFactoryInterface $responseFactory;
-
-    public function __construct(ResponseFactoryInterface $responseFactory)
-    {
-        $this->responseFactory = $responseFactory;
-    }
+    public function __construct(
+        protected ResponseFactoryInterface $responseFactory,
+    ) {}
 
     protected function getResponse(ResponseType $responseType): ResponseInterface
     {

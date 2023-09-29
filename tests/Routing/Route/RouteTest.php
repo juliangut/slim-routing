@@ -43,18 +43,12 @@ class RouteTest extends TestCase
     {
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
-        $metadata = $this->getMockBuilder(RouteMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $metadata->expects(static::once())
-            ->method('isXmlHttpRequest')
-            ->willReturn(true);
+        $metadata = (new RouteMetadata('', null))->setXmlHttpRequest(true);
 
         $route = new Route(
             ['GET'],
             '/',
-            static function (): void {
-            },
+            static function (): void {},
             new ResponseFactory(),
             $callableResolver,
             $metadata,
@@ -83,21 +77,13 @@ class RouteTest extends TestCase
             ->method('get')
             ->willReturn(new stdClass());
 
-        $metadata = $this->getMockBuilder(RouteMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $metadata->expects(static::once())
-            ->method('getTransformer')
-            ->willReturn('transformer');
-
         $route = new Route(
             ['GET'],
             '/',
-            static function (): void {
-            },
+            static function (): void {},
             new ResponseFactory(),
             $callableResolver,
-            $metadata,
+            (new RouteMetadata('', null))->setTransformer('transformer'),
             $container,
         );
 
@@ -126,25 +112,10 @@ class RouteTest extends TestCase
             ->method('get')
             ->willReturn(new AbstractTransformerStub(10));
 
-        $group = $this->getMockBuilder(GroupMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $group->expects(static::once())
-            ->method('getParameters')
-            ->willReturn([]);
-
-        $metadata = $this->getMockBuilder(RouteMetadata::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $metadata->expects(static::once())
-            ->method('getTransformer')
-            ->willReturn('transformer');
-        $metadata->expects(static::once())
-            ->method('getParameters')
-            ->willReturn(['id' => 'int']);
-        $metadata->expects(static::once())
-            ->method('getGroupChain')
-            ->willReturn([$group]);
+        $metadata = (new RouteMetadata('', null))
+            ->setTransformer('transformer')
+            ->setParameters(['id' => 'int'])
+            ->setGroup(new GroupMetadata());
 
         $route = new Route(
             ['GET'],

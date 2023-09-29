@@ -23,12 +23,9 @@ use RuntimeException;
 
 class RouteResolver
 {
-    protected Configuration $configuration;
-
-    public function __construct(Configuration $configuration)
-    {
-        $this->configuration = $configuration;
-    }
+    public function __construct(
+        protected Configuration $configuration,
+    ) {}
 
     public function getName(RouteMetadata $route): ?string
     {
@@ -36,10 +33,10 @@ class RouteResolver
             return null;
         }
 
-        $nameSegments = array_filter(array_map(
+        $nameSegments = array_values(array_filter(array_map(
             static fn(GroupMetadata $group): ?string => $group->getPrefix(),
             $route->getGroupChain(),
-        ));
+        )));
 
         $nameSegments[] = $route->getName();
 
@@ -48,7 +45,7 @@ class RouteResolver
     }
 
     /**
-     * @return array<string|callable(): ResponseInterface|MiddlewareInterface>
+     * @return list<string|callable(): ResponseInterface|MiddlewareInterface>
      */
     public function getMiddleware(RouteMetadata $route): array
     {
@@ -58,7 +55,7 @@ class RouteResolver
         ));
         array_unshift($middleware, $route->getMiddleware());
 
-        return array_filter(array_merge(...$middleware));
+        return array_values(array_filter(array_merge(...$middleware)));
     }
 
     /**
@@ -74,7 +71,7 @@ class RouteResolver
         $patterns = array_filter($patterns);
 
         $pattern = '/' . (\count($patterns) === 0 ? '' : implode('/', $patterns));
-        if ($this->configuration->hasTrailingSlash() && $pattern !== '/') {
+        if ($pattern !== '/' && $this->configuration->hasTrailingSlash()) {
             $pattern .= '/';
         }
         $placeholders = $this->getPlaceholders($route);
@@ -106,7 +103,7 @@ class RouteResolver
     /**
      * @throws InvalidArgumentException
      *
-     * @return array<string>
+     * @return array<string, string>
      */
     protected function getPlaceholders(RouteMetadata $route): array
     {
@@ -155,7 +152,7 @@ class RouteResolver
     }
 
     /**
-     * @param array<RouteMetadata> $routes
+     * @param list<RouteMetadata> $routes
      *
      * @throws RuntimeException
      */
@@ -166,7 +163,7 @@ class RouteResolver
     }
 
     /**
-     * @param array<RouteMetadata> $routes
+     * @param list<RouteMetadata> $routes
      *
      * @throws RuntimeException
      */
@@ -184,7 +181,7 @@ class RouteResolver
     }
 
     /**
-     * @param array<RouteMetadata> $routes
+     * @param list<RouteMetadata> $routes
      *
      * @throws RuntimeException
      */
@@ -215,9 +212,9 @@ class RouteResolver
     }
 
     /**
-     * @param array<RouteMetadata> $routesMetadata
+     * @param list<RouteMetadata> $routesMetadata
      *
-     * @return array<RouteMetadata>
+     * @return list<RouteMetadata>
      */
     public function sort(array $routesMetadata): array
     {
@@ -231,17 +228,17 @@ class RouteResolver
     /**
      * Stable usort. Keeps original order when sorting function returns 0.
      *
-     * @param array<RouteMetadata>                        $array
+     * @param list<RouteMetadata>                         $array
      * @param callable(RouteMetadata, RouteMetadata): int $sortFunction
      *
-     * @return array<RouteMetadata>
+     * @return list<RouteMetadata>
      */
     private function stableUsort(array $array, callable $sortFunction): array
     {
         $sortArray = [];
 
         $key = 0;
-        foreach (array_values($array) as $route) {
+        foreach ($array as $route) {
             $sortArray[] = [$key, $route];
 
             ++$key;
@@ -256,9 +253,9 @@ class RouteResolver
             },
         );
 
-        return array_map(
+        return array_values(array_map(
             static fn(array $item): RouteMetadata => $item[1],
             $sortArray,
-        );
+        ));
     }
 }

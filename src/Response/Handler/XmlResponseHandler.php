@@ -22,13 +22,11 @@ use Spatie\ArrayToXml\ArrayToXml;
 
 class XmlResponseHandler extends AbstractResponseHandler
 {
-    protected bool $prettify;
-
-    public function __construct(ResponseFactoryInterface $responseFactory, bool $prettify = false)
-    {
+    public function __construct(
+        ResponseFactoryInterface $responseFactory,
+        protected bool $prettify = false,
+    ) {
         parent::__construct($responseFactory);
-
-        $this->prettify = $prettify;
     }
 
     public function handle(ResponseType $responseType): ResponseInterface

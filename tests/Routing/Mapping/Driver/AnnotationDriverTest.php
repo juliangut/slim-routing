@@ -21,7 +21,7 @@ use RuntimeException;
 /**
  * @internal
  */
-class AnnotationDriverTest extends AbstractDriverTest
+class AnnotationDriverTest extends AbstractDriverTestCase
 {
     protected AnnotationReader $reader;
 

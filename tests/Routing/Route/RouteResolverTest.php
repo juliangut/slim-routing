@@ -48,7 +48,7 @@ class RouteResolverTest extends TestCase
      *
      * @return array<array{RouteMetadata, string|null}>
      */
-    public function routeNameProvider(): array
+    public static function routeNameProvider(): array
     {
         return [
             [new RouteMetadata('callable', null), null],
@@ -76,7 +76,7 @@ class RouteResolverTest extends TestCase
      *
      * @return array<array{RouteMetadata, array<string>}>
      */
-    public function routeMiddlewareProvider(): array
+    public static function routeMiddlewareProvider(): array
     {
         return [
             [new RouteMetadata('callable', null), []],
@@ -105,7 +105,7 @@ class RouteResolverTest extends TestCase
     /**
      * Route path checker provider.
      */
-    public function routePatternProvider(): array
+    public static function routePatternProvider(): array
     {
         return [
             [new Configuration(), new RouteMetadata('callable', null), '/'],
@@ -199,7 +199,7 @@ class RouteResolverTest extends TestCase
     /**
      * Route arguments provider.
      */
-    public function routeArgumentsProvider(): array
+    public static function routeArgumentsProvider(): array
     {
         return [
             [new Configuration(), new RouteMetadata('callable', null), []],

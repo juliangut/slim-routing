@@ -25,7 +25,5 @@ use Jgut\Slim\Routing\Mapping\Attribute\Router;
 class UnknownGroupRoute
 {
     #[Route(pattern: '/unknown')]
-    public function actionUnknown(): void
-    {
-    }
+    public function actionUnknown(): void {}
 }

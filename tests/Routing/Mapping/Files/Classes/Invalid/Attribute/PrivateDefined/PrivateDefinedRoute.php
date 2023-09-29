@@ -25,7 +25,5 @@ use Jgut\Slim\Routing\Mapping\Attribute\Router;
 class PrivateDefinedRoute
 {
     #[Route(pattern: '/private')]
-    private function privateAction(): void
-    {
-    }
+    private function privateAction(): void {}
 }

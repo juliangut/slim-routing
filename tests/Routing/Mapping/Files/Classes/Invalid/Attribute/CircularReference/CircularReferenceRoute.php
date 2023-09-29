@@ -25,7 +25,5 @@ use Jgut\Slim\Routing\Mapping\Attribute\Router;
 class CircularReferenceRoute
 {
     #[Route(pattern: '/circular')]
-    public function actionCircular(): void
-    {
-    }
+    public function actionCircular(): void {}
 }

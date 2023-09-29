@@ -17,7 +17,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Jgut\Mapping\Driver\AbstractDriverFactory;
 use Jgut\Mapping\Driver\DriverInterface;
 
-class DriverFactory extends AbstractDriverFactory
+final class DriverFactory extends AbstractDriverFactory
 {
     protected function getPhpDriver(array $paths): DriverInterface
     {

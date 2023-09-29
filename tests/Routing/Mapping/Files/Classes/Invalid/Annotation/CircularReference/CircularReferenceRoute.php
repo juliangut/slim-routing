@@ -31,7 +31,5 @@ class CircularReferenceRoute
      *     pattern="/circular"
      * )
      */
-    public function actionCircular(): void
-    {
-    }
+    public function actionCircular(): void {}
 }

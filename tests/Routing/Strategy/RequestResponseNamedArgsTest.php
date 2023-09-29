@@ -28,10 +28,6 @@ class RequestResponseNamedArgsTest extends TestCase
 {
     public function testDispatch(): void
     {
-        if (\PHP_VERSION_ID < 80_000) {
-            static::markTestSkipped('Named arguments supported from PHP 8.0');
-        }
-
         $responseFactory = new ResponseFactory();
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
@@ -44,7 +40,7 @@ class RequestResponseNamedArgsTest extends TestCase
         $callback = static function (
             ServerRequestInterface $request,
             ResponseInterface $response,
-            $namedParameter
+            $namedParameter,
         ) use ($responseFactory) {
             static::assertEquals('value', $namedParameter);
 

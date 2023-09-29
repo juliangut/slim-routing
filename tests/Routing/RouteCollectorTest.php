@@ -36,10 +36,8 @@ class RouteCollectorTest extends TestCase
             ->getMock();
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
-        $configuration = $this->getMockBuilder(Configuration::class)
-            ->getMock();
 
-        $routeCollector = new RouteCollector($configuration, $responseFactory, $callableResolver);
+        $routeCollector = new RouteCollector(new Configuration(), $responseFactory, $callableResolver);
 
         $route = $routeCollector->map(['GET'], '/', '');
 
@@ -49,27 +47,31 @@ class RouteCollectorTest extends TestCase
         static::assertEquals('', $route->getCallable());
     }
 
-    public function testRoutes(): void
+    public static function sourcesProvider(): iterable
     {
-        $sources = \PHP_VERSION_ID < 80_000
-            ? [
+        yield [[__DIR__ . '/Mapping/Files/Classes/Valid/Attribute']];
+
+        yield [
+            [
                 [
                     'type' => DriverFactoryInterface::DRIVER_ANNOTATION,
                     'path' => [__DIR__ . '/Mapping/Files/Classes/Valid/Annotation'],
                 ],
-            ]
-            : [__DIR__ . '/Mapping/Files/Classes/Valid/Attribute'];
+            ],
+        ];
+    }
 
+    /**
+     * @dataProvider sourcesProvider
+     *
+     * @param list<string|array<string, mixed>> $sources
+     */
+    public function testRoutes(array $sources): void
+    {
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->getMock();
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
-        $configuration = $this->getMockBuilder(Configuration::class)
-            ->setMethods(['getSources', 'getRouteResolver'])
-            ->getMock();
-        $configuration->expects(static::once())
-            ->method('getSources')
-            ->willReturn($sources);
         $cache = $this->getMockBuilder(CacheInterface::class)
             ->getMock();
         $cache->expects(static::once())
@@ -90,17 +92,16 @@ class RouteCollectorTest extends TestCase
                 ->setMiddleware(['twoMiddleware']),
         ];
 
+        $configuration = new Configuration(['sources' => $sources]);
+
         $resolver = $this->getMockBuilder(RouteResolver::class)
             ->setConstructorArgs([$configuration])
-            ->setMethods(['sort'])
             ->getMock();
         $resolver->expects(static::once())
             ->method('sort')
             ->willReturn($routesMetadata);
 
-        $configuration
-            ->method('getRouteResolver')
-            ->willReturn($resolver);
+        $configuration->setRouteResolver($resolver);
 
         $routeCollector = new RouteCollector($configuration, $responseFactory, $callableResolver);
         $routeCollector->setCache($cache);
@@ -108,27 +109,17 @@ class RouteCollectorTest extends TestCase
         static::assertCount(2, $routeCollector->getRoutes());
     }
 
-    public function testCachedRoutes(): void
+    /**
+     * @dataProvider sourcesProvider
+     *
+     * @param list<string|array<string, mixed>> $sources
+     */
+    public function testCachedRoutes($sources): void
     {
-        $sources = \PHP_VERSION_ID < 80_000
-            ? [
-                [
-                    'type' => DriverFactoryInterface::DRIVER_ANNOTATION,
-                    'path' => [__DIR__ . '/Mapping/Files/Classes/Valid/Annotation'],
-                ],
-            ]
-            : [__DIR__ . '/Mapping/Files/Classes/Valid/Attribute'];
-
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->getMock();
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
-        /** @var CallableResolverInterface $callableResolver */
-        $configuration = $this->getMockBuilder(Configuration::class)
-            ->getMock();
-        $configuration->expects(static::once())
-            ->method('getSources')
-            ->willReturn($sources);
 
         $routesMetadata = [
             (new RouteMetadata(['one', 'action'], null))
@@ -152,35 +143,28 @@ class RouteCollectorTest extends TestCase
             ->with(static::matchesRegularExpression('/^prefix_.+$/'))
             ->willReturn($routesMetadata);
 
-        $routeCollector = new RouteCollector($configuration, $responseFactory, $callableResolver);
+        $routeCollector = new RouteCollector(
+            new Configuration(['sources' => $sources]),
+            $responseFactory,
+            $callableResolver,
+        );
         $routeCollector->setCache($cache);
         $routeCollector->setCachePrefix('prefix_');
 
         static::assertCount(2, $routeCollector->getRoutes());
     }
 
-    public function testRouteLookup(): void
+    /**
+     * @dataProvider sourcesProvider
+     *
+     * @param list<string|array<string, mixed>> $sources
+     */
+    public function testRouteLookup($sources): void
     {
-        $sources = \PHP_VERSION_ID < 80_000
-            ? [
-                [
-                    'type' => DriverFactoryInterface::DRIVER_ANNOTATION,
-                    'path' => [__DIR__ . '/Mapping/Files/Classes/Valid/Annotation'],
-                ],
-            ]
-            : [__DIR__ . '/Mapping/Files/Classes/Valid/Attribute'];
-
         $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
             ->getMock();
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
-        /** @var CallableResolverInterface $callableResolver */
-        $configuration = $this->getMockBuilder(Configuration::class)
-            ->setMethods(['getSources', 'getRouteResolver'])
-            ->getMock();
-        $configuration->expects(static::once())
-            ->method('getSources')
-            ->willReturn($sources);
 
         $routesMetadata = [
             (new RouteMetadata(['one', 'action'], null))
@@ -195,26 +179,26 @@ class RouteCollectorTest extends TestCase
                 ->setMiddleware(['twoMiddleware']),
         ];
 
+        $configuration = new Configuration(['sources' => $sources]);
+
         $resolver = $this->getMockBuilder(RouteResolver::class)
             ->setConstructorArgs([$configuration])
-            ->setMethods(['sort'])
+            ->onlyMethods(['sort'])
             ->getMock();
         $resolver->expects(static::once())
             ->method('sort')
             ->willReturn($routesMetadata);
 
-        $configuration
-            ->method('getRouteResolver')
-            ->willReturn($resolver);
+        $configuration->setRouteResolver($resolver);
 
-        $router = new RouteCollector($configuration, $responseFactory, $callableResolver);
+        $routeCollector = new RouteCollector($configuration, $responseFactory, $callableResolver);
 
-        $resolvedRoute = $router->lookupRoute('route0');
+        $resolvedRoute = $routeCollector->lookupRoute('route0');
         static::assertInstanceOf(RouteInterface::class, $resolvedRoute);
         static::assertNull($resolvedRoute->getName());
         static::assertEquals([], $resolvedRoute->getArguments());
 
-        $resolvedRoute = $router->lookupRoute('route1');
+        $resolvedRoute = $routeCollector->lookupRoute('route1');
         static::assertInstanceOf(RouteInterface::class, $resolvedRoute);
         static::assertEquals('two', $resolvedRoute->getName());
         static::assertEquals(['scope' => 'public'], $resolvedRoute->getArguments());

@@ -35,9 +35,7 @@ class GroupedRoute
      *     middleware={"twoMiddleware"},
      * )
      */
-    public function actionTwo(): void
-    {
-    }
+    public function actionTwo(): void {}
 
     /**
      * @JSR\Route(
@@ -47,7 +45,5 @@ class GroupedRoute
      *     placeholders={"id":"\d+"}
      * )
      */
-    public function actionThree(): void
-    {
-    }
+    public function actionThree(): void {}
 }

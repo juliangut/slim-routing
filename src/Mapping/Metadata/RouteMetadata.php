@@ -14,53 +14,40 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Mapping\Metadata;
 
 use Jgut\Mapping\Exception\MetadataException;
-use Psr\Http\Message\ResponseInterface;
 
-class RouteMetadata extends AbstractMetadata
+final class RouteMetadata extends AbstractMetadata
 {
-    protected ?string $name;
-
     protected ?GroupMetadata $group = null;
 
     /**
-     * @var array<GroupMetadata>
+     * @var list<GroupMetadata>
      */
     protected ?array $groupChain = null;
 
     protected ?string $transformer = null;
 
     /**
-     * @var array<string>
+     * @var list<string>
      */
     protected array $methods = [];
 
     protected bool $xmlHttpRequest = false;
 
-    /**
-     * @var string|callable(): ResponseInterface
-     */
-    protected $invokable;
-
     protected int $priority = 0;
 
     /**
-     * @phpstan-param string|callable(): ResponseInterface|mixed $invokable
-     *
      * @throws MetadataException
      */
-    public function __construct($invokable, ?string $name)
-    {
-        if (!\is_string($invokable) && !\is_array($invokable) && !\is_callable($invokable)) {
-            throw new MetadataException('Route invokable does not seem to be supported by Slim router.');
-        }
-
-        /** @var callable $invokable */
-        $this->invokable = $invokable;
-        $this->name = $name;
-    }
+    public function __construct(
+        /**
+         * @var string|callable(): mixed
+         */
+        protected $invokable,
+        protected ?string $name,
+    ) {}
 
     /**
-     * @return string|callable(): ResponseInterface
+     * @return string|callable(): mixed
      */
     public function getInvokable()
     {
@@ -87,7 +74,7 @@ class RouteMetadata extends AbstractMetadata
     /**
      * @throws MetadataException
      *
-     * @return array<GroupMetadata>
+     * @return list<GroupMetadata>
      */
     public function getGroupChain(): array
     {
@@ -124,7 +111,7 @@ class RouteMetadata extends AbstractMetadata
     }
 
     /**
-     * @return array<string>
+     * @return list<string>
      */
     public function getMethods(): array
     {
@@ -132,7 +119,7 @@ class RouteMetadata extends AbstractMetadata
     }
 
     /**
-     * @param array<string> $methods
+     * @param list<string> $methods
      */
     public function setMethods(array $methods): self
     {

@@ -21,7 +21,7 @@ use Jgut\Mapping\Exception\AnnotationException;
  *
  * @Target("CLASS")
  */
-class Group extends AbstractAnnotation
+final class Group extends AbstractAnnotation
 {
     use PathTrait;
     use ArgumentTrait;
@@ -53,7 +53,7 @@ class Group extends AbstractAnnotation
      */
     public function setPrefix(string $prefix): self
     {
-        if (mb_strpos(trim($prefix), ' ') !== false) {
+        if (str_contains(trim($prefix), ' ')) {
             throw new AnnotationException('Group prefixes must not contain spaces.');
         }
 
