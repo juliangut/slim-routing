@@ -16,6 +16,7 @@ namespace Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Valid\Attribute;
 use Jgut\Slim\Routing\Mapping\Attribute\Group;
 use Jgut\Slim\Routing\Mapping\Attribute\Middleware;
 use Jgut\Slim\Routing\Mapping\Attribute\Route;
+use Jgut\Slim\Routing\Mapping\Attribute\Transformer;
 
 /**
  * Example grouped route.
@@ -24,21 +25,23 @@ use Jgut\Slim\Routing\Mapping\Attribute\Route;
     pattern: '/grouped/{section}',
     placeholders: ['section' => '[A-Za-z]+'],
 )]
-#[Middleware('groupedMiddleware')]
+#[Middleware('group-middleware')]
+#[Transformer(transformer: 'group-transformer', parameters: ['section' => 'string'])]
 class GroupedRoute
 {
     #[Route(
         pattern: '/two/{id}',
         arguments: ['scope' => 'protected'],
     )]
-    #[Middleware('twoMiddleware')]
+    #[Middleware('route-middleware')]
+    #[Transformer(transformer: 'route-transformer', parameters: ['id' => 'int'])]
     public function actionTwo(): void {}
 
     #[Route(
         pattern: '/three/{id}',
+        placeholders: ['id' => '\d+'],
         xmlHttpRequest: true,
         priority: 10,
-        placeholders: ['id' => '\d+'],
     )]
     public function actionThree(): void {}
 }

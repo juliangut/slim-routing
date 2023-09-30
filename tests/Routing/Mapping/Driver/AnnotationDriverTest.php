@@ -95,7 +95,7 @@ class AnnotationDriverTest extends AbstractDriverTestCase
     public function testNoRoutesRoute(): void
     {
         $paths = [
-            __DIR__ . '/../Files/Classes/Invalid/Annotation/NoRoutes/NoRoutesRoute.php',
+            __DIR__ . '/../Files/Classes/Valid/Annotation/NoRoutesRoute.php',
         ];
 
         $driver = new AnnotationDriver($paths, $this->reader);

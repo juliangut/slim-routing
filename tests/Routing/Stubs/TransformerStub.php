@@ -11,9 +11,14 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Invalid\Attribute\NoRoutes;
+namespace Jgut\Slim\Routing\Tests\Stubs;
+
+use Jgut\Slim\Routing\Mapping\Annotation\TransformerTrait;
 
 /**
- * Example no routes route.
+ * @internal
  */
-class NoRoutesRoute {}
+class TransformerStub
+{
+    use TransformerTrait;
+}

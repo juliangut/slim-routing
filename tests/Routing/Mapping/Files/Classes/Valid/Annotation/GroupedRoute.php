@@ -19,9 +19,11 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
  * Example grouped route.
  *
  * @JSR\Group(
- * pattern="/grouped/{section}",
- * placeholders={"section": "[A-Za-z]+"},
- * middleware={"groupedMiddleware"}
+ *     pattern="/grouped/{section}",
+ *     placeholders={"section": "[A-Za-z]+"},
+ *     parameters={"section": "string"},
+ *     transformers={"group-transformer"},
+ *     middleware={"group-middleware"}
  * )
  */
 class GroupedRoute
@@ -30,7 +32,9 @@ class GroupedRoute
      * @JSR\Route(
      *     pattern="/two/{id}",
      *     arguments={"scope": "protected"},
-     *     middleware={"twoMiddleware"},
+     *     parameters={"id": "int"},
+     *     transformers={"route-transformer"},
+     *     middleware={"route-middleware"},
      * )
      */
     public function actionTwo(): void {}

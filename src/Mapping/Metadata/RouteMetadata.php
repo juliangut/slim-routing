@@ -20,14 +20,9 @@ final class RouteMetadata extends AbstractMetadata
     protected ?GroupMetadata $group = null;
 
     /**
-     * @var list<GroupMetadata>
+     * @var list<GroupMetadata>|null
      */
     protected ?array $groupChain = null;
-
-    /**
-     * @var list<string|object>|null
-     */
-    protected ?array $transformers = null;
 
     /**
      * @var list<string>
@@ -99,24 +94,6 @@ final class RouteMetadata extends AbstractMetadata
         }
 
         return $this->groupChain;
-    }
-
-    /**
-     * @return list<string|object>|null
-     */
-    public function getTransformers(): ?array
-    {
-        return $this->transformers;
-    }
-
-    /**
-     * @param list<string|object> $transformers
-     */
-    public function setTransformers(array $transformers): self
-    {
-        $this->transformers = $transformers;
-
-        return $this;
     }
 
     /**

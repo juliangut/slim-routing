@@ -84,8 +84,9 @@ trait FileMappingTrait
         $this->populatePrefix($group, $mapping);
         $this->populatePattern($group, $mapping);
         $this->populatePlaceholders($group, $mapping);
-        $this->populateParameters($group, $mapping);
         $this->populateMiddleware($group, $mapping);
+        $this->populateParameters($group, $mapping);
+        $this->populateTransformers($group, $mapping);
         $this->populateArguments($group, $mapping);
     }
 
@@ -95,14 +96,14 @@ trait FileMappingTrait
     protected function populateRoute(RouteMetadata $route, array $mapping): void
     {
         $this->populatePattern($route, $mapping);
-        $this->populatePlaceholders($route, $mapping);
-        $this->populateParameters($route, $mapping);
         $this->populateMethods($route, $mapping);
         $this->populateXmlHttpRequest($route, $mapping);
-        $this->populateMiddleware($route, $mapping);
-        $this->populateArguments($route, $mapping);
         $this->populatePriority($route, $mapping);
+        $this->populatePlaceholders($route, $mapping);
+        $this->populateArguments($route, $mapping);
+        $this->populateParameters($route, $mapping);
         $this->populateTransformers($route, $mapping);
+        $this->populateMiddleware($route, $mapping);
     }
 
     /**
@@ -331,11 +332,12 @@ trait FileMappingTrait
     }
 
     /**
-     * @param array<mixed> $mapping
+     * @param GroupMetadata|RouteMetadata $metadata
+     * @param array<mixed>                $mapping
      *
      * @throws DriverException
      */
-    protected function populateTransformers(RouteMetadata $metadata, array $mapping): void
+    protected function populateTransformers($metadata, array $mapping): void
     {
         if (!\array_key_exists('transformers', $mapping)) {
             return;
@@ -361,7 +363,7 @@ trait FileMappingTrait
             }
         }
 
-        /** @var list<string|ParameterTransformer> $transformers */
+        /** @var list<class-string<ParameterTransformer>|ParameterTransformer> $transformers */
         $metadata->setTransformers(array_values($transformers));
     }
 }

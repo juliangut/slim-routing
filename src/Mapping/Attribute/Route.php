@@ -15,17 +15,12 @@ namespace Jgut\Slim\Routing\Mapping\Attribute;
 
 use Attribute;
 use Jgut\Mapping\Exception\AttributeException;
-use Jgut\Slim\Routing\Transformer\ParameterTransformer;
 
 #[Attribute(Attribute::TARGET_METHOD)]
 final class Route
 {
-    use PathTrait {
-        PathTrait::__construct as protected pathConstruct;
-    }
-    use ArgumentTrait {
-        ArgumentTrait::__construct as protected argumentConstruct;
-    }
+    use PathTrait;
+    use ArgumentTrait;
 
     protected ?string $name = null;
 
@@ -35,31 +30,18 @@ final class Route
     protected array $methods = ['GET'];
 
     /**
-     * @var list<string|object>|null
-     */
-    protected ?array $transformers = null;
-
-    protected bool $xmlHttpRequest;
-
-    protected int $priority;
-
-    /**
      * @param list<string>|null          $methods
-     * @param list<string|object>|null   $transformers
      * @param array<string, string>|null $placeholders
-     * @param array<string, string>|null $parameters
      * @param array<string, string>|null $arguments
      */
     public function __construct(
-        ?string $pattern = null,
-        ?array $methods = [],
         ?string $name = null,
-        ?bool $xmlHttpRequest = false,
-        ?int $priority = 0,
-        ?array $transformers = null,
+        ?array $methods = [],
+        ?string $pattern = null,
         ?array $placeholders = [],
-        ?array $parameters = [],
         ?array $arguments = [],
+        protected bool $xmlHttpRequest = false,
+        protected int $priority = 0,
     ) {
         if ($name !== null) {
             $this->setName($name);
@@ -67,14 +49,15 @@ final class Route
         if ($methods !== null) {
             $this->setMethods($methods);
         }
-        if ($transformers !== null) {
-            $this->setTransformers($transformers);
+        if ($pattern !== null) {
+            $this->setPattern($pattern);
         }
-        $this->xmlHttpRequest = $xmlHttpRequest ?? false;
-        $this->priority = $priority ?? 0;
-
-        $this->pathConstruct($pattern, $placeholders, $parameters);
-        $this->argumentConstruct($arguments);
+        if ($placeholders !== null) {
+            $this->setPlaceholders($placeholders);
+        }
+        if ($arguments !== null) {
+            $this->setArguments($arguments);
+        }
     }
 
     /**
@@ -128,34 +111,6 @@ final class Route
         if (\in_array('ANY', $this->methods, true) && \count($this->methods) > 1) {
             throw new AttributeException('Route "ANY" method cannot be defined with other methods.');
         }
-    }
-
-    /**
-     * @return list<string|object>|null
-     */
-    public function getTransformers(): ?array
-    {
-        return $this->transformers;
-    }
-
-    /**
-     * @param list<string|object> $transformers
-     *
-     * @throws AttributeException
-     */
-    protected function setTransformers(array $transformers): void
-    {
-        foreach ($transformers as $transformer) {
-            if (!\is_string($transformer) && !$transformer instanceof ParameterTransformer) {
-                throw new AttributeException(sprintf(
-                    'Route transformers must be a list of string or "%s". "%s" given.',
-                    ParameterTransformer::class,
-                    $transformer::class,
-                ));
-            }
-        }
-
-        $this->transformers = array_values($transformers);
     }
 
     /**

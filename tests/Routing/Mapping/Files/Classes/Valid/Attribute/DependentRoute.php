@@ -21,8 +21,8 @@ use Jgut\Slim\Routing\Mapping\Attribute\Route;
  * Example dependent route.
  */
 #[Group(
+    prefix: 'dependent',
     parent: AbstractRoute::class,
-    prefix: 'grouped',
     pattern: '/dependent',
 )]
 #[Middleware('dependentMiddleware')]

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-    <group1 prefix="abstract" pattern="/abstract">
+    <group1 pattern="/abstract">
         <middleware>
             <middleware1>abstractMiddleware</middleware1>
         </middleware>
         <routes>
-            <subgroup1 prefix="grouped" pattern="/dependent">
+            <subgroup1 prefix="dependent" pattern="/dependent">
                 <middleware>
                     <middleware1>dependentMiddleware</middleware1>
                 </middleware>

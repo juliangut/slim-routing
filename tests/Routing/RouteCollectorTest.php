@@ -89,7 +89,7 @@ class RouteCollectorTest extends TestCase
             (new RouteMetadata(['two', 'action'], 'two'))
                 ->setMethods(['POST'])
                 ->setPattern('two')
-                ->setMiddleware(['twoMiddleware']),
+                ->setMiddleware(['route-middleware']),
         ];
 
         $configuration = new Configuration(['sources' => $sources]);
@@ -130,7 +130,7 @@ class RouteCollectorTest extends TestCase
             (new RouteMetadata(['two', 'action'], 'two'))
                 ->setMethods(['POST'])
                 ->setPattern('two')
-                ->setMiddleware(['twoMiddleware']),
+                ->setMiddleware(['route-middleware']),
         ];
 
         $cache = $this->getMockBuilder(CacheInterface::class)
@@ -176,7 +176,7 @@ class RouteCollectorTest extends TestCase
                 ->setMethods(['POST'])
                 ->setPattern('two')
                 ->setArguments(['scope' => 'public'])
-                ->setMiddleware(['twoMiddleware']),
+                ->setMiddleware(['route-middleware']),
         ];
 
         $configuration = new Configuration(['sources' => $sources]);

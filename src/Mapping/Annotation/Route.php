@@ -24,15 +24,11 @@ use Jgut\Mapping\Exception\AnnotationException;
 final class Route extends AbstractAnnotation
 {
     use PathTrait;
-    use ArgumentTrait;
+    use TransformerTrait;
     use MiddlewareTrait;
+    use ArgumentTrait;
 
     protected ?string $name = null;
-
-    /**
-     * @var list<string>|null
-     */
-    protected ?array $transformers = null;
 
     /**
      * @var list<string>
@@ -62,24 +58,6 @@ final class Route extends AbstractAnnotation
         }
 
         $this->name = trim($name);
-
-        return $this;
-    }
-
-    /**
-     * @return list<string>|null
-     */
-    public function getTransformers(): ?array
-    {
-        return $this->transformers;
-    }
-
-    /**
-     * @param list<string> $transformers
-     */
-    public function setTransformers(array $transformers): self
-    {
-        $this->transformers = $transformers;
 
         return $this;
     }

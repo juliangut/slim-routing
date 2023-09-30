@@ -24,8 +24,9 @@ use Jgut\Mapping\Exception\AnnotationException;
 final class Group extends AbstractAnnotation
 {
     use PathTrait;
-    use ArgumentTrait;
+    use TransformerTrait;
     use MiddlewareTrait;
+    use ArgumentTrait;
 
     protected ?string $parent = null;
 

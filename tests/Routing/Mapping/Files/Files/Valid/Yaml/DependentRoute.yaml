@@ -1,8 +1,7 @@
-- prefix: "abstract"
-  pattern: "/abstract"
+- pattern: "/abstract"
   middleware: ["abstractMiddleware"]
   routes:
-    - prefix: "grouped"
+    - prefix: "dependent"
       pattern: "/dependent"
       middleware: ["dependentMiddleware"]
       routes:

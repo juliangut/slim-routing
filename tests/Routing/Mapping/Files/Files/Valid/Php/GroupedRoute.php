@@ -17,7 +17,15 @@ use Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Valid\Attribute\GroupedRoute;
 
 return [
     [
-        'middleware' => ['groupedMiddleware'],
+        'pattern' => '/grouped/{section}',
+        'placeholders' => [
+            'section' => '[A-Za-z]+',
+        ],
+        'parameters' => [
+            'section' => 'string',
+        ],
+        'transformers' => ['group-transformer'],
+        'middleware' => ['group-middleware'],
         'routes' => [
             [
                 'methods' => ['GET'],
@@ -25,7 +33,11 @@ return [
                 'arguments' => [
                     'scope' => 'protected',
                 ],
-                'middleware' => ['twoMiddleware'],
+                'parameters' => [
+                    'id' => 'int',
+                ],
+                'transformers' => ['route-transformer'],
+                'middleware' => ['route-middleware'],
                 'invokable' => GroupedRoute::class . ':actionTwo',
             ],
             [

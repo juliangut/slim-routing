@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
     <group1>
+        <placeholders>
+            <section>[A-Za-z]+</section>
+        </placeholders>
+        <pattern>/grouped/{section}</pattern>
+        <parameters>
+            <section>string</section>
+        </parameters>
+        <transformers>
+            <transformer1>group-transformer</transformer1>
+        </transformers>
         <middleware>
-            <middleware1>groupedMiddleware</middleware1>
+            <middleware1>group-middleware</middleware1>
         </middleware>
         <routes>
             <route1 pattern="/two/{id}">
@@ -12,8 +22,14 @@
                 <arguments>
                     <scope>protected</scope>
                 </arguments>
+                <parameters>
+                    <id>int</id>
+                </parameters>
+                <transformers>
+                    <transformer1>route-transformer</transformer1>
+                </transformers>
                 <middleware>
-                    <middleware1>twoMiddleware</middleware1>
+                    <middleware1>route-middleware</middleware1>
                 </middleware>
                 <invokable>Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Valid\Attribute\GroupedRoute:actionTwo</invokable>
             </route1>

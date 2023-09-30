@@ -18,6 +18,7 @@ use Jgut\Mapping\Exception\DriverException;
 use Jgut\Slim\Routing\Mapping\Attribute\Group as GroupAttribute;
 use Jgut\Slim\Routing\Mapping\Attribute\Middleware as MiddlewareAttribute;
 use Jgut\Slim\Routing\Mapping\Attribute\Route as RouteAttribute;
+use Jgut\Slim\Routing\Mapping\Attribute\Transformer as TransformerAttribute;
 use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use Reflection;
@@ -159,33 +160,26 @@ final class AttributeDriver extends AbstractClassDriver
     /**
      * @param ReflectionClass<object> $class
      */
-    protected function populateGroup(
-        GroupMetadata $group,
-        ReflectionClass $class,
-        GroupAttribute $attribute,
-    ): void {
+    protected function populateGroup(GroupMetadata $group, ReflectionClass $class, GroupAttribute $attribute): void
+    {
         $this->populatePrefix($group, $attribute);
         $this->populatePattern($group, $attribute);
         $group->setPlaceholders($attribute->getPlaceholders());
-        $group->setParameters($attribute->getParameters());
-        $this->populateMiddleware($group, $class);
         $group->setArguments($attribute->getArguments());
+        $this->populateTransformer($group, $class);
+        $this->populateMiddleware($group, $class);
     }
 
-    protected function populateRoute(
-        RouteMetadata $route,
-        ReflectionMethod $method,
-        RouteAttribute $attribute,
-    ): void {
+    protected function populateRoute(RouteMetadata $route, ReflectionMethod $method, RouteAttribute $attribute): void
+    {
         $this->populatePattern($route, $attribute);
-        $route->setPlaceholders($attribute->getPlaceholders());
-        $route->setParameters($attribute->getParameters());
         $route->setMethods($attribute->getMethods());
         $route->setXmlHttpRequest($attribute->isXmlHttpRequest());
-        $this->populateMiddleware($route, $method);
-        $route->setArguments($attribute->getArguments());
         $route->setPriority($attribute->getPriority());
-        $this->populateTransformer($route, $attribute, $method);
+        $route->setPlaceholders($attribute->getPlaceholders());
+        $route->setArguments($attribute->getArguments());
+        $this->populateTransformer($route, $method);
+        $this->populateMiddleware($route, $method);
     }
 
     protected function populatePrefix(GroupMetadata $metadata, GroupAttribute $attribute): void
@@ -215,43 +209,58 @@ final class AttributeDriver extends AbstractClassDriver
     protected function populateMiddleware($metadata, $reflection): void
     {
         $middlewareList = [];
-        $middlewareAttributes = $reflection->getAttributes(
-            MiddlewareAttribute::class,
-            ReflectionAttribute::IS_INSTANCEOF,
-        );
-        foreach ($middlewareAttributes as $middlewareAttribute) {
-            /** @var MiddlewareAttribute $middleware */
-            $middleware = $middlewareAttribute->newInstance();
 
-            $middlewareList[] = $middleware->getMiddleware();
+        /** @var list<ReflectionAttribute<MiddlewareAttribute>> $attributes */
+        $attributes = $reflection->getAttributes(MiddlewareAttribute::class, ReflectionAttribute::IS_INSTANCEOF);
+        foreach ($attributes as $middlewareAttribute) {
+            $middlewareList[] = $middlewareAttribute->newInstance()->getMiddleware();
         }
         if (\count($middlewareList) !== 0) {
             $metadata->setMiddleware($middlewareList);
         }
     }
 
-    protected function populateTransformer(
-        RouteMetadata $route,
-        RouteAttribute $attribute,
-        ReflectionMethod $method,
-    ): void {
-        if ($attribute->getTransformers() !== null) {
-            $route->setTransformers($attribute->getTransformers())
-                ->setParameters($this->getRouteParameters($method, $attribute));
+    /**
+     * @param GroupMetadata|RouteMetadata              $metadata
+     * @param ReflectionClass<object>|ReflectionMethod $reflection
+     */
+    protected function populateTransformer($metadata, $reflection): void
+    {
+        $parameters = [];
+        $transformers = [];
+
+        /** @var list<ReflectionAttribute<TransformerAttribute>> $attributes */
+        $attributes = $reflection->getAttributes(TransformerAttribute::class, ReflectionAttribute::IS_INSTANCEOF);
+        foreach ($attributes as $transformerAttribute) {
+            $transformer = $transformerAttribute->newInstance();
+
+            foreach ($this->getTransformerParameters($reflection, $transformer) as $parameter => $type) {
+                $parameters[$parameter] = $type;
+            }
+
+            $transformers[] = $transformer->getTransformer();
         }
+
+        $metadata->setParameters($parameters);
+        $metadata->setTransformers(array_values(array_filter($transformers)));
     }
 
     /**
+     * @param ReflectionClass<object>|ReflectionMethod $reflection
+     *
      * @return array<string, string>
      */
-    protected function getRouteParameters(ReflectionMethod $method, RouteAttribute $attribute): array
+    protected function getTransformerParameters($reflection, TransformerAttribute $attribute): array
     {
         $parameters = [];
-        foreach ($method->getParameters() as $parameter) {
-            /** @var ReflectionNamedType|null $type */
-            $type = $parameter->getType();
-            if ($type !== null) {
-                $parameters[$parameter->getName()] = $type->getName();
+        if ($reflection instanceof ReflectionMethod) {
+            foreach ($reflection->getParameters() as $parameter) {
+                /** @var ReflectionNamedType|null $type */
+                $type = $parameter->getType();
+
+                if ($type !== null) {
+                    $parameters[$parameter->getName()] = $type->getName();
+                }
             }
         }
 

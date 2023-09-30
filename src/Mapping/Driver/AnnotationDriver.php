@@ -152,9 +152,9 @@ final class AnnotationDriver extends AbstractAnnotationDriver
         $this->populatePrefix($group, $annotation);
         $this->populatePattern($group, $annotation);
         $group->setPlaceholders($annotation->getPlaceholders());
-        $group->setParameters($annotation->getParameters());
-        $group->setMiddleware($annotation->getMiddleware());
         $group->setArguments($annotation->getArguments());
+        $this->populateTransformer($group, $annotation);
+        $group->setMiddleware($annotation->getMiddleware());
     }
 
     /**
@@ -166,14 +166,13 @@ final class AnnotationDriver extends AbstractAnnotationDriver
         RouteAnnotation $annotation,
     ): void {
         $this->populatePattern($route, $annotation);
-        $route->setPlaceholders($annotation->getPlaceholders());
-        $route->setParameters($annotation->getParameters());
         $route->setMethods($annotation->getMethods());
         $route->setXmlHttpRequest($annotation->isXmlHttpRequest());
-        $route->setMiddleware($annotation->getMiddleware());
-        $route->setArguments($annotation->getArguments());
         $route->setPriority($annotation->getPriority());
+        $route->setPlaceholders($annotation->getPlaceholders());
+        $route->setArguments($annotation->getArguments());
         $this->populateTransformer($route, $annotation, $method);
+        $route->setMiddleware($annotation->getMiddleware());
     }
 
     protected function populatePrefix(GroupMetadata $metadata, GroupAnnotation $annotation): void
@@ -196,28 +195,32 @@ final class AnnotationDriver extends AbstractAnnotationDriver
         }
     }
 
-    protected function populateTransformer(
-        RouteMetadata $route,
-        RouteAnnotation $annotation,
-        ReflectionMethod $method,
-    ): void {
-        if ($annotation->getTransformers() !== null) {
-            $route->setTransformers($annotation->getTransformers())
-                ->setParameters($this->getRouteParameters($method, $annotation));
-        }
+    /**
+     * @param GroupMetadata|RouteMetadata     $metadata
+     * @param GroupAnnotation|RouteAnnotation $annotation
+     */
+    protected function populateTransformer($metadata, $annotation, ?ReflectionMethod $method = null): void
+    {
+        $metadata->setParameters($this->getTransformerParameters($annotation, $method))
+            ->setTransformers($annotation->getTransformers());
     }
 
     /**
+     * @param GroupAnnotation|RouteAnnotation $annotation
+     *
      * @return array<string, string>
      */
-    protected function getRouteParameters(ReflectionMethod $method, RouteAnnotation $annotation): array
+    protected function getTransformerParameters($annotation, ?ReflectionMethod $reflection): array
     {
         $parameters = [];
-        foreach ($method->getParameters() as $parameter) {
-            $type = $parameter->getType();
 
-            if ($type !== null) {
-                $parameters[$parameter->getName()] = $type->getName();
+        if ($reflection !== null) {
+            foreach ($reflection->getParameters() as $parameter) {
+                $type = $parameter->getType();
+
+                if ($type !== null) {
+                    $parameters[$parameter->getName()] = $type->getName();
+                }
             }
         }
 

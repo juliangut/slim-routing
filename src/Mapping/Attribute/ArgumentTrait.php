@@ -21,18 +21,18 @@ trait ArgumentTrait
     protected array $arguments = [];
 
     /**
-     * @param array<string, string>|null $arguments
-     */
-    public function __construct(?array $arguments = [])
-    {
-        $this->arguments = $arguments ?? [];
-    }
-
-    /**
      * @return array<string, string>
      */
     public function getArguments(): array
     {
         return $this->arguments;
+    }
+
+    /**
+     * @param array<string, string> $arguments
+     */
+    protected function setArguments(array $arguments): void
+    {
+        $this->arguments = $arguments;
     }
 }

@@ -15,32 +15,21 @@ namespace Jgut\Slim\Routing\Mapping\Attribute;
 
 trait PathTrait
 {
+    protected ?string $pattern = null;
+
     /**
      * @var array<string, string>
      */
     protected array $placeholders = [];
 
-    /**
-     * @var array<string, string>
-     */
-    protected array $parameters = [];
-
-    /**
-     * @param array<string, string>|null $placeholders
-     * @param array<string, string>|null $parameters
-     */
-    public function __construct(
-        protected ?string $pattern = null,
-        ?array $placeholders = [],
-        ?array $parameters = [],
-    ) {
-        $this->placeholders = $placeholders ?? [];
-        $this->parameters = $parameters ?? [];
-    }
-
     public function getPattern(): ?string
     {
         return $this->pattern;
+    }
+
+    protected function setPattern(string $pattern): void
+    {
+        $this->pattern = $pattern;
     }
 
     /**
@@ -52,10 +41,10 @@ trait PathTrait
     }
 
     /**
-     * @return array<string, string>
+     * @param array<string, string> $placeholders
      */
-    public function getParameters(): array
+    protected function setPlaceholders(array $placeholders): void
     {
-        return $this->parameters;
+        $this->placeholders = $placeholders;
     }
 }

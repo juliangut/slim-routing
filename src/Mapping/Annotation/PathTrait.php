@@ -25,11 +25,6 @@ trait PathTrait
      */
     protected array $placeholders = [];
 
-    /**
-     * @var array<string, string>
-     */
-    protected array $parameters = [];
-
     public function getPattern(): ?string
     {
         return $this->pattern;
@@ -56,24 +51,6 @@ trait PathTrait
     public function setPlaceholders(array $placeholders): static
     {
         $this->placeholders = $placeholders;
-
-        return $this;
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    public function getParameters(): array
-    {
-        return $this->parameters;
-    }
-
-    /**
-     * @param array<string, string> $parameters
-     */
-    public function setParameters(array $parameters): static
-    {
-        $this->parameters = $parameters;
 
         return $this;
     }

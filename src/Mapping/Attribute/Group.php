@@ -19,49 +19,39 @@ use Jgut\Mapping\Exception\AttributeException;
 #[Attribute(Attribute::TARGET_CLASS)]
 final class Group
 {
-    use PathTrait {
-        PathTrait::__construct as protected pathConstruct;
-    }
-    use ArgumentTrait {
-        ArgumentTrait::__construct as protected argumentConstruct;
-    }
-
-    protected ?string $parent = null;
+    use PathTrait;
+    use ArgumentTrait;
 
     protected ?string $prefix = null;
 
+    protected ?string $parent = null;
+
     /**
      * @param array<string, string>|null $placeholders
-     * @param array<string, string>|null $parameters
      * @param array<string, string>|null $arguments
      */
     public function __construct(
-        ?string $parent = null,
         ?string $prefix = null,
+        ?string $parent = null,
         ?string $pattern = null,
         ?array $placeholders = [],
-        ?array $parameters = [],
         ?array $arguments = [],
     ) {
-        if ($parent !== null) {
-            $this->setParent($parent);
-        }
         if ($prefix !== null) {
             $this->setPrefix($prefix);
         }
-
-        $this->pathConstruct($pattern, $placeholders, $parameters);
-        $this->argumentConstruct($arguments);
-    }
-
-    protected function setParent(string $parent): void
-    {
-        $this->parent = trim($parent, '\\');
-    }
-
-    public function getParent(): ?string
-    {
-        return $this->parent;
+        if ($parent !== null) {
+            $this->setParent($parent);
+        }
+        if ($pattern !== null) {
+            $this->setPattern($pattern);
+        }
+        if ($placeholders !== null) {
+            $this->setPlaceholders($placeholders);
+        }
+        if ($arguments !== null) {
+            $this->setArguments($arguments);
+        }
     }
 
     /**
@@ -79,5 +69,15 @@ final class Group
     public function getPrefix(): ?string
     {
         return $this->prefix;
+    }
+
+    protected function setParent(string $parent): void
+    {
+        $this->parent = trim($parent, '\\');
+    }
+
+    public function getParent(): ?string
+    {
+        return $this->parent;
     }
 }

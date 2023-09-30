@@ -167,7 +167,7 @@ class Route extends SlimRoute
             return [];
         }
 
-        return array_values(array_map(
+        return array_values(array_unique(array_map(
             function ($transformer): ParameterTransformer {
                 if ($this->container !== null && \is_string($transformer)) {
                     $transformer = $this->container->get($transformer);
@@ -182,8 +182,8 @@ class Route extends SlimRoute
 
                 return $transformer;
             },
-            $this->metadata->getTransformers() ?? [],
-        ));
+            $this->metadata->getTransformers(),
+        )));
     }
 
     /**

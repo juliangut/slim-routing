@@ -15,6 +15,7 @@ namespace Jgut\Slim\Routing\Mapping\Metadata;
 
 use Jgut\Mapping\Exception\MetadataException;
 use Jgut\Mapping\Metadata\MetadataInterface;
+use Jgut\Slim\Routing\Transformer\ParameterTransformer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 
@@ -31,6 +32,11 @@ abstract class AbstractMetadata implements MetadataInterface
      * @var array<string, string>
      */
     protected array $parameters = [];
+
+    /**
+     * @var list<class-string<ParameterTransformer>|ParameterTransformer>
+     */
+    protected array $transformers = [];
 
     /**
      * @var array<string, mixed>
@@ -101,6 +107,24 @@ abstract class AbstractMetadata implements MetadataInterface
     public function setParameters(array $parameters): static
     {
         $this->parameters = $parameters;
+
+        return $this;
+    }
+
+    /**
+     * @return list<class-string<ParameterTransformer>|ParameterTransformer>
+     */
+    public function getTransformers(): array
+    {
+        return $this->transformers;
+    }
+
+    /**
+     * @param list<class-string<ParameterTransformer>|ParameterTransformer> $transformers
+     */
+    public function setTransformers(array $transformers): self
+    {
+        $this->transformers = $transformers;
 
         return $this;
     }

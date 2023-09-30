@@ -13,19 +13,19 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Mapping\Annotation;
 
-use Jgut\Slim\Routing\Tests\Stubs\PathStub;
+use Jgut\Slim\Routing\Tests\Stubs\TransformerStub;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  */
-class PathTraitTest extends TestCase
+class TransformerTraitTest extends TestCase
 {
     public function testDefaults(): void
     {
-        $annotation = new PathStub();
+        $annotation = new TransformerStub();
 
-        static::assertEquals('', $annotation->getPattern());
-        static::assertEquals([], $annotation->getPlaceholders());
+        static::assertEquals([], $annotation->getTransformers());
+        static::assertEquals([], $annotation->getParameters());
     }
 }

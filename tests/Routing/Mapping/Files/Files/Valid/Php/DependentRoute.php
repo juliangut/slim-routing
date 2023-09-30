@@ -17,12 +17,11 @@ use Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Valid\Attribute\DependentRoute
 
 return [
     [
-        'prefix' => 'abstract',
         'pattern' => '/abstract',
         'middleware' => ['abstractMiddleware'],
         'routes' => [
             [
-                'prefix' => 'grouped',
+                'prefix' => 'dependent',
                 'pattern' => '/dependent',
                 'middleware' => ['dependentMiddleware'],
                 'routes' => [

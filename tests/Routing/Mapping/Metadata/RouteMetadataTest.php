@@ -36,7 +36,7 @@ class RouteMetadataTest extends TestCase
         static::assertNull($this->route->getGroup());
         static::assertEquals([], $this->route->getGroupChain());
         static::assertEquals([], $this->route->getMethods());
-        static::assertNull($this->route->getTransformers());
+        static::assertEquals([], $this->route->getTransformers());
         static::assertEquals(0, $this->route->getPriority());
         static::assertFalse($this->route->isXmlHttpRequest());
     }

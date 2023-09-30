@@ -15,6 +15,7 @@ namespace Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Valid\Attribute;
 
 use Jgut\Slim\Routing\Mapping\Attribute\Middleware;
 use Jgut\Slim\Routing\Mapping\Attribute\Route;
+use Jgut\Slim\Routing\Mapping\Attribute\Transformer;
 
 /**
  * Example single route.
@@ -26,15 +27,14 @@ class SingleRoute
      * @SuppressWarnings(PHPMD.ShortVariable)
      */
     #[Route(
-        pattern: '/one/{id}',
-        methods: ['GET', 'POST'],
         name: 'one',
+        methods: ['GET', 'POST'],
+        pattern: '/one/{id}',
+        placeholders: ['id' => 'numeric'],
         xmlHttpRequest: true,
         priority: -10,
-        transformers: ['fake_transformer'],
-        placeholders: ['id' => 'numeric'],
-        parameters: ['first' => 'value'],
     )]
     #[Middleware('oneMiddleware')]
+    #[Transformer(transformer: 'fake_transformer', parameters: ['first' => 'value'])]
     public function actionOne(int $id): void {}
 }

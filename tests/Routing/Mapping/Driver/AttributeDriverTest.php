@@ -87,7 +87,7 @@ class AttributeDriverTest extends AbstractDriverTestCase
     public function testNoRoutesRoute(): void
     {
         $paths = [
-            __DIR__ . '/../Files/Classes/Invalid/Attribute/NoRoutes/NoRoutesRoute.php',
+            __DIR__ . '/../Files/Classes/Valid/Attribute/NoRoutesRoute.php',
         ];
 
         $driver = new AttributeDriver($paths);

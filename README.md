@@ -254,9 +254,7 @@ use Jgut\Slim\Routing\Mapping\Attribute\Group;
     parent: Area::class,
     pattern: 'section/{section}',
     placeholders: ['section': '[a-z]+'],
-    parameters: ['section' => Section::class],
-    arguments: ['scope' => 'public']
-    middleware: [SectionMiddleware::class],
+    arguments: ['scope' => 'public'],
  )]
 class Section {}
 ```
@@ -265,9 +263,7 @@ class Section {}
 * `parent`, optional, references a parent group name
 * `pattern`, optional, path pattern, prepended to route patterns
 * `placeholders`, optional, array of regex/alias for path placeholders,
-* `parameters`, optional, array of definitions of parameters, to be used in route transformer 
 * `arguments`, optional, array of arguments to attach to final route 
-* `middleware`, optional, array of middleware to be added to all group routes
 
 ##### Route (Method level)
 
@@ -280,13 +276,11 @@ class Section
 {
     #[Route(
         name: 'routeName',
-        xmlHttpRequest: true,
         methods: ['GET', 'POST'],
         pattern: 'user/{user}',
         placeholders: ['user': '[a-z0-9]+'],
-        transformers: [UserEntityTransformer::class],
-        parameters: ['user': User::class],
         arguments: ['scope': 'admin.read']
+        xmlHttpRequest: true,
         priority: -10,
     )]
     public function userAction() {}
@@ -294,13 +288,11 @@ class Section
 ```
 
 * `name`, optional, route name so it can be referenced in Slim
-* `pattern`, optional, path pattern (defaults to '/')
-* `xmlHttpRequest`, request should be AJAX, false by default
 * `methods`, optional, list of accepted HTTP route methods. ºANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed in the list (defaults to GET)
+* `pattern`, optional, path pattern (defaults to '/')
 * `placeholders`, optional, array of regex/alias for path placeholders
-* `transformers`, optional, array of ParameterTransformer instances or references to ParameterTransformer instances that will be extracted from the container
-* `parameters`, optional, array of definitions of parameters, to be used in transformer
 * `arguments`, optional, array of arguments to attach to the route
+* `xmlHttpRequest`, request should be AJAX, false by default
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
 
 ##### Middleware (Class and Method level)
@@ -308,7 +300,10 @@ class Section
 Defines middleware to apply. Several can be added
 
 ```php
+use Jgut\Slim\Routing\Mapping\Attribute\Group;
+use Jgut\Slim\Routing\Mapping\Attribute\Middleware;
 use Jgut\Slim\Routing\Mapping\Attribute\Route;
+use Psr\Http\Message\ResponseInterface;
 
 #[Group(pattern: 'section')]
 #[Middleware(SectionMiddleware::class)]
@@ -316,12 +311,38 @@ class Section
 {
     #[Route(methods: ['GET'], pattern: 'user')]
     #[Middleware(UserMiddleware::class)]
-    public function userAction() {}
+    public function userAction(): ResponseInterface {}
 }
 ```
 
 * `middleware`, middleware instance or reference to middleware that will be extracted from the container
 
+##### Transformer (Class and Method level)
+
+Defines route transformers. Several can be added
+
+```php
+use Jgut\Slim\Routing\Mapping\Attribute\Group;
+use Jgut\Slim\Routing\Mapping\Attribute\Route;
+use Jgut\Slim\Routing\Mapping\Attribute\Transformer;
+use Psr\Http\Message\ResponseInterface;
+
+#[Group(pattern: 'section')]
+#[Transformer(transformer: SectionEntityTransfomer::class)]
+class Section
+{
+    #[Route(methods: ['GET'], pattern: 'user/{user}')]
+    #[Transformer(
+        transformer: UserEntityTransfomer::class),
+        parameters: ['user': User::class],
+    )]
+    public function userAction($request, $response, $user): ResponseInterface {}
+}
+```
+
+* `transformer`, required, ParameterTransformer instances or reference to ParameterTransformer instance that will be extracted from the container
+* `parameters`, optional, array of definitions of parameters
+* 
 #### Definition files
 
 ###### PHP
@@ -338,6 +359,10 @@ return [
     'arguments' => [
         'group-argument' => 'value',
     ],
+    'parameters' => [
+        'group-parameters' => 'type',
+    ],
+    'transformers' => ['group-transformer'],
     'middleware' => ['group-middleware'],
     'routes' => [
       [
@@ -353,7 +378,7 @@ return [
         'parameters' => [
             'route-parameters' => 'type',
         ],
-        'transformers' => ['customTransformer'],
+        'transformers' => ['route-transformer'],
         'arguments' => [
             'route-argument' => 'value',
         ],
@@ -393,6 +418,12 @@ return [
         <arguments>
             <group-argument1>value</group-argument1>
         </arguments>
+        <parameters>
+          <group-parameter1>type</group-parameter1>
+        </parameters>
+        <transformers>
+          <transformer1>group-transformer</transformer1>
+        </transformers>
         <middleware>
             <middleware1>group-middleware</middleware1>
         </middleware>
@@ -410,7 +441,7 @@ return [
                     <route-parameter1>type</route-parameter1>
                 </parameters>
                 <transformers>
-                     <transformer1>CustomTransformer</transformer1>
+                     <transformer1>route-ransformer</transformer1>
                 </transformers>
                 <arguments>
                     <route-argument1>value</route-argument1>
@@ -457,6 +488,10 @@ _Mind comments are not valid standard JSON_
     "arguments": [{
       "group-argument": "value"
     }],
+    "parameters": [{
+      "group-parameter": "type"
+    }],
+    "transformers": ["group-transformer"],
     "middleware": ["group-middleware"],
     "routes": [
       {
@@ -472,7 +507,7 @@ _Mind comments are not valid standard JSON_
         "parameters": [{
           "route-parameter": "type"
         }],
-        "transformers": ["customTransformer"],
+        "transformers": ["route-transformer"],
         "arguments": [{
           "route-argument": "value"
         }],
@@ -510,6 +545,9 @@ _Mind comments are not valid standard JSON_
     - group-placeholder: type
   arguments: 
     - group-argument: value
+  parameters:
+    - group-parameter: type
+  transformers: [group-ransformer]
   middleware: [group-middleware]
   routes:
     # Route
@@ -522,7 +560,7 @@ _Mind comments are not valid standard JSON_
         - route-placeholder: type
       parameters:
         - route-parameter: type
-      transformers: [CustomTransformer]
+      transformers: [route-ransformer]
       arguments:
         - route-argument: value
       middleware: [route-middleware]
@@ -548,7 +586,8 @@ Defines a group in which routes may reside
 * `prefix`, optional, prefix to be prepended to route names
 * `pattern`, optional, path pattern, prepended to route patterns
 * `placeholders`, optional, array of regex/alias for path placeholders,
-* `parameters`, optional, array of definitions of parameters, to be used in route transformer
+* `parameters`, optional, array of definitions of parameters, to be used in transformer
+* `transformers`, optional, array of ParameterTransformer instances or reference to ParameterTransformer instances that will be extracted from the container
 * `arguments`, optional, array of arguments to attach to final route
 * `middleware`, optional, array of middleware to be added to all group routes
 
@@ -591,9 +630,10 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
  *     parent=Area::class,
  *     pattern="section/{section}",
  *     placeholders={"section": "[a-z]+"},
- *     parameters={"section": "\Namespace\To\Section"},
  *     arguments={"scope": "public"}
- *     middleware={"\Namespace\To\SectionMiddleware"}
+ *     parameters={"section": "\Namespace\To\Section"},
+ *     transformers={"\Namespace\To\GroupTransformer"}
+ *     middleware={"\Namespace\To\GroupMiddleware"}
  * )
  */
 class Section {}
@@ -604,6 +644,7 @@ class Section {}
 * `pattern`, optional, path pattern, prepended to route patterns
 * `placeholders`, optional, array of regex/alias for path placeholders,
 * `parameters`, optional, array of definitions of parameters, to be used in route transformer
+* `transformers`, optional, array of ParameterTransformer instances or reference to ParameterTransformer instances that will be extracted from the container
 * `arguments`, optional, array of arguments to attach to final route
 * `middleware`, optional, array of middleware to be added to all group routes
 
@@ -623,10 +664,10 @@ class Section
      *     methods={"GET", "POST"},
      *     pattern="user/{user}",
      *     placeholders={"user": "[a-z0-9]+"},
-     *     transformers={"\Namespace\To\UserEntityTransformer"},
-     *     parameters={"user": "\Namespace\To\User"},
      *     arguments={"scope": "admin.read"}
-     *     middleware={"Namespace\To\UserMiddleware"},
+     *     parameters={"user": "\Namespace\To\User"},
+     *     transformers={"\Namespace\To\RouteTransformer"},
+     *     middleware={"Namespace\To\RouteMiddleware"},
      *     priority=-10
      * )
      */
@@ -669,13 +710,19 @@ It is important to pay attention not to duplicate placeholder names in the resul
 
 Resulting route arguments is composed of all group arguments if any and route arguments
 
-#### Middleware
+#### Middlewares
 
-Resulting middleware added to a route will be the result of combining group middleware and route middleware and are applied to the route in the following order, so that final middleware execution order will be the same as expected in any Slim app:
+Resulting middlewares added to a route will be the result of combining group middleware and route middleware and are applied to the route in the following order, so that final middleware execution order will be the same as expected in any Slim app:
 
 * Firstly route middleware will be set to the route **in the order they are defined**
 * Then route group middleware (if any) are to be set into the route **in the same order they are defined**
 * If group has a parent then parent's middleware are set **in the order they are defined**, and this goes up until no parent group is left
+
+#### Transformers and parameters
+
+Resulting transformers list is a combination of all group transformers and parameters if any and route transformers and parameters
+
+As with placeholders, it is important to pay attention not to duplicate parameter names as child groups and routes will replace previous parameters
 
 ## Migration from 2.x
 
@@ -683,10 +730,11 @@ Resulting middleware added to a route will be the result of combining group midd
 * Minimum Slim version is now 4.7
 * PHP8 Attributes have been introduced for routing
 * Annotations have been deprecated and its use is highly discouraged
-* Router Annotation use is not needed
+* @Router Annotation use is not needed
 * ParameterTransformer methods and signatures have changed
 * AbstractTransformer has been removed, simply implement ParameterTransformer
 * Routing transformers now accepts an array instead of a single reference
+* Groups now support transformers
 
 ## Contributing
 

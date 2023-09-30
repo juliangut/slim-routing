@@ -23,7 +23,7 @@ final class Middleware
         /**
          * @var class-string<MiddlewareInterface>|MiddlewareInterface
          */
-        protected string|object $middleware,
+        protected string|MiddlewareInterface $middleware,
     ) {}
 
     /**

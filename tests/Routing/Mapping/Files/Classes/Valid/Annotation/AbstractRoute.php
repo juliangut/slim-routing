@@ -19,9 +19,9 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
  * Example dependent route.
  *
  * @JSR\Group(
- * prefix="abstract",
- * pattern="/abstract",
- * middleware={"abstractMiddleware"}
+ *     prefix="abstract",
+ *     pattern="/abstract",
+ *     middleware={"abstractMiddleware"}
  * )
  */
 abstract class AbstractRoute {}

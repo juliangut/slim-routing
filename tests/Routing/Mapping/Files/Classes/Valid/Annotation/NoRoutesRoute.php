@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Invalid\Annotation\NoRoutes;
+namespace Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Valid\Annotation;
 
 /**
  * Example no routes route.
