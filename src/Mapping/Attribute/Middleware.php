@@ -19,17 +19,17 @@ use Psr\Http\Server\MiddlewareInterface;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 final class Middleware
 {
-    /**
-     * @param class-string<MiddlewareInterface> $middleware
-     */
     public function __construct(
-        protected string $middleware,
+        /**
+         * @var class-string<MiddlewareInterface>|MiddlewareInterface
+         */
+        protected string|object $middleware,
     ) {}
 
     /**
-     * @return class-string<MiddlewareInterface>
+     * @return class-string<MiddlewareInterface>|MiddlewareInterface
      */
-    public function getMiddleware(): string
+    public function getMiddleware()
     {
         return $this->middleware;
     }

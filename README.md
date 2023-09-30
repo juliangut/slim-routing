@@ -221,7 +221,7 @@ final class UserEntityTransformer implements ParameterTransformer
 
     protected function supports(string $parameter, string $type) : bool
     {
-        return $type === UserEntity::class;
+        return $parameter === 'user' && $type === UserEntity::class;
     }
 
     protected function transform(string $parameter, string $type, mixed $value): mixed
@@ -251,16 +251,14 @@ use Jgut\Slim\Routing\Mapping\Attribute\Group;
 
 #[Group(
     prefix: 'routePrefix',
-    parent: 'parentGroupClassName',
-    pattern: 'section/{name}',
-    placeholders: ['name': '[a-z]+'],
-    parameters: ['action' => MyEntity::class],
+    parent: Area::class,
+    pattern: 'section/{section}',
+    placeholders: ['section': '[a-z]+'],
+    parameters: ['section' => Section::class],
     arguments: ['scope' => 'public']
-    middleware: ['groupMiddlewareName'],
+    middleware: [SectionMiddleware::class],
  )]
-class Section
-{
-}
+class Section {}
 ```
 
 * `prefix`, optional, prefix to be prepended to route names
@@ -284,17 +282,14 @@ class Section
         name: 'routeName',
         xmlHttpRequest: true,
         methods: ['GET', 'POST'],
-        pattern: 'do/{action}',
-        placeholders: ['action': '[a-z0-9]+'],
-        transformers: ['CustomTransformer'],
-        parameters: ['action': MyEntity::class],
+        pattern: 'user/{user}',
+        placeholders: ['user': '[a-z0-9]+'],
+        transformers: [UserEntityTransformer::class],
+        parameters: ['user': User::class],
         arguments: ['scope': 'admin.read']
-        middleware: ['routeMiddlewareName'],
         priority: -10,
     )]
-    public function doSomething()
-    {
-    }
+    public function userAction() {}
 }
 ```
 
@@ -303,11 +298,29 @@ class Section
 * `xmlHttpRequest`, request should be AJAX, false by default
 * `methods`, optional, list of accepted HTTP route methods. ºANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed in the list (defaults to GET)
 * `placeholders`, optional, array of regex/alias for path placeholders
-* `parameters`, optional, array of definitions of parameters, to be used in transformer
 * `transformers`, optional, array of ParameterTransformer instances or references to ParameterTransformer instances that will be extracted from the container
+* `parameters`, optional, array of definitions of parameters, to be used in transformer
 * `arguments`, optional, array of arguments to attach to the route
-* `middleware`, optional, array of middleware to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
+
+##### Middleware (Class and Method level)
+
+Defines middleware to apply. Several can be added
+
+```php
+use Jgut\Slim\Routing\Mapping\Attribute\Route;
+
+#[Group(pattern: 'section')]
+#[Middleware(SectionMiddleware::class)]
+class Section
+{
+    #[Route(methods: ['GET'], pattern: 'user')]
+    #[Middleware(UserMiddleware::class)]
+    public function userAction() {}
+}
+```
+
+* `middleware`, middleware instance or reference to middleware that will be extracted from the container
 
 #### Definition files
 
@@ -575,17 +588,15 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
 /**
  * @JSR\Group(
  *     prefix="routePrefix",
- *     parent="parentGroupClassName",
- *     pattern="section/{name}",
- *     placeholders={"name": "[a-z]+"},
- *     parameters={"action": "\My\Entity"},
+ *     parent=Area::class,
+ *     pattern="section/{section}",
+ *     placeholders={"section": "[a-z]+"},
+ *     parameters={"section": "\Namespace\To\Section"},
  *     arguments={"scope": "public"}
- *     middleware={"groupMiddlewareName"}
+ *     middleware={"\Namespace\To\SectionMiddleware"}
  * )
  */
-class Section
-{
-}
+class Section {}
 ```
 
 * `prefix`, optional, prefix to be prepended to route names
@@ -610,18 +621,16 @@ class Section
      *     name="routeName",
      *     xmlHttpRequest=true,
      *     methods={"GET", "POST"},
-     *     pattern="do/{action}",
-     *     placeholders={"action": "[a-z0-9]+"},
-     *     transformers={"CustomTransformer"},
-     *     parameters={"action": "\My\Entity"},
+     *     pattern="user/{user}",
+     *     placeholders={"user": "[a-z0-9]+"},
+     *     transformers={"\Namespace\To\UserEntityTransformer"},
+     *     parameters={"user": "\Namespace\To\User"},
      *     arguments={"scope": "admin.read"}
-     *     middleware={"routeMiddlewareName"},
+     *     middleware={"Namespace\To\UserMiddleware"},
      *     priority=-10
      * )
      */
-    public function doSomething()
-    {
-    }
+    public function userAction() {}
 }
 ```
 
