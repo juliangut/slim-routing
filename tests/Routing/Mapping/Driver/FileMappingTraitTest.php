@@ -215,7 +215,9 @@ class FileMappingTraitTest extends AbstractDriverTestCase
     public function testInvalidTransformer(): void
     {
         $this->expectException(DriverException::class);
-        $this->expectExceptionMessage('Route transformer must be a string. "object" given.');
+        $this->expectExceptionMessageMatches(
+            '/^Route transformers must be an array of string or ".+"\. "stdClass" given\.$/',
+        );
 
         $driver = $this->getMockForTrait(FileMappingTrait::class);
         $driver->expects(static::once())
@@ -223,7 +225,7 @@ class FileMappingTraitTest extends AbstractDriverTestCase
             ->willReturn([
                 [
                     'invokable' => 'callable',
-                    'transformer' => new stdClass(),
+                    'transformers' => new stdClass(),
                 ],
             ]);
 

@@ -16,6 +16,7 @@ namespace Jgut\Slim\Routing\Mapping\Driver;
 use Jgut\Mapping\Exception\DriverException;
 use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
+use Jgut\Slim\Routing\Transformer\ParameterTransformer;
 
 trait FileMappingTrait
 {
@@ -101,7 +102,7 @@ trait FileMappingTrait
         $this->populateMiddleware($route, $mapping);
         $this->populateArguments($route, $mapping);
         $this->populatePriority($route, $mapping);
-        $this->populateTransformer($route, $mapping);
+        $this->populateTransformers($route, $mapping);
     }
 
     /**
@@ -334,19 +335,33 @@ trait FileMappingTrait
      *
      * @throws DriverException
      */
-    protected function populateTransformer(RouteMetadata $metadata, array $mapping): void
+    protected function populateTransformers(RouteMetadata $metadata, array $mapping): void
     {
-        if (!\array_key_exists('transformer', $mapping)) {
+        if (!\array_key_exists('transformers', $mapping)) {
             return;
         }
 
-        $transformer = $mapping['transformer'];
-        if (!\is_string($transformer)) {
-            throw new DriverException(
-                sprintf('Route transformer must be a string. "%s" given.', \gettype($transformer)),
-            );
+        $transformers = $mapping['transformers'];
+        if ($transformers !== [] && !\is_array($transformers)) {
+            throw new DriverException(sprintf(
+                'Route transformers must be an array of string or "%s". "%s" given.',
+                ParameterTransformer::class,
+                \is_object($transformers) ? $transformers::class : \gettype($transformers),
+            ));
         }
 
-        $metadata->setTransformer($transformer);
+        /** @var list<mixed> $transformers */
+        foreach ($transformers as $transformer) {
+            if (!\is_string($transformer) && !$transformer instanceof ParameterTransformer) {
+                throw new DriverException(sprintf(
+                    'Route transformers must be an array of string or "%s". "%s" given.',
+                    ParameterTransformer::class,
+                    \is_object($transformer) ? $transformer::class : \gettype($transformers),
+                ));
+            }
+        }
+
+        /** @var list<string|ParameterTransformer> $transformers */
+        $metadata->setTransformers(array_values($transformers));
     }
 }

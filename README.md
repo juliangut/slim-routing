@@ -299,7 +299,7 @@ class Section
         methods: ['GET', 'POST'],
         pattern: 'do/{action}',
         placeholders: ['action': '[a-z0-9]+'],
-        transformer: 'CustomTransformer',
+        transformers: ['CustomTransformer'],
         parameters: ['action': MyEntity::class],
         arguments: ['scope': 'admin.read']
         middleware: ['routeMiddlewareName'],
@@ -317,7 +317,7 @@ class Section
 * `methods`, optional, list of accepted HTTP route methods. ºANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed in the list (defaults to GET)
 * `placeholders`, optional, array of regex/alias for path placeholders
 * `parameters`, optional, array of definitions of parameters, to be used in transformer
-* `transformer`, optional, reference to a ParameterTransformer instance that will be extracted from the container
+* `transformers`, optional, array of ParameterTransformer instances or references to ParameterTransformer instances that will be extracted from the container
 * `arguments`, optional, array of arguments to attach to the route
 * `middleware`, optional, array of middleware to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
@@ -353,7 +353,7 @@ return [
         'parameters' => [
             'route-parameters' => 'type',
         ],
-        'transformer' => 'customTransformer',
+        'transformers' => ['customTransformer'],
         'arguments' => [
             'route-argument' => 'value',
         ],
@@ -409,7 +409,9 @@ return [
                 <parameters>
                     <route-parameter1>type</route-parameter1>
                 </parameters>
-                <transformer>CustomTransformer</transformer>
+                <transformers>
+                     <transformer1>CustomTransformer</transformer1>
+                </transformers>
                 <arguments>
                     <route-argument1>value</route-argument1>
                 </arguments>
@@ -470,7 +472,7 @@ _Mind comments are not valid standard JSON_
         "parameters": [{
           "route-parameter": "type"
         }],
-        "transformer": "customTransformer",
+        "transformers": ["customTransformer"],
         "arguments": [{
           "route-argument": "value"
         }],
@@ -520,7 +522,7 @@ _Mind comments are not valid standard JSON_
         - route-placeholder: type
       parameters:
         - route-parameter: type
-      transformer: CustomTransformer
+      transformers: [CustomTransformer]
       arguments:
         - route-argument: value
       middleware: [route-middleware]
@@ -561,7 +563,7 @@ Defines a route added to Slim
 * `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed (defaults to GET)
 * `placeholders`, optional, array of regex for path placeholders
 * `parameters`, optional, array of definitions of parameters, to be used in transformer
-* `transformer`, optional, reference to a ParameterTransformer instance that will be extracted from the container
+* `transformers`, optional, array of ParameterTransformer instances or reference to ParameterTransformer instances that will be extracted from the container
 * `arguments`, optional, array of arguments to attach to the route
 * `middleware`, optional, array of middleware to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
@@ -642,7 +644,7 @@ class Section
      *     methods={"GET", "POST"},
      *     pattern="do/{action}",
      *     placeholders={"action": "[a-z0-9]+"},
-     *     transformer="CustomTransformer",
+     *     transformers={"CustomTransformer"},
      *     parameters={"action": "\My\Entity"},
      *     arguments={"scope": "admin.read"}
      *     middleware={"routeMiddlewareName"},
@@ -661,7 +663,7 @@ class Section
 * `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed in the list (defaults to GET)
 * `placeholders`, optional, array of regex/alias for path placeholders
 * `parameters`, optional, array of definitions of parameters, to be used in transformer
-* `transformer`, optional, reference to a ParameterTransformer instance that will be extracted from the container
+* `transformers`, optional, array of reference to a ParameterTransformer instances that will be extracted from the container
 * `arguments`, optional, array of arguments to attach to the route
 * `middleware`, optional, array of middleware to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
@@ -704,6 +706,8 @@ Resulting middleware added to a route will be the result of combining group midd
 * Minimum Slim version is now 4.7
 * Annotations have been deprecated and its use is highly discouraged
 * ParameterTransformer methods and signatures have changed
+* AbstractTransformer has been removed, simply implement ParameterTransformer
+* Route transformers now accepts an array of transformers instead of a single reference
 
 ## Contributing
 

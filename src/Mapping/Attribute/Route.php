@@ -15,6 +15,7 @@ namespace Jgut\Slim\Routing\Mapping\Attribute;
 
 use Attribute;
 use Jgut\Mapping\Exception\AttributeException;
+use Jgut\Slim\Routing\Transformer\ParameterTransformer;
 
 #[Attribute(Attribute::TARGET_METHOD)]
 final class Route
@@ -33,12 +34,18 @@ final class Route
      */
     protected array $methods = ['GET'];
 
+    /**
+     * @var list<string|object>|null
+     */
+    protected ?array $transformers = null;
+
     protected bool $xmlHttpRequest;
 
     protected int $priority;
 
     /**
      * @param list<string>|null          $methods
+     * @param list<string|object>|null   $transformers
      * @param array<string, string>|null $placeholders
      * @param array<string, string>|null $parameters
      * @param array<string, string>|null $arguments
@@ -49,7 +56,7 @@ final class Route
         ?string $name = null,
         ?bool $xmlHttpRequest = false,
         ?int $priority = 0,
-        protected ?string $transformer = null,
+        ?array $transformers = null,
         ?array $placeholders = [],
         ?array $parameters = [],
         ?array $arguments = [],
@@ -59,6 +66,9 @@ final class Route
         }
         if ($methods !== null) {
             $this->setMethods($methods);
+        }
+        if ($transformers !== null) {
+            $this->setTransformers($transformers);
         }
         $this->xmlHttpRequest = $xmlHttpRequest ?? false;
         $this->priority = $priority ?? 0;
@@ -86,11 +96,6 @@ final class Route
     public function getName(): ?string
     {
         return $this->name;
-    }
-
-    public function getTransformer(): ?string
-    {
-        return $this->transformer;
     }
 
     /**
@@ -123,6 +128,34 @@ final class Route
         if (\in_array('ANY', $this->methods, true) && \count($this->methods) > 1) {
             throw new AttributeException('Route "ANY" method cannot be defined with other methods.');
         }
+    }
+
+    /**
+     * @return list<string|object>|null
+     */
+    public function getTransformers(): ?array
+    {
+        return $this->transformers;
+    }
+
+    /**
+     * @param list<string|object> $transformers
+     *
+     * @throws AttributeException
+     */
+    protected function setTransformers(array $transformers): void
+    {
+        foreach ($transformers as $transformer) {
+            if (!\is_string($transformer) && !$transformer instanceof ParameterTransformer) {
+                throw new AttributeException(sprintf(
+                    'Route transformers must be a list of string or "%s". "%s" given.',
+                    ParameterTransformer::class,
+                    $transformer::class,
+                ));
+            }
+        }
+
+        $this->transformers = array_values($transformers);
     }
 
     /**

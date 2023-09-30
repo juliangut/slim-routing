@@ -28,7 +28,7 @@ class SingleRoute
      *     pattern="/one/{id}",
      *     priority=-10,
      *     placeholders={"id": "numeric"},
-     *     transformer="fake_transformer",
+     *     transformers={"fake_transformer"},
      *     middleware={"oneMiddleware"},
      *     xmlHttpRequest=true,
      *     parameters={"first": "value"},

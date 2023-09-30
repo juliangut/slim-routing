@@ -24,7 +24,7 @@ return [
         'placeholders' => [
             'id' => 'numeric',
         ],
-        'transformer' => 'fake_transformer',
+        'transformers' => ['fake_transformer'],
         'parameters' => [
             'first' => 'value',
             'id' => 'int',

@@ -37,7 +37,7 @@ abstract class AbstractDriverTestCase extends TestCase
         static::assertEquals('four', $route->getPattern());
         static::assertEquals([], $route->getPlaceholders());
         static::assertEquals([], $route->getArguments());
-        static::assertEquals([], $route->getArguments());
+        static::assertEquals([], $route->getParameters());
         static::assertFalse($route->isXmlHttpRequest());
         static::assertEquals(['fourMiddleware'], $route->getMiddleware());
 
@@ -79,6 +79,6 @@ abstract class AbstractDriverTestCase extends TestCase
         static::assertEquals(['first' => 'value', 'id' => 'int'], $route->getParameters());
         static::assertTrue($route->isXmlHttpRequest());
         static::assertEquals(['oneMiddleware'], $route->getMiddleware());
-        static::assertEquals('fake_transformer', $route->getTransformer());
+        static::assertEquals(['fake_transformer'], $route->getTransformers());
     }
 }

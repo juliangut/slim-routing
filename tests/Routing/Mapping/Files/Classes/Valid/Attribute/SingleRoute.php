@@ -33,7 +33,7 @@ class SingleRoute
         name: 'one',
         xmlHttpRequest: true,
         priority: -10,
-        transformer: 'fake_transformer',
+        transformers: ['fake_transformer'],
         placeholders: ['id' => 'numeric'],
         parameters: ['first' => 'value'],
     )]

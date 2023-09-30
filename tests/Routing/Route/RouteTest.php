@@ -83,9 +83,10 @@ class RouteTest extends TestCase
             static function (): void {},
             new ResponseFactory(),
             $callableResolver,
-            (new RouteMetadata('', null))->setTransformer('transformer'),
+            (new RouteMetadata('', null))->setTransformers(['transformer']),
             $container,
         );
+        $route->setArgument('id', '10');
 
         $route->run($this->request);
     }
@@ -113,7 +114,7 @@ class RouteTest extends TestCase
             ->willReturn(new ParameterTransformerStub(10));
 
         $metadata = (new RouteMetadata('', null))
-            ->setTransformer('transformer');
+            ->setTransformers(['transformer']);
 
         $responseFactory = new ResponseFactory();
         $route = new Route(
@@ -154,7 +155,7 @@ class RouteTest extends TestCase
             ->willReturn(new ParameterTransformerStub(10));
 
         $metadata = (new RouteMetadata('', null))
-            ->setTransformer('transformer')
+            ->setTransformers(['transformer'])
             ->setParameters(['identifier' => 'int']);
 
         $responseFactory = new ResponseFactory();

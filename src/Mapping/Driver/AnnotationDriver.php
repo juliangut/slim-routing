@@ -210,8 +210,8 @@ final class AnnotationDriver extends AbstractAnnotationDriver
         RouteAnnotation $annotation,
         ReflectionMethod $method,
     ): void {
-        if ($annotation->getTransformer() !== null) {
-            $route->setTransformer($annotation->getTransformer())
+        if ($annotation->getTransformers() !== null) {
+            $route->setTransformers($annotation->getTransformers())
                 ->setParameters($this->getRouteParameters($method, $annotation));
         }
     }

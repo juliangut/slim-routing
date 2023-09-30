@@ -8,7 +8,9 @@
         <placeholders>
             <id>numeric</id>
         </placeholders>
-        <transformer>fake_transformer</transformer>
+        <transformers>
+            <transformer1>fake_transformer</transformer1>
+        </transformers>
         <parameters>
             <first>value</first>
             <id>int</id>

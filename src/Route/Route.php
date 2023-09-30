@@ -84,7 +84,9 @@ class Route extends SlimRoute
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $arguments = $this->arguments;
-        $this->arguments = $this->transformParameters($arguments);
+        if (\count($arguments) !== 0) {
+            $this->arguments = $this->transformParameters($arguments);
+        }
 
         try {
             $response = parent::handle($request);
@@ -96,7 +98,7 @@ class Route extends SlimRoute
     }
 
     /**
-     * @param array<string, string> $parameters
+     * @param array<string, mixed> $parameters
      *
      * @throws RuntimeException
      *
@@ -104,62 +106,100 @@ class Route extends SlimRoute
      */
     protected function transformParameters(array $parameters): array
     {
-        $transformer = $this->metadata?->getTransformer();
-        if ($this->metadata === null || $transformer === null) {
+        $transformers = $this->getTransformers();
+        if (\count($transformers) === 0) {
             return $parameters;
         }
 
-        if ($this->container !== null) {
-            $transformer = $this->container->get($transformer);
-        }
-        if (!$transformer instanceof ParameterTransformer) {
-            throw new RuntimeException(sprintf(
-                'Parameter transformer should implement %s, "%s" given.',
-                ParameterTransformer::class,
-                \is_object($transformer) ? $transformer::class : \gettype($transformer),
-            ));
-        }
+        $definitions = $this->getRouteParametersDefinitions();
 
-        $definitions = $this->getRouteParametersDefinitions($this->metadata);
-
-        array_walk(
-            $parameters,
-            function (&$parameterValue, string $parameterName) use ($definitions, $transformer): void {
-                if (\array_key_exists($parameterName, $definitions)) {
-                    $parameterType = $definitions[$parameterName];
-
-                    if (\in_array($parameterType, ['string', 'int', 'float', 'bool'], true)) {
-                        $parameterValue = $this->transformToPrimitive($parameterType, $parameterValue);
-                    } elseif ($transformer->supports($parameterName, $parameterType)) {
-                        $parameterValue = $transformer->transform($parameterName, $parameterType, $parameterValue);
-                    }
+        $transformed = [];
+        foreach ($transformers as $transformer) {
+            foreach ($parameters as $parameterName => $parameterValue) {
+                if (!\array_key_exists($parameterName, $definitions)) {
+                    $transformed[$parameterName] = $parameterValue;
+                } else {
+                    $transformed[$parameterName] = $this->transformParameter(
+                        $transformer,
+                        $parameterName,
+                        $definitions[$parameterName],
+                        $parameterValue,
+                    );
                 }
-            },
-        );
 
-        return $parameters;
+                unset($parameters[$parameterName]);
+            }
+
+            if (\count($parameters) === 0) {
+                break;
+            }
+        }
+
+        return $transformed;
     }
 
-    protected function transformToPrimitive(string $type, string $value): float|bool|int|string
+    protected function transformParameter(
+        ParameterTransformer $transformer,
+        string $parameterName,
+        string $parameterType,
+        mixed $parameterValue,
+    ): mixed {
+        if (\is_string($parameterValue) && \in_array($parameterType, ['string', 'int', 'float', 'bool'], true)) {
+            return match ($parameterType) {
+                'int' => (int) $parameterValue,
+                'float' => (float) $parameterValue,
+                'bool' => \in_array(trim($parameterValue), ['1', 'on', 'yes', 'true'], true),
+                default => $parameterValue,
+            };
+        }
+
+        return $transformer->supports($parameterName, $parameterType)
+            ? $transformer->transform($parameterName, $parameterType, $parameterValue)
+            : $parameterValue;
+    }
+
+    /**
+     * @return list<ParameterTransformer>
+     */
+    protected function getTransformers(): array
     {
-        return match ($type) {
-            'int' => (int) $value,
-            'float' => (float) $value,
-            'bool' => \in_array(trim($value), ['1', 'on', 'yes', 'true'], true),
-            default => $value,
-        };
+        if ($this->metadata === null) {
+            return [];
+        }
+
+        return array_values(array_map(
+            function ($transformer): ParameterTransformer {
+                if ($this->container !== null && \is_string($transformer)) {
+                    $transformer = $this->container->get($transformer);
+                }
+                if (!$transformer instanceof ParameterTransformer) {
+                    throw new RuntimeException(sprintf(
+                        'Parameter transformer should implement %s, "%s" given.',
+                        ParameterTransformer::class,
+                        \is_object($transformer) ? $transformer::class : \gettype($transformer),
+                    ));
+                }
+
+                return $transformer;
+            },
+            $this->metadata->getTransformers() ?? [],
+        ));
     }
 
     /**
      * @return array<string, string>
      */
-    protected function getRouteParametersDefinitions(RouteMetadata $route): array
+    protected function getRouteParametersDefinitions(): array
     {
+        if ($this->metadata === null) {
+            return [];
+        }
+
         $parameters = array_filter(array_map(
             static fn(GroupMetadata $group): array => $group->getParameters(),
-            $route->getGroupChain(),
+            $this->metadata->getGroupChain(),
         ));
-        array_unshift($parameters, $route->getParameters());
+        array_unshift($parameters, $this->metadata->getParameters());
 
         return array_filter(array_merge(...$parameters));
     }

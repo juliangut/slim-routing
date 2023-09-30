@@ -29,7 +29,10 @@ final class Route extends AbstractAnnotation
 
     protected ?string $name = null;
 
-    protected ?string $transformer = null;
+    /**
+     * @var list<string>|null
+     */
+    protected ?array $transformers = null;
 
     /**
      * @var list<string>
@@ -63,14 +66,20 @@ final class Route extends AbstractAnnotation
         return $this;
     }
 
-    public function getTransformer(): ?string
+    /**
+     * @return list<string>|null
+     */
+    public function getTransformers(): ?array
     {
-        return $this->transformer;
+        return $this->transformers;
     }
 
-    public function setTransformer(string $transformer): self
+    /**
+     * @param list<string> $transformers
+     */
+    public function setTransformers(array $transformers): self
     {
-        $this->transformer = $transformer;
+        $this->transformers = $transformers;
 
         return $this;
     }

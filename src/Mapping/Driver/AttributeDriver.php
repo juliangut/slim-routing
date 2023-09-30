@@ -243,8 +243,8 @@ final class AttributeDriver extends AbstractClassDriver
         RouteAttribute $attribute,
         ReflectionMethod $method,
     ): void {
-        if ($attribute->getTransformer() !== null) {
-            $route->setTransformer($attribute->getTransformer())
+        if ($attribute->getTransformers() !== null) {
+            $route->setTransformers($attribute->getTransformers())
                 ->setParameters($this->getRouteParameters($method, $attribute));
         }
     }
