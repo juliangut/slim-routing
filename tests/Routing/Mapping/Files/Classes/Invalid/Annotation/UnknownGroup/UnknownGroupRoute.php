@@ -18,8 +18,6 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
 /**
  * Example unknown group route.
  *
- * @JSR\Router()
- *
  * @JSR\Group(
  * parent="unknown"
  * )

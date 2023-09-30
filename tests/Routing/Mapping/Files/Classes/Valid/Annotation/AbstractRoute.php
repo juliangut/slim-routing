@@ -18,8 +18,6 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
 /**
  * Example dependent route.
  *
- * @JSR\Router()
- *
  * @JSR\Group(
  * prefix="abstract",
  * pattern="/abstract",

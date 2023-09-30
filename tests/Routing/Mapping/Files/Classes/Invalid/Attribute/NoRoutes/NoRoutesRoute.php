@@ -13,10 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Invalid\Attribute\NoRoutes;
 
-use Jgut\Slim\Routing\Mapping\Attribute\Router;
-
 /**
  * Example no routes route.
  */
-#[Router]
 class NoRoutesRoute {}

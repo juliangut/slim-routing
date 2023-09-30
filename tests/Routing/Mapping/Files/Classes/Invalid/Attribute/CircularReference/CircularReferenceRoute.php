@@ -15,12 +15,10 @@ namespace Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Invalid\Attribute\Circul
 
 use Jgut\Slim\Routing\Mapping\Attribute\Group;
 use Jgut\Slim\Routing\Mapping\Attribute\Route;
-use Jgut\Slim\Routing\Mapping\Attribute\Router;
 
 /**
  * Example circular reference route.
  */
-#[Router]
 #[Group(parent: CircularReferenceRoute::class)]
 class CircularReferenceRoute
 {

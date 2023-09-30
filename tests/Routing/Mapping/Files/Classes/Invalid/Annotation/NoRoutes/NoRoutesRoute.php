@@ -13,11 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Invalid\Annotation\NoRoutes;
 
-use Jgut\Slim\Routing\Mapping\Annotation as JSR;
-
 /**
  * Example no routes route.
- *
- * @JSR\Router()
  */
 class NoRoutesRoute {}

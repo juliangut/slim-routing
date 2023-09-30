@@ -17,7 +17,6 @@ use Jgut\Mapping\Driver\AbstractAnnotationDriver;
 use Jgut\Mapping\Exception\DriverException;
 use Jgut\Slim\Routing\Mapping\Annotation\Group as GroupAnnotation;
 use Jgut\Slim\Routing\Mapping\Annotation\Route as RouteAnnotation;
-use Jgut\Slim\Routing\Mapping\Annotation\Router as RouterAnnotation;
 use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use Reflection;
@@ -42,11 +41,7 @@ final class AnnotationDriver extends AbstractAnnotationDriver
                 continue;
             }
 
-            /** @var RouterAnnotation|null $router */
-            $router = $this->annotationReader->getClassAnnotation($class, RouterAnnotation::class);
-            if ($router !== null) {
-                $routes[] = $this->getRoutesMetadata($class, $groups);
-            }
+            $routes[] = $this->getRoutesMetadata($class, $groups);
         }
 
         return \count($routes) > 0 ? array_values(array_merge(...$routes)) : [];
@@ -102,10 +97,6 @@ final class AnnotationDriver extends AbstractAnnotationDriver
 
                 $routes[] = $routeMetadata;
             }
-        }
-
-        if (\count($routes) === 0) {
-            throw new DriverException(sprintf('Class "%s" does not define any route.', $class->name));
         }
 
         return $routes;

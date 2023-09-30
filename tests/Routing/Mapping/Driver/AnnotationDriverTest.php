@@ -62,20 +62,6 @@ class AnnotationDriverTest extends AbstractDriverTestCase
         $driver->getMetadata();
     }
 
-    public function testNoRoutesRoute(): void
-    {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessageMatches('/Class ".+" does not define any route\.$/');
-
-        $paths = [
-            __DIR__ . '/../Files/Classes/Invalid/Annotation/NoRoutes/NoRoutesRoute.php',
-        ];
-
-        $driver = new AnnotationDriver($paths, $this->reader);
-
-        $driver->getMetadata();
-    }
-
     public function testUnknownGroupRoute(): void
     {
         $this->expectException(RuntimeException::class);
@@ -104,6 +90,17 @@ class AnnotationDriverTest extends AbstractDriverTestCase
         $route = $driver->getMetadata()[0];
 
         $route->getGroupChain();
+    }
+
+    public function testNoRoutesRoute(): void
+    {
+        $paths = [
+            __DIR__ . '/../Files/Classes/Invalid/Annotation/NoRoutes/NoRoutesRoute.php',
+        ];
+
+        $driver = new AnnotationDriver($paths, $this->reader);
+
+        static::assertEmpty($driver->getMetadata());
     }
 
     public function testRoutes(): void

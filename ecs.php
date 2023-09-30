@@ -39,6 +39,7 @@ return static function (ECSConfig $ecsConfig) use ($header): void {
             NoSilencedErrorsSniff::class . '.Forbidden' => [
                 __DIR__ . '/src/Configuration.php',
                 __DIR__ . '/src/Route/RouteResolver.php',
+                __DIR__ . '/src/Mapping/Annotation/Router.php',
             ],
             NoNullableBooleanTypeFixer::class => __DIR__ . '/src/Mapping/Attribute/Route.php',
         ])

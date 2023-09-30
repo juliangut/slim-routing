@@ -54,20 +54,6 @@ class AttributeDriverTest extends AbstractDriverTestCase
         $driver->getMetadata();
     }
 
-    public function testNoRoutesRoute(): void
-    {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessageMatches('/Class ".+" does not define any route\.$/');
-
-        $paths = [
-            __DIR__ . '/../Files/Classes/Invalid/Attribute/NoRoutes/NoRoutesRoute.php',
-        ];
-
-        $driver = new AttributeDriver($paths);
-
-        $driver->getMetadata();
-    }
-
     public function testUnknownGroupRoute(): void
     {
         $this->expectException(RuntimeException::class);
@@ -96,6 +82,17 @@ class AttributeDriverTest extends AbstractDriverTestCase
         $route = $driver->getMetadata()[0];
 
         $route->getGroupChain();
+    }
+
+    public function testNoRoutesRoute(): void
+    {
+        $paths = [
+            __DIR__ . '/../Files/Classes/Invalid/Attribute/NoRoutes/NoRoutesRoute.php',
+        ];
+
+        $driver = new AttributeDriver($paths);
+
+        static::assertEmpty($driver->getMetadata());
     }
 
     public function testRoutes(): void

@@ -16,12 +16,10 @@ namespace Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Valid\Attribute;
 use Jgut\Slim\Routing\Mapping\Attribute\Group;
 use Jgut\Slim\Routing\Mapping\Attribute\Middleware;
 use Jgut\Slim\Routing\Mapping\Attribute\Route;
-use Jgut\Slim\Routing\Mapping\Attribute\Router;
 
 /**
  * Example dependent route.
  */
-#[Router]
 #[Group(
     parent: AbstractRoute::class,
     prefix: 'grouped',

@@ -15,12 +15,10 @@ namespace Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Invalid\Attribute\Unknow
 
 use Jgut\Slim\Routing\Mapping\Attribute\Group;
 use Jgut\Slim\Routing\Mapping\Attribute\Route;
-use Jgut\Slim\Routing\Mapping\Attribute\Router;
 
 /**
  * Example unknown group route.
  */
-#[Router]
 #[Group(parent: 'unknown')]
 class UnknownGroupRoute
 {

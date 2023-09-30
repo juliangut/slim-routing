@@ -49,8 +49,8 @@
   },
   "suggest": {
     "doctrine/annotations": "In order to load routing from annotations",
-    "symfony/yaml": "In order to load routing from YAML files",
     "spatie/array-to-xml": "In order to return XML responses",
+    "symfony/yaml": "In order to load routing from YAML files",
     "slim/twig-view": "In order to return Twig rendered responses"
   },
   "autoload": {

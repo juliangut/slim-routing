@@ -7,16 +7,16 @@
 
 # slim-routing
 
-A replacement for Slim's router that adds annotation and configuration based routing as well as expands the possibilities of your route callbacks by handling different response types
+A replacement for Slim's router that adds Attribute and configuration based routing as well as expands the possibilities of your route callbacks by handling different response types
 
 Thanks to this library, instead of configuring routes by hand one by one and including them into Slim's routing you can create mapping files that define and structure your routes and let them be included automatically instead
 
 Additionally, if you're familiar with Symfony's definition of routes through Attributes you'll feel at home with slim-routing because route mappings can be defined the same way as well
 
-* On class Attributes (in controller classes)
+* On class Attributes (i.e. controller classes)
 * In routing definition files, currently supported in PHP, JSON, XML and YAML
 
-> Route gathering and compilation can be quite a heavy process depending on how many classes/files and routes are defined, specially in the case of annotations. For this reason it's strongly advised to always use this library route collector cache and Slim's [route collector caching](https://www.slimframework.com/docs/v4/objects/routing.html#route-expressions-caching) on production applications and invalidate cache on deployment
+> Route gathering and compilation can be quite a heavy process depending on how many classes/files and routes are defined, specially in the case of attributes. For this reason it's strongly advised to always use route collector's cache and Slim's [route collector caching](https://www.slimframework.com/docs/v4/objects/routing.html#route-expressions-caching) on production applications and invalidate cache on deployment
 
 Thanks to slim-routing route callbacks can now return `\Jgut\Slim\Routing\Response\ResponseType` objects that will be ultimately transformed into the mandatory `Psr\Message\ResponseInterface` in a way that lets you fully decouple view from the route
 
@@ -100,7 +100,7 @@ $app->run();
 ### Configuration
 
 * `sources` must be an array containing arrays of configurations to create MappingDriver objects:
-    * `type` one of \Jgut\Slim\Routing\Mapping\Driver\DriverFactory constants: `DRIVER_ATTRIBUTE`, `DRIVER_PHP`, `DRIVER_JSON`, `DRIVER_XML`, `DRIVER_YAML` or `DRIVER_ANNOTATION` **if no driver, defaults to DRIVER_ATTRIBUTE in PHP >=8.0 or DRIVER_ANNOTATION PHP < 8.0**
+    * `type` one of \Jgut\Slim\Routing\Mapping\Driver\DriverFactory constants: `DRIVER_ATTRIBUTE`, `DRIVER_PHP`, `DRIVER_JSON`, `DRIVER_XML`, `DRIVER_YAML` or `DRIVER_ANNOTATION` **if no driver, defaults to DRIVER_ATTRIBUTE**
     * `path` a string path or array of paths to where mapping files are located (files or directories) **REQUIRED if no driver**
     * `driver` an already created \Jgut\Slim\Routing\Mapping\Driver\DriverInterface object **REQUIRED if no type AND path**
 * `trailingSlash` boolean, indicates whether to append a trailing slash on route pattern (true) or remove it completely (false), by default. False by default
@@ -113,6 +113,8 @@ $app->run();
   * mongoid -> `[0-9a-f]{24}`
   * any => `[^}]+`
 * `namingStrategy`, instance of \Jgut\Slim\Routing\Naming\Strategy (\Jgut\Slim\Routing\Naming\SnakeCase by default)
+
+In the case of Attributes mapping all classes in source paths will be traversed in search of routing definitons
 
 ## Response handling
 
@@ -240,26 +242,13 @@ Routes can be defined in two basic ways: by writing them down in definition file
 
 #### Attributes
 
-##### Router (Class level)
-
-Just to identify classes defining routes. Its presence is mandatory on each routing class other way the rest of the annotations won't be read
-
-```php
-use Jgut\Slim\Routing\Mapping\Attribute\Router;
-
-#[Router]
-class Home {}
-```
-
 ##### Group (Class level)
 
 Defines a group in which routes may reside. It is not mandatory but useful when you want to do route grouping or apply middleware to several routes at the same time
 
 ```php
 use Jgut\Slim\Routing\Mapping\Attribute\Group;
-use Jgut\Slim\Routing\Mapping\Attribute\Router;
 
-#[Router]
 #[Group(
     prefix: 'routePrefix',
     parent: 'parentGroupClassName',
@@ -288,9 +277,7 @@ Defines the final routes added to Slim
 
 ```php
 use Jgut\Slim\Routing\Mapping\Attribute\Route;
-use Jgut\Slim\Routing\Mapping\Attribute\Router;
 
-#[Router]
 class Section
 {
     #[Route(
@@ -578,21 +565,6 @@ You need to require Doctrine's annotation package
 composer require doctrine/annotations
 ```
 
-##### Router (Class level)
-
-Just to identify classes defining routes. Its presence is mandatory on each routing class either way the rest of the annotations won't be read
-
-```php
-use Jgut\Slim\Routing\Mapping\Annotation as JSR;
-
-/**
- * @JSR\Router
- */
-class Home
-{
-}
-```
-
 ##### Group (Class level)
 
 Defines a group in which routes may reside. It is not mandatory but useful when you want to do route grouping or apply middleware to several routes at the same time
@@ -601,7 +573,6 @@ Defines a group in which routes may reside. It is not mandatory but useful when 
 use Jgut\Slim\Routing\Mapping\Annotation as JSR;
 
 /**
- * @JSR\Router
  * @JSR\Group(
  *     prefix="routePrefix",
  *     parent="parentGroupClassName",
@@ -632,9 +603,6 @@ Defines the final routes added to Slim
 ```php
 use Jgut\Slim\Routing\Mapping\Annotation as JSR;
 
-/**
- * @JSR\Router
- */
 class Section
 {
     /**
@@ -704,10 +672,12 @@ Resulting middleware added to a route will be the result of combining group midd
 
 * Minimum PHP version is now 8.0
 * Minimum Slim version is now 4.7
+* PHP8 Attributes have been introduced for routing
 * Annotations have been deprecated and its use is highly discouraged
+* Router Annotation use is not needed
 * ParameterTransformer methods and signatures have changed
 * AbstractTransformer has been removed, simply implement ParameterTransformer
-* Route transformers now accepts an array of transformers instead of a single reference
+* Routing transformers now accepts an array instead of a single reference
 
 ## Contributing
 

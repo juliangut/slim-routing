@@ -17,8 +17,6 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
 
 /**
  * Example single route.
- *
- * @JSR\Router()
  */
 class SingleRoute
 {

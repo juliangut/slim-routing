@@ -13,11 +13,15 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Mapping\Annotation;
 
-use Jgut\Mapping\Annotation\AbstractAnnotation;
-
 /**
  * @Annotation
  *
  * @Target("CLASS")
  */
-final class Router extends AbstractAnnotation {}
+final class Router
+{
+    public function __construct()
+    {
+        @trigger_error('Router annotation is deprecated as it is not needed any more.', \E_USER_DEPRECATED);
+    }
+}

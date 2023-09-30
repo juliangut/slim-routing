@@ -18,7 +18,6 @@ use Jgut\Mapping\Exception\DriverException;
 use Jgut\Slim\Routing\Mapping\Attribute\Group as GroupAttribute;
 use Jgut\Slim\Routing\Mapping\Attribute\Middleware as MiddlewareAttribute;
 use Jgut\Slim\Routing\Mapping\Attribute\Route as RouteAttribute;
-use Jgut\Slim\Routing\Mapping\Attribute\Router as RouterAttribute;
 use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use Reflection;
@@ -46,10 +45,7 @@ final class AttributeDriver extends AbstractClassDriver
                 continue;
             }
 
-            $routerAttributes = $class->getAttributes(RouterAttribute::class);
-            if (\count($routerAttributes) !== 0) {
-                $routes[] = $this->getRoutesMetadata($class, $groups);
-            }
+            $routes[] = $this->getRoutesMetadata($class, $groups);
         }
 
         return \count($routes) > 0 ? array_values(array_merge(...$routes)) : [];
@@ -107,10 +103,6 @@ final class AttributeDriver extends AbstractClassDriver
 
                 $routes[] = $routeMetadata;
             }
-        }
-
-        if (\count($routes) === 0) {
-            throw new DriverException(sprintf('Class "%s" does not define any route.', $class->name));
         }
 
         return $routes;

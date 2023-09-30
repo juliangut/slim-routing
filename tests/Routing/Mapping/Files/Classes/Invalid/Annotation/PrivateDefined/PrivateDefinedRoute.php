@@ -18,8 +18,6 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
 /**
  * Example private method defined route.
  *
- * @JSR\Router()
- *
  * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
  */
 class PrivateDefinedRoute

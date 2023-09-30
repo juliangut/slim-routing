@@ -17,8 +17,6 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
 
 /**
  * Example constructor defined route.
- *
- * @JSR\Router()
  */
 class ConstructorDefinedRoute
 {

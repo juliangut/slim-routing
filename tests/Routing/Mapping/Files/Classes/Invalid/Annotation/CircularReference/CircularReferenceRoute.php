@@ -18,8 +18,6 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
 /**
  * Example circular reference route.
  *
- * @JSR\Router()
- *
  * @JSR\Group(
  * parent="Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Invalid\Annotation\CircularReference\CircularReferenceRoute"
  * )

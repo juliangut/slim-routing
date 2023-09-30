@@ -16,12 +16,10 @@ namespace Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Valid\Attribute;
 use Jgut\Slim\Routing\Mapping\Attribute\Group;
 use Jgut\Slim\Routing\Mapping\Attribute\Middleware;
 use Jgut\Slim\Routing\Mapping\Attribute\Route;
-use Jgut\Slim\Routing\Mapping\Attribute\Router;
 
 /**
  * Example grouped route.
  */
-#[Router]
 #[Group(
     pattern: '/grouped/{section}',
     placeholders: ['section' => '[A-Za-z]+'],

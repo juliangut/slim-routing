@@ -12,6 +12,8 @@ parameters:
     GroupMapping: 'array{prefix?: string, placeholders?: mixed, middleware?: mixed, routes: array<string, mixed>}'
     RouteMapping: 'array{invokable?: mixed, name?: string, prefix?: string, pattern?: string, placeholders?: mixed, xmlHttpRequest?: mixed, priority?: mixed, middleware?: mixed}'
   ignoreErrors:
+    - message: '/^Error suppression via "@" should not be used\.$/'
+      path: src/Mapping/Annotation/Router.php
     - message: '/^Parameter #1 \$callback of function array_map expects \(callable\(.+\)\|null, Closure\(string\): string given\.$/'
       path: src/Mapping/Metadata/AbstractMetadata.php
     - message: '/^Call to an undefined method ReflectionType::getName\(\)\.$/'

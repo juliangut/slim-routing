@@ -18,8 +18,6 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
 /**
  * Example grouped route.
  *
- * @JSR\Router()
- *
  * @JSR\Group(
  * pattern="/grouped/{section}",
  * placeholders={"section": "[A-Za-z]+"},

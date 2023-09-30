@@ -14,14 +14,12 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Invalid\Attribute\PrivateDefined;
 
 use Jgut\Slim\Routing\Mapping\Attribute\Route;
-use Jgut\Slim\Routing\Mapping\Attribute\Router;
 
 /**
  * Example private method defined route.
  *
  * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
  */
-#[Router]
 class PrivateDefinedRoute
 {
     #[Route(pattern: '/private')]

@@ -15,12 +15,10 @@ namespace Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Valid\Attribute;
 
 use Jgut\Slim\Routing\Mapping\Attribute\Middleware;
 use Jgut\Slim\Routing\Mapping\Attribute\Route;
-use Jgut\Slim\Routing\Mapping\Attribute\Router;
 
 /**
  * Example single route.
  */
-#[Router]
 class SingleRoute
 {
     /**

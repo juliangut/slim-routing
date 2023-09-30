@@ -14,12 +14,10 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Invalid\Attribute\ConstructorDefined;
 
 use Jgut\Slim\Routing\Mapping\Attribute\Route;
-use Jgut\Slim\Routing\Mapping\Attribute\Router;
 
 /**
  * Example constructor defined route.
  */
-#[Router]
 class ConstructorDefinedRoute
 {
     #[Route(pattern: '/constructor')]
