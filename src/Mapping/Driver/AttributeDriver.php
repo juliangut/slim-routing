@@ -96,7 +96,7 @@ final class AttributeDriver extends AbstractClassDriver
                 /** @var RouteAttribute $route */
                 $route = $routeAttribute->newInstance();
 
-                $routeMetadata = new RouteMetadata($class->name . ':' . $method->name, $route->getName());
+                $routeMetadata = new RouteMetadata($class->name . ':' . $method->name);
                 if ($group !== null) {
                     $routeMetadata->setGroup($group);
                 }
@@ -172,6 +172,10 @@ final class AttributeDriver extends AbstractClassDriver
 
     protected function populateRoute(RouteMetadata $route, ReflectionMethod $method, RouteAttribute $attribute): void
     {
+        $name = $attribute->getName();
+        if ($name !== null) {
+            $route->setName($name);
+        }
         $this->populatePattern($route, $attribute);
         $route->setMethods($attribute->getMethods());
         $route->setXmlHttpRequest($attribute->isXmlHttpRequest());
@@ -216,7 +220,7 @@ final class AttributeDriver extends AbstractClassDriver
             $middlewareList[] = $middlewareAttribute->newInstance()->getMiddleware();
         }
         if (\count($middlewareList) !== 0) {
-            $metadata->setMiddleware($middlewareList);
+            $metadata->setMiddlewares($middlewareList);
         }
     }
 

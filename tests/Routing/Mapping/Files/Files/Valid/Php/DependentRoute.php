@@ -18,18 +18,18 @@ use Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Valid\Attribute\DependentRoute
 return [
     [
         'pattern' => '/abstract',
-        'middleware' => ['abstractMiddleware'],
+        'middlewares' => ['abstractMiddleware'],
         'routes' => [
             [
                 'prefix' => 'dependent',
                 'pattern' => '/dependent',
-                'middleware' => ['dependentMiddleware'],
+                'middlewares' => ['dependentMiddleware'],
                 'routes' => [
                     [
                         'name' => 'four',
                         'methods' => ['GET'],
                         'pattern' => '/four',
-                        'middleware' => ['fourMiddleware'],
+                        'middlewares' => ['fourMiddleware'],
                         'invokable' => DependentRoute::class . ':actionFour',
                     ],
                 ],

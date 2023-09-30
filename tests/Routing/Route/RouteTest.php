@@ -43,7 +43,7 @@ class RouteTest extends TestCase
     {
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)
             ->getMock();
-        $metadata = (new RouteMetadata('', null))->setXmlHttpRequest(true);
+        $metadata = (new RouteMetadata(''))->setXmlHttpRequest(true);
 
         $route = new Route(
             ['GET'],
@@ -83,7 +83,7 @@ class RouteTest extends TestCase
             static function (): void {},
             new ResponseFactory(),
             $callableResolver,
-            (new RouteMetadata('', null))->setTransformers(['transformer']),
+            (new RouteMetadata(''))->setTransformers(['transformer']),
             $container,
         );
         $route->setArgument('id', '10');
@@ -113,7 +113,7 @@ class RouteTest extends TestCase
             ->method('get')
             ->willReturn(new ParameterTransformerStub(10));
 
-        $metadata = (new RouteMetadata('', null))
+        $metadata = (new RouteMetadata(''))
             ->setTransformers(['transformer']);
 
         $responseFactory = new ResponseFactory();
@@ -154,7 +154,7 @@ class RouteTest extends TestCase
             ->method('get')
             ->willReturn(new ParameterTransformerStub(10));
 
-        $metadata = (new RouteMetadata('', null))
+        $metadata = (new RouteMetadata(''))
             ->setTransformers(['transformer'])
             ->setParameters(['identifier' => 'int']);
 

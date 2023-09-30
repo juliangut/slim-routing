@@ -86,24 +86,6 @@ class FileMappingTraitTest extends AbstractDriverTestCase
         $driver->getMetadata();
     }
 
-    public function testInvalidMethods(): void
-    {
-        $this->expectException(DriverException::class);
-        $this->expectExceptionMessage('Route methods must be a string or string array. "integer" given.');
-
-        $driver = $this->getMockForTrait(FileMappingTrait::class);
-        $driver->expects(static::once())
-            ->method('getMappingData')
-            ->willReturn([
-                [
-                    'invokable' => 'callable',
-                    'methods' => 10,
-                ],
-            ]);
-
-        $driver->getMetadata();
-    }
-
     public function testInvalidPlaceholdersType(): void
     {
         $this->expectException(DriverException::class);
@@ -169,7 +151,7 @@ class FileMappingTraitTest extends AbstractDriverTestCase
             ->willReturn([
                 [
                     'invokable' => 'callable',
-                    'middleware' => 10,
+                    'middlewares' => 10,
                 ],
             ]);
 

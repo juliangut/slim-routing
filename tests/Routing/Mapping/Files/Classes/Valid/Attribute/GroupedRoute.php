@@ -33,7 +33,7 @@ class GroupedRoute
         pattern: '/two/{id}',
         arguments: ['scope' => 'protected'],
     )]
-    #[Middleware('route-middleware')]
+    #[Middleware('twoMiddleware')]
     #[Transformer(transformer: 'route-transformer', parameters: ['id' => 'int'])]
     public function actionTwo(): void {}
 

@@ -13,15 +13,17 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Mapping\Metadata;
 
+use Jgut\Mapping\Exception\MetadataException;
+
 final class GroupMetadata extends AbstractMetadata
 {
     protected ?self $parent = null;
 
+    /**
+     * @var non-empty-string|null
+     */
     protected ?string $prefix = null;
 
-    /**
-     * Get parent group.
-     */
     public function getParent(): ?self
     {
         return $this->parent;
@@ -34,6 +36,9 @@ final class GroupMetadata extends AbstractMetadata
         return $this;
     }
 
+    /**
+     * @return non-empty-string|null
+     */
     public function getPrefix(): ?string
     {
         return $this->prefix;
@@ -41,7 +46,15 @@ final class GroupMetadata extends AbstractMetadata
 
     public function setPrefix(string $prefix): self
     {
-        $this->prefix = $prefix;
+        if (str_contains($prefix, ' ')) {
+            throw new MetadataException('Group prefix must not contain spaces.');
+        }
+
+        if (trim($prefix) === '') {
+            throw new MetadataException('Group prefix can not be an empty string.');
+        }
+
+        $this->prefix = trim($prefix);
 
         return $this;
     }

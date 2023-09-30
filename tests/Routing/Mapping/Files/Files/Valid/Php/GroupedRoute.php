@@ -25,7 +25,7 @@ return [
             'section' => 'string',
         ],
         'transformers' => ['group-transformer'],
-        'middleware' => ['group-middleware'],
+        'middlewares' => ['group-middleware'],
         'routes' => [
             [
                 'methods' => ['GET'],
@@ -37,7 +37,7 @@ return [
                     'id' => 'int',
                 ],
                 'transformers' => ['route-transformer'],
-                'middleware' => ['route-middleware'],
+                'middlewares' => ['twoMiddleware'],
                 'invokable' => GroupedRoute::class . ':actionTwo',
             ],
             [

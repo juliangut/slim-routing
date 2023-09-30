@@ -35,7 +35,8 @@ abstract class AbstractDriverTestCase extends TestCase
         static::assertEquals([], $group->getArguments());
         static::assertEquals([], $group->getParameters());
         static::assertEquals([], $group->getTransformers());
-        static::assertEquals(['dependentMiddleware'], $group->getMiddleware());
+        static::assertEquals(['dependentMiddleware'], $group->getMiddlewares());
+        static::assertCount(2, $route->getGroupChain());
 
         static::assertEquals('four', $route->getName());
         static::assertEquals(['GET'], $route->getMethods());
@@ -46,7 +47,7 @@ abstract class AbstractDriverTestCase extends TestCase
         static::assertEquals(0, $route->getPriority());
         static::assertEquals([], $route->getArguments());
         static::assertEquals([], $route->getParameters());
-        static::assertEquals(['fourMiddleware'], $route->getMiddleware());
+        static::assertEquals(['fourMiddleware'], $route->getMiddlewares());
 
         $route = $routes[1];
         $group = $route->getGroup();
@@ -57,7 +58,8 @@ abstract class AbstractDriverTestCase extends TestCase
         static::assertEquals([], $group->getArguments());
         static::assertEquals(['section' => 'string'], $group->getParameters());
         static::assertEquals(['group-transformer'], $group->getTransformers());
-        static::assertEquals(['group-middleware'], $group->getMiddleware());
+        static::assertEquals(['group-middleware'], $group->getMiddlewares());
+        static::assertCount(1, $route->getGroupChain());
 
         static::assertNull($route->getName());
         static::assertEquals(['GET'], $route->getMethods());
@@ -69,7 +71,7 @@ abstract class AbstractDriverTestCase extends TestCase
         static::assertEquals(['scope' => 'protected'], $route->getArguments());
         static::assertEquals(['id' => 'int'], $route->getParameters());
         static::assertEquals(['route-transformer'], $route->getTransformers());
-        static::assertEquals(['route-middleware'], $route->getMiddleware());
+        static::assertEquals(['twoMiddleware'], $route->getMiddlewares());
 
         $route = $routes[2];
         $group = $route->getGroup();
@@ -81,7 +83,8 @@ abstract class AbstractDriverTestCase extends TestCase
         static::assertEquals([], $group->getArguments());
         static::assertEquals(['section' => 'string'], $group->getParameters());
         static::assertEquals(['group-transformer'], $group->getTransformers());
-        static::assertEquals(['group-middleware'], $group->getMiddleware());
+        static::assertEquals(['group-middleware'], $group->getMiddlewares());
+        static::assertCount(1, $route->getGroupChain());
 
         static::assertNull($route->getName());
         static::assertEquals(['GET'], $route->getMethods());
@@ -93,10 +96,13 @@ abstract class AbstractDriverTestCase extends TestCase
         static::assertEquals([], $route->getArguments());
         static::assertEquals([], $route->getParameters());
         static::assertEquals([], $route->getTransformers());
-        static::assertEquals([], $route->getMiddleware());
+        static::assertEquals([], $route->getMiddlewares());
+        static::assertCount(1, $route->getGroupChain());
 
         $route = $routes[3];
         static::assertNull($route->getGroup());
+        static::assertCount(0, $route->getGroupChain());
+
         static::assertEquals('one', $route->getName());
         static::assertEquals(['GET', 'POST'], $route->getMethods());
         static::assertEquals('one/{id}', $route->getPattern());
@@ -107,6 +113,6 @@ abstract class AbstractDriverTestCase extends TestCase
         static::assertEquals([], $route->getArguments());
         static::assertEquals(['first' => 'value', 'id' => 'int'], $route->getParameters());
         static::assertEquals(['fake_transformer'], $route->getTransformers());
-        static::assertEquals(['oneMiddleware'], $route->getMiddleware());
+        static::assertEquals(['oneMiddleware'], $route->getMiddlewares());
     }
 }

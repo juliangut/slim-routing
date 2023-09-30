@@ -8,6 +8,6 @@
   parameters:
     first: "value"
     id: "int"
-  middleware: ["oneMiddleware"]
+  middlewares: ["oneMiddleware"]
   xmlHttpRequest: true
   invokable: "Jgut\\Slim\\Routing\\Tests\\Mapping\\Files\\Classes\\Valid\\Attribute\\SingleRoute:actionOne"

@@ -15,9 +15,9 @@
             <first>value</first>
             <id>int</id>
         </parameters>
-        <middleware>
+        <middlewares>
             <middleware1>oneMiddleware</middleware1>
-        </middleware>
+        </middlewares>
         <xmlHttpRequest>true</xmlHttpRequest>
         <invokable>Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Valid\Attribute\SingleRoute:actionOne</invokable>
     </route1>

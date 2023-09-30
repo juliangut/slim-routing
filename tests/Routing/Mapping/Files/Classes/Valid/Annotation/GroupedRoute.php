@@ -23,7 +23,7 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
  *     placeholders={"section": "[A-Za-z]+"},
  *     parameters={"section": "string"},
  *     transformers={"group-transformer"},
- *     middleware={"group-middleware"}
+ *     middlewares={"group-middleware"}
  * )
  */
 class GroupedRoute
@@ -34,7 +34,7 @@ class GroupedRoute
      *     arguments={"scope": "protected"},
      *     parameters={"id": "int"},
      *     transformers={"route-transformer"},
-     *     middleware={"route-middleware"},
+     *     middlewares={"twoMiddleware"},
      * )
      */
     public function actionTwo(): void {}

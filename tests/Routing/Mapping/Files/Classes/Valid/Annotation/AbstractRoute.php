@@ -21,7 +21,7 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
  * @JSR\Group(
  *     prefix="abstract",
  *     pattern="/abstract",
- *     middleware={"abstractMiddleware"}
+ *     middlewares={"abstractMiddleware"}
  * )
  */
 abstract class AbstractRoute {}

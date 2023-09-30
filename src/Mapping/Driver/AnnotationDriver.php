@@ -89,7 +89,7 @@ final class AnnotationDriver extends AbstractAnnotationDriver
                     ));
                 }
 
-                $routeMetadata = new RouteMetadata($class->name . ':' . $method->name, $route->getName());
+                $routeMetadata = new RouteMetadata($class->name . ':' . $method->name);
                 if ($group !== null) {
                     $routeMetadata->setGroup($group);
                 }
@@ -154,7 +154,7 @@ final class AnnotationDriver extends AbstractAnnotationDriver
         $group->setPlaceholders($annotation->getPlaceholders());
         $group->setArguments($annotation->getArguments());
         $this->populateTransformer($group, $annotation);
-        $group->setMiddleware($annotation->getMiddleware());
+        $group->setMiddlewares($annotation->getMiddlewares());
     }
 
     /**
@@ -165,6 +165,10 @@ final class AnnotationDriver extends AbstractAnnotationDriver
         ReflectionMethod $method,
         RouteAnnotation $annotation,
     ): void {
+        $name = $annotation->getName();
+        if ($name !== null) {
+            $route->setName($name);
+        }
         $this->populatePattern($route, $annotation);
         $route->setMethods($annotation->getMethods());
         $route->setXmlHttpRequest($annotation->isXmlHttpRequest());
@@ -172,7 +176,7 @@ final class AnnotationDriver extends AbstractAnnotationDriver
         $route->setPlaceholders($annotation->getPlaceholders());
         $route->setArguments($annotation->getArguments());
         $this->populateTransformer($route, $annotation, $method);
-        $route->setMiddleware($annotation->getMiddleware());
+        $route->setMiddlewares($annotation->getMiddlewares());
     }
 
     protected function populatePrefix(GroupMetadata $metadata, GroupAnnotation $annotation): void

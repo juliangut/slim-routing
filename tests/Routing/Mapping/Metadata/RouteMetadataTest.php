@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Mapping\Metadata;
 
-use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
+use Jgut\Mapping\Exception\MetadataException;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
 use PHPUnit\Framework\TestCase;
 
@@ -22,62 +22,74 @@ use PHPUnit\Framework\TestCase;
  */
 class RouteMetadataTest extends TestCase
 {
-    protected RouteMetadata $route;
-
-    protected function setUp(): void
-    {
-        $this->route = new RouteMetadata('callable', null);
-    }
-
     public function testDefaults(): void
     {
-        static::assertEquals('callable', $this->route->getInvokable());
-        static::assertNull($this->route->getName());
-        static::assertNull($this->route->getGroup());
-        static::assertEquals([], $this->route->getGroupChain());
-        static::assertEquals([], $this->route->getMethods());
-        static::assertEquals([], $this->route->getTransformers());
-        static::assertEquals(0, $this->route->getPriority());
-        static::assertFalse($this->route->isXmlHttpRequest());
+        $route = new RouteMetadata('callable');
+
+        static::assertNull($route->getName());
+        static::assertNull($route->getGroup());
+        static::assertEquals([], $route->getGroupChain());
+        static::assertEquals(['GET'], $route->getMethods());
+        static::assertEquals('callable', $route->getInvokable());
+        static::assertEquals([], $route->getTransformers());
+        static::assertEquals(0, $route->getPriority());
+        static::assertFalse($route->isXmlHttpRequest());
     }
 
-    public function testGroup(): void
+    public function testInvalidName(): void
     {
-        $group = new GroupMetadata();
+        $this->expectException(MetadataException::class);
+        $this->expectExceptionMessage('Route name must not contain spaces.');
 
-        $this->route->setGroup($group);
+        (new RouteMetadata('callable'))->setName('invalid name');
+    }
 
-        static::assertEquals($group, $this->route->getGroup());
-        static::assertEquals([$group], $this->route->getGroupChain());
+    public function testEmptyName(): void
+    {
+        $this->expectException(MetadataException::class);
+        $this->expectExceptionMessage('Route name can not be an empty string.');
+
+        (new RouteMetadata('callable'))->setName('');
+    }
+
+    public function testInvalidMethod(): void
+    {
+        $this->expectException(MetadataException::class);
+        $this->expectExceptionMessage('Route method must not contain spaces.');
+
+        (new RouteMetadata('callable'))->setMethods(['invalid method']);
+    }
+
+    public function testEmptyMethod(): void
+    {
+        $this->expectException(MetadataException::class);
+        $this->expectExceptionMessage('Route method can not be an empty string.');
+
+        (new RouteMetadata('callable'))->setMethods(['']);
+    }
+
+    public function testEmptyMethods(): void
+    {
+        $this->expectException(MetadataException::class);
+        $this->expectExceptionMessage('Route methods can not be empty');
+
+        (new RouteMetadata('callable'))->setMethods([]);
+    }
+
+    public function testWrongMethodCount(): void
+    {
+        $this->expectException(MetadataException::class);
+        $this->expectExceptionMessage('Route method "ANY" cannot be defined with other methods');
+
+        (new RouteMetadata('callable'))->setMethods(['GET', 'ANY']);
     }
 
     public function testTransformer(): void
     {
-        $this->route->setTransformers(['transformer']);
+        $route = new RouteMetadata('callable');
 
-        static::assertEquals(['transformer'], $this->route->getTransformers());
-    }
+        $route->setTransformers(['transformer']);
 
-    public function testMethods(): void
-    {
-        $methods = ['GET', 'POST', 'DELETE'];
-
-        $this->route->setMethods($methods);
-
-        static::assertEquals($methods, $this->route->getMethods());
-    }
-
-    public function testPriority(): void
-    {
-        $this->route->setPriority(-10);
-
-        static::assertEquals(-10, $this->route->getPriority());
-    }
-
-    public function testXmlHttpRequest(): void
-    {
-        $this->route->setXmlHttpRequest(true);
-
-        static::assertTrue($this->route->isXmlHttpRequest());
+        static::assertEquals(['transformer'], $route->getTransformers());
     }
 }

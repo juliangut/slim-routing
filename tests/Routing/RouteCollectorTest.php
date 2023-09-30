@@ -81,15 +81,16 @@ class RouteCollectorTest extends TestCase
             ->method('set');
 
         $routesMetadata = [
-            (new RouteMetadata(['one', 'action'], null))
+            (new RouteMetadata(['one', 'action']))
                 ->setMethods(['GET'])
                 ->setPattern('one/{id}')
                 ->setPlaceholders(['id' => 'numeric'])
                 ->setXmlHttpRequest(true),
-            (new RouteMetadata(['two', 'action'], 'two'))
+            (new RouteMetadata(['two', 'action']))
+                ->setName('two')
                 ->setMethods(['POST'])
                 ->setPattern('two')
-                ->setMiddleware(['route-middleware']),
+                ->setMiddlewares(['twoMiddleware']),
         ];
 
         $configuration = new Configuration(['sources' => $sources]);
@@ -122,15 +123,16 @@ class RouteCollectorTest extends TestCase
             ->getMock();
 
         $routesMetadata = [
-            (new RouteMetadata(['one', 'action'], null))
+            (new RouteMetadata(['one', 'action']))
                 ->setMethods(['GET'])
                 ->setPattern('one/{id}')
                 ->setPlaceholders(['id' => 'numeric'])
                 ->setXmlHttpRequest(true),
-            (new RouteMetadata(['two', 'action'], 'two'))
+            (new RouteMetadata(['two', 'action']))
+                ->setName('two')
                 ->setMethods(['POST'])
                 ->setPattern('two')
-                ->setMiddleware(['route-middleware']),
+                ->setMiddlewares(['twoMiddleware']),
         ];
 
         $cache = $this->getMockBuilder(CacheInterface::class)
@@ -167,16 +169,17 @@ class RouteCollectorTest extends TestCase
             ->getMock();
 
         $routesMetadata = [
-            (new RouteMetadata(['one', 'action'], null))
+            (new RouteMetadata(['one', 'action']))
                 ->setMethods(['GET'])
                 ->setPattern('one/{id}')
                 ->setPlaceholders(['id' => 'numeric'])
                 ->setXmlHttpRequest(true),
-            (new RouteMetadata(['two', 'action'], 'two'))
+            (new RouteMetadata(['two', 'action']))
+                ->setName('two')
                 ->setMethods(['POST'])
                 ->setPattern('two')
                 ->setArguments(['scope' => 'public'])
-                ->setMiddleware(['route-middleware']),
+                ->setMiddlewares(['twoMiddleware']),
         ];
 
         $configuration = new Configuration(['sources' => $sources]);

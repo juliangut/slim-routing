@@ -25,23 +25,24 @@ final class RouteMetadata extends AbstractMetadata
     protected ?array $groupChain = null;
 
     /**
-     * @var list<string>
+     * @var non-empty-string|null
      */
-    protected array $methods = [];
+    protected ?string $name = null;
+
+    /**
+     * @var non-empty-list<non-empty-string>
+     */
+    protected array $methods = ['GET'];
 
     protected bool $xmlHttpRequest = false;
 
     protected int $priority = 0;
 
-    /**
-     * @throws MetadataException
-     */
     public function __construct(
         /**
          * @var string|callable(): mixed
          */
         protected $invokable,
-        protected ?string $name,
     ) {}
 
     /**
@@ -52,9 +53,30 @@ final class RouteMetadata extends AbstractMetadata
         return $this->invokable;
     }
 
+    /**
+     * @return non-empty-string|null
+     */
     public function getName(): ?string
     {
         return $this->name;
+    }
+
+    /**
+     * @throws MetadataException
+     */
+    public function setName(string $name): self
+    {
+        if (str_contains(trim($name), ' ')) {
+            throw new MetadataException('Route name must not contain spaces.');
+        }
+
+        if (trim($name) === '') {
+            throw new MetadataException('Route name can not be an empty string.');
+        }
+
+        $this->name = trim($name);
+
+        return $this;
     }
 
     public function getGroup(): ?GroupMetadata
@@ -97,7 +119,7 @@ final class RouteMetadata extends AbstractMetadata
     }
 
     /**
-     * @return list<string>
+     * @return non-empty-list<non-empty-string>
      */
     public function getMethods(): array
     {
@@ -105,11 +127,37 @@ final class RouteMetadata extends AbstractMetadata
     }
 
     /**
-     * @param list<string> $methods
+     * @param array<string> $methods
+     *
+     * @throws MetadataException
      */
     public function setMethods(array $methods): self
     {
-        $this->methods = $methods;
+        /** @var list<non-empty-string> $methodList */
+        $methodList = [];
+        foreach ($methods as $method) {
+            if (str_contains(trim($method), ' ')) {
+                throw new MetadataException('Route method must not contain spaces.');
+            }
+
+            if (trim($method) === '') {
+                throw new MetadataException('Route method can not be an empty string.');
+            }
+
+            $methodList[] = mb_strtoupper(trim($method));
+        }
+
+        $methodList = array_filter($methodList, 'strlen');
+
+        if (\count($methodList) === 0) {
+            throw new MetadataException('Route methods can not be empty.');
+        }
+
+        if (\count($methodList) > 1 && \in_array('ANY', $methodList, true)) {
+            throw new MetadataException('Route method "ANY" cannot be defined with other methods.');
+        }
+
+        $this->methods = array_values($methodList);
 
         return $this;
     }

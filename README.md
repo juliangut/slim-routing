@@ -114,7 +114,7 @@ $app->run();
   * any => `[^}]+`
 * `namingStrategy`, instance of \Jgut\Slim\Routing\Naming\Strategy (\Jgut\Slim\Routing\Naming\SnakeCase by default)
 
-In the case of Attributes mapping all classes in source paths will be traversed in search of routing definitons
+In the case of Attributes mapping all classes in source paths will be traversed in search of routing definitions
 
 ## Response handling
 
@@ -205,7 +205,7 @@ You can create your own response type handlers to compose specifically formatted
 
 Route parameters can be transformed before arriving to route callable. The most common use of this feature would be to transform IDs into actual object/entity used in the callable
 
-To achieve this you need to provide a `\Jgut\Slim\Routing\Transformer\ParameterTransformer` instance defined in the route itself
+To achieve this you need to provide a `\Jgut\Slim\Routing\Transformer\ParameterTransformer` instance
 
 For example, you would want to transform parameters into Doctrine entities
 
@@ -236,6 +236,8 @@ final class UserEntityTransformer implements ParameterTransformer
 }
 ```
 
+_Mind that a single transformer can transform one or several parameters_
+
 ### Route mapping
 
 Routes can be defined in two basic ways: by writing them down in definition files of various formats or directly defined in attributes on controller classes
@@ -253,7 +255,7 @@ use Jgut\Slim\Routing\Mapping\Attribute\Group;
     prefix: 'routePrefix',
     parent: Area::class,
     pattern: 'section/{section}',
-    placeholders: ['section': '[a-z]+'],
+    placeholders: ['section': 'alpha'],
     arguments: ['scope' => 'public'],
  )]
 class Section {}
@@ -261,8 +263,8 @@ class Section {}
 
 * `prefix`, optional, prefix to be prepended to route names
 * `parent`, optional, references a parent group name
-* `pattern`, optional, path pattern, prepended to route patterns
-* `placeholders`, optional, array of regex/alias for path placeholders,
+* `pattern`, optional, path pattern, prepended to route patterns. Do not use placeholders in the pattern
+* `placeholders`, optional, array of regex/alias for pattern placeholders,
 * `arguments`, optional, array of arguments to attach to final route 
 
 ##### Route (Method level)
@@ -278,7 +280,7 @@ class Section
         name: 'routeName',
         methods: ['GET', 'POST'],
         pattern: 'user/{user}',
-        placeholders: ['user': '[a-z0-9]+'],
+        placeholders: ['user': 'alnum'],
         arguments: ['scope': 'admin.read']
         xmlHttpRequest: true,
         priority: -10,
@@ -289,8 +291,8 @@ class Section
 
 * `name`, optional, route name so it can be referenced in Slim
 * `methods`, optional, list of accepted HTTP route methods. ºANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed in the list (defaults to GET)
-* `pattern`, optional, path pattern (defaults to '/')
-* `placeholders`, optional, array of regex/alias for path placeholders
+* `pattern`, optional, path pattern (defaults to '/'). Do not use placeholders in the pattern
+* `placeholders`, optional, array of regex/alias for pattern placeholders
 * `arguments`, optional, array of arguments to attach to the route
 * `xmlHttpRequest`, request should be AJAX, false by default
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
@@ -305,7 +307,7 @@ use Jgut\Slim\Routing\Mapping\Attribute\Middleware;
 use Jgut\Slim\Routing\Mapping\Attribute\Route;
 use Psr\Http\Message\ResponseInterface;
 
-#[Group(pattern: 'section')]
+#[Group()]
 #[Middleware(SectionMiddleware::class)]
 class Section
 {
@@ -327,7 +329,7 @@ use Jgut\Slim\Routing\Mapping\Attribute\Route;
 use Jgut\Slim\Routing\Mapping\Attribute\Transformer;
 use Psr\Http\Message\ResponseInterface;
 
-#[Group(pattern: 'section')]
+#[Group()]
 #[Transformer(transformer: SectionEntityTransfomer::class)]
 class Section
 {
@@ -363,7 +365,7 @@ return [
         'group-parameters' => 'type',
     ],
     'transformers' => ['group-transformer'],
-    'middleware' => ['group-middleware'],
+    'middlewares' => ['group-middleware'],
     'routes' => [
       [
         // Route
@@ -382,7 +384,7 @@ return [
         'arguments' => [
             'route-argument' => 'value',
         ],
-        'middleware' => ['route-middleware'],
+        'middlewares' => ['route-middleware'],
         'invokable' => 'callable',
       ],
       [
@@ -394,7 +396,7 @@ return [
         'arguments' => [
             'subgroup-argument' => 'value',
         ],
-        'middleware' => ['subgroup-middleware'],
+        'middlewares' => ['subgroup-middleware'],
         'routes' => [
           // Routes/groups ...
         ],
@@ -424,9 +426,9 @@ return [
         <transformers>
           <transformer1>group-transformer</transformer1>
         </transformers>
-        <middleware>
+        <middlewares>
             <middleware1>group-middleware</middleware1>
-        </middleware>
+        </middlewares>
         <routes>
             <route1 name="routeName" priority="0" pattern="route-pattern">
                 <xmlHttpRequest>true</xmlHttpRequest>
@@ -446,9 +448,9 @@ return [
                 <arguments>
                     <route-argument1>value</route-argument1>
                 </arguments>
-                <middleware>
+                <middlewares>
                     <middleware1>route-middleware</middleware1>
-                </middleware>
+                </middlewares>
                 <invokable>callable</invokable>
             </route1>
             <subgroup1 prefix="prefix" pattern="subgroup-pattern">
@@ -458,9 +460,9 @@ return [
                 <argument>
                     <subgroup-argument1>value</subgroup-argument1>
                 </argument>
-                <middleware>
+                <middlewares>
                     <middleware1>subgroup-middleware</middleware1>
-                </middleware>
+                </middlewares>
                 <routes>
                     <!-- Routes/groups... -->
                 </routes>
@@ -492,7 +494,7 @@ _Mind comments are not valid standard JSON_
       "group-parameter": "type"
     }],
     "transformers": ["group-transformer"],
-    "middleware": ["group-middleware"],
+    "middlewares": ["group-middleware"],
     "routes": [
       {
         // Route
@@ -511,7 +513,7 @@ _Mind comments are not valid standard JSON_
         "arguments": [{
           "route-argument": "value"
         }],
-        "middleware": ["route-middleware"],
+        "middlewares": ["route-middleware"],
         "invokable": "callable"
       },
       {
@@ -523,7 +525,7 @@ _Mind comments are not valid standard JSON_
         "arguments": [{
           "subgroup-argument": "value"
         }],
-        "middleware": ["subgroup-middleware"],
+        "middlewares": ["subgroup-middleware"],
         "routes": [
           // Routes/groups ...
         ]
@@ -548,7 +550,7 @@ _Mind comments are not valid standard JSON_
   parameters:
     - group-parameter: type
   transformers: [group-ransformer]
-  middleware: [group-middleware]
+  middlewares: [group-middleware]
   routes:
     # Route
     - name: routeName
@@ -563,7 +565,7 @@ _Mind comments are not valid standard JSON_
       transformers: [route-ransformer]
       arguments:
         - route-argument: value
-      middleware: [route-middleware]
+      middlewares: [route-middleware]
       invokable: callable
     # Subgroup
     - pattern: subgroup-pattern
@@ -571,7 +573,7 @@ _Mind comments are not valid standard JSON_
         - subgroup-placeholder: type
       arguments: 
         - subgroup-argument: value
-      middleware: [subgroup-middleware]
+      middlewares: [subgroup-middleware]
       routes:
         # Routes/groups ...
     # Routes/groups ...
@@ -584,12 +586,12 @@ Defines a group in which routes may reside
 
 * `routes`, array of routes and/or subgroups (this key identifies a group)
 * `prefix`, optional, prefix to be prepended to route names
-* `pattern`, optional, path pattern, prepended to route patterns
-* `placeholders`, optional, array of regex/alias for path placeholders,
+* `pattern`, optional, path pattern, prepended to route patterns. Do not use placeholders in the pattern
+* `placeholders`, optional, array of regex/alias for pattern placeholders,
 * `parameters`, optional, array of definitions of parameters, to be used in transformer
 * `transformers`, optional, array of ParameterTransformer instances or reference to ParameterTransformer instances that will be extracted from the container
 * `arguments`, optional, array of arguments to attach to final route
-* `middleware`, optional, array of middleware to be added to all group routes
+* `middlewares`, optional, array of middleware to be added to all group routes
 
 ##### Route
 
@@ -597,14 +599,14 @@ Defines a route added to Slim
 
 * `invokable`, callable to be invoked on route match. Can be a container entry, class name or an array of [class, method]
 * `name`, optional, route name so it can be referenced in Slim
-* `pattern`, optional, path pattern (defaults to '/')
+* `pattern`, optional, path pattern (defaults to '/'). Do not use placeholders in the pattern
+* `placeholders`, optional, array of regex/alias for pattern placeholders
 * `xmlHttpRequest`, request should be AJAX, false by default
 * `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed (defaults to GET)
-* `placeholders`, optional, array of regex for path placeholders
 * `parameters`, optional, array of definitions of parameters, to be used in transformer
 * `transformers`, optional, array of ParameterTransformer instances or reference to ParameterTransformer instances that will be extracted from the container
 * `arguments`, optional, array of arguments to attach to the route
-* `middleware`, optional, array of middleware to be added to the route
+* `middlewares`, optional, array of middleware to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
 
 #### Annotations
@@ -642,11 +644,11 @@ class Section {}
 * `prefix`, optional, prefix to be prepended to route names
 * `parent`, optional, references a parent group name
 * `pattern`, optional, path pattern, prepended to route patterns
-* `placeholders`, optional, array of regex/alias for path placeholders,
+* `placeholders`, optional, array of regex/alias for pattern placeholders,
 * `parameters`, optional, array of definitions of parameters, to be used in route transformer
 * `transformers`, optional, array of ParameterTransformer instances or reference to ParameterTransformer instances that will be extracted from the container
 * `arguments`, optional, array of arguments to attach to final route
-* `middleware`, optional, array of middleware to be added to all group routes
+* `middlewares`, optional, array of middleware to be added to all group routes
 
 ##### Route (Method level)
 
@@ -677,13 +679,13 @@ class Section
 
 * `name`, optional, route name so it can be referenced in Slim
 * `pattern`, optional, path pattern (defaults to '/')
+* `placeholders`, optional, array of regex/alias for pattern placeholders
 * `xmlHttpRequest`, request should be AJAX, false by default
 * `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed in the list (defaults to GET)
-* `placeholders`, optional, array of regex/alias for path placeholders
 * `parameters`, optional, array of definitions of parameters, to be used in transformer
 * `transformers`, optional, array of reference to a ParameterTransformer instances that will be extracted from the container
 * `arguments`, optional, array of arguments to attach to the route
-* `middleware`, optional, array of middleware to be added to the route
+* `middlewares`, optional, array of middleware to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
 
 ### Route composition
@@ -715,7 +717,7 @@ Resulting route arguments is composed of all group arguments if any and route ar
 Resulting middlewares added to a route will be the result of combining group middleware and route middleware and are applied to the route in the following order, so that final middleware execution order will be the same as expected in any Slim app:
 
 * Firstly route middleware will be set to the route **in the order they are defined**
-* Then route group middleware (if any) are to be set into the route **in the same order they are defined**
+* Then group middleware (if any) are to be set into the route **in the same order they are defined**
 * If group has a parent then parent's middleware are set **in the order they are defined**, and this goes up until no parent group is left
 
 #### Transformers and parameters
@@ -731,10 +733,12 @@ As with placeholders, it is important to pay attention not to duplicate paramete
 * PHP8 Attributes have been introduced for routing
 * Annotations have been deprecated and its use is highly discouraged
 * @Router Annotation use is not needed
+* Middleware parameter of @Group and @Route Annotations have changed to "middlewares"
 * ParameterTransformer methods and signatures have changed
 * AbstractTransformer has been removed, simply implement ParameterTransformer
-* Routing transformers now accepts an array instead of a single reference
+* Routing transformers now accept an array instead of a single reference
 * Groups now support transformers
+* Some internal methods have changed their signatures
 
 ## Contributing
 

@@ -19,23 +19,16 @@ use Jgut\Slim\Routing\Transformer\ParameterTransformer;
 #[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 final class Transformer
 {
-    /**
-     * @var array<string, string>
-     */
-    private array $parameters;
-
-    /**
-     * @param array<string, string>|null $parameters
-     */
     public function __construct(
         /**
          * @var class-string<ParameterTransformer>|ParameterTransformer|null
          */
         protected string|object|null $transformer = null,
-        ?array $parameters = [],
-    ) {
-        $this->parameters = $parameters ?? [];
-    }
+        /**
+         * @var array<string, string>
+         */
+        private array $parameters = [],
+    ) {}
 
     /**
      * @return class-string<ParameterTransformer>|ParameterTransformer|null

@@ -16,7 +16,6 @@ namespace Jgut\Slim\Routing\Mapping\Metadata;
 use Jgut\Mapping\Exception\MetadataException;
 use Jgut\Mapping\Metadata\MetadataInterface;
 use Jgut\Slim\Routing\Transformer\ParameterTransformer;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 
 abstract class AbstractMetadata implements MetadataInterface
@@ -44,9 +43,9 @@ abstract class AbstractMetadata implements MetadataInterface
     protected array $arguments = [];
 
     /**
-     * @var list<string|callable(): ResponseInterface|MiddlewareInterface>
+     * @var list<class-string<MiddlewareInterface>|MiddlewareInterface>
      */
-    protected array $middleware = [];
+    protected array $middlewares = [];
 
     public function getPattern(): ?string
     {
@@ -120,11 +119,24 @@ abstract class AbstractMetadata implements MetadataInterface
     }
 
     /**
-     * @param list<class-string<ParameterTransformer>|ParameterTransformer> $transformers
+     * @param array<mixed> $transformers
+     *
+     * @throws MetadataException
      */
     public function setTransformers(array $transformers): self
     {
-        $this->transformers = $transformers;
+        foreach ($transformers as $transformer) {
+            if (!\is_string($transformer) && !$transformer instanceof ParameterTransformer) {
+                throw new MetadataException(sprintf(
+                    'Transformers must be an array of strings or "%s". "%s" given.',
+                    ParameterTransformer::class,
+                    \is_object($transformer) ? $transformer::class : \gettype($transformer),
+                ));
+            }
+        }
+
+        /** @var array<string, class-string<ParameterTransformer>|ParameterTransformer> $transformers */
+        $this->transformers = array_values($transformers);
 
         return $this;
     }
@@ -148,22 +160,32 @@ abstract class AbstractMetadata implements MetadataInterface
     }
 
     /**
-     * @return list<string|callable(): ResponseInterface|MiddlewareInterface>
+     * @return list<class-string<MiddlewareInterface>|MiddlewareInterface>
      */
-    public function getMiddleware(): array
+    public function getMiddlewares(): array
     {
-        return $this->middleware;
+        return $this->middlewares;
     }
 
     /**
-     * @param list<string|callable(): ResponseInterface|MiddlewareInterface> $middleware
+     * @param array<mixed> $middlewares
+     *
+     * @throws MetadataException
      */
-    public function setMiddleware(array $middleware): static
+    public function setMiddlewares(array $middlewares): static
     {
-        $this->middleware = array_map(
-            static fn(string $middleware): string => ltrim($middleware, '\\'),
-            $middleware,
-        );
+        foreach ($middlewares as $middleware) {
+            if (!\is_string($middleware) && !$middleware instanceof MiddlewareInterface) {
+                throw new MetadataException(sprintf(
+                    'Middlewares must be an array of strings or "%s". "%s" given.',
+                    MiddlewareInterface::class,
+                    \is_object($middleware) ? $middleware::class : \gettype($middleware),
+                ));
+            }
+        }
+
+        /** @var array<string, class-string<MiddlewareInterface>|MiddlewareInterface> $middlewares */
+        $this->middlewares = array_values($middlewares);
 
         return $this;
     }

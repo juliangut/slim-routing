@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Mapping\Metadata;
 
+use Jgut\Mapping\Exception\MetadataException;
 use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use PHPUnit\Framework\TestCase;
 
@@ -21,32 +22,27 @@ use PHPUnit\Framework\TestCase;
  */
 class GroupMetadataTest extends TestCase
 {
-    protected GroupMetadata $group;
-
-    protected function setUp(): void
-    {
-        $this->group = new GroupMetadata();
-    }
-
     public function testDefaults(): void
-    {
-        static::assertNull($this->group->getParent());
-        static::assertNull($this->group->getPrefix());
-    }
-
-    public function testParent(): void
     {
         $group = new GroupMetadata();
 
-        $this->group->setParent($group);
-
-        static::assertEquals($group, $this->group->getParent());
+        static::assertNull($group->getParent());
+        static::assertNull($group->getPrefix());
     }
 
-    public function testPrefix(): void
+    public function testInvalidPrefix(): void
     {
-        $this->group->setPrefix('prefix');
+        $this->expectException(MetadataException::class);
+        $this->expectExceptionMessage('Group prefix must not contain spaces.');
 
-        static::assertEquals('prefix', $this->group->getPrefix());
+        (new GroupMetadata())->setPrefix('invalid value');
+    }
+
+    public function testEmptyPrefix(): void
+    {
+        $this->expectException(MetadataException::class);
+        $this->expectExceptionMessage('Group prefix can not be an empty string.');
+
+        (new GroupMetadata())->setPrefix('');
     }
 }

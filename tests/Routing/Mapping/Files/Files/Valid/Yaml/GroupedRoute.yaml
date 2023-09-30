@@ -4,7 +4,7 @@
   parameters:
     section: "string"
   transformers: [ "group-transformer" ]
-  middleware: ["group-middleware"]
+  middlewares: ["group-middleware"]
   routes:
     - methods: ["GET"]
       pattern: "/two/{id}"
@@ -13,7 +13,7 @@
       parameters:
         id: "int"
       transformers: ["route-transformer"]
-      middleware: ["route-middleware"]
+      middlewares: ["twoMiddleware"]
       invokable: "Jgut\\Slim\\Routing\\Tests\\Mapping\\Files\\Classes\\Valid\\Attribute\\GroupedRoute:actionTwo"
     - methods": ["GET"],
       pattern: "/three/{id}"

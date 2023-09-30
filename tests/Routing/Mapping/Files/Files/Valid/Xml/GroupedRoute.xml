@@ -11,9 +11,9 @@
         <transformers>
             <transformer1>group-transformer</transformer1>
         </transformers>
-        <middleware>
+        <middlewares>
             <middleware1>group-middleware</middleware1>
-        </middleware>
+        </middlewares>
         <routes>
             <route1 pattern="/two/{id}">
                 <methods>
@@ -28,9 +28,9 @@
                 <transformers>
                     <transformer1>route-transformer</transformer1>
                 </transformers>
-                <middleware>
-                    <middleware1>route-middleware</middleware1>
-                </middleware>
+                <middlewares>
+                    <middleware1>twoMiddleware</middleware1>
+                </middlewares>
                 <invokable>Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Valid\Attribute\GroupedRoute:actionTwo</invokable>
             </route1>
             <route2 pattern="/three/{id}">

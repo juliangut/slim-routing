@@ -51,10 +51,13 @@ class RouteResolverTest extends TestCase
     public static function routeNameProvider(): array
     {
         return [
-            [new RouteMetadata('callable', null), null],
-            [new RouteMetadata('callable', 'name'), 'name'],
+            [new RouteMetadata('callable'), null],
             [
-                (new RouteMetadata('callable', 'name'))
+                (new RouteMetadata('callable'))->setName('name'),
+                'name',
+            ],
+            [
+                (new RouteMetadata('callable'))->setName('name')
                     ->setGroup((new GroupMetadata())->setPrefix('prefix')),
                 'prefix_name',
             ],
@@ -79,16 +82,16 @@ class RouteResolverTest extends TestCase
     public static function routeMiddlewareProvider(): array
     {
         return [
-            [new RouteMetadata('callable', null), []],
+            [new RouteMetadata('callable'), []],
             [
-                (new RouteMetadata('callable', null))
-                    ->setMiddleware(['routeMiddleware']),
+                (new RouteMetadata('callable'))
+                    ->setMiddlewares(['routeMiddleware']),
                 ['routeMiddleware'],
             ],
             [
-                (new RouteMetadata('callable', null))
-                    ->setMiddleware(['routeMiddleware'])
-                    ->setGroup((new GroupMetadata())->setMiddleware(['groupMiddleware'])),
+                (new RouteMetadata('callable'))
+                    ->setMiddlewares(['routeMiddleware'])
+                    ->setGroup((new GroupMetadata())->setMiddlewares(['groupMiddleware'])),
                 ['routeMiddleware', 'groupMiddleware'],
             ],
         ];
@@ -108,38 +111,38 @@ class RouteResolverTest extends TestCase
     public static function routePatternProvider(): array
     {
         return [
-            [new Configuration(), new RouteMetadata('callable', null), '/'],
-            [new Configuration(['trailingSlash' => true]), new RouteMetadata('callable', null), '/'],
+            [new Configuration(), new RouteMetadata('callable'), '/'],
+            [new Configuration(['trailingSlash' => true]), new RouteMetadata('callable'), '/'],
             [
                 new Configuration(),
-                (new RouteMetadata('callable', null))
+                (new RouteMetadata('callable'))
                     ->setPattern('entity/{id}/'),
                 '/entity/{id}',
             ],
             [
                 new Configuration(['trailingSlash' => true]),
-                (new RouteMetadata('callable', null))
+                (new RouteMetadata('callable'))
                     ->setPattern('entity/{id}')
                     ->setGroup((new GroupMetadata())->setPattern('parent/{section}')),
                 '/parent/{section}/entity/{id}/',
             ],
             [
                 new Configuration(),
-                (new RouteMetadata('callable', null))
+                (new RouteMetadata('callable'))
                     ->setPattern('/{path}/to/entity/{id}')
                     ->setPlaceholders(['path' => '[a-z]+', 'id' => 'alnum']),
                 '/{path:[a-z]+}/to/entity/{id:[a-zA-Z0-9]+}',
             ],
             [
                 new Configuration(['trailingSlash' => true]),
-                (new RouteMetadata('callable', null))
+                (new RouteMetadata('callable'))
                     ->setPattern('entity/{id}')
                     ->setPlaceholders(['id' => 'alnum']),
                 '/entity/{id:[a-zA-Z0-9]+}/',
             ],
             [
                 new Configuration(),
-                (new RouteMetadata('callable', null))
+                (new RouteMetadata('callable'))
                     ->setPattern('entity/{id}')
                     ->setPlaceholders(['id' => '[a-z]+'])
                     ->setGroup(
@@ -151,7 +154,7 @@ class RouteResolverTest extends TestCase
             ],
             [
                 new Configuration(),
-                (new RouteMetadata('callable', null))
+                (new RouteMetadata('callable'))
                     ->setPattern('entity/{id}')
                     ->setPlaceholders(['id' => '[a-z]+', 'section' => '[0-9]+'])
                     ->setGroup(
@@ -169,7 +172,7 @@ class RouteResolverTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('There are duplicated route parameters: id');
 
-        $route = (new RouteMetadata('callable', null))
+        $route = (new RouteMetadata('callable'))
             ->setPattern('entity/{id}')
             ->setGroup((new GroupMetadata())->setPattern('parent/{id}'));
 
@@ -181,7 +184,7 @@ class RouteResolverTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Placeholder "~245" is not a known alias or a valid regex pattern');
 
-        $route = (new RouteMetadata('callable', null))->setPlaceholders(['id', '~245']);
+        $route = (new RouteMetadata('callable'))->setPlaceholders(['id', '~245']);
 
         $this->resolver->getPattern($route);
     }
@@ -202,22 +205,22 @@ class RouteResolverTest extends TestCase
     public static function routeArgumentsProvider(): array
     {
         return [
-            [new Configuration(), new RouteMetadata('callable', null), []],
+            [new Configuration(), new RouteMetadata('callable'), []],
             [
                 new Configuration(),
-                (new RouteMetadata('callable', null))->setArguments(['routeArgument' => 'value']),
+                (new RouteMetadata('callable'))->setArguments(['routeArgument' => 'value']),
                 ['routeArgument' => 'value'],
             ],
             [
                 new Configuration(),
-                (new RouteMetadata('callable', null))
+                (new RouteMetadata('callable'))
                     ->setArguments(['routeArgument' => 'route'])
                     ->setGroup((new GroupMetadata())->setArguments(['groupArgument' => 'group'])),
                 ['groupArgument' => 'group', 'routeArgument' => 'route'],
             ],
             [
                 new Configuration(),
-                (new RouteMetadata('callable', null))
+                (new RouteMetadata('callable'))
                     ->setArguments(['routeArgument' => 'route', 'groupArgument' => 'replaced'])
                     ->setGroup((new GroupMetadata())->setArguments(['groupArgument' => 'group'])),
                 ['groupArgument' => 'replaced', 'routeArgument' => 'route'],
@@ -228,9 +231,9 @@ class RouteResolverTest extends TestCase
     public function testRouteSorting(): void
     {
         $routes = [
-            (new RouteMetadata('callable', null))->setPriority(10),
-            new RouteMetadata('callable', null),
-            (new RouteMetadata('callable', null))->setPriority(-10),
+            (new RouteMetadata('callable'))->setPriority(10),
+            new RouteMetadata('callable'),
+            (new RouteMetadata('callable'))->setPriority(-10),
         ];
 
         $sortedRoutes = $this->resolver->sort($routes);
@@ -246,10 +249,10 @@ class RouteResolverTest extends TestCase
         $this->expectExceptionMessage('There are duplicated route names: route, name');
 
         $routes = [
-            (new RouteMetadata('callable', 'route')),
-            (new RouteMetadata('callable', 'route')),
-            (new RouteMetadata('callable', 'name')),
-            (new RouteMetadata('callable', 'name')),
+            (new RouteMetadata('callable'))->setName('route'),
+            (new RouteMetadata('callable'))->setName('route'),
+            (new RouteMetadata('callable'))->setName('name'),
+            (new RouteMetadata('callable'))->setName('name'),
         ];
 
         $this->resolver->checkDuplicatedRoutes($routes);
@@ -261,11 +264,11 @@ class RouteResolverTest extends TestCase
         $this->expectExceptionMessage('There are duplicated routes: GET /route/{[a-zA-Z0-9]+}');
 
         $nonDuplicatedRoutes = [
-            (new RouteMetadata('callable', null))
+            (new RouteMetadata('callable'))
                 ->setMethods(['GET'])
                 ->setPattern('{path}/to/route/{id}')
                 ->setPlaceholders(['path' => 'alpha', 'id' => 'numeric']),
-            (new RouteMetadata('callable', null))
+            (new RouteMetadata('callable'))
                 ->setMethods(['GET'])
                 ->setPattern('{path}/to/route')
                 ->setPlaceholders(['path' => 'alpha']),
@@ -274,11 +277,11 @@ class RouteResolverTest extends TestCase
         $this->resolver->checkDuplicatedRoutes($nonDuplicatedRoutes);
 
         $duplicatedRoutes = [
-            (new RouteMetadata('callable', null))
+            (new RouteMetadata('callable'))
                 ->setMethods(['GET'])
                 ->setPattern('route/{id}')
                 ->setPlaceholders(['id' => 'alnum']),
-            (new RouteMetadata('callable', null))
+            (new RouteMetadata('callable'))
                 ->setMethods(['GET'])
                 ->setPattern('route/{slug}')
                 ->setPlaceholders(['slug' => 'alnum']),

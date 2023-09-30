@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Mapping\Annotation;
 
 use Jgut\Mapping\Annotation\AbstractAnnotation;
-use Jgut\Mapping\Exception\AnnotationException;
 
 /**
  * @Annotation
@@ -44,20 +43,9 @@ final class Route extends AbstractAnnotation
         return $this->name;
     }
 
-    /**
-     * @throws AnnotationException
-     */
     public function setName(string $name): self
     {
-        if (str_contains(trim($name), ' ')) {
-            throw new AnnotationException('Route name must not contain spaces.');
-        }
-
-        if (trim($name) === '') {
-            throw new AnnotationException('Route name can not be empty.');
-        }
-
-        $this->name = trim($name);
+        $this->name = $name;
 
         return $this;
     }
@@ -73,37 +61,11 @@ final class Route extends AbstractAnnotation
     }
 
     /**
-     * @param list<string>|mixed $methods
-     *
-     * @throws AnnotationException
+     * @param list<string> $methods
      */
     public function setMethods($methods): self
     {
-        $this->methods = [];
-
-        if (!\is_array($methods)) {
-            $methods = [$methods];
-        }
-
-        foreach (array_filter($methods) as $method) {
-            if (!\is_string($method)) {
-                throw new AnnotationException(
-                    sprintf('Route annotation methods must be strings. "%s" given.', \gettype($method)),
-                );
-            }
-
-            $this->methods[] = mb_strtoupper(trim($method));
-        }
-
-        $this->methods = array_values(array_unique(array_filter($this->methods, 'strlen')));
-
-        if (\count($this->methods) === 0) {
-            throw new AnnotationException('Route annotation methods can not be empty.');
-        }
-
-        if (\in_array('ANY', $this->methods, true) && \count($this->methods) > 1) {
-            throw new AnnotationException('Route "ANY" method cannot be defined with other methods.');
-        }
+        $this->methods = $methods;
 
         return $this;
     }

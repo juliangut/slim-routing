@@ -63,7 +63,7 @@ trait FileMappingTrait
                 $routes[] = $this->getRoutesMetadata($routingMapping, $groupMetadata);
             } else {
                 /** @var RouteMapping $mapping */
-                $routeMetadata = new RouteMetadata($this->getInvokable($mapping), $this->getName($mapping));
+                $routeMetadata = new RouteMetadata($this->getInvokable($mapping));
                 if ($group !== null) {
                     $routeMetadata->setGroup($group);
                 }
@@ -95,6 +95,10 @@ trait FileMappingTrait
      */
     protected function populateRoute(RouteMetadata $route, array $mapping): void
     {
+        $name = $this->getName($mapping);
+        if ($name !== null) {
+            $route->setName($name);
+        }
         $this->populatePattern($route, $mapping);
         $this->populateMethods($route, $mapping);
         $this->populateXmlHttpRequest($route, $mapping);
@@ -215,16 +219,16 @@ trait FileMappingTrait
                 );
             }
 
-            $methods[] = mb_strtoupper(trim($method));
+            $methods[] = trim($method);
         }
 
-        $methods = array_values(array_unique(array_filter($methods, 'strlen')));
+        $methods = array_unique(array_filter($methods, 'strlen'));
 
         if (\count($methods) === 0) {
             throw new DriverException('Route methods can not be empty.');
         }
 
-        $metadata->setMethods($methods);
+        $metadata->setMethods(array_values($methods));
     }
 
     /**
@@ -271,11 +275,11 @@ trait FileMappingTrait
      */
     protected function populateMiddleware($metadata, array $mapping): void
     {
-        if (!\array_key_exists('middleware', $mapping)) {
+        if (!\array_key_exists('middlewares', $mapping)) {
             return;
         }
 
-        $middlewareList = $mapping['middleware'];
+        $middlewareList = $mapping['middlewares'];
         if (!\is_array($middlewareList)) {
             $middlewareList = [$middlewareList];
         }
@@ -288,7 +292,7 @@ trait FileMappingTrait
             }
         }
 
-        $metadata->setMiddleware(array_values($middlewareList));
+        $metadata->setMiddlewares($middlewareList);
     }
 
     /**

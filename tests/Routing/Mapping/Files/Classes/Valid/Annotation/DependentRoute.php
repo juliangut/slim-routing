@@ -22,7 +22,7 @@ use Jgut\Slim\Routing\Mapping\Annotation as JSR;
  *     parent="\Jgut\Slim\Routing\Tests\Mapping\Files\Classes\Valid\Annotation\AbstractRoute",
  *     prefix="dependent",
  *     pattern="/dependent",
- *     middleware={"dependentMiddleware"}
+ *     middlewares={"dependentMiddleware"}
  * )
  */
 class DependentRoute
@@ -31,7 +31,7 @@ class DependentRoute
      * @JSR\Route(
      *     name="four",
      *     pattern="/four",
-     *     middleware={"fourMiddleware"}
+     *     middlewares={"fourMiddleware"}
      * )
      */
     public function actionFour(): void {}

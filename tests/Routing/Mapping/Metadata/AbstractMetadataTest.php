@@ -22,20 +22,16 @@ use PHPUnit\Framework\TestCase;
  */
 class AbstractMetadataTest extends TestCase
 {
-    protected AbstractMetadataStub $metadata;
-
-    protected function setUp(): void
-    {
-        $this->metadata = new AbstractMetadataStub();
-    }
-
     public function testDefaults(): void
     {
-        static::assertNull($this->metadata->getPattern());
-        static::assertEquals([], $this->metadata->getPlaceholders());
-        static::assertEquals([], $this->metadata->getParameters());
-        static::assertEquals([], $this->metadata->getArguments());
-        static::assertEquals([], $this->metadata->getMiddleware());
+        $metadata = new AbstractMetadataStub();
+
+        static::assertNull($metadata->getPattern());
+        static::assertEquals([], $metadata->getPlaceholders());
+        static::assertEquals([], $metadata->getParameters());
+        static::assertEquals([], $metadata->getTransformers());
+        static::assertEquals([], $metadata->getArguments());
+        static::assertEquals([], $metadata->getMiddlewares());
     }
 
     public function testEmptyPattern(): void
@@ -43,7 +39,7 @@ class AbstractMetadataTest extends TestCase
         $this->expectException(MetadataException::class);
         $this->expectExceptionMessage('Pattern can not be empty');
 
-        $this->metadata->setPattern('');
+        (new AbstractMetadataStub())->setPattern('');
     }
 
     public function testInvalidPattern(): void
@@ -51,51 +47,72 @@ class AbstractMetadataTest extends TestCase
         $this->expectException(MetadataException::class);
         $this->expectExceptionMessage('Placeholder matching "[0-9]+" must be defined on placeholders parameter');
 
-        $this->metadata->setPattern('{path}/to/{id:[0-9]+}');
+        (new AbstractMetadataStub())->setPattern('{path}/to/{id:[0-9]+}');
     }
 
     public function testPattern(): void
     {
         $path = 'home/route/path/{id}';
 
-        $this->metadata->setPattern('/' . $path . '/');
+        $metadata = new AbstractMetadataStub();
 
-        static::assertEquals($path, $this->metadata->getPattern());
+        $metadata->setPattern('/' . $path . '/');
+
+        static::assertEquals($path, $metadata->getPattern());
     }
 
     public function testPlaceholders(): void
     {
         $placeholders = ['id' => '[0-9]{5}'];
 
-        $this->metadata->setPlaceholders($placeholders);
+        $metadata = new AbstractMetadataStub();
 
-        static::assertEquals($placeholders, $this->metadata->getPlaceholders());
+        $metadata->setPlaceholders($placeholders);
+
+        static::assertEquals($placeholders, $metadata->getPlaceholders());
     }
 
     public function testParameters(): void
     {
         $parameters = ['id' => 'int'];
 
-        $this->metadata->setParameters($parameters);
+        $metadata = new AbstractMetadataStub();
 
-        static::assertEquals($parameters, $this->metadata->getParameters());
+        $metadata->setParameters($parameters);
+
+        static::assertEquals($parameters, $metadata->getParameters());
+    }
+
+    public function testTransformers(): void
+    {
+        $transformers = ['transformerOne', 'transformerTwo'];
+
+        $metadata = new AbstractMetadataStub();
+
+        $metadata->setTransformers($transformers);
+
+        static::assertEquals(['transformerOne', 'transformerTwo'], $metadata->getTransformers());
     }
 
     public function testArguments(): void
     {
         $arguments = ['scope' => 'public'];
 
-        $this->metadata->setArguments($arguments);
+        $metadata = new AbstractMetadataStub();
 
-        static::assertEquals($arguments, $this->metadata->getArguments());
+        $metadata->setArguments($arguments);
+
+        static::assertEquals($arguments, $metadata->getArguments());
     }
 
     public function testMiddleware(): void
     {
-        $middleware = ['\middlewareOne', 'middlewareTwo'];
+        $middleware = ['middlewareOne', 'middlewareTwo'];
 
-        $this->metadata->setMiddleware($middleware);
+        $metadata = new AbstractMetadataStub();
 
-        static::assertEquals(['middlewareOne', 'middlewareTwo'], $this->metadata->getMiddleware());
+        $metadata->setMiddlewares($middleware);
+
+        static::assertEquals(['middlewareOne', 'middlewareTwo'], $metadata->getMiddlewares());
     }
 }

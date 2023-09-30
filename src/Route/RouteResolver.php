@@ -17,7 +17,6 @@ use InvalidArgumentException;
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use RuntimeException;
 
@@ -45,17 +44,17 @@ class RouteResolver
     }
 
     /**
-     * @return list<string|callable(): ResponseInterface|MiddlewareInterface>
+     * @return list<string|MiddlewareInterface>
      */
     public function getMiddleware(RouteMetadata $route): array
     {
         $middleware = array_filter(array_map(
-            static fn(GroupMetadata $group): array => $group->getMiddleware(),
+            static fn(GroupMetadata $group): array => $group->getMiddlewares(),
             array_reverse($route->getGroupChain()),
         ));
-        array_unshift($middleware, $route->getMiddleware());
+        array_unshift($middleware, $route->getMiddlewares());
 
-        return array_values(array_filter(array_merge(...$middleware)));
+        return array_values(array_merge(...$middleware));
     }
 
     /**

@@ -30,7 +30,7 @@ return [
             'id' => 'int',
         ],
         'xmlHttpRequest' => true,
-        'middleware' => ['oneMiddleware'],
+        'middlewares' => ['oneMiddleware'],
         'invokable' => SingleRoute::class . ':actionOne',
     ],
 ];
