@@ -75,8 +75,8 @@ class RouteCollectorTest extends TestCase
         $cache = $this->getMockBuilder(CacheInterface::class)
             ->getMock();
         $cache->expects(static::once())
-            ->method('has')
-            ->willReturn(false);
+            ->method('get')
+            ->willReturn(null);
         $cache->expects(static::once())
             ->method('set');
 
@@ -137,9 +137,6 @@ class RouteCollectorTest extends TestCase
 
         $cache = $this->getMockBuilder(CacheInterface::class)
             ->getMock();
-        $cache->expects(static::once())
-            ->method('has')
-            ->willReturn(true);
         $cache->expects(static::once())
             ->method('get')
             ->with(static::matchesRegularExpression('/^prefix_.+$/'))

@@ -21,6 +21,7 @@ use Jgut\Slim\Routing\Route\RouteResolver;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\SimpleCache\CacheInterface;
+use Psr\SimpleCache\InvalidArgumentException as CacheInvalidArgumentException;
 use RuntimeException;
 use Slim\Interfaces\CallableResolverInterface;
 use Slim\Interfaces\InvocationStrategyInterface;
@@ -135,12 +136,14 @@ class RouteCollector extends SlimRouteCollector
         $mappingSources = $this->configuration->getSources();
         $cacheKey = $this->getCacheKey($mappingSources);
 
-        if ($this->cache !== null && $this->cache->has($cacheKey)) {
-            $cachedRoutes = $this->cache->get($cacheKey);
+        try {
+            $cachedRoutes = $this->cache?->get($cacheKey);
             if (\is_array($cachedRoutes)) {
                 /** @var list<RouteMetadata> $cachedRoutes */
                 return $cachedRoutes;
             }
+        } catch (CacheInvalidArgumentException) {
+            // @ignoreException
         }
 
         /** @var list<RouteMetadata> $routes */
@@ -152,7 +155,11 @@ class RouteCollector extends SlimRouteCollector
 
         $routes = $routeResolver->sort($routes);
 
-        $this->cache?->set($cacheKey, $routes);
+        try {
+            $this->cache?->set($cacheKey, $routes);
+        } catch (CacheInvalidArgumentException) {
+            // @ignoreException
+        }
 
         return $routes;
     }

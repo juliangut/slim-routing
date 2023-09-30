@@ -16,7 +16,7 @@ Additionally, if you're familiar with Symfony's definition of routes through Att
 * On class Attributes (i.e. controller classes)
 * In routing definition files, currently supported in PHP, JSON, XML and YAML
 
-> Route gathering and compilation can be quite a heavy process depending on how many classes/files and routes are defined, specially in the case of attributes. For this reason it's strongly advised to always use route collector's cache and Slim's [route collector caching](https://www.slimframework.com/docs/v4/objects/routing.html#route-expressions-caching) on production applications and invalidate cache on deployment
+> Route gathering and compilation can be quite a heavy process depending on how many classes/files and routes are defined, specially in the case of attributes. For this reason it's strongly advised to always use route collector's cache and Slim's [route expression caching](https://www.slimframework.com/docs/v4/objects/routing.html#route-expressions-caching) on production applications and invalidate cache on deployment
 
 Thanks to slim-routing route callbacks can now return `\Jgut\Slim\Routing\Response\ResponseType` objects that will be ultimately transformed into the mandatory `Psr\Message\ResponseInterface` in a way that lets you fully decouple view from the route
 
