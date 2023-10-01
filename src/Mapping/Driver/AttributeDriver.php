@@ -246,7 +246,7 @@ final class AttributeDriver extends AbstractClassDriver
         }
 
         $metadata->setParameters($parameters);
-        $metadata->setTransformers(array_values(array_filter($transformers)));
+        $metadata->setTransformers(array_values($transformers));
     }
 
     /**

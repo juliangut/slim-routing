@@ -21,9 +21,9 @@ final class Transformer
 {
     public function __construct(
         /**
-         * @var class-string<ParameterTransformer>|ParameterTransformer|null
+         * @var class-string<ParameterTransformer>
          */
-        protected string|object|null $transformer = null,
+        protected string $transformer,
         /**
          * @var array<string, string>
          */
@@ -31,9 +31,9 @@ final class Transformer
     ) {}
 
     /**
-     * @return class-string<ParameterTransformer>|ParameterTransformer|null
+     * @return class-string<ParameterTransformer>
      */
-    public function getTransformer(): string|object|null
+    public function getTransformer(): string
     {
         return $this->transformer;
     }

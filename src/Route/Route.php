@@ -169,18 +169,17 @@ class Route extends SlimRoute
 
         return array_values(array_unique(array_map(
             function ($transformer): ParameterTransformer {
-                if ($this->container !== null && \is_string($transformer)) {
-                    $transformer = $this->container->get($transformer);
-                }
-                if (!$transformer instanceof ParameterTransformer) {
+                $resolved = $this->container?->get($transformer);
+                if (!$resolved instanceof ParameterTransformer) {
                     throw new RuntimeException(sprintf(
-                        'Parameter transformer should implement %s, "%s" given.',
+                        'Parameter transformer "%s" could not be resolved to a "%s", "%s" given.',
+                        $transformer,
                         ParameterTransformer::class,
-                        \is_object($transformer) ? $transformer::class : \gettype($transformer),
+                        \is_object($resolved) ? $resolved::class : \gettype($resolved),
                     ));
                 }
 
-                return $transformer;
+                return $resolved;
             },
             $this->metadata->getTransformers(),
         )));

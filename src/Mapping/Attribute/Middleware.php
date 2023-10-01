@@ -21,13 +21,13 @@ final class Middleware
 {
     public function __construct(
         /**
-         * @var class-string<MiddlewareInterface>|MiddlewareInterface
+         * @var class-string<MiddlewareInterface>
          */
-        protected string|MiddlewareInterface $middleware,
+        protected string $middleware,
     ) {}
 
     /**
-     * @return class-string<MiddlewareInterface>|MiddlewareInterface
+     * @return class-string<MiddlewareInterface>
      */
     public function getMiddleware()
     {

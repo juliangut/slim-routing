@@ -317,7 +317,7 @@ class Section
 }
 ```
 
-* `middleware`, middleware instance or reference to middleware that will be extracted from the container
+* `middleware`, MiddlewareInterface class that will be extracted from the container
 
 ##### Transformer (Class and Method level)
 
@@ -342,7 +342,7 @@ class Section
 }
 ```
 
-* `transformer`, required, ParameterTransformer instances or reference to ParameterTransformer instance that will be extracted from the container
+* `transformer`, ParameterTransformer class that will be extracted from the container
 * `parameters`, optional, array of definitions of parameters
 * 
 #### Definition files
@@ -589,9 +589,9 @@ Defines a group in which routes may reside
 * `pattern`, optional, path pattern, prepended to route patterns. Do not use placeholders in the pattern
 * `placeholders`, optional, array of regex/alias for pattern placeholders,
 * `parameters`, optional, array of definitions of parameters, to be used in transformer
-* `transformers`, optional, array of ParameterTransformer instances or reference to ParameterTransformer instances that will be extracted from the container
+* `transformers`, optional, array of ParameterTransformer class that will be extracted from the container
 * `arguments`, optional, array of arguments to attach to final route
-* `middlewares`, optional, array of middleware to be added to all group routes
+* `middlewares`, optional, array of MiddlewareInterface class to be added to all group routes
 
 ##### Route
 
@@ -604,9 +604,9 @@ Defines a route added to Slim
 * `xmlHttpRequest`, request should be AJAX, false by default
 * `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed (defaults to GET)
 * `parameters`, optional, array of definitions of parameters, to be used in transformer
-* `transformers`, optional, array of ParameterTransformer instances or reference to ParameterTransformer instances that will be extracted from the container
+* `transformers`, optional, array of ParameterTransformer class that will be extracted from the container
 * `arguments`, optional, array of arguments to attach to the route
-* `middlewares`, optional, array of middleware to be added to the route
+* `middlewares`, optional, array of MiddlewareInterface class to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
 
 #### Annotations
@@ -646,9 +646,9 @@ class Section {}
 * `pattern`, optional, path pattern, prepended to route patterns
 * `placeholders`, optional, array of regex/alias for pattern placeholders,
 * `parameters`, optional, array of definitions of parameters, to be used in route transformer
-* `transformers`, optional, array of ParameterTransformer instances or reference to ParameterTransformer instances that will be extracted from the container
+* `transformers`, optional, array of ParameterTransformer class that will be extracted from the container
 * `arguments`, optional, array of arguments to attach to final route
-* `middlewares`, optional, array of middleware to be added to all group routes
+* `middlewares`, optional, array of MiddlewareInterface class to be added to all group routes
 
 ##### Route (Method level)
 
@@ -683,9 +683,9 @@ class Section
 * `xmlHttpRequest`, request should be AJAX, false by default
 * `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed in the list (defaults to GET)
 * `parameters`, optional, array of definitions of parameters, to be used in transformer
-* `transformers`, optional, array of reference to a ParameterTransformer instances that will be extracted from the container
+* `transformers`, optional, array of ParameterTransformer class that will be extracted from the container
 * `arguments`, optional, array of arguments to attach to the route
-* `middlewares`, optional, array of middleware to be added to the route
+* `middlewares`, optional, array of MiddlewareInterface class to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
 
 ### Route composition

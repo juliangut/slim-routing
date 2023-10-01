@@ -65,7 +65,8 @@ class RouteTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessageMatches(
-            '/^Parameter transformer should implement .+\\\ParameterTransformer, "stdClass" given\.$/',
+            '/^Parameter transformer "transformer" could not be resolved to a ".+\\\ParameterTransformer", '
+            . '"stdClass" given\.$/',
         );
 
         $callableResolver = $this->getMockBuilder(CallableResolverInterface::class)

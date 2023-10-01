@@ -17,7 +17,6 @@ use InvalidArgumentException;
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
-use Psr\Http\Server\MiddlewareInterface;
 use RuntimeException;
 
 class RouteResolver
@@ -44,7 +43,7 @@ class RouteResolver
     }
 
     /**
-     * @return list<string|MiddlewareInterface>
+     * @return list<non-empty-string>
      */
     public function getMiddleware(RouteMetadata $route): array
     {

@@ -16,7 +16,6 @@ namespace Jgut\Slim\Routing\Mapping\Driver;
 use Jgut\Mapping\Exception\DriverException;
 use Jgut\Slim\Routing\Mapping\Metadata\GroupMetadata;
 use Jgut\Slim\Routing\Mapping\Metadata\RouteMetadata;
-use Jgut\Slim\Routing\Transformer\ParameterTransformer;
 
 trait FileMappingTrait
 {
@@ -280,16 +279,11 @@ trait FileMappingTrait
         }
 
         $middlewareList = $mapping['middlewares'];
-        if (!\is_array($middlewareList)) {
-            $middlewareList = [$middlewareList];
-        }
-
-        foreach ($middlewareList as $middleware) {
-            if (!\is_string($middleware)) {
-                throw new DriverException(
-                    sprintf('Middleware must be a string or string array. "%s" given.', \gettype($middleware)),
-                );
-            }
+        if ($middlewareList !== [] && !\is_array($middlewareList)) {
+            throw new DriverException(sprintf(
+                'Middlewares must be an array of strings. "%s" given.',
+                \is_object($middlewareList) ? $middlewareList::class : \gettype($middlewareList),
+            ));
         }
 
         $metadata->setMiddlewares($middlewareList);
@@ -350,24 +344,11 @@ trait FileMappingTrait
         $transformers = $mapping['transformers'];
         if ($transformers !== [] && !\is_array($transformers)) {
             throw new DriverException(sprintf(
-                'Route transformers must be an array of string or "%s". "%s" given.',
-                ParameterTransformer::class,
+                'Transformers must be an array of strings. "%s" given.',
                 \is_object($transformers) ? $transformers::class : \gettype($transformers),
             ));
         }
 
-        /** @var list<mixed> $transformers */
-        foreach ($transformers as $transformer) {
-            if (!\is_string($transformer) && !$transformer instanceof ParameterTransformer) {
-                throw new DriverException(sprintf(
-                    'Route transformers must be an array of string or "%s". "%s" given.',
-                    ParameterTransformer::class,
-                    \is_object($transformer) ? $transformer::class : \gettype($transformers),
-                ));
-            }
-        }
-
-        /** @var list<class-string<ParameterTransformer>|ParameterTransformer> $transformers */
         $metadata->setTransformers(array_values($transformers));
     }
 }

@@ -143,7 +143,7 @@ class FileMappingTraitTest extends AbstractDriverTestCase
     public function testInvalidMiddleware(): void
     {
         $this->expectException(DriverException::class);
-        $this->expectExceptionMessage('Middleware must be a string or string array. "integer" given.');
+        $this->expectExceptionMessage('Middlewares must be an array of strings. "integer" given.');
 
         $driver = $this->getMockForTrait(FileMappingTrait::class);
         $driver->expects(static::once())
@@ -198,7 +198,7 @@ class FileMappingTraitTest extends AbstractDriverTestCase
     {
         $this->expectException(DriverException::class);
         $this->expectExceptionMessageMatches(
-            '/^Route transformers must be an array of string or ".+"\. "stdClass" given\.$/',
+            '/^Transformers must be an array of strings\. "stdClass" given\.$/',
         );
 
         $driver = $this->getMockForTrait(FileMappingTrait::class);

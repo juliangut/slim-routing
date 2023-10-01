@@ -13,15 +13,13 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Mapping\Annotation;
 
-use Jgut\Slim\Routing\Transformer\ParameterTransformer;
-
 /**
  * Transformer annotation trait.
  */
 trait TransformerTrait
 {
     /**
-     * @var list<class-string<ParameterTransformer>>
+     * @var list<non-empty-string>
      */
     protected array $transformers = [];
 
@@ -31,7 +29,7 @@ trait TransformerTrait
     protected array $parameters = [];
 
     /**
-     * @return list<class-string<ParameterTransformer>>
+     * @return list<non-empty-string>
      */
     public function getTransformers(): array
     {
@@ -39,7 +37,7 @@ trait TransformerTrait
     }
 
     /**
-     * @param list<class-string<ParameterTransformer>> $transformers
+     * @param list<non-empty-string> $transformers
      */
     public function setTransformers(array $transformers): self
     {

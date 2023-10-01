@@ -218,13 +218,11 @@ final class AnnotationDriver extends AbstractAnnotationDriver
     {
         $parameters = [];
 
-        if ($reflection !== null) {
-            foreach ($reflection->getParameters() as $parameter) {
-                $type = $parameter->getType();
+        foreach ($reflection?->getParameters() ?? [] as $parameter) {
+            $type = $parameter->getType();
 
-                if ($type !== null) {
-                    $parameters[$parameter->getName()] = $type->getName();
-                }
+            if ($type !== null) {
+                $parameters[$parameter->getName()] = $type->getName();
             }
         }
 

@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Jgut\Slim\Routing\Mapping\Annotation;
 
 use Jgut\Mapping\Exception\AnnotationException;
-use Psr\Http\Server\MiddlewareInterface;
 
 /**
  * Middleware annotation trait.
@@ -22,12 +21,12 @@ use Psr\Http\Server\MiddlewareInterface;
 trait MiddlewareTrait
 {
     /**
-     * @var list<class-string<MiddlewareInterface>>
+     * @var list<non-empty-string>
      */
     protected array $middlewares = [];
 
     /**
-     * @return list<class-string<MiddlewareInterface>>
+     * @return list<non-empty-string>
      */
     public function getMiddlewares(): array
     {
@@ -35,7 +34,7 @@ trait MiddlewareTrait
     }
 
     /**
-     * @param list<class-string<MiddlewareInterface>> $middlewareList
+     * @param list<non-empty-string> $middlewareList
      *
      * @throws AnnotationException
      */
