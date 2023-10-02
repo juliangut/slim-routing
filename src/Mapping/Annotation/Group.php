@@ -27,9 +27,9 @@ final class Group extends AbstractAnnotation
     use MiddlewareTrait;
     use ArgumentTrait;
 
-    protected ?string $parent = null;
+    private ?string $parent = null;
 
-    protected ?string $prefix = null;
+    private ?string $prefix = null;
 
     public function getParent(): ?string
     {

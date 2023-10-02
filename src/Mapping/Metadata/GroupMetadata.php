@@ -17,12 +17,12 @@ use Jgut\Mapping\Exception\MetadataException;
 
 final class GroupMetadata extends AbstractMetadata
 {
-    protected ?self $parent = null;
+    private ?self $parent = null;
 
     /**
      * @var non-empty-string|null
      */
-    protected ?string $prefix = null;
+    private ?string $prefix = null;
 
     public function getParent(): ?self
     {

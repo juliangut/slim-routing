@@ -17,32 +17,32 @@ use Jgut\Mapping\Exception\MetadataException;
 
 final class RouteMetadata extends AbstractMetadata
 {
-    protected ?GroupMetadata $group = null;
+    private ?GroupMetadata $group = null;
 
     /**
      * @var list<GroupMetadata>|null
      */
-    protected ?array $groupChain = null;
+    private ?array $groupChain = null;
 
     /**
      * @var non-empty-string|null
      */
-    protected ?string $name = null;
+    private ?string $name = null;
 
     /**
      * @var non-empty-list<non-empty-string>
      */
-    protected array $methods = ['GET'];
+    private array $methods = ['GET'];
 
-    protected bool $xmlHttpRequest = false;
+    private bool $xmlHttpRequest = false;
 
-    protected int $priority = 0;
+    private int $priority = 0;
 
     public function __construct(
         /**
          * @var string|callable(): mixed
          */
-        protected $invokable,
+        private $invokable,
     ) {}
 
     /**

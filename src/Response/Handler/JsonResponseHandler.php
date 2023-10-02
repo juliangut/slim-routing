@@ -19,11 +19,11 @@ use Jgut\Slim\Routing\Response\ResponseType;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class JsonResponseHandler extends AbstractResponseHandler
+final class JsonResponseHandler extends AbstractResponseHandler
 {
     public function __construct(
         ResponseFactoryInterface $responseFactory,
-        protected bool $prettify = false,
+        private bool $prettify = false,
     ) {
         parent::__construct($responseFactory);
     }
@@ -48,7 +48,7 @@ class JsonResponseHandler extends AbstractResponseHandler
         return $response->withHeader('Content-Type', 'application/json; charset=utf-8');
     }
 
-    protected function getJsonEncodeFlags(): int
+    private function getJsonEncodeFlags(): int
     {
         $jsonFlags = \JSON_UNESCAPED_UNICODE | \JSON_UNESCAPED_SLASHES | \JSON_PRESERVE_ZERO_FRACTION;
         if ($this->prettify) {
@@ -58,7 +58,7 @@ class JsonResponseHandler extends AbstractResponseHandler
         return $jsonFlags;
     }
 
-    protected function isJsonEncodable(mixed $payload): bool
+    private function isJsonEncodable(mixed $payload): bool
     {
         if (\is_resource($payload)) {
             return false;

@@ -60,7 +60,7 @@ final class AttributeDriver extends AbstractClassDriver
      *
      * @return list<RouteMetadata>
      */
-    protected function getRoutesMetadata(ReflectionClass $class, array $groups): array
+    private function getRoutesMetadata(ReflectionClass $class, array $groups): array
     {
         $routes = [];
 
@@ -116,7 +116,7 @@ final class AttributeDriver extends AbstractClassDriver
      *
      * @return array<class-string<object>, GroupMetadata>
      */
-    protected function getGroups(array $mappingClasses): array
+    private function getGroups(array $mappingClasses): array
     {
         $groups = [];
 
@@ -160,7 +160,7 @@ final class AttributeDriver extends AbstractClassDriver
     /**
      * @param ReflectionClass<object> $class
      */
-    protected function populateGroup(GroupMetadata $group, ReflectionClass $class, GroupAttribute $attribute): void
+    private function populateGroup(GroupMetadata $group, ReflectionClass $class, GroupAttribute $attribute): void
     {
         $this->populatePrefix($group, $attribute);
         $this->populatePattern($group, $attribute);
@@ -170,7 +170,7 @@ final class AttributeDriver extends AbstractClassDriver
         $this->populateMiddleware($group, $class);
     }
 
-    protected function populateRoute(RouteMetadata $route, ReflectionMethod $method, RouteAttribute $attribute): void
+    private function populateRoute(RouteMetadata $route, ReflectionMethod $method, RouteAttribute $attribute): void
     {
         $name = $attribute->getName();
         if ($name !== null) {
@@ -186,7 +186,7 @@ final class AttributeDriver extends AbstractClassDriver
         $this->populateMiddleware($route, $method);
     }
 
-    protected function populatePrefix(GroupMetadata $metadata, GroupAttribute $attribute): void
+    private function populatePrefix(GroupMetadata $metadata, GroupAttribute $attribute): void
     {
         $prefix = $attribute->getPrefix();
         if ($prefix !== null) {
@@ -198,7 +198,7 @@ final class AttributeDriver extends AbstractClassDriver
      * @param GroupMetadata|RouteMetadata   $metadata
      * @param GroupAttribute|RouteAttribute $attribute
      */
-    protected function populatePattern($metadata, $attribute): void
+    private function populatePattern($metadata, $attribute): void
     {
         $pattern = $attribute->getPattern();
         if ($pattern !== null) {
@@ -210,7 +210,7 @@ final class AttributeDriver extends AbstractClassDriver
      * @param GroupMetadata|RouteMetadata              $metadata
      * @param ReflectionClass<object>|ReflectionMethod $reflection
      */
-    protected function populateMiddleware($metadata, $reflection): void
+    private function populateMiddleware($metadata, $reflection): void
     {
         $middlewareList = [];
 
@@ -228,7 +228,7 @@ final class AttributeDriver extends AbstractClassDriver
      * @param GroupMetadata|RouteMetadata              $metadata
      * @param ReflectionClass<object>|ReflectionMethod $reflection
      */
-    protected function populateTransformer($metadata, $reflection): void
+    private function populateTransformer($metadata, $reflection): void
     {
         $parameters = [];
         $transformers = [];
@@ -254,7 +254,7 @@ final class AttributeDriver extends AbstractClassDriver
      *
      * @return array<string, string>
      */
-    protected function getTransformerParameters($reflection, TransformerAttribute $attribute): array
+    private function getTransformerParameters($reflection, TransformerAttribute $attribute): array
     {
         $parameters = [];
         if ($reflection instanceof ReflectionMethod) {

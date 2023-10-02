@@ -27,16 +27,16 @@ final class Route extends AbstractAnnotation
     use MiddlewareTrait;
     use ArgumentTrait;
 
-    protected ?string $name = null;
+    private ?string $name = null;
 
     /**
      * @var list<non-empty-string>
      */
-    protected array $methods = ['GET'];
+    private array $methods = ['GET'];
 
-    protected bool $xmlHttpRequest = false;
+    private bool $xmlHttpRequest = false;
 
-    protected int $priority = 0;
+    private int $priority = 0;
 
     public function getName(): ?string
     {

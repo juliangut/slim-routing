@@ -16,7 +16,7 @@ namespace Jgut\Slim\Routing\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ViewResponse extends AbstractResponse
+final class ViewResponse extends AbstractResponse
 {
     public function __construct(
         protected string $template,

@@ -20,11 +20,11 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Spatie\ArrayToXml\ArrayToXml;
 
-class XmlResponseHandler extends AbstractResponseHandler
+final class XmlResponseHandler extends AbstractResponseHandler
 {
     public function __construct(
         ResponseFactoryInterface $responseFactory,
-        protected bool $prettify = false,
+        private bool $prettify = false,
     ) {
         parent::__construct($responseFactory);
     }
@@ -50,7 +50,7 @@ class XmlResponseHandler extends AbstractResponseHandler
     /**
      * Return XML in a single line.
      */
-    protected function asSingleLine(ArrayToXml $converter): string
+    private function asSingleLine(ArrayToXml $converter): string
     {
         $xmlLines = explode("\n", $converter->toXml());
         array_walk(
@@ -64,7 +64,7 @@ class XmlResponseHandler extends AbstractResponseHandler
     /**
      * Prettify xml output.
      */
-    protected function prettify(ArrayToXml $converter): string
+    private function prettify(ArrayToXml $converter): string
     {
         $domDocument = $converter->toDom();
         $domDocument->formatOutput = true;

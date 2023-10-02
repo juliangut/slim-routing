@@ -31,9 +31,9 @@ class ResponseTypeStrategyTraitTest extends TestCase
 {
     public function testNullDispatch(): void
     {
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->getMock();
         $request = $this->getMockBuilder(ServerRequestInterface::class)
+            ->getMock();
+        $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
@@ -58,9 +58,9 @@ class ResponseTypeStrategyTraitTest extends TestCase
 
     public function testStringDispatch(): void
     {
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->getMock();
         $request = $this->getMockBuilder(ServerRequestInterface::class)
+            ->getMock();
+        $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
@@ -87,9 +87,9 @@ class ResponseTypeStrategyTraitTest extends TestCase
 
     public function testResponseDispatch(): void
     {
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->getMock();
         $request = $this->getMockBuilder(ServerRequestInterface::class)
+            ->getMock();
+        $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
@@ -117,9 +117,9 @@ class ResponseTypeStrategyTraitTest extends TestCase
             '/^Handled route response type should be string, null or ".+". "integer" given\.$/',
         );
 
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->getMock();
         $request = $this->getMockBuilder(ServerRequestInterface::class)
+            ->getMock();
+        $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
@@ -136,12 +136,10 @@ class ResponseTypeStrategyTraitTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessageMatches('/^No handler registered for response type ".+"\.$/');
 
-        $responseType = $this->getMockBuilder(PayloadResponse::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $container = $this->getMockBuilder(ContainerInterface::class)
-            ->getMock();
         $request = $this->getMockBuilder(ServerRequestInterface::class)
+            ->getMock();
+        $responseType = new PayloadResponse([], $request);
+        $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
@@ -160,16 +158,14 @@ class ResponseTypeStrategyTraitTest extends TestCase
             '/^Response handler should implement .+\\\ResponseTypeHandler, "stdClass" given\.$/',
         );
 
-        $responseType = $this->getMockBuilder(PayloadResponse::class)
-            ->disableOriginalConstructor()
+        $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
+        $responseType = new PayloadResponse([], $request);
         $container = $this->getMockBuilder(ContainerInterface::class)
             ->getMock();
         $container->expects(static::once())
             ->method('get')
             ->willReturn(new stdClass());
-        $request = $this->getMockBuilder(ServerRequestInterface::class)
-            ->getMock();
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
 
@@ -184,9 +180,9 @@ class ResponseTypeStrategyTraitTest extends TestCase
     public function testResponseTypeDispatch(): void
     {
         $responseFactory = new ResponseFactory();
-        $responseType = $this->getMockBuilder(PayloadResponse::class)
-            ->disableOriginalConstructor()
+        $request = $this->getMockBuilder(ServerRequestInterface::class)
             ->getMock();
+        $responseType = new PayloadResponse([], $request);
         $responseHandler = $this->getMockBuilder(ResponseTypeHandler::class)
             ->getMock();
         $resultResponse = $responseFactory->createResponse();
@@ -201,8 +197,6 @@ class ResponseTypeStrategyTraitTest extends TestCase
         $container->expects(static::once())
             ->method('get')
             ->willReturn($responseHandler);
-        $request = $this->getMockBuilder(ServerRequestInterface::class)
-            ->getMock();
         $response = $this->getMockBuilder(ResponseInterface::class)
             ->getMock();
 

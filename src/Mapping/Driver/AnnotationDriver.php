@@ -55,7 +55,7 @@ final class AnnotationDriver extends AbstractAnnotationDriver
      *
      * @return list<RouteMetadata>
      */
-    protected function getRoutesMetadata(ReflectionClass $class, array $groups): array
+    private function getRoutesMetadata(ReflectionClass $class, array $groups): array
     {
         $routes = [];
 
@@ -109,7 +109,7 @@ final class AnnotationDriver extends AbstractAnnotationDriver
      *
      * @return array<class-string<object>, GroupMetadata>
      */
-    protected function getGroups(array $mappingClasses): array
+    private function getGroups(array $mappingClasses): array
     {
         $groups = [];
 
@@ -147,7 +147,7 @@ final class AnnotationDriver extends AbstractAnnotationDriver
         );
     }
 
-    protected function populateGroup(GroupMetadata $group, GroupAnnotation $annotation): void
+    private function populateGroup(GroupMetadata $group, GroupAnnotation $annotation): void
     {
         $this->populatePrefix($group, $annotation);
         $this->populatePattern($group, $annotation);
@@ -160,7 +160,7 @@ final class AnnotationDriver extends AbstractAnnotationDriver
     /**
      * @throws DriverException
      */
-    protected function populateRoute(
+    private function populateRoute(
         RouteMetadata $route,
         ReflectionMethod $method,
         RouteAnnotation $annotation,
@@ -179,7 +179,7 @@ final class AnnotationDriver extends AbstractAnnotationDriver
         $route->setMiddlewares($annotation->getMiddlewares());
     }
 
-    protected function populatePrefix(GroupMetadata $metadata, GroupAnnotation $annotation): void
+    private function populatePrefix(GroupMetadata $metadata, GroupAnnotation $annotation): void
     {
         $prefix = $annotation->getPrefix();
         if ($prefix !== null) {
@@ -191,7 +191,7 @@ final class AnnotationDriver extends AbstractAnnotationDriver
      * @param GroupMetadata|RouteMetadata     $metadata
      * @param GroupAnnotation|RouteAnnotation $annotation
      */
-    protected function populatePattern($metadata, $annotation): void
+    private function populatePattern($metadata, $annotation): void
     {
         $pattern = $annotation->getPattern();
         if ($pattern !== null) {
@@ -203,7 +203,7 @@ final class AnnotationDriver extends AbstractAnnotationDriver
      * @param GroupMetadata|RouteMetadata     $metadata
      * @param GroupAnnotation|RouteAnnotation $annotation
      */
-    protected function populateTransformer($metadata, $annotation, ?ReflectionMethod $method = null): void
+    private function populateTransformer($metadata, $annotation, ?ReflectionMethod $method = null): void
     {
         $metadata->setParameters($this->getTransformerParameters($annotation, $method))
             ->setTransformers($annotation->getTransformers());
@@ -214,7 +214,7 @@ final class AnnotationDriver extends AbstractAnnotationDriver
      *
      * @return array<string, string>
      */
-    protected function getTransformerParameters($annotation, ?ReflectionMethod $reflection): array
+    private function getTransformerParameters($annotation, ?ReflectionMethod $reflection): array
     {
         $parameters = [];
 

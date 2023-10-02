@@ -20,11 +20,11 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Views\Twig;
 
-class TwigViewResponseHandler extends AbstractResponseHandler
+final class TwigViewResponseHandler extends AbstractResponseHandler
 {
     public function __construct(
         ResponseFactoryInterface $responseFactory,
-        protected Twig $viewRenderer,
+        private Twig $viewRenderer,
     ) {
         parent::__construct($responseFactory);
     }
