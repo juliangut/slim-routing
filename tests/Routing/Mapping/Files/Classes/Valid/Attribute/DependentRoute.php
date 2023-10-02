@@ -30,6 +30,7 @@ class DependentRoute
 {
     #[Route(
         name: 'four',
+        methods: 'GET',
         pattern: '/four',
     )]
     #[Middleware('fourMiddleware')]

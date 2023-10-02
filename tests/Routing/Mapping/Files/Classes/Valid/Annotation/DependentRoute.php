@@ -30,6 +30,7 @@ class DependentRoute
     /**
      * @JSR\Route(
      *     name="four",
+     *     methods="GET",
      *     pattern="/four",
      *     middlewares={"fourMiddleware"}
      * )

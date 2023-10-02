@@ -137,7 +137,7 @@ Route callbacks normally respond with a `Psr\Message\ResponseInterface` object, 
 ```php
 $app->get(
     '/hello/{name}', 
-    fn ($args): string => 'Hello ' . $args['name'],
+    fn (array $args): string => 'Hello ' . $args['name'],
 )->setName('greet');
 ```
 
@@ -240,7 +240,7 @@ _Mind that a single transformer can transform one or several parameters_
 
 ### Route mapping
 
-Routes can be defined in two basic ways: by writing them down in definition files of various formats or directly defined in attributes on controller classes
+Routes can be defined in two basic ways: by writing them down in definition files of various formats or directly in classes with Attributes
 
 #### Attributes
 
@@ -290,7 +290,7 @@ class Section
 ```
 
 * `name`, optional, route name so it can be referenced in Slim
-* `methods`, optional, list of accepted HTTP route methods. ºANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed in the list (defaults to GET)
+* `methods`, optional, one or a list of accepted HTTP route methods. ºANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed in the list (defaults to GET)
 * `pattern`, optional, path pattern (defaults to '/'). Do not use placeholders in the pattern
 * `placeholders`, optional, array of regex/alias for pattern placeholders
 * `arguments`, optional, array of arguments to attach to the route
@@ -299,7 +299,7 @@ class Section
 
 ##### Middleware (Class and Method level)
 
-Defines middleware to apply. Several can be added
+Defines middleware to apply. Multiple Attributes can be added
 
 ```php
 use Jgut\Slim\Routing\Mapping\Attribute\Group;
@@ -308,11 +308,12 @@ use Jgut\Slim\Routing\Mapping\Attribute\Route;
 use Psr\Http\Message\ResponseInterface;
 
 #[Group()]
-#[Middleware(SectionMiddleware::class)]
+#[Middleware(GroupMiddleware::class)]
+#[Middleware(AdditionalMiddleware::class)]
 class Section
 {
     #[Route(methods: ['GET'], pattern: 'user')]
-    #[Middleware(UserMiddleware::class)]
+    #[Middleware(RouteMiddleware::class)]
     public function userAction(): ResponseInterface {}
 }
 ```
@@ -321,7 +322,7 @@ class Section
 
 ##### Transformer (Class and Method level)
 
-Defines route transformers. Several can be added
+Defines route transformers. Multiple Attributes can be added
 
 ```php
 use Jgut\Slim\Routing\Mapping\Attribute\Group;
@@ -344,7 +345,7 @@ class Section
 
 * `transformer`, ParameterTransformer class that will be extracted from the container
 * `parameters`, optional, array of definitions of parameters
-* 
+
 #### Definition files
 
 ###### PHP
@@ -602,7 +603,7 @@ Defines a route added to Slim
 * `pattern`, optional, path pattern (defaults to '/'). Do not use placeholders in the pattern
 * `placeholders`, optional, array of regex/alias for pattern placeholders
 * `xmlHttpRequest`, request should be AJAX, false by default
-* `methods`, optional, list of accepted HTTP route methods. "ANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed (defaults to GET)
+* `methods`, optional, one or a list of accepted HTTP route methods. "ANY" is a special method that transforms to `[GET, POST, PUT, PATCH, DELETE]`, if ANY is used no other method is allowed (defaults to GET)
 * `parameters`, optional, array of definitions of parameters, to be used in transformer
 * `transformers`, optional, array of ParameterTransformer class that will be extracted from the container
 * `arguments`, optional, array of arguments to attach to the route

@@ -30,7 +30,7 @@ final class Route extends AbstractAnnotation
     protected ?string $name = null;
 
     /**
-     * @var list<string>
+     * @var list<non-empty-string>
      */
     protected array $methods = ['GET'];
 
@@ -53,7 +53,7 @@ final class Route extends AbstractAnnotation
     /**
      * Get route methods.
      *
-     * @return list<string>
+     * @return list<non-empty-string>
      */
     public function getMethods(): array
     {
@@ -61,10 +61,14 @@ final class Route extends AbstractAnnotation
     }
 
     /**
-     * @param list<string> $methods
+     * @param non-empty-string|list<non-empty-string> $methods
      */
-    public function setMethods($methods): self
+    public function setMethods(string|array $methods): self
     {
+        if (\is_string($methods)) {
+            $methods = [$methods];
+        }
+
         $this->methods = $methods;
 
         return $this;

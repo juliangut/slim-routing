@@ -34,12 +34,16 @@ trait MiddlewareTrait
     }
 
     /**
-     * @param list<non-empty-string> $middlewareList
+     * @param non-empty-string|list<non-empty-string> $middlewareList
      *
      * @throws AnnotationException
      */
-    public function setMiddlewares(array $middlewareList): static
+    public function setMiddlewares(string|array $middlewareList): static
     {
+        if (\is_string($middlewareList)) {
+            $middlewareList = [$middlewareList];
+        }
+
         $this->middlewares = $middlewareList;
 
         return $this;

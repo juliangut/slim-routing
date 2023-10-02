@@ -18,24 +18,34 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD)]
 final class Route
 {
+    /**
+     * @var list<string>
+     */
+    private array $methods;
+
+    /**
+     * @param non-empty-string|list<non-empty-string>|null $methods
+     */
     public function __construct(
         private ?string $name = null,
-        /**
-         * @var list<string>
-         */
-        private array $methods = ['GET'],
+        string|array|null $methods = null,
         private ?string $pattern = null,
         /**
          * @var array<string, string>
-         */
-        private array $placeholders = [],
+         */  private array $placeholders = [],
         /**
          * @var array<string, string>
-         */
-        private array $arguments = [],
+         */  private array $arguments = [],
         protected bool $xmlHttpRequest = false,
         protected int $priority = 0,
-    ) {}
+    ) {
+        if ($methods === null) {
+            $methods = ['GET'];
+        } elseif (\is_string($methods)) {
+            $methods = [$methods];
+        }
+        $this->methods = $methods;
+    }
 
     public function getName(): ?string
     {

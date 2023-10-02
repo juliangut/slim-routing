@@ -37,10 +37,14 @@ trait TransformerTrait
     }
 
     /**
-     * @param list<non-empty-string> $transformers
+     * @param non-empty-string|list<non-empty-string> $transformers
      */
-    public function setTransformers(array $transformers): self
+    public function setTransformers(string|array $transformers): self
     {
+        if (\is_string($transformers)) {
+            $transformers = [$transformers];
+        }
+
         $this->transformers = $transformers;
 
         return $this;
