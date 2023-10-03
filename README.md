@@ -645,7 +645,7 @@ Defines a route added to Slim
 
 ### Annotations
 
-_Annotations are deprecated and will be removed eventually. Use Attribute mapping when possible_
+__Annotations are deprecated and will be removed eventually. Use Attribute mapping when possible__.
 
 You need to require Doctrine's annotation package
 
@@ -703,7 +703,7 @@ class Section
      *     arguments={"scope": "admin.read"}
      *     parameters={"user": "\Namespace\To\User"},
      *     transformers={"\Namespace\To\RouteTransformer"},
-     *     middleware={"Namespace\To\RouteMiddleware"},
+     *     middleware={"\Namespace\To\RouteMiddleware"},
      *     priority=-10
      * )
      */
@@ -726,7 +726,7 @@ class Section
 
 Using grouping with juliangut/slim-routing is a little different to how default Slim's router works
 
-Groups are never really added to the router (in the sense you can add them in Slim with `$app->group(...)`) but routes are a composition of definitions that makes the final route
+Groups are never really added to the router (in the sense you can add them in Slim with `$app->group(...)`), instead, routes are a composition of definitions that makes the final route
 
 ### Name
 
@@ -764,15 +764,19 @@ As with placeholders, it is important to pay attention not to duplicate paramete
 
 * Minimum PHP version is now 8.0
 * Minimum Slim version is now 4.7
-* PHP8 Attributes have been introduced for routing
+* PHP8 Attributes have been introduced for route mapping
 * ParameterTransformer methods and signatures have changed
 * AbstractTransformer has been removed, simply implement ParameterTransformer
-* Annotations have been deprecated and its use is highly discouraged
-* @Router Annotation use is not needed anymore
-* @Group and @Route Annotations "middleware" parameter have changed to "middlewares" and also accepts a list instead of a single reference
-* @Route Annotation transformers now also accepts a list instead of a single reference
+* Some internal methods have changed their signatures or have been made final
+
+##### Annotations
+
+__Annotations have been deprecated and its use is highly discouraged in favor of Attributes__
+
+* @Router Annotation optional and triggers an E_USER_DEPRECATED
+* @Group and @Route Annotations "middleware" parameter have changed to "middlewares" and accepts a list or a single middleware
+* @Route Annotation transformers now accepts a list or a single transformer
 * @Group Annotation now supports transformers as well
-* Some internal methods have changed their signatures
 
 ## Contributing
 
