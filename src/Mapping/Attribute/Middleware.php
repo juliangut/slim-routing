@@ -16,7 +16,7 @@ namespace Jgut\Slim\Routing\Mapping\Attribute;
 use Attribute;
 use Psr\Http\Server\MiddlewareInterface;
 
-#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 final class Middleware
 {
     public function __construct(

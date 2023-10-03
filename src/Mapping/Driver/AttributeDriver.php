@@ -73,6 +73,7 @@ final class AttributeDriver extends AbstractClassDriver
 
         foreach ($class->getMethods() as $method) {
             $routeAttributes = $method->getAttributes(RouteAttribute::class, ReflectionAttribute::IS_INSTANCEOF);
+
             foreach ($routeAttributes as $routeAttribute) {
                 if ($method->isConstructor() || $method->isDestructor()) {
                     throw new DriverException(

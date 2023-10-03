@@ -69,9 +69,13 @@ final class AnnotationDriver extends AbstractAnnotationDriver
         }
 
         foreach ($class->getMethods() as $method) {
-            /** @var RouteAnnotation|null $route */
-            $route = $this->annotationReader->getMethodAnnotation($method, RouteAnnotation::class);
-            if ($route !== null) {
+            $methodAnnotations = $this->annotationReader->getMethodAnnotations($method);
+
+            foreach ($methodAnnotations as $methodAnnotation) {
+                if (!$methodAnnotation instanceof RouteAnnotation) {
+                    continue;
+                }
+
                 if ($method->isConstructor() || $method->isDestructor()) {
                     throw new DriverException(
                         sprintf('Routes can not be defined in constructor or destructor in class "%s".', $class->name),
@@ -93,7 +97,7 @@ final class AnnotationDriver extends AbstractAnnotationDriver
                 if ($group !== null) {
                     $routeMetadata->setGroup($group);
                 }
-                $this->populateRoute($routeMetadata, $method, $route);
+                $this->populateRoute($routeMetadata, $method, $methodAnnotation);
 
                 $routes[] = $routeMetadata;
             }

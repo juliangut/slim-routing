@@ -16,7 +16,7 @@ namespace Jgut\Slim\Routing\Mapping\Attribute;
 use Attribute;
 use Jgut\Slim\Routing\Transformer\ParameterTransformer;
 
-#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 final class Transformer
 {
     public function __construct(
