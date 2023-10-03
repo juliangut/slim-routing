@@ -80,19 +80,6 @@ class RouteCollectorTest extends TestCase
         $cache->expects(static::once())
             ->method('set');
 
-        $routesMetadata = [
-            (new RouteMetadata(['one', 'action']))
-                ->setMethods(['GET'])
-                ->setPattern('one/{id}')
-                ->setPlaceholders(['id' => 'numeric'])
-                ->setXmlHttpRequest(true),
-            (new RouteMetadata(['two', 'action']))
-                ->setName('two')
-                ->setMethods(['POST'])
-                ->setPattern('two')
-                ->setMiddlewares(['twoMiddleware']),
-        ];
-
         $configuration = new Configuration(['sources' => $sources]);
 
         $resolver = $this->getMockBuilder(RouteResolver::class)
@@ -100,14 +87,14 @@ class RouteCollectorTest extends TestCase
             ->getMock();
         $resolver->expects(static::once())
             ->method('sort')
-            ->willReturn($routesMetadata);
+            ->willReturnArgument(0);
 
         $configuration->setRouteResolver($resolver);
 
         $routeCollector = new RouteCollector($configuration, $responseFactory, $callableResolver);
         $routeCollector->setCache($cache);
 
-        static::assertCount(2, $routeCollector->getRoutes());
+        static::assertCount(4, $routeCollector->getRoutes());
     }
 
     /**

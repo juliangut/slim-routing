@@ -25,7 +25,7 @@
   "require": {
     "php": "^8.0",
     "juliangut/mapping": "^1.4.1",
-    "psr/simple-cache": "^1.0",
+    "psr/simple-cache": "^1.0|^2.0",
     "slim/slim": "^4.7",
     "symfony/polyfill-php81": "^1.27"
   },
