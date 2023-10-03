@@ -201,7 +201,7 @@ Provided response types handlers:
 
 You can create your own response type handlers to compose specifically formatted response (JSON:API, ...) or use another template engines (Plates, ...)
 
-### Parameter transformation
+## Parameter transformation
 
 Route parameters can be transformed before arriving to route callable. The most common use of this feature would be to transform IDs into actual object/entity used in the callable
 
@@ -238,13 +238,46 @@ final class UserEntityTransformer implements ParameterTransformer
 
 _Mind that a single transformer can transform one or several parameters_
 
-### Route mapping
+## Console commands
+
+```php
+use Symfony\Component\Console\Application;
+use Jgut\Slim\Routing\Console\ListCommand;
+use Jgut\Slim\Routing\Console\MatchCommand;
+
+/** @var \Slim\App $app */
+$routeResolver = $app->getRouteResolver();
+
+$cli = new Application('Slim CLI');
+$cli->add(new ListCommand($routeResolver));
+$cli->add(new MatchCommand($routeResolver));
+
+$app->run();
+```
+
+### List routing
+
+List defined routes supporting searching and sorting 
+
+```bash
+php -f cli.php slim:routing:list --help
+```
+
+### Match routing
+
+Match routes with Slim's route resolver, so results will be exactly the same as through HTTP requests
+
+```bash
+php -f cli.php slim:routing:match --help
+```
+
+## Route mapping
 
 Routes can be defined in two basic ways: by writing them down in definition files of various formats or directly in classes with Attributes
 
-#### Attributes
+### Attributes
 
-##### Group (Class level)
+#### Group (Class level)
 
 Defines a group in which routes may reside. It is not mandatory but useful when you want to do route grouping or apply middleware to several routes at the same time
 
@@ -267,7 +300,7 @@ class Section {}
 * `placeholders`, optional, array of regex/alias for pattern placeholders,
 * `arguments`, optional, array of arguments to attach to final route 
 
-##### Route (Method level)
+#### Route (Method level)
 
 Defines the final routes added to Slim
 
@@ -297,7 +330,7 @@ class Section
 * `xmlHttpRequest`, request should be AJAX, false by default
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
 
-##### Middleware (Class and Method level)
+#### Middleware (Class and Method level)
 
 Defines middleware to apply. Multiple Attributes can be added
 
@@ -320,7 +353,7 @@ class Section
 
 * `middleware`, MiddlewareInterface class that will be extracted from the container
 
-##### Transformer (Class and Method level)
+#### Transformer (Class and Method level)
 
 Defines route transformers. Multiple Attributes can be added
 
@@ -346,9 +379,9 @@ class Section
 * `transformer`, ParameterTransformer class that will be extracted from the container
 * `parameters`, optional, array of definitions of parameters
 
-#### Definition files
+### Definition files
 
-###### PHP
+##### PHP
 
 ```php
 return [
@@ -409,7 +442,7 @@ return [
 ];
 ```
 
-###### XML
+##### XML
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -475,7 +508,7 @@ return [
 </root>
 ```
 
-###### JSON
+##### JSON
 
 _Mind comments are not valid standard JSON_
 
@@ -538,7 +571,7 @@ _Mind comments are not valid standard JSON_
 ]
 ```
 
-###### YAML
+##### YAML
 
 ```yaml
 # Group
@@ -581,7 +614,7 @@ _Mind comments are not valid standard JSON_
 # Routes/groups ...
 ```
 
-##### Group
+#### Group
 
 Defines a group in which routes may reside
 
@@ -594,7 +627,7 @@ Defines a group in which routes may reside
 * `arguments`, optional, array of arguments to attach to final route
 * `middlewares`, optional, array of MiddlewareInterface class to be added to all group routes
 
-##### Route
+#### Route
 
 Defines a route added to Slim
 
@@ -610,7 +643,7 @@ Defines a route added to Slim
 * `middlewares`, optional, array of MiddlewareInterface class to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
 
-#### Annotations
+### Annotations
 
 _Annotations are deprecated and will be removed eventually. Use Attribute mapping when possible_
 
@@ -620,7 +653,7 @@ You need to require Doctrine's annotation package
 composer require doctrine/annotations
 ```
 
-##### Group (Class level)
+#### Group (Class level)
 
 Defines a group in which routes may reside. It is not mandatory but useful when you want to do route grouping or apply middleware to several routes at the same time
 
@@ -651,7 +684,7 @@ class Section {}
 * `arguments`, optional, array of arguments to attach to final route
 * `middlewares`, optional, array of MiddlewareInterface class to be added to all group routes
 
-##### Route (Method level)
+#### Route (Method level)
 
 Defines the final routes added to Slim
 
@@ -689,31 +722,31 @@ class Section
 * `middlewares`, optional, array of MiddlewareInterface class to be added to the route
 * `priority`, optional, integer for ordering route registration. The order is global among all loaded routes. Negative routes get loaded first (defaults to 0)
 
-### Route composition
+## Route composition
 
 Using grouping with juliangut/slim-routing is a little different to how default Slim's router works
 
 Groups are never really added to the router (in the sense you can add them in Slim with `$app->group(...)`) but routes are a composition of definitions that makes the final route
 
-#### Name
+### Name
 
 Final route name is composed of the concatenation of group prefixes followed by route name according to configured route _naming strategy_
 
-#### Pattern
+### Pattern
 
 Resulting route pattern is composed of the concatenation of group patterns if any and finally route pattern
 
-#### Placeholders
+### Placeholders
 
 Resulting placeholders list is composed of all group placeholders if any and route placeholders
 
 It is important to pay attention not to duplicate placeholder names in the resulting pattern as this can't be handled by FastRoute. Check group tree patterns for placeholder names
 
-#### Arguments
+### Arguments
 
 Resulting route arguments is composed of all group arguments if any and route arguments
 
-#### Middlewares
+### Middlewares
 
 Resulting middlewares added to a route will be the result of combining group middleware and route middleware and are applied to the route in the following order, so that final middleware execution order will be the same as expected in any Slim app:
 
@@ -721,9 +754,9 @@ Resulting middlewares added to a route will be the result of combining group mid
 * Then group middleware (if any) are to be set into the route **in the same order they are defined**
 * If group has a parent then parent's middleware are set **in the order they are defined**, and this goes up until no parent group is left
 
-#### Transformers and parameters
+### Transformers and parameters
 
-Resulting transformers list is a combination of all group transformers and parameters if any and route transformers and parameters
+Resulting transformers and parameters list are a combination of all group transformers and parameters if any and route transformers and parameters
 
 As with placeholders, it is important to pay attention not to duplicate parameter names as child groups and routes will replace previous parameters
 
@@ -732,13 +765,13 @@ As with placeholders, it is important to pay attention not to duplicate paramete
 * Minimum PHP version is now 8.0
 * Minimum Slim version is now 4.7
 * PHP8 Attributes have been introduced for routing
-* Annotations have been deprecated and its use is highly discouraged
-* @Router Annotation use is not needed
-* Middleware parameter of @Group and @Route Annotations have changed to "middlewares"
 * ParameterTransformer methods and signatures have changed
 * AbstractTransformer has been removed, simply implement ParameterTransformer
-* Routing transformers now accept an array instead of a single reference
-* Groups now support transformers
+* Annotations have been deprecated and its use is highly discouraged
+* @Router Annotation use is not needed anymore
+* @Group and @Route Annotations "middleware" parameter have changed to "middlewares" and also accepts a list instead of a single reference
+* @Route Annotation transformers now also accepts a list instead of a single reference
+* @Group Annotation now supports transformers as well
 * Some internal methods have changed their signatures
 
 ## Contributing

@@ -44,14 +44,16 @@
     "phpunit/phpunit": "^9.6|^10.3",
     "povils/phpmnd": "^3.2",
     "roave/security-advisories": "dev-master",
-    "slim/twig-view": "^3.3.0",
-    "spatie/array-to-xml": "^3.2"
+    "slim/twig-view": "^3.3",
+    "spatie/array-to-xml": "^3.2",
+    "symfony/console": "^6.0",
+    "symfony/yaml": "^6.0"
   },
   "suggest": {
-    "doctrine/annotations": "In order to load routing from annotations",
-    "spatie/array-to-xml": "In order to return XML responses",
-    "symfony/yaml": "In order to load routing from YAML files",
-    "slim/twig-view": "In order to return Twig rendered responses"
+    "slim/twig-view": "In order to return Twig rendered responses (>=3.3)",
+    "spatie/array-to-xml": "In order to return XML responses (>=3.2)",
+    "symfony/yaml": "In order to load routing from YAML files (>=5.1)",
+    "symfony/console": "In order to use console commands (>=5.1)"
   },
   "autoload": {
     "psr-4": {

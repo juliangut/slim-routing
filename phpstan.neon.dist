@@ -20,6 +20,8 @@ parameters:
         - src/Mapping/Annotation/Router.php
         - src/Route/RouteResolver.php
     # Slim's route
+    - message: '/^Parameter #3 \$callable of method Slim\\Routing\\Route::__construct\(\) expects \(callable\(\): mixed\)\|string, array{string, string}\|\(callable\(\): mixed\)\|string given\.$/'
+      path: src/Route/Route.php
     - message: '/^Property Slim\\Routing\\Route::\$arguments \(array<string, string>\) does not accept array<string, mixed>\.$/'
       path: src/Route/Route.php
     - message: '/^Parameter #1 \$arguments of method Slim\\Routing\\Route::setArguments\(\) expects array<string, string>, array<string, mixed> given\.$/'
