@@ -22,14 +22,14 @@ abstract class AbstractRoutingCommand extends Command
     /**
      * Get routes formatted for table.
      *
-     * @param list<Route|RouteInterface> $routes
+     * @param list<RouteInterface> $routes
      *
      * @return list<list<string|null>>
      */
     final protected function getTableRows(array $routes): array
     {
         return array_values(array_map(
-            static function ($route): array {
+            static function (RouteInterface $route): array {
                 $xmlHttpRequest = false;
                 if ($route instanceof Route) {
                     $metadata = $route->getMetadata();

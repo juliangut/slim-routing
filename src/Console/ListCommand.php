@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Console;
 
-use Jgut\Slim\Routing\Route\Route;
 use Jgut\Slim\Routing\RouteCollector;
+use Slim\Interfaces\RouteInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -90,8 +90,10 @@ class ListCommand extends AbstractRoutingCommand
 
         if (\in_array($sorting, [self::SORT_PATH, self::SORT_NAME], true)) {
             $sortCallback = $sorting === self::SORT_NAME
-                ? static fn(Route $routeA, Route $routeB): int => $routeA->getName() <=> $routeB->getName()
-                : static fn(Route $routeA, Route $routeB): int => $routeA->getPattern() <=> $routeB->getPattern();
+                ? static fn(RouteInterface $routeA, RouteInterface $routeB): int
+                    => $routeA->getName() <=> $routeB->getName()
+                : static fn(RouteInterface $routeA, RouteInterface $routeB): int
+                    => $routeA->getPattern() <=> $routeB->getPattern();
 
             usort($routes, $sortCallback);
         }
@@ -114,12 +116,11 @@ class ListCommand extends AbstractRoutingCommand
     }
 
     /**
-     * @return list<Route>
+     * @return list<RouteInterface>
      */
     public function getRoutes(InputInterface $input): array
     {
-        /** @var list<Route> $routes */
-        $routes = $this->routeCollector->getRoutes();
+        $routes = array_values($this->routeCollector->getRoutes());
 
         $searchPattern = $this->getSearchPattern($input);
         if ($searchPattern === null) {
@@ -128,7 +129,7 @@ class ListCommand extends AbstractRoutingCommand
 
         return array_values(array_filter(
             $routes,
-            static function (Route $route) use ($searchPattern): bool {
+            static function (RouteInterface $route) use ($searchPattern): bool {
                 return preg_match($searchPattern, $route->getPattern()) === 1
                     || ($route->getName() !== null && preg_match($searchPattern, $route->getName()) === 1);
             },
