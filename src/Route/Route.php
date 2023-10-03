@@ -29,9 +29,9 @@ use Slim\Routing\Route as SlimRoute;
 class Route extends SlimRoute
 {
     /**
-     * @param list<string>              $methods
-     * @param string|callable(): mixed  $callable
-     * @param list<RouteGroupInterface> $groups
+     * @param list<string>                                   $methods
+     * @param string|array{string, string}|callable(): mixed $callable
+     * @param list<RouteGroupInterface>                      $groups
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */

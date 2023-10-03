@@ -189,8 +189,8 @@ class RouteCollector extends SlimRouteCollector
     }
 
     /**
-     * @param list<string>             $methods
-     * @param string|callable(): mixed $callable
+     * @param list<string>                                   $methods
+     * @param string|array{string, string}|callable(): mixed $callable
      *
      * @return Route
      */

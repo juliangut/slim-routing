@@ -114,7 +114,7 @@ trait FileMappingTrait
      *
      * @throws DriverException
      *
-     * @return string|callable(): mixed
+     * @return string|array{string, string}|callable(): mixed
      */
     protected function getInvokable(array $mapping)
     {
@@ -128,7 +128,7 @@ trait FileMappingTrait
             throw new DriverException('Route invokable does not seem to be supported by Slim router.');
         }
 
-        /** @var string|callable(): mixed $invokable */
+        /** @var string|array{string, string}|callable(): mixed $invokable */
         return $invokable;
     }
 

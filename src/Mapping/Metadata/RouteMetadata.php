@@ -40,15 +40,15 @@ final class RouteMetadata extends AbstractMetadata
 
     public function __construct(
         /**
-         * @var string|callable(): mixed
+         * @var string|array{string, string}|callable(): mixed
          */
         private $invokable,
     ) {}
 
     /**
-     * @return string|callable(): mixed
+     * @return string|array{string, string}|callable(): mixed
      */
-    public function getInvokable()
+    public function getInvokable(): string|array|callable
     {
         return $this->invokable;
     }
