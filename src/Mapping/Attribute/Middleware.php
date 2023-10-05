@@ -29,7 +29,7 @@ final class Middleware
     /**
      * @return class-string<MiddlewareInterface>
      */
-    public function getMiddleware()
+    public function getMiddleware(): string
     {
         return $this->middleware;
     }

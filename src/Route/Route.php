@@ -159,6 +159,8 @@ class Route extends SlimRoute
     }
 
     /**
+     * @throws RuntimeException
+     *
      * @return list<ParameterTransformer>
      */
     protected function getTransformers(): array
