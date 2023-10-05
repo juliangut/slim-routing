@@ -153,24 +153,26 @@ trait FileMappingTrait
     }
 
     /**
-     * @param GroupMetadata|RouteMetadata $metadata
-     * @param GroupMapping|RouteMapping   $mapping
+     * @param GroupMapping|RouteMapping $mapping
      */
-    protected function populatePattern($metadata, array $mapping): void
-    {
+    protected function populatePattern(
+        GroupMetadata|RouteMetadata $metadata,
+        array $mapping,
+    ): void {
         if (\array_key_exists('pattern', $mapping) && trim($mapping['pattern'], ' /') !== '') {
             $metadata->setPattern(trim($mapping['pattern'], ' /'));
         }
     }
 
     /**
-     * @param GroupMetadata|RouteMetadata $metadata
-     * @param GroupMapping|RouteMapping   $mapping
+     * @param GroupMapping|RouteMapping $mapping
      *
      * @throws DriverException
      */
-    protected function populatePlaceholders($metadata, array $mapping): void
-    {
+    protected function populatePlaceholders(
+        GroupMetadata|RouteMetadata $metadata,
+        array $mapping,
+    ): void {
         if (!\array_key_exists('placeholders', $mapping)) {
             return;
         }
@@ -267,13 +269,14 @@ trait FileMappingTrait
     }
 
     /**
-     * @param GroupMetadata|RouteMetadata $metadata
-     * @param array<mixed>                $mapping
+     * @param array<mixed> $mapping
      *
      * @throws DriverException
      */
-    protected function populateMiddleware($metadata, array $mapping): void
-    {
+    protected function populateMiddleware(
+        GroupMetadata|RouteMetadata $metadata,
+        array $mapping,
+    ): void {
         if (!\array_key_exists('middlewares', $mapping)) {
             return;
         }
@@ -290,13 +293,14 @@ trait FileMappingTrait
     }
 
     /**
-     * @param GroupMetadata|RouteMetadata $metadata
-     * @param array<mixed>                $mapping
+     * @param array<mixed> $mapping
      *
      * @throws DriverException
      */
-    protected function populateArguments($metadata, array $mapping): void
-    {
+    protected function populateArguments(
+        GroupMetadata|RouteMetadata $metadata,
+        array $mapping,
+    ): void {
         if (!\array_key_exists('arguments', $mapping)) {
             return;
         }
@@ -310,13 +314,14 @@ trait FileMappingTrait
     }
 
     /**
-     * @param GroupMetadata|RouteMetadata $metadata
-     * @param array<mixed>                $mapping
+     * @param array<mixed> $mapping
      *
      * @throws DriverException
      */
-    protected function populateParameters($metadata, array $mapping): void
-    {
+    protected function populateParameters(
+        GroupMetadata|RouteMetadata $metadata,
+        array $mapping,
+    ): void {
         if (!\array_key_exists('parameters', $mapping)) {
             return;
         }
@@ -330,13 +335,14 @@ trait FileMappingTrait
     }
 
     /**
-     * @param GroupMetadata|RouteMetadata $metadata
-     * @param array<mixed>                $mapping
+     * @param array<mixed> $mapping
      *
      * @throws DriverException
      */
-    protected function populateTransformers($metadata, array $mapping): void
-    {
+    protected function populateTransformers(
+        GroupMetadata|RouteMetadata $metadata,
+        array $mapping,
+    ): void {
         if (!\array_key_exists('transformers', $mapping)) {
             return;
         }

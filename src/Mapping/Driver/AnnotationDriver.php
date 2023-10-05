@@ -191,24 +191,21 @@ final class AnnotationDriver extends AbstractAnnotationDriver
         }
     }
 
-    /**
-     * @param GroupMetadata|RouteMetadata     $metadata
-     * @param GroupAnnotation|RouteAnnotation $annotation
-     */
-    private function populatePattern($metadata, $annotation): void
-    {
+    private function populatePattern(
+        GroupMetadata|RouteMetadata $metadata,
+        GroupAnnotation|RouteAnnotation $annotation,
+    ): void {
         $pattern = $annotation->getPattern();
         if ($pattern !== null) {
             $metadata->setPattern($pattern);
         }
     }
 
-    /**
-     * @param GroupMetadata|RouteMetadata     $metadata
-     * @param GroupAnnotation|RouteAnnotation $annotation
-     */
-    private function populateTransformer($metadata, $annotation, ?ReflectionMethod $method = null): void
-    {
+    private function populateTransformer(
+        GroupMetadata|RouteMetadata $metadata,
+        GroupAnnotation|RouteAnnotation $annotation,
+        ?ReflectionMethod $method = null,
+    ): void {
         $metadata->setParameters($this->getTransformerParameters($annotation, $method))
             ->setTransformers($annotation->getTransformers());
     }

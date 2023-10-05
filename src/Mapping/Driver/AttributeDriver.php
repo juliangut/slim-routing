@@ -195,12 +195,10 @@ final class AttributeDriver extends AbstractClassDriver
         }
     }
 
-    /**
-     * @param GroupMetadata|RouteMetadata   $metadata
-     * @param GroupAttribute|RouteAttribute $attribute
-     */
-    private function populatePattern($metadata, $attribute): void
-    {
+    private function populatePattern(
+        GroupMetadata|RouteMetadata $metadata,
+        GroupAttribute|RouteAttribute $attribute,
+    ): void {
         $pattern = $attribute->getPattern();
         if ($pattern !== null) {
             $metadata->setPattern($pattern);
@@ -208,11 +206,12 @@ final class AttributeDriver extends AbstractClassDriver
     }
 
     /**
-     * @param GroupMetadata|RouteMetadata              $metadata
      * @param ReflectionClass<object>|ReflectionMethod $reflection
      */
-    private function populateMiddleware($metadata, $reflection): void
-    {
+    private function populateMiddleware(
+        GroupMetadata|RouteMetadata $metadata,
+        ReflectionClass|ReflectionMethod $reflection,
+    ): void {
         $middlewareList = [];
 
         /** @var list<ReflectionAttribute<MiddlewareAttribute>> $attributes */
@@ -226,11 +225,12 @@ final class AttributeDriver extends AbstractClassDriver
     }
 
     /**
-     * @param GroupMetadata|RouteMetadata              $metadata
      * @param ReflectionClass<object>|ReflectionMethod $reflection
      */
-    private function populateTransformer($metadata, $reflection): void
-    {
+    private function populateTransformer(
+        GroupMetadata|RouteMetadata $metadata,
+        ReflectionClass|ReflectionMethod $reflection,
+    ): void {
         $parameters = [];
         $transformers = [];
 
@@ -255,8 +255,10 @@ final class AttributeDriver extends AbstractClassDriver
      *
      * @return array<string, string>
      */
-    private function getTransformerParameters($reflection, TransformerAttribute $attribute): array
-    {
+    private function getTransformerParameters(
+        ReflectionClass|ReflectionMethod $reflection,
+        TransformerAttribute $attribute,
+    ): array {
         $parameters = [];
         if ($reflection instanceof ReflectionMethod) {
             foreach ($reflection->getParameters() as $parameter) {
