@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Response\Handler;
 
+use ArrayIterator;
 use InvalidArgumentException;
 use Jgut\Slim\Routing\Response\Handler\XmlResponseHandler;
 use Jgut\Slim\Routing\Response\PayloadResponse;
@@ -20,7 +21,6 @@ use Jgut\Slim\Routing\Tests\Stubs\ResponseStub;
 use Laminas\Diactoros\ResponseFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -49,21 +49,29 @@ class XmlResponseHandlerTest extends TestCase
         (new XmlResponseHandler($responseFactory))->handle(new ResponseStub($this->request));
     }
 
-    public function testHandleCollapsed(): void
+    public function testNonEncodableResponseType(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Response type payload is not XML encodable');
+
+        $responseFactory = $this->getMockBuilder(ResponseFactoryInterface::class)
+            ->getMock();
+
+        (new XmlResponseHandler($responseFactory))
+            ->handle(new PayloadResponse(fopen('php://stdout', 'rb'), $this->request));
+    }
+
+    public function testHandleCompressed(): void
     {
         $responseFactory = new ResponseFactory();
 
         $response = (new XmlResponseHandler($responseFactory))
-            ->handle(new PayloadResponse(
-                [
-                    'data' => [
-                        'param' => 'value',
-                    ],
+            ->handle(new PayloadResponse([
+                'data' => [
+                    'param' => 'value',
                 ],
-                $this->request,
-            ));
+            ], $this->request));
 
-        static::assertInstanceOf(ResponseInterface::class, $response);
         static::assertEquals('application/xml; charset=utf-8', $response->getHeaderLine('Content-Type'));
         static::assertEquals(
             '<?xml version="1.0"?><root><data><param>value</param></data></root>',
@@ -76,16 +84,12 @@ class XmlResponseHandlerTest extends TestCase
         $responseFactory = new ResponseFactory();
 
         $response = (new XmlResponseHandler($responseFactory, true))
-            ->handle(new PayloadResponse(
-                [
-                    'data' => [
-                        'param' => 'value',
-                    ],
+            ->handle(new PayloadResponse(new ArrayIterator([
+                'data' => [
+                    'param' => 'value',
                 ],
-                $this->request,
-            ));
+            ]), $this->request));
 
-        static::assertInstanceOf(ResponseInterface::class, $response);
         static::assertEquals('application/xml; charset=utf-8', $response->getHeaderLine('Content-Type'));
 
         $responseContent = <<<'XML'

@@ -37,7 +37,12 @@ final class TwigViewResponseHandler extends AbstractResponseHandler
             );
         }
 
-        $responseContent = $this->viewRenderer->fetch($responseType->getTemplate(), $responseType->getParameters());
+        $parameters = $responseType->getParameters();
+        if (!\is_array($parameters)) {
+            $parameters = iterator_to_array($parameters);
+        }
+
+        $responseContent = $this->viewRenderer->fetch($responseType->getTemplate(), $parameters);
 
         $response = $this->getResponse($responseType);
         $response->getBody()

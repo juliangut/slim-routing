@@ -21,9 +21,9 @@ final class ViewResponse extends AbstractResponse
     public function __construct(
         protected string $template,
         /**
-         * @var array<string, mixed>
+         * @var iterable<string, mixed>
          */
-        protected array $parameters,
+        protected iterable $parameters,
         ServerRequestInterface $request,
         ?ResponseInterface $response = null,
     ) {
@@ -36,9 +36,9 @@ final class ViewResponse extends AbstractResponse
     }
 
     /**
-     * @return array<string, mixed>
+     * @return iterable<string, mixed>
      */
-    public function getParameters(): array
+    public function getParameters(): iterable
     {
         return $this->parameters;
     }

@@ -19,20 +19,14 @@ use Psr\Http\Message\ServerRequestInterface;
 final class PayloadResponse extends AbstractResponse
 {
     public function __construct(
-        /**
-         * @var array<mixed> $payload
-         */
-        protected array $payload,
+        protected mixed $payload,
         ServerRequestInterface $request,
         ?ResponseInterface $response = null,
     ) {
         parent::__construct($request, $response);
     }
 
-    /**
-     * @return array<mixed>
-     */
-    public function getPayload(): array
+    public function getPayload(): mixed
     {
         return $this->payload;
     }

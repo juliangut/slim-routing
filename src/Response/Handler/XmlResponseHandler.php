@@ -37,8 +37,17 @@ final class XmlResponseHandler extends AbstractResponseHandler
             );
         }
 
-        $converter = new ArrayToXml($responseType->getPayload(), '', false);
-        $responseContent = $this->prettify ? $this->prettify($converter) : $this->asSingleLine($converter);
+        $payload = $responseType->getPayload();
+        if (is_iterable($payload) && !\is_array($payload)) {
+            $payload = iterator_to_array($payload);
+        }
+
+        if (!\is_array($payload)) {
+            throw new InvalidArgumentException('Response type payload is not XML encodable.');
+        }
+
+        $converter = new ArrayToXml($payload, '', false);
+        $responseContent = $this->prettify ? $this->getPrettified($converter) : $this->getCompressed($converter);
 
         $response = $this->getResponse($responseType);
         $response->getBody()
@@ -50,7 +59,7 @@ final class XmlResponseHandler extends AbstractResponseHandler
     /**
      * Return XML in a single line.
      */
-    private function asSingleLine(ArrayToXml $converter): string
+    private function getCompressed(ArrayToXml $converter): string
     {
         $xmlLines = explode("\n", $converter->toXml());
         array_walk(
@@ -64,7 +73,7 @@ final class XmlResponseHandler extends AbstractResponseHandler
     /**
      * Prettify xml output.
      */
-    private function prettify(ArrayToXml $converter): string
+    private function getPrettified(ArrayToXml $converter): string
     {
         $domDocument = $converter->toDom();
         $domDocument->formatOutput = true;

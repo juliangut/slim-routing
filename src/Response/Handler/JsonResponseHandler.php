@@ -37,8 +37,12 @@ final class JsonResponseHandler extends AbstractResponseHandler
         }
 
         $payload = $responseType->getPayload();
+        if (is_iterable($payload) && !\is_array($payload)) {
+            $payload = iterator_to_array($payload);
+        }
+
         if (!$this->isJsonEncodable($payload)) {
-            throw new InvalidArgumentException('Response type payload is not json encodable.');
+            throw new InvalidArgumentException('Response type payload is not JSON encodable.');
         }
 
         $response = $this->getResponse($responseType);

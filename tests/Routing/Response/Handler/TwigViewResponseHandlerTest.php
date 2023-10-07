@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Jgut\Slim\Routing\Tests\Response\Handler;
 
+use ArrayIterator;
 use InvalidArgumentException;
 use Jgut\Slim\Routing\Response\Handler\TwigViewResponseHandler;
 use Jgut\Slim\Routing\Response\ViewResponse;
@@ -20,7 +21,6 @@ use Jgut\Slim\Routing\Tests\Stubs\ResponseStub;
 use Laminas\Diactoros\ResponseFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Views\Twig;
 
@@ -53,7 +53,7 @@ class TwigViewResponseHandlerTest extends TestCase
         (new TwigViewResponseHandler($responseFactory, $twig))->handle(new ResponseStub($this->request));
     }
 
-    public function testHandlePrettified(): void
+    public function testHandle(): void
     {
         $responseFactory = new ResponseFactory();
         $twig = $this->getMockBuilder(Twig::class)
@@ -64,9 +64,8 @@ class TwigViewResponseHandlerTest extends TestCase
             ->willReturn('Template rendered!');
 
         $response = (new TwigViewResponseHandler($responseFactory, $twig))
-            ->handle(new ViewResponse('template.twig', [], $this->request));
+            ->handle(new ViewResponse('user.twig', new ArrayIterator(['id' => null]), $this->request));
 
-        static::assertInstanceOf(ResponseInterface::class, $response);
         static::assertEquals('text/html; charset=utf-8', $response->getHeaderLine('Content-Type'));
         static::assertEquals('Template rendered!', (string) $response->getBody());
     }
