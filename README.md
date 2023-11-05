@@ -58,8 +58,10 @@ require './vendor/autoload.php';
 use Jgut\Slim\Routing\AppFactory;
 use Jgut\Slim\Routing\Configuration;
 use Jgut\Slim\Routing\Response\PayloadResponse;
+use Jgut\Slim\Routing\Response\RedirectResponse;
 use Jgut\Slim\Routing\Response\ResponseType;
 use Jgut\Slim\Routing\Response\Handler\JsonResponseHandler;
+use Jgut\Slim\Routing\Response\Handler\RedirectResponseHandler;
 use Jgut\Slim\Routing\Strategy\RequestHandler;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -71,16 +73,19 @@ AppFactory::setRouteCollectorConfiguration($configuration);
 // Instantiate the app
 $app = AppFactory::create();
 
+$routeCollector = $app->getRouteCollector();
+$responseFactory = $app->getResponseFactory();
 
 // Register custom invocation strategy to handle ResponseType objects
 $invocationStrategy = new RequestHandler(
     [
+        RedirectResponse::class => new RedirectResponseHandler($responseFactory, $routeCollector),
+        // Handlers can be pulled from the container
         PayloadResponse::class => JsonResponseHandler::class,
     ],
-    $app->getResponseFactory(),
+    $responseFactory,
     $app->getContainer()
 );
-$routeCollector = $app->getRouteCollector();
 $routeCollector->setDefaultInvocationStrategy($invocationStrategy);
 
 $cache = new PSR16Cache();
@@ -171,8 +176,9 @@ $app->get(
 
 If a route returns an instance of `\Jgut\Slim\Routing\Response\ResponseType` it will be passed to the corresponding handler according to configuration
 
-There are two response types already provided:
+There are three response types already provided:
 
+* `RedirectResponse` Slim's route aware redirection, can redirect to a Slim route or an external location
 * `PayloadResponse` stores simple payload data to be later transformed for example into JSON or XML
 * `ViewResponse` keeps agnostic template parameters, so they can be rendered in a handler
 
@@ -195,11 +201,12 @@ $invocationStrategy->setResponseHandler(PayloadResponse::class, JsonResponseHand
 
 Provided response types handlers:
 
-* `JsonResponseHandler` receives a PayloadResponse and returns a JSON response
-* `XmlResponseHandler` receives a PayloadResponse and returns a XML response (requires [spatie/array-to-xml](https://github.com/spatie/array-to-xml))
-* `TwigViewResponseHandler` receives a generic ViewResponse and returns a template rendered thanks to [slim/twig-view](https://github.com/slimphp/Twig-View)
+* `RedirectResponseHandler` receives a RedirectResponse type and returns the corresponding PSR7 redirect response
+* `JsonResponseHandler` receives a PayloadResponse type and returns a PSR7 JSON response
+* `XmlResponseHandler` receives a PayloadResponse type and returns a PSR7 XML response (requires [spatie/array-to-xml](https://github.com/spatie/array-to-xml))
+* `TwigViewResponseHandler` receives a generic ViewResponse type and returns a template rendered PSR7 response thanks to [slim/twig-view](https://github.com/slimphp/Twig-View)
 
-You can create your own response type handlers to compose specifically formatted response (JSON:API, ...) or use another template engines (Plates, ...)
+You can create your own response type handlers to compose specifically formatted response (JSON:API, ...) or use another template engines (Plates, Blade, ...), or craft any other response
 
 ## Parameter transformation
 
