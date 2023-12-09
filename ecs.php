@@ -1,12 +1,10 @@
 <?php
 
 /*
- * slim-routing (https://github.com/juliangut/slim-routing).
- * Slim framework routing.
+ * (c) 2017-2023 Julián Gutiérrez <juliangut@gmail.com>
  *
  * @license BSD-3-Clause
  * @link https://github.com/juliangut/slim-routing
- * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
 declare(strict_types=1);
@@ -17,21 +15,20 @@ use PhpCsFixer\Fixer\Phpdoc\PhpdocAlignFixer;
 use PhpCsFixerCustomFixers\Fixer\NoNullableBooleanTypeFixer;
 use Symplify\EasyCodingStandard\Config\ECSConfig;
 
-$header = <<<'HEADER'
-slim-routing (https://github.com/juliangut/slim-routing).
-Slim framework routing.
+return static function (ECSConfig $ecsConfig): void {
+    $header = <<<'HEADER'
+    (c) 2017-{{year}} Julián Gutiérrez <juliangut@gmail.com>
 
-@license BSD-3-Clause
-@link https://github.com/juliangut/slim-routing
-@author Julián Gutiérrez <juliangut@gmail.com>
-HEADER;
+    @license BSD-3-Clause
+    @link https://github.com/juliangut/slim-routing
+    HEADER;
 
-return static function (ECSConfig $ecsConfig) use ($header): void {
     $ecsConfig->paths([
         __FILE__,
         __DIR__ . '/src',
         __DIR__ . '/tests',
     ]);
+    $ecsConfig->cacheDirectory('.ecs.cache');
 
     $skips = [
         NoSilencedErrorsSniff::class . '.Forbidden' => [

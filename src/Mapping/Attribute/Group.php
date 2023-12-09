@@ -1,12 +1,10 @@
 <?php
 
 /*
- * slim-routing (https://github.com/juliangut/slim-routing).
- * Slim framework routing.
+ * (c) 2017-2023 Julián Gutiérrez <juliangut@gmail.com>
  *
  * @license BSD-3-Clause
  * @link https://github.com/juliangut/slim-routing
- * @author Julián Gutiérrez <juliangut@gmail.com>
  */
 
 declare(strict_types=1);
@@ -24,10 +22,10 @@ final class Group
         private ?string $pattern = null,
         /**
          * @var array<string, string>
-         */  private array $placeholders = [],
+         */ private array $placeholders = [],
         /**
          * @var array<string, string>
-         */  private array $arguments = [],
+         */ private array $arguments = [],
     ) {}
 
     public function getPrefix(): ?string
