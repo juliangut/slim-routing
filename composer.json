@@ -35,7 +35,7 @@
     "infection/infection": "~0.25|~0.27",
     "juliangut/easy-coding-standard-config": "^1.12",
     "juliangut/phpstan-config": "^1.1",
-    "laminas/laminas-diactoros": "^2.20",
+    "laminas/laminas-diactoros": "^3.2",
     "mikey179/vfsstream": "^1.6",
     "overtrue/phplint": "^9.0",
     "phpcompatibility/php-compatibility": "^9.3",
