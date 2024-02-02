@@ -45,7 +45,7 @@ class MatchCommandTest extends TestCase
 
         $command = new MatchCommand($routeResolver);
 
-        $input = new ArgvInput([MatchCommand::NAME, '/home', 'get'], $command->getDefinition());
+        $input = new ArgvInput([MatchCommand::getDefaultName(), '/home', 'get'], $command->getDefinition());
 
         $output = new ConsoleOutputStub();
 
@@ -98,8 +98,8 @@ class MatchCommandTest extends TestCase
         $command = new MatchCommand($routeResolver);
 
         $input = $method !== null
-            ? new ArgvInput([MatchCommand::NAME, $path, $method], $command->getDefinition())
-            : new ArgvInput([MatchCommand::NAME, $path], $command->getDefinition());
+            ? new ArgvInput([MatchCommand::getDefaultName(), $path, $method], $command->getDefinition())
+            : new ArgvInput([MatchCommand::getDefaultName(), $path], $command->getDefinition());
 
         $output = new ConsoleOutputStub();
 

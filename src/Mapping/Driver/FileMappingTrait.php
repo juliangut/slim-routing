@@ -221,7 +221,9 @@ trait FileMappingTrait
             $methods[] = trim($method);
         }
 
-        $methods = array_unique(array_filter($methods, 'strlen'));
+        /** @var callable $callable */
+        $callable = 'strlen';
+        $methods = array_unique(array_filter($methods, $callable));
 
         if (\count($methods) === 0) {
             throw new DriverException('Route methods can not be empty.');

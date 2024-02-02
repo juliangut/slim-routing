@@ -145,7 +145,9 @@ final class RouteMetadata extends AbstractMetadata
             $methodList[] = mb_strtoupper(trim($method));
         }
 
-        $methodList = array_filter($methodList, 'strlen');
+        /** @var callable $callable */
+        $callable = 'strlen';
+        $methodList = array_filter($methodList, $callable);
 
         if (\count($methodList) === 0) {
             throw new MetadataException('Route methods can not be empty.');

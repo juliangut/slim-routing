@@ -14,18 +14,16 @@ namespace Jgut\Slim\Routing\Console;
 use Slim\Interfaces\RouteInterface;
 use Slim\Interfaces\RouteResolverInterface;
 use Slim\Routing\RoutingResults;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(name: 'slim:routing:match')]
 class MatchCommand extends AbstractRoutingCommand
 {
-    public const NAME = 'slim:routing:match';
-
-    protected static $defaultName = self::NAME;
-
     public function __construct(
         private RouteResolverInterface $routeResolver,
         ?string $name = null,

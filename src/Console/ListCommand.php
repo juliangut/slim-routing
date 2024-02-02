@@ -13,6 +13,7 @@ namespace Jgut\Slim\Routing\Console;
 
 use Jgut\Slim\Routing\RouteCollector;
 use Slim\Interfaces\RouteInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,14 +21,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[AsCommand(name: 'slim:routing:list')]
 class ListCommand extends AbstractRoutingCommand
 {
-    public const NAME = 'slim:routing:list';
     private const SORT_PRIORITY = 'priority';
     private const SORT_PATH = 'path';
     private const SORT_NAME = 'name';
-
-    protected static $defaultName = self::NAME;
 
     public function __construct(
         private RouteCollector $routeCollector,

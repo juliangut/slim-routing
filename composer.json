@@ -45,14 +45,14 @@
     "roave/security-advisories": "dev-master",
     "slim/twig-view": "^3.3",
     "spatie/array-to-xml": "^3.2",
-    "symfony/console": "^6.0",
-    "symfony/yaml": "^6.0"
+    "symfony/console": "^6.0|^7.0",
+    "symfony/yaml": "^6.0|^7.0"
   },
   "suggest": {
     "slim/twig-view": "In order to return Twig rendered responses (>=3.3)",
     "spatie/array-to-xml": "In order to return XML responses (>=3.2)",
-    "symfony/yaml": "In order to load routing from YAML files (>=5.1)",
-    "symfony/console": "In order to use console commands (>=5.1)"
+    "symfony/yaml": "In order to load routing from YAML files (>=6.0)",
+    "symfony/console": "In order to use console commands (>=6.0)"
   },
   "autoload": {
     "psr-4": {
