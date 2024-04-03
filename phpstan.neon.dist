@@ -19,7 +19,7 @@ parameters:
         - src/Configuration.php
         - src/Mapping/Annotation/Router.php
         - src/Route/RouteResolver.php
-    # Slim's invokation strategy
+    # Slim's invocation strategy
     - message: '/^Parameter #1 \$callable \(callable\(Psr\\Http\\Message\\ServerRequestInterface\): mixed\) of method Jgut\\Slim\\Routing\\Strategy\\RequestHandler::__invoke\(\) should be contravariant with parameter \$callable \(callable\(\): mixed\) of method Slim\\Interfaces\\InvocationStrategyInterface::__invoke\(\)$/'
       path: src/Strategy/RequestHandler.php
     - message: '/^Parameter #1 \$callable \(callable\(Psr\\Http\\Message\\ServerRequestInterface, Psr\\Http\\Message\\ResponseInterface, array<string, mixed>\): mixed\) of method Jgut\\Slim\\Routing\\Strategy\\RequestResponse::__invoke\(\) should be contravariant with parameter \$callable \(callable\(\): mixed\) of method Slim\\Interfaces\\InvocationStrategyInterface::__invoke\(\)$/'
