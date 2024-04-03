@@ -47,7 +47,7 @@ final class AttributeDriver extends AbstractClassDriver
             $routes[] = $this->getRoutesMetadata($class, $groups);
         }
 
-        return \count($routes) > 0 ? array_values(array_merge(...$routes)) : [];
+        return \count($routes) > 0 ? array_merge(...$routes) : [];
     }
 
     /**
@@ -245,7 +245,7 @@ final class AttributeDriver extends AbstractClassDriver
         }
 
         $metadata->setParameters($parameters);
-        $metadata->setTransformers(array_values($transformers));
+        $metadata->setTransformers($transformers);
     }
 
     /**

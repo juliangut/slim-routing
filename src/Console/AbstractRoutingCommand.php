@@ -26,7 +26,7 @@ abstract class AbstractRoutingCommand extends Command
      */
     final protected function getTableRows(array $routes): array
     {
-        return array_values(array_map(
+        return array_map(
             static function (RouteInterface $route): array {
                 $xmlHttpRequest = false;
                 if ($route instanceof Route) {
@@ -50,6 +50,6 @@ abstract class AbstractRoutingCommand extends Command
                 ];
             },
             $routes,
-        ));
+        );
     }
 }

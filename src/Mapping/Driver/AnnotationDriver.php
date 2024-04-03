@@ -42,7 +42,7 @@ final class AnnotationDriver extends AbstractAnnotationDriver
             $routes[] = $this->getRoutesMetadata($class, $groups);
         }
 
-        return \count($routes) > 0 ? array_values(array_merge(...$routes)) : [];
+        return \count($routes) > 0 ? array_merge(...$routes) : [];
     }
 
     /**

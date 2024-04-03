@@ -51,7 +51,7 @@ class RouteResolver
         ));
         array_unshift($middleware, $route->getMiddlewares());
 
-        return array_values(array_merge(...$middleware));
+        return array_merge(...$middleware);
     }
 
     /**
@@ -249,9 +249,9 @@ class RouteResolver
             },
         );
 
-        return array_values(array_map(
+        return array_map(
             static fn(array $item): RouteMetadata => $item[1],
             $sortArray,
-        ));
+        );
     }
 }
