@@ -51,8 +51,8 @@ final class AttributeDriver extends AbstractClassDriver
     }
 
     /**
-     * @param ReflectionClass<object>                    $class
-     * @param array<class-string<object>, GroupMetadata> $groups
+     * @param ReflectionClass<object>      $class
+     * @param array<string, GroupMetadata> $groups
      *
      * @throws DriverException
      *
@@ -113,7 +113,7 @@ final class AttributeDriver extends AbstractClassDriver
      *
      * @throws DriverException
      *
-     * @return array<class-string<object>, GroupMetadata>
+     * @return array<string, GroupMetadata>
      */
     private function getGroups(array $mappingClasses): array
     {

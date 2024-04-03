@@ -22,6 +22,7 @@ trait FileMappingTrait
      */
     public function getMetadata(): array
     {
+        /** @var list<GroupMapping|RouteMapping|mixed> $mappingData */
         $mappingData = $this->getMappingData();
 
         return $this->getRoutesMetadata($mappingData);
@@ -33,7 +34,7 @@ trait FileMappingTrait
     abstract protected function getMappingData(): array;
 
     /**
-     * @param array<GroupMapping|RouteMapping|mixed> $mappingData
+     * @param list<GroupMapping|RouteMapping|mixed> $mappingData
      *
      * @return list<RouteMetadata>
      */
@@ -54,8 +55,7 @@ trait FileMappingTrait
                 }
                 $this->populateGroup($groupMetadata, $mapping);
 
-                /** @var GroupMapping|RouteMapping $routingMapping */
-                $routingMapping = $mapping['routes'];
+                $routingMapping = array_values($mapping['routes']);
 
                 $routes[] = $this->getRoutesMetadata($routingMapping, $groupMetadata);
             } else {
@@ -198,7 +198,7 @@ trait FileMappingTrait
     }
 
     /**
-     * @param array<mixed> $mapping
+     * @param array<array-key, mixed> $mapping
      *
      * @throws DriverException
      */
@@ -269,7 +269,7 @@ trait FileMappingTrait
     }
 
     /**
-     * @param array<mixed> $mapping
+     * @param array<array-key, mixed> $mapping
      *
      * @throws DriverException
      */
@@ -293,7 +293,7 @@ trait FileMappingTrait
     }
 
     /**
-     * @param array<mixed> $mapping
+     * @param array<array-key, mixed> $mapping
      *
      * @throws DriverException
      */
@@ -314,7 +314,7 @@ trait FileMappingTrait
     }
 
     /**
-     * @param array<mixed> $mapping
+     * @param array<array-key, mixed> $mapping
      *
      * @throws DriverException
      */
@@ -335,7 +335,7 @@ trait FileMappingTrait
     }
 
     /**
-     * @param array<mixed> $mapping
+     * @param array<array-key, mixed> $mapping
      *
      * @throws DriverException
      */

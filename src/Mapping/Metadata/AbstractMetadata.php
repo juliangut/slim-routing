@@ -115,7 +115,7 @@ abstract class AbstractMetadata implements MetadataInterface
     }
 
     /**
-     * @param array<mixed> $transformers
+     * @param array<array-key, mixed> $transformers
      *
      * @throws MetadataException
      */
@@ -163,7 +163,7 @@ abstract class AbstractMetadata implements MetadataInterface
     }
 
     /**
-     * @param array<mixed> $middlewares
+     * @param array<array-key, mixed> $middlewares
      *
      * @throws MetadataException
      */

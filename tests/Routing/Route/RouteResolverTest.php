@@ -44,7 +44,7 @@ class RouteResolverTest extends TestCase
     /**
      * Route name checker provider.
      *
-     * @return array<array{RouteMetadata, string|null}>
+     * @return list<array{RouteMetadata, string|null}>
      */
     public static function routeNameProvider(): array
     {
@@ -65,7 +65,7 @@ class RouteResolverTest extends TestCase
     /**
      * @dataProvider routeMiddlewareProvider
      *
-     * @param array<string> $middleware
+     * @param list<string> $middleware
      */
     public function testRouteMiddleware(RouteMetadata $route, array $middleware): void
     {
@@ -75,7 +75,7 @@ class RouteResolverTest extends TestCase
     /**
      * Route name checker provider.
      *
-     * @return array<array{RouteMetadata, array<string>}>
+     * @return list<array{RouteMetadata, list<string>}>
      */
     public static function routeMiddlewareProvider(): array
     {
@@ -190,7 +190,7 @@ class RouteResolverTest extends TestCase
     /**
      * @dataProvider routeArgumentsProvider
      *
-     * @param array<mixed> $result
+     * @param list<mixed> $result
      */
     public function testRouteArguments(Configuration $configuration, RouteMetadata $route, array $result): void
     {

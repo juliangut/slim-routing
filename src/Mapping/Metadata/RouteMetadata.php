@@ -125,7 +125,7 @@ final class RouteMetadata extends AbstractMetadata
     }
 
     /**
-     * @param array<string> $methods
+     * @param list<string> $methods
      *
      * @throws MetadataException
      */

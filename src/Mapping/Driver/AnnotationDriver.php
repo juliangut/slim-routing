@@ -46,8 +46,8 @@ final class AnnotationDriver extends AbstractAnnotationDriver
     }
 
     /**
-     * @param ReflectionClass<object>                    $class
-     * @param array<class-string<object>, GroupMetadata> $groups
+     * @param ReflectionClass<object>      $class
+     * @param array<string, GroupMetadata> $groups
      *
      * @throws DriverException
      *
@@ -109,7 +109,7 @@ final class AnnotationDriver extends AbstractAnnotationDriver
      *
      * @throws DriverException
      *
-     * @return array<class-string<object>, GroupMetadata>
+     * @return array<string, GroupMetadata>
      */
     private function getGroups(array $mappingClasses): array
     {

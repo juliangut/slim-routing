@@ -178,7 +178,7 @@ class RouteCollector extends SlimRouteCollector
     }
 
     /**
-     * @param array<string>            $methods
+     * @param array<array-key, string> $methods
      * @param string|callable(): mixed $callable
      */
     final protected function createRoute(array $methods, string $pattern, $callable): RouteInterface
