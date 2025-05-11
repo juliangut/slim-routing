@@ -64,15 +64,15 @@ final class RouteMetadata extends AbstractMetadata
      */
     public function setName(string $name): self
     {
-        if (str_contains(trim($name), ' ')) {
+        if (str_contains(mb_trim($name), ' ')) {
             throw new MetadataException('Route name must not contain spaces.');
         }
 
-        if (trim($name) === '') {
+        if (mb_trim($name) === '') {
             throw new MetadataException('Route name can not be an empty string.');
         }
 
-        $this->name = trim($name);
+        $this->name = mb_trim($name);
 
         return $this;
     }
@@ -134,15 +134,15 @@ final class RouteMetadata extends AbstractMetadata
         /** @var list<non-empty-string> $methodList */
         $methodList = [];
         foreach ($methods as $method) {
-            if (str_contains(trim($method), ' ')) {
+            if (str_contains(mb_trim($method), ' ')) {
                 throw new MetadataException('Route method must not contain spaces.');
             }
 
-            if (trim($method) === '') {
+            if (mb_trim($method) === '') {
                 throw new MetadataException('Route method can not be an empty string.');
             }
 
-            $methodList[] = mb_strtoupper(trim($method));
+            $methodList[] = mb_strtoupper(mb_trim($method));
         }
 
         /** @var callable $callable */

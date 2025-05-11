@@ -149,7 +149,7 @@ class Route extends SlimRoute
             return match ($parameterType) {
                 'int' => (int) $parameterValue,
                 'float' => (float) $parameterValue,
-                'bool' => \in_array(trim($parameterValue), ['1', 'on', 'yes', 'true'], true),
+                'bool' => \in_array(mb_trim($parameterValue), ['1', 'on', 'yes', 'true'], true),
                 default => $parameterValue,
             };
         }

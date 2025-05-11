@@ -135,8 +135,8 @@ trait FileMappingTrait
      */
     protected function getName(array $mapping): ?string
     {
-        return \array_key_exists('name', $mapping) && trim($mapping['name']) !== ''
-            ? trim($mapping['name'])
+        return \array_key_exists('name', $mapping) && mb_trim($mapping['name']) !== ''
+            ? mb_trim($mapping['name'])
             : null;
     }
 
@@ -145,8 +145,8 @@ trait FileMappingTrait
      */
     protected function populatePrefix(GroupMetadata $metadata, array $mapping): void
     {
-        if (\array_key_exists('prefix', $mapping) && trim($mapping['prefix']) !== '') {
-            $metadata->setPrefix(trim($mapping['prefix']));
+        if (\array_key_exists('prefix', $mapping) && mb_trim($mapping['prefix']) !== '') {
+            $metadata->setPrefix(mb_trim($mapping['prefix']));
         }
     }
 
@@ -157,8 +157,8 @@ trait FileMappingTrait
         GroupMetadata|RouteMetadata $metadata,
         array $mapping,
     ): void {
-        if (\array_key_exists('pattern', $mapping) && trim($mapping['pattern'], ' /') !== '') {
-            $metadata->setPattern(trim($mapping['pattern'], ' /'));
+        if (\array_key_exists('pattern', $mapping) && mb_trim($mapping['pattern'], ' /') !== '') {
+            $metadata->setPattern(mb_trim($mapping['pattern'], ' /'));
         }
     }
 
@@ -219,7 +219,7 @@ trait FileMappingTrait
                 );
             }
 
-            $methods[] = trim($method);
+            $methods[] = mb_trim($method);
         }
 
         /** @var callable $callable */

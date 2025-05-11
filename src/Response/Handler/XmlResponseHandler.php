@@ -62,7 +62,7 @@ final class XmlResponseHandler extends AbstractResponseHandler
         $xmlLines = explode("\n", $converter->toXml());
         array_walk(
             $xmlLines,
-            static fn(string $xmlLine): string => ltrim($xmlLine),
+            static fn(string $xmlLine): string => mb_ltrim($xmlLine),
         );
 
         return implode('', $xmlLines);
@@ -77,6 +77,6 @@ final class XmlResponseHandler extends AbstractResponseHandler
         $domDocument->formatOutput = true;
         $xmlContent = $domDocument->saveXML();
 
-        return $xmlContent !== false ? rtrim($xmlContent, "\n") : '';
+        return $xmlContent !== false ? mb_rtrim($xmlContent, "\n") : '';
     }
 }

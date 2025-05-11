@@ -48,11 +48,11 @@ final class GroupMetadata extends AbstractMetadata
             throw new MetadataException('Group prefix must not contain spaces.');
         }
 
-        if (trim($prefix) === '') {
+        if (mb_trim($prefix) === '') {
             throw new MetadataException('Group prefix can not be an empty string.');
         }
 
-        $this->prefix = trim($prefix);
+        $this->prefix = mb_trim($prefix);
 
         return $this;
     }

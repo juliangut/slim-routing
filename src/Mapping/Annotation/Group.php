@@ -36,7 +36,7 @@ final class Group extends AbstractAnnotation
 
     public function setParent(string $parent): self
     {
-        $this->parent = trim($parent, '\\');
+        $this->parent = mb_trim($parent, '\\');
 
         return $this;
     }

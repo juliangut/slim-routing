@@ -53,11 +53,11 @@ abstract class AbstractMetadata implements MetadataInterface
      */
     public function setPattern(string $pattern): static
     {
-        if (trim($pattern) === '') {
+        if (mb_trim($pattern) === '') {
             throw new MetadataException('Pattern can not be empty.');
         }
 
-        $pattern = trim($pattern, ' /');
+        $pattern = mb_trim($pattern, ' /');
 
         if ((bool) preg_match('/{([a-zA-Z_][a-zA-Z0-9_-]*):([^}]+)?}/', $pattern, $matches) !== false) {
             throw new MetadataException(
