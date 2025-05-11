@@ -295,7 +295,7 @@ use Jgut\Slim\Routing\Mapping\Attribute\Group;
     prefix: 'routePrefix',
     parent: Area::class,
     pattern: 'section/{section}',
-    placeholders: ['section': 'alpha'],
+    placeholders: ['section' => 'alpha'],
     arguments: ['scope' => 'public'],
  )]
 class Section {}
@@ -320,8 +320,8 @@ class Section
         name: 'routeName',
         methods: ['GET', 'POST'],
         pattern: 'user/{user}',
-        placeholders: ['user': 'alnum'],
-        arguments: ['scope': 'admin.read']
+        placeholders: ['user' => 'alnum'],
+        arguments: ['scope' => 'admin.read'],
         xmlHttpRequest: true,
         priority: -10,
     )]
@@ -376,8 +376,8 @@ class Section
 {
     #[Route(methods: ['GET'], pattern: 'user/{user}')]
     #[Transformer(
-        transformer: UserEntityTransfomer::class),
-        parameters: ['user': User::class],
+        transformer: UserEntityTransfomer::class,
+        parameters: ['user' => User::class],
     )]
     public function userAction($request, $response, $user): ResponseInterface {}
 }
