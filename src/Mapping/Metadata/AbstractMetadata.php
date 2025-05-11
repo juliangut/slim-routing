@@ -61,7 +61,7 @@ abstract class AbstractMetadata implements MetadataInterface
 
         if ((bool) preg_match('/{([a-zA-Z_][a-zA-Z0-9_-]*):([^}]+)?}/', $pattern, $matches) !== false) {
             throw new MetadataException(
-                sprintf('Placeholder matching "%s" must be defined on placeholders parameter.', $matches[2]),
+                \sprintf('Placeholder matching "%s" must be defined on placeholders parameter.', $matches[2]),
             );
         }
 
@@ -123,7 +123,7 @@ abstract class AbstractMetadata implements MetadataInterface
     {
         foreach ($transformers as $transformer) {
             if (!\is_string($transformer) || $transformer === '') {
-                throw new MetadataException(sprintf(
+                throw new MetadataException(\sprintf(
                     'Transformers must be an array of strings. "%s" given.',
                     \is_object($transformer) ? $transformer::class : \gettype($transformer),
                 ));
@@ -171,7 +171,7 @@ abstract class AbstractMetadata implements MetadataInterface
     {
         foreach ($middlewares as $middleware) {
             if (!\is_string($middleware) || $middleware === '') {
-                throw new MetadataException(sprintf(
+                throw new MetadataException(\sprintf(
                     'Middlewares must be an array of strings. "%s" given.',
                     \is_object($middleware) ? $middleware::class : \gettype($middleware),
                 ));

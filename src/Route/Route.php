@@ -171,7 +171,7 @@ class Route extends SlimRoute
             function ($transformer): ParameterTransformer {
                 $resolved = $this->container?->get($transformer);
                 if (!$resolved instanceof ParameterTransformer) {
-                    throw new RuntimeException(sprintf(
+                    throw new RuntimeException(\sprintf(
                         'Parameter transformer "%s" could not be resolved to a "%s", "%s" given.',
                         $transformer,
                         ParameterTransformer::class,

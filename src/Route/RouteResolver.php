@@ -86,7 +86,7 @@ class RouteResolver
                 if (\array_key_exists($param, $placeholders)) {
                     $pattern = str_replace(
                         '{' . $param . '}',
-                        sprintf('{%s:%s}', $param, $placeholders[$param]),
+                        \sprintf('{%s:%s}', $param, $placeholders[$param]),
                         $pattern,
                     );
                 }
@@ -124,7 +124,7 @@ class RouteResolver
                 }
 
                 throw new InvalidArgumentException(
-                    sprintf('Placeholder "%s" is not a known alias or a valid regex pattern.', $pattern),
+                    \sprintf('Placeholder "%s" is not a known alias or a valid regex pattern.', $pattern),
                 );
             },
             $placeholders,
@@ -187,7 +187,7 @@ class RouteResolver
             function (RouteMetadata $route) {
                 return array_map(
                     function (string $method) use ($route): string {
-                        return sprintf(
+                        return \sprintf(
                             '%s %s',
                             $method,
                             preg_replace('/{([a-zA-Z_][a-zA-Z0-9_-]*):/', '{', $this->getPattern($route)),

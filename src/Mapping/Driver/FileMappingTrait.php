@@ -188,7 +188,7 @@ trait FileMappingTrait
         foreach ($placeholders as $placeholder) {
             if (!\is_string($placeholder)) {
                 throw new DriverException(
-                    sprintf('Placeholders must be strings. "%s" given.', \gettype($placeholder)),
+                    \sprintf('Placeholders must be strings. "%s" given.', \gettype($placeholder)),
                 );
             }
         }
@@ -214,7 +214,7 @@ trait FileMappingTrait
         foreach (array_filter($mappingMethods) as $method) {
             if (!\is_string($method)) {
                 throw new DriverException(
-                    sprintf('Route methods must be a string or array og string. "%s" given.', \gettype($method)),
+                    \sprintf('Route methods must be a string or array og string. "%s" given.', \gettype($method)),
                 );
             }
 
@@ -243,7 +243,7 @@ trait FileMappingTrait
 
         if (!\is_bool($xmlHttpRequest)) {
             throw new DriverException(
-                sprintf('XMLHTTPRequest must be a boolean. "%s" given.', \gettype($xmlHttpRequest)),
+                \sprintf('XMLHTTPRequest must be a boolean. "%s" given.', \gettype($xmlHttpRequest)),
             );
         }
 
@@ -261,7 +261,7 @@ trait FileMappingTrait
 
         if (!\is_int($priority)) {
             throw new DriverException(
-                sprintf('Route priority must be an integer. "%s" given.', \gettype($mapping['priority'] ?? null)),
+                \sprintf('Route priority must be an integer. "%s" given.', \gettype($mapping['priority'] ?? null)),
             );
         }
 
@@ -283,7 +283,7 @@ trait FileMappingTrait
 
         $middlewareList = $mapping['middlewares'];
         if ($middlewareList !== [] && !\is_array($middlewareList)) {
-            throw new DriverException(sprintf(
+            throw new DriverException(\sprintf(
                 'Middlewares must be an array of strings. "%s" given.',
                 \is_object($middlewareList) ? $middlewareList::class : \gettype($middlewareList),
             ));
@@ -349,7 +349,7 @@ trait FileMappingTrait
 
         $transformers = $mapping['transformers'];
         if ($transformers !== [] && !\is_array($transformers)) {
-            throw new DriverException(sprintf(
+            throw new DriverException(\sprintf(
                 'Transformers must be an array of strings. "%s" given.',
                 \is_object($transformers) ? $transformers::class : \gettype($transformers),
             ));

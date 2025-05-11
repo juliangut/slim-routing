@@ -80,7 +80,7 @@ class ListCommand extends AbstractRoutingCommand
         /** @var string $sorting */
         $sorting = $input->getOption('sort');
         if (!\in_array($sorting, [self::SORT_PRIORITY, self::SORT_PATH, self::SORT_NAME], true)) {
-            $ioStyle->error(sprintf('Unsupported sorting type "%s"', $sorting));
+            $ioStyle->error(\sprintf('Unsupported sorting type "%s"', $sorting));
 
             return self::FAILURE;
         }
@@ -142,12 +142,12 @@ class ListCommand extends AbstractRoutingCommand
         }
 
         foreach (['~', '!', '\/', '#', '%', '\|'] as $delimiter) {
-            $pattern = sprintf('/^%1$s.*%1$s[imsxeuADSUXJ]*$/', $delimiter);
+            $pattern = \sprintf('/^%1$s.*%1$s[imsxeuADSUXJ]*$/', $delimiter);
             if (preg_match($pattern, $searchPattern) === 1) {
                 return $searchPattern;
             }
         }
 
-        return sprintf('/%s/i', preg_quote($searchPattern, '/'));
+        return \sprintf('/%s/i', preg_quote($searchPattern, '/'));
     }
 }

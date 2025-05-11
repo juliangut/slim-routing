@@ -79,7 +79,7 @@ trait ResponseTypeStrategyTrait
         }
 
         if (!$dispatchedResponse instanceof ResponseInterface) {
-            throw new RuntimeException(sprintf(
+            throw new RuntimeException(\sprintf(
                 'Handled route response type should be string, null or "%s". "%s" given.',
                 ResponseType::class,
                 \gettype($dispatchedResponse),
@@ -99,7 +99,7 @@ trait ResponseTypeStrategyTrait
         $type = $responseType::class;
 
         if (!\array_key_exists($type, $this->responseHandlers)) {
-            throw new RuntimeException(sprintf('No handler registered for response type "%s".', $type));
+            throw new RuntimeException(\sprintf('No handler registered for response type "%s".', $type));
         }
 
         $handler = $this->responseHandlers[$type];
@@ -108,7 +108,7 @@ trait ResponseTypeStrategyTrait
         }
 
         if (!$handler instanceof ResponseTypeHandler) {
-            throw new RuntimeException(sprintf(
+            throw new RuntimeException(\sprintf(
                 'Response handler should implement %s, "%s" given.',
                 ResponseTypeHandler::class,
                 \is_object($handler) ? $handler::class : \gettype($handler),

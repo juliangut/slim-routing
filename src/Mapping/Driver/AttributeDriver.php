@@ -75,7 +75,7 @@ final class AttributeDriver extends AbstractClassDriver
             foreach ($routeAttributes as $routeAttribute) {
                 if ($method->isConstructor() || $method->isDestructor()) {
                     throw new DriverException(
-                        sprintf('Routes can not be defined in constructor or destructor in class "%s".', $class->name),
+                        \sprintf('Routes can not be defined in constructor or destructor in class "%s".', $class->name),
                     );
                 }
 
@@ -85,7 +85,7 @@ final class AttributeDriver extends AbstractClassDriver
                 );
                 if (\count($modifiers) !== 0) {
                     throw new DriverException(
-                        sprintf(
+                        \sprintf(
                             'Routes can not be defined in private or protected methods in class "%s".',
                             $class->name,
                         ),
@@ -144,7 +144,7 @@ final class AttributeDriver extends AbstractClassDriver
                 $parent = $groupDataBag->parent;
                 if ($parent !== null) {
                     if (!\array_key_exists($parent, $groups)) {
-                        throw new DriverException(sprintf('Parent group "%s" does not exist.', $parent));
+                        throw new DriverException(\sprintf('Parent group "%s" does not exist.', $parent));
                     }
 
                     $group->setParent($groups[$parent]->group);

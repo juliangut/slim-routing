@@ -69,7 +69,7 @@ final class Configuration
         $unknownParameters = array_diff(array_keys($configurations), $configs);
         if (\count($unknownParameters) > 0) {
             throw new InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     'The following configuration parameters are not recognized: %s.',
                     implode(', ', $unknownParameters),
                 ),
@@ -120,7 +120,7 @@ final class Configuration
     public function addSource($source): self
     {
         if (!\is_string($source) && !\is_array($source) && !$source instanceof DriverInterface) {
-            throw new InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(\sprintf(
                 'Mapping source must be a string, array or %s, %s given.',
                 DriverInterface::class,
                 \is_object($source) ? $source::class : \gettype($source),
@@ -174,7 +174,7 @@ final class Configuration
     {
         if (@preg_match('~^' . $pattern . '$~', '') === false) {
             throw new InvalidArgumentException(
-                sprintf('Placeholder pattern "%s" is not a valid regex.', $pattern),
+                \sprintf('Placeholder pattern "%s" is not a valid regex.', $pattern),
             );
         }
 

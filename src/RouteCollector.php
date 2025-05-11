@@ -221,7 +221,7 @@ class RouteCollector extends SlimRouteCollector
             $mappingSources,
             static function (string $key, $mappingSource): string {
                 if (\is_array($mappingSource) && \array_key_exists('driver', $mappingSource)) {
-                    return sprintf('%s::driver:%s', $key, $mappingSource['driver']::class);
+                    return \sprintf('%s::driver:%s', $key, $mappingSource['driver']::class);
                 }
 
                 if (!\is_array($mappingSource)) {
@@ -236,7 +236,7 @@ class RouteCollector extends SlimRouteCollector
                     ? implode('', $mappingSource['path'])
                     : $mappingSource['path'];
 
-                return sprintf('%s::%s:%s', $key, $mappingSource['type'], $path);
+                return \sprintf('%s::%s:%s', $key, $mappingSource['type'], $path);
             },
             'slim-routing',
         );

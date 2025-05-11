@@ -31,7 +31,7 @@ final class XmlResponseHandler extends AbstractResponseHandler
     {
         if (!$responseType instanceof PayloadResponse) {
             throw new InvalidArgumentException(
-                sprintf('Response type should be an instance of %s.', PayloadResponse::class),
+                \sprintf('Response type should be an instance of %s.', PayloadResponse::class),
             );
         }
 

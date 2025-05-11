@@ -33,7 +33,7 @@ final class RedirectResponseHandler extends AbstractResponseHandler
     {
         if (!$responseType instanceof RedirectResponse) {
             throw new InvalidArgumentException(
-                sprintf('Response type should be an instance of %s.', RedirectResponse::class),
+                \sprintf('Response type should be an instance of %s.', RedirectResponse::class),
             );
         }
 
