@@ -126,10 +126,9 @@ class ListCommand extends AbstractRoutingCommand
 
         return array_values(array_filter(
             $routes,
-            static function (RouteInterface $route) use ($searchPattern): bool {
-                return preg_match($searchPattern, $route->getPattern()) === 1
-                    || ($route->getName() !== null && preg_match($searchPattern, $route->getName()) === 1);
-            },
+            static fn(RouteInterface $route): bool
+                => preg_match($searchPattern, $route->getPattern()) === 1
+                    || ($route->getName() !== null && preg_match($searchPattern, $route->getName()) === 1),
         ));
     }
 

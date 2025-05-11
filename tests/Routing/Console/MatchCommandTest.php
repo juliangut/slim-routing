@@ -79,18 +79,10 @@ class MatchCommandTest extends TestCase
             ->getMock();
         $routeResolver->method('computeRoutingResults')
             ->willReturnCallback(
-                static function (
-                    string $resolvePath,
-                    string $resolveMethod,
-                ) use (
-                    $route,
-                    $routingResult,
-                    $noRoutingResult
-                ) {
-                    return \in_array($resolveMethod, $route->getMethods(), true)
+                static fn(string $resolvePath, string $resolveMethod)
+                    => \in_array($resolveMethod, $route->getMethods(), true)
                         ? $routingResult
-                        : $noRoutingResult;
-                },
+                        : $noRoutingResult,
             );
         $routeResolver->method('resolveRoute')
             ->willReturn($route);

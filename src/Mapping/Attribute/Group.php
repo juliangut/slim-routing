@@ -22,10 +22,12 @@ final class Group
         private ?string $pattern = null,
         /**
          * @var array<string, string>
-         */ private array $placeholders = [],
+         */
+        private array $placeholders = [],
         /**
          * @var array<string, string>
-         */ private array $arguments = [],
+         */
+        private array $arguments = [],
     ) {}
 
     public function getPrefix(): ?string

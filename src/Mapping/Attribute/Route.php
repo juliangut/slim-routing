@@ -30,10 +30,12 @@ final class Route
         private ?string $pattern = null,
         /**
          * @var array<string, string>
-         */ private array $placeholders = [],
+         */
+        private array $placeholders = [],
         /**
          * @var array<string, string>
-         */ private array $arguments = [],
+         */
+        private array $arguments = [],
         protected bool $xmlHttpRequest = false,
         protected int $priority = 0,
     ) {

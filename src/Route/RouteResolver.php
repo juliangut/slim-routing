@@ -184,18 +184,14 @@ class RouteResolver
     protected function checkDuplicatedRoutePaths(array $routes): void
     {
         $paths = array_map(
-            function (RouteMetadata $route) {
-                return array_map(
-                    function (string $method) use ($route): string {
-                        return \sprintf(
-                            '%s %s',
-                            $method,
-                            preg_replace('/{([a-zA-Z_][a-zA-Z0-9_-]*):/', '{', $this->getPattern($route)),
-                        );
-                    },
-                    $route->getMethods(),
-                );
-            },
+            fn(RouteMetadata $route) => array_map(
+                fn(string $method): string => \sprintf(
+                    '%s %s',
+                    $method,
+                    preg_replace('/{([a-zA-Z_][a-zA-Z0-9_-]*):/', '{', $this->getPattern($route)),
+                ),
+                $route->getMethods(),
+            ),
             $routes,
         );
 
