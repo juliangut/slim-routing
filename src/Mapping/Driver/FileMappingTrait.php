@@ -210,11 +210,12 @@ trait FileMappingTrait
         if (!\is_array($mappingMethods)) {
             $mappingMethods = [$mappingMethods];
         }
+        $mappingMethods = array_filter($mappingMethods, static fn($method) => $method !== null);
 
-        foreach (array_filter($mappingMethods) as $method) {
+        foreach ($mappingMethods as $method) {
             if (!\is_string($method)) {
                 throw new DriverException(
-                    \sprintf('Route methods must be a string or array og string. "%s" given.', \gettype($method)),
+                    \sprintf('Route methods must be a string or array of strings. "%s" given.', \gettype($method)),
                 );
             }
 

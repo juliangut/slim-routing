@@ -24,6 +24,9 @@ use Slim\Interfaces\InvocationStrategyInterface;
 use Slim\Interfaces\RouteGroupInterface;
 use Slim\Routing\Route as SlimRoute;
 
+/**
+ * @extends SlimRoute<ContainerInterface|null>
+ */
 class Route extends SlimRoute
 {
     /**
@@ -167,7 +170,7 @@ class Route extends SlimRoute
             return [];
         }
 
-        return array_values(array_unique(array_map(
+        return array_map(
             function ($transformer): ParameterTransformer {
                 $resolved = $this->container?->get($transformer);
                 if (!$resolved instanceof ParameterTransformer) {
@@ -182,7 +185,7 @@ class Route extends SlimRoute
                 return $resolved;
             },
             $this->metadata->getTransformers(),
-        )));
+        );
     }
 
     /**
@@ -200,6 +203,6 @@ class Route extends SlimRoute
         ));
         array_unshift($parameters, $this->metadata->getParameters());
 
-        return array_filter(array_merge(...$parameters));
+        return array_merge(...$parameters);
     }
 }

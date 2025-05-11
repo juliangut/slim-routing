@@ -88,7 +88,7 @@ class ListCommand extends AbstractRoutingCommand
         if (\in_array($sorting, [self::SORT_PATH, self::SORT_NAME], true)) {
             $sortCallback = $sorting === self::SORT_NAME
                 ? static fn(RouteInterface $routeA, RouteInterface $routeB): int
-                    => $routeA->getName() <=> $routeB->getName()
+                    => (string) $routeA->getName() <=> (string) $routeB->getName()
                 : static fn(RouteInterface $routeA, RouteInterface $routeB): int
                     => $routeA->getPattern() <=> $routeB->getPattern();
 

@@ -30,6 +30,8 @@ use Slim\Routing\RouteCollector as SlimRouteCollector;
 /**
  * @phpstan-import-type Source from Configuration
  *
+ * @extends SlimRouteCollector<ContainerInterface|null>
+ *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RouteCollector extends SlimRouteCollector

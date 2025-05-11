@@ -29,10 +29,13 @@ class RouteResolver
             return null;
         }
 
-        $nameSegments = array_values(array_filter(array_map(
-            static fn(GroupMetadata $group): ?string => $group->getPrefix(),
-            $route->getGroupChain(),
-        )));
+        $nameSegments = array_values(array_filter(
+            array_map(
+                static fn(GroupMetadata $group): ?string => $group->getPrefix(),
+                $route->getGroupChain(),
+            ),
+            static fn(?string $prefix): bool => $prefix !== null,
+        ));
 
         $nameSegments[] = $route->getName();
 
@@ -64,7 +67,7 @@ class RouteResolver
             $route->getGroupChain(),
         );
         $patterns[] = $route->getPattern();
-        $patterns = array_filter($patterns);
+        $patterns = array_filter($patterns, static fn(?string $pattern): bool => $pattern !== null);
 
         $pattern = '/' . (\count($patterns) === 0 ? '' : implode('/', $patterns));
         if ($pattern !== '/' && $this->configuration->hasTrailingSlash()) {
@@ -111,7 +114,10 @@ class RouteResolver
         ));
         $placeholders[] = $route->getPlaceholders();
 
-        $placeholders = array_filter(array_merge(...$placeholders));
+        $placeholders = array_filter(
+            array_merge(...$placeholders),
+            static fn(?string $placeholder): bool => $placeholder !== null
+        );
 
         return array_map(
             static function (string $pattern) use ($aliases): string {
@@ -144,7 +150,7 @@ class RouteResolver
         );
         $arguments[] = $route->getArguments();
 
-        return array_filter(array_merge(...$arguments));
+        return array_filter(array_merge(...$arguments), static fn($argument): bool => $argument !== null);
     }
 
     /**
@@ -165,10 +171,13 @@ class RouteResolver
      */
     protected function checkDuplicatedRouteNames(array $routes): void
     {
-        $names = array_filter(array_map(
-            fn(RouteMetadata $route): ?string => $this->getName($route),
-            $routes,
-        ));
+        $names = array_filter(
+            array_map(
+                fn(RouteMetadata $route): ?string => $this->getName($route),
+                $routes,
+            ),
+            static fn(?string $name): bool => $name !== null,
+        );
 
         $duplicatedNames = array_unique(array_diff_assoc($names, array_unique($names)));
         if (\count($duplicatedNames) > 0) {
