@@ -15,7 +15,7 @@ Find here a few rules to follow in order to keep the code clean and easy to revi
 
 Makefile targets are provided to help you keep code quality and run the test suite:
 
-- `make lint` will run PHP linting, [PHP Code Sniffer](https://github.com/squizlabs/PHP_CodeSniffer) and [PHP-CS-Fixer](https://github.com/FriendsOfPhp/PHP-CS-Fixer) for coding style guidelines check
+- `make lint` will run PHP linting, [PHP Code Sniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer) and [PHP-CS-Fixer](https://github.com/FriendsOfPhp/PHP-CS-Fixer) for coding style guidelines check
 - `make fix` will run [PHP-CS-Fixer](https://github.com/FriendsOfPhp/PHP-CS-Fixer) trying to fix coding styles
 - `make qa` will run [PHPCPD](https://github.com/sebastianbergmann/phpcpd) for copy/paste detection, [PHPMD](https://github.com/phpmd/phpmd) and [PHPStan](https://github.com/phpstan/phpstan) for static analysis
 - `make test` will run [PHPUnit](https://github.com/sebastianbergmann/phpunit) for unit tests and [Infection](https://github.com/infection/infection) for mutation tests
